@@ -3,7 +3,6 @@ Configuration management for UE5 AI Assistant.
 Handles settings, API endpoints, and user preferences.
 """
 import json
-import os
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -12,6 +11,7 @@ try:
     HAS_UNREAL = True
 except ImportError:
     HAS_UNREAL = False
+    unreal = None  # type: ignore  # Only available in UE environment
 
 
 class Config:
@@ -33,8 +33,11 @@ class Config:
 
     def __init__(self, config_path: Optional[Path] = None):
         """Initialize config, loading from file if it exists."""
-        if config_path is None and HAS_UNREAL:
-            saved_dir = Path(unreal.Paths.project_saved_dir())
+        if config_path is None and HAS_UNREAL and unreal is not None:
+            # unreal is available here (UE environment only)
+            saved_dir = Path(
+                unreal.Paths.project_saved_dir()  # type: ignore[union-attr]
+            )
             config_path = saved_dir / "AIConsole" / "config.json"
 
         self.config_path = config_path

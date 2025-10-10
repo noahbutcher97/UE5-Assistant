@@ -12,6 +12,7 @@ try:
     HAS_UNREAL = True
 except ImportError:
     HAS_UNREAL = False
+    unreal = None  # type: ignore  # Only available in UE environment
 
 
 class Logger:
@@ -26,13 +27,14 @@ class Logger:
         prefix = f"[{self.name}]"
         full_msg = f"{prefix} {icon} {msg}".strip()
 
-        if HAS_UNREAL:
+        if HAS_UNREAL and unreal is not None:
+            # unreal is available (UE environment only)
             if level == "error":
-                unreal.log_error(full_msg)
+                unreal.log_error(full_msg)  # type: ignore[union-attr]
             elif level == "warn":
-                unreal.log_warning(full_msg)
+                unreal.log_warning(full_msg)  # type: ignore[union-attr]
             else:
-                unreal.log(full_msg)
+                unreal.log(full_msg)  # type: ignore[union-attr]
 
         print(full_msg)
 
@@ -60,8 +62,11 @@ class Logger:
 
 def get_project_saved_dir() -> Path:
     """Get the project's Saved directory."""
-    if HAS_UNREAL:
-        return Path(unreal.Paths.project_saved_dir())
+    if HAS_UNREAL and unreal is not None:
+        # unreal is available (UE environment only)
+        return Path(
+            unreal.Paths.project_saved_dir()  # type: ignore[union-attr]
+        )
     return Path(".")
 
 

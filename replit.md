@@ -8,10 +8,14 @@ The project is part of the UE5 AI Assistant Integration by Noah Butcher and is d
 
 ## Recent Changes
 
-### October 2025: Performance Optimization & Prose Enhancement
-- **Performance Fix**: Eliminated redundant API call in viewport description flow. Previously, the system made two sequential OpenAI calls (describe_viewport + wrap_natural_language), causing 30-40 second response times. Now outputs formatted prose directly from /describe_viewport endpoint, reducing latency by ~50%.
-- **Enhanced Prompts**: Updated AI prompts to generate comprehensive, flowing prose paragraphs instead of fragmented lists. Descriptions now systematically cover: camera configuration, complete actor inventory, spatial relationships, environmental systems, and selection state using connected sentences with technical precision.
-- **Output Style**: Maintains factual, objective tone without conversational phrasing or subjective qualifiers, per user preference for "technical prose in programming sense, not code, but not conversational or vibes-heavy".
+### October 2025: Modular Architecture v2.0 & Blueprint Integration
+- **Modular Rewrite**: Complete architectural overhaul with separation of concerns - config, API client, async client, context collector, action executor, UI manager, and main orchestrator as independent modules
+- **Blueprint Integration**: Seamless integration with Editor Utility Widget via file-based communication. Simple one-line Python command update to migrate from v1.0
+- **Enhanced Context Collection**: Automatic collection of lighting (directional, point, spot), materials, environment (fog, post-process), landscape, and detailed selection data
+- **Async Support**: Background threading for API calls prevents editor freezing. Thread-safe file-based communication ensures all UE API calls happen on main thread
+- **Extensibility**: Command registry pattern allows custom actions to be registered from Blueprint or Python. Configuration system with runtime modification support
+- **Code Quality**: All pyright-extended linting errors resolved with documented type guards for environment-specific modules (unreal, requests)
+- **Performance**: Same optimizations as before - direct prose generation from /describe_viewport, 50% latency reduction vs v1.0
 
 ## User Preferences
 

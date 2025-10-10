@@ -4,13 +4,15 @@ True async API client using threading to avoid blocking the editor.
 import json
 import threading
 import time
-from queue import Empty, Queue
+from queue import Queue
 from typing import Any, Callable, Dict, Optional
 
 try:
-    import requests
+    import requests  # type: ignore
+    HAS_REQUESTS = True
 except ImportError:
-    requests = None  # type: ignore
+    requests = None  # type: ignore  # Optional dependency
+    HAS_REQUESTS = False
 
 from .config import get_config
 from .utils import Logger
@@ -65,6 +67,10 @@ class AsyncAPIClient:
         timeout: float,
     ) -> None:
         """Execute request in background thread."""
+        if not HAS_REQUESTS or requests is None:
+            callback({"error": "requests library not available"})
+            return
+
         max_retries = self.config.get("max_retries", 3)
         retry_delay = self.config.get("retry_delay", 2.5)
         last_error = None
@@ -75,7 +81,8 @@ class AsyncAPIClient:
                     f"POST {url} (attempt {attempt}/{max_retries})"
                 )
 
-                response = requests.post(
+                # requests is available here (checked above)
+                response = requests.post(  # type: ignore[union-attr]
                     url, json=payload, timeout=timeout
                 )
                 response.raise_for_status()
@@ -89,13 +96,13 @@ class AsyncAPIClient:
                 callback(result)
                 return
 
-            except requests.Timeout:
+            except requests.Timeout:  # type: ignore[union-attr]
                 last_error = f"Request timed out after {timeout}s"
                 self.logger.warn(
                     f"{last_error} (attempt {attempt}/{max_retries})"
                 )
 
-            except requests.HTTPError as e:
+            except requests.HTTPError as e:  # type: ignore[union-attr]
                 status = e.response.status_code
                 last_error = (
                     f"HTTP {status}: {e.response.text[:200]}"
@@ -104,7 +111,7 @@ class AsyncAPIClient:
                     f"{last_error} (attempt {attempt}/{max_retries})"
                 )
 
-            except requests.RequestException as e:
+            except requests.RequestException as e:  # type: ignore[union-attr]
                 last_error = str(e)
                 self.logger.warn(
                     f"Request failed: {last_error} "

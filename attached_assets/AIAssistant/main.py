@@ -220,10 +220,7 @@ class AIAssistant:
             "selected": "get_selected_info",
         }
 
-        for keyword in keywords:
-            if keyword in lower:
-                return True
-        return False
+        return any(keyword in lower for keyword in keywords)
 
     def _extract_action_token(self, text: str) -> str:
         """Extract action token from user input."""

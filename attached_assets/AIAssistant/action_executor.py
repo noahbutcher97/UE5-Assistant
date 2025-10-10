@@ -2,13 +2,14 @@
 Action execution system with command registry pattern.
 Handles [UE_REQUEST] tokens and executes Unreal Engine operations.
 """
-from typing import Any, Callable, Dict, Optional
+from typing import Callable, Dict, Optional
 
 try:
     import unreal  # type: ignore
     HAS_UNREAL = True
 except ImportError:
     HAS_UNREAL = False
+    unreal = None  # type: ignore  # Only available in UE environment
 
 from .api_client import get_client
 from .context_collector import get_collector
@@ -83,11 +84,12 @@ class ActionExecutor:
 
     def _list_actors(self, limit: int = 30) -> str:
         """List actors in the current level."""
-        if not HAS_UNREAL:
+        if not HAS_UNREAL or unreal is None:
             return "[UE_ERROR] Unreal module not available"
 
         try:
-            ell = unreal.EditorLevelLibrary
+            # unreal is available here (checked above, UE environment only)
+            ell = unreal.EditorLevelLibrary  # type: ignore[union-attr]
             actors = list(ell.get_all_level_actors())
             names = [a.get_fname() for a in actors]
             total = len(names)
@@ -105,11 +107,12 @@ class ActionExecutor:
 
     def _get_selected_info(self) -> str:
         """Get detailed info about selected actors."""
-        if not HAS_UNREAL:
+        if not HAS_UNREAL or unreal is None:
             return "[UE_ERROR] Unreal module not available"
 
         try:
-            ell = unreal.EditorLevelLibrary
+            # unreal is available here (checked above, UE environment only)
+            ell = unreal.EditorLevelLibrary  # type: ignore[union-attr]
             selected = list(ell.get_selected_level_actors())
 
             if not selected:
