@@ -12,7 +12,7 @@ import importlib
 import subprocess
 import sys
 
-import unreal
+import unreal  # type: ignore
 
 REQUIRED_PACKAGES = ["requests"]
 

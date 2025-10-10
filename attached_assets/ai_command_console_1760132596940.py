@@ -44,38 +44,47 @@ LOG_PREFIX = "[AIConsole]"
 # FILE HELPERS
 # ============================================================
 
+
 def _write_text(path: Path, text: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         f.write(text)
+
 
 def _append_text(path: Path, text: str):
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "a", encoding="utf-8") as f:
         f.write(text)
 
+
 def _timestamp():
     return datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 
 def _log_exchange(role: str, text: str):
     entry = {"ts": _timestamp(), "role": role, "text": text}
     _append_text(CONV_LOG_PATH, json.dumps(entry, ensure_ascii=False) + "\n")
 
+
 def _log(msg: str):
     unreal.log(f"{LOG_PREFIX} {msg}")
+
 
 # ============================================================
 # UX FEEDBACK
 # ============================================================
+
 
 def _write_thinking():
     msg = "⏳ Thinking..."
     _write_text(LAST_REPLY_PATH, msg)
     _log(f"Wrote thinking state: {msg}")
 
+
 # ============================================================
 # HTTP HELPERS
 # ============================================================
+
 
 def _post_json(url: str, payload: dict, timeout: float = 25.0) -> dict:
     try:
@@ -87,9 +96,11 @@ def _post_json(url: str, payload: dict, timeout: float = 25.0) -> dict:
         _log(traceback.format_exc())
         return {"error": str(e)}
 
+
 # ============================================================
 # LOCAL UE ACTIONS
 # ============================================================
+
 
 def _action_list_actors(limit: int = 30) -> str:
     try:
@@ -105,6 +116,7 @@ def _action_list_actors(limit: int = 30) -> str:
         _log(f"⚠️ list_actors failed: {e}")
         return "[UE_ERROR] list_actors failed."
 
+
 def _action_get_selected_info() -> str:
     try:
         ell = unreal.EditorLevelLibrary
@@ -119,7 +131,10 @@ def _action_get_selected_info() -> str:
             loc = ""
             try:
                 t = a.get_root_component().get_component_transform()
-                loc = f" at ({round(t.translation.x,1)}, {round(t.translation.y,1)}, {round(t.translation.z,1)})"
+                x = round(t.translation.x, 1)
+                y = round(t.translation.y, 1)
+                z = round(t.translation.z, 1)
+                loc = f" at ({x}, {y}, {z})"
             except Exception:
                 pass
             out.append(f" - {name} ({cls}){loc}")
@@ -127,6 +142,7 @@ def _action_get_selected_info() -> str:
     except Exception as e:
         _log(f"⚠️ get_selected_info failed: {e}")
         return "[UE_ERROR] get_selected_info failed."
+
 
 def _handle_describe_viewport() -> str:
     """
@@ -146,16 +162,19 @@ def _handle_describe_viewport() -> str:
             return "[UE_ERROR] Failed to collect viewport data."
 
         data = _post_json(DESCRIBE_VIEWPORT_ENDPOINT, payload)
-        summary = data.get("response") or data.get("description") or "(no summary)"
+        summary = data.get("response") or data.get(
+            "description") or "(no summary)"
         _log("✅ Viewport summary received from backend.")
         return summary
     except Exception as e:
         _log(f"⚠️ Viewport roundtrip failed: {e}")
         return "[UE_ERROR] Viewport summarization failed."
 
+
 # ============================================================
 # NATURAL-LANGUAGE WRAPPING
 # ============================================================
+
 
 def _wrap_natural_language(factual_text: str) -> str:
     """
@@ -176,9 +195,11 @@ def _wrap_natural_language(factual_text: str) -> str:
         _log(f"⚠️ Wrapping failed: {e}")
         return factual_text
 
+
 # ============================================================
 # TOKEN ROUTER
 # ============================================================
+
 
 def _dispatch_control_token(response_text: str) -> str:
     """
@@ -214,9 +235,11 @@ def _dispatch_control_token(response_text: str) -> str:
     _write_text(LAST_REPLY_PATH, msg)
     return msg
 
+
 # ============================================================
 # CORE REQUEST FLOW
 # ============================================================
+
 
 def send_ai_request(prompt: str) -> str:
     _log(f"Sending to: {EXECUTE_ENDPOINT}")
@@ -225,9 +248,11 @@ def send_ai_request(prompt: str) -> str:
     _log(f"⬅️ Raw response: {reply}")
     return reply
 
+
 # ============================================================
 # MAIN ENTRYPOINT
 # ============================================================
+
 
 def send_and_store(user_text: str):
     """

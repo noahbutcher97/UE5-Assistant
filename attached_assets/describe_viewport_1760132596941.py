@@ -127,8 +127,10 @@ def send_to_api(data):
                     raw = result.get("raw_context", {})
                     log_info("✅ AI Description Received:")
                     log_info(f"   {desc}")
-                    log_info(f"   (Actors: {len(raw.get('visible_actors', []))}, "
-                             f"Level: {raw.get('additional_info', {}).get('level_name', 'Unknown')})")
+                    actor_count = len(raw.get("visible_actors", []))
+                    level_name = raw.get("additional_info", {}).get(
+                        "level_name", "Unknown")
+                    log_info(f"   (Actors: {actor_count}, Level: {level_name})")
                     return True
                 except json.JSONDecodeError:
                     log_warn("Invalid JSON response from server.")
