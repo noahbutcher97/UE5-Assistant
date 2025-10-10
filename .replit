@@ -19,12 +19,16 @@ deploymentTarget = "autoscale"
 build = ["pip", "install", "-r", "requirements.txt"]
 
 [[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
 localPort = 8000
 externalPort = 80
 
 [[ports]]
-localPort = 5000
-externalPort = 80
+localPort = 40399
+externalPort = 3000
 
 [agent]
 expertMode = true

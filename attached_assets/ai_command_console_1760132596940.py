@@ -194,9 +194,9 @@ def _dispatch_control_token(response_text: str) -> str:
 
     if action == "describe_viewport":
         summary = _handle_describe_viewport()
-        wrapped = _wrap_natural_language(summary)
-        _write_text(LAST_REPLY_PATH, wrapped)
-        return wrapped
+        # REMOVED: wrapped = _wrap_natural_language(summary)
+        _write_text(LAST_REPLY_PATH, summary)
+        return summary
 
     if action == "list_actors":
         summary = _action_list_actors()

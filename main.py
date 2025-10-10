@@ -257,21 +257,29 @@ async def describe_viewport(request: Request):
     # ------------------------------------------------------------
     if style == "technical":
         prompt_intro = (
-            "Generate a technical summary of viewport contents from the JSON data below. "
-            "Organize into logical sections: camera position/orientation (precise coordinates), "
-            "scene composition (actor types and counts), spatial organization (grouping by location), "
-            "and environmental systems (lighting, atmosphere). "
-            "Use technical prose with specific actor names and quantitative data. "
-            "Include coordinate values, class names, and system states. "
-            "Write as structured technical documentation."
+            "Analyze the viewport JSON data and generate a comprehensive technical description. "
+            "Structure the response as flowing prose paragraphs that systematically cover:\n"
+            "1. Camera spatial configuration (position coordinates, rotation angles, viewing direction)\n"
+            "2. Complete scene inventory (all visible actors with their types and classifications)\n"
+            "3. Spatial organization (actor distribution, groupings, and layout patterns)\n"
+            "4. Environmental systems (lighting setup, atmospheric elements, post-process effects)\n"
+            "5. Selection state and focus (currently selected actor details if applicable)\n\n"
+            "Use complete sentences that connect related information. Include all specific names, "
+            "coordinate values, class types, and quantitative data. Describe relationships between "
+            "elements. Write as detailed technical documentation that thoroughly explains the scene "
+            "composition. Avoid bullet points or fragmented lists - synthesize information into "
+            "coherent explanatory paragraphs. Maintain factual, objective tone without subjective "
+            "qualifiers or casual language."
         )
     else:
         prompt_intro = (
-            "Generate a technical viewport summary from the JSON data below. "
-            "Describe camera position, actor composition, and scene organization. "
-            "Use precise terminology and include specific names and values. "
-            "Write as technical prose, not conversational text. "
-            "Focus on factual description without interpretation."
+            "Analyze the viewport JSON data and generate a detailed technical description. "
+            "Write complete sentences that systematically describe: camera position and orientation, "
+            "all visible actors in the scene, their spatial arrangement, environmental elements, "
+            "and any selection state. Include specific names, values, and technical classifications. "
+            "Connect related information into flowing prose paragraphs. Provide comprehensive coverage "
+            "of all scene elements. Maintain objective, informative tone using precise terminology. "
+            "Avoid conversational phrasing, subjective descriptors, and fragmented lists."
         )
 
     prompt = (f"{prompt_intro}\n\nViewport JSON:\n"
@@ -283,19 +291,23 @@ async def describe_viewport(request: Request):
     if style == "technical":
         system_msg = (
             "You are a technical documentation system for Unreal Engine 5.6. "
-            "Convert viewport data into structured technical prose organized into logical sections. "
-            "Include specific actor names, coordinate values, type classifications, and system states. "
-            "Use declarative statements with precise terminology. "
-            "No conversational phrasing, no subjective descriptions, no interpretations. "
-            "If data is missing, state it explicitly."
+            "Generate comprehensive descriptions using flowing prose paragraphs, not lists or bullet points. "
+            "Systematically analyze and describe all scene elements: camera configuration, actor inventory, "
+            "spatial relationships, environmental systems, and selection state. Include every specific name, "
+            "coordinate value, class type, and quantitative measurement. Connect related information into "
+            "coherent explanatory sentences. Write as detailed technical documentation that thoroughly "
+            "explains scene composition. Use precise terminology and factual statements. Never use "
+            "conversational tone, subjective qualifiers, casual language, or interpretive descriptions. "
+            "If data is missing, state it explicitly as a technical observation."
         )
     else:
         system_msg = (
             "You are a technical documentation system for Unreal Engine 5.6. "
-            "Convert viewport data into technical prose describing scene composition. "
-            "State facts about actors, positions, and systems using precise terminology. "
-            "Write declaratively without conversational tone or subjective language. "
-            "Include specific names and values where available."
+            "Generate detailed descriptions using complete sentences and flowing prose, not fragmented lists. "
+            "Describe all scene elements comprehensively: camera state, visible actors, spatial organization, "
+            "environmental components. Include specific names, values, and technical classifications. "
+            "Connect information into coherent paragraphs. Maintain objective, informative tone with precise "
+            "terminology. Avoid conversational phrasing, subjective descriptors, and casual language."
         )
 
     # ------------------------------------------------------------
