@@ -8,9 +8,10 @@
 ===============================================================================
 """
 
-import sys
-import subprocess
 import importlib
+import subprocess
+import sys
+
 import unreal
 
 REQUIRED_PACKAGES = ["requests"]
