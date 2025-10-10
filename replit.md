@@ -13,6 +13,7 @@ The project is part of the UE5 AI Assistant Integration by Noah Butcher and is d
 - **Blueprint Integration**: Seamless integration with Editor Utility Widget via file-based communication. Simple one-line Python command update to migrate from v1.0
 - **Enhanced Context Collection**: Automatic collection of lighting (directional, point, spot), materials, environment (fog, post-process), landscape, and detailed selection data
 - **Thread Safety Fix**: Discovered async mode causes "Attempted to access Unreal API from outside the main game thread" errors. System now defaults to synchronous mode (use_async=False) for reliable operation. Brief blocking (~15-20s) is acceptable for editor tools and ensures all UE API calls execute correctly
+- **Critical Data Structure Bug Fix**: Resolved mismatch between v2.0 modular client (nested structure) and v1.0 FastAPI backend (flat structure). Backend now accepts v2.0 format with camera{location, rotation}, actors{total, names, types}, lighting{}, environment{}, selection{} structure. This fixed "null data" responses where AI couldn't describe viewport
 - **Extensibility**: Command registry pattern allows custom actions to be registered from Blueprint or Python. Configuration system with runtime modification support
 - **Code Quality**: All pyright-extended linting errors resolved with documented type guards for environment-specific modules (unreal, requests)
 - **Performance**: Direct prose generation from /describe_viewport, 50% latency reduction vs v1.0

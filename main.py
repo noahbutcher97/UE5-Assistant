@@ -29,8 +29,16 @@ app = FastAPI(
 class ViewportContext(BaseModel):
     """
     Describes the Unreal Engine editor viewport context.
-    Compatible with both direct UE calls and tokenized routing.
+    Compatible with modular AIAssistant v2.0 structure.
     """
+    # New v2.0 structure (modular)
+    camera: Optional[Dict[str, Any]] = None
+    actors: Optional[Dict[str, Any]] = None
+    lighting: Optional[Dict[str, Any]] = None
+    environment: Optional[Dict[str, Any]] = None
+    selection: Optional[Dict[str, Any]] = None
+    
+    # Legacy v1.0 fields (backward compatibility)
     camera_location: Optional[List[float]] = None
     camera_rotation: Optional[List[float]] = None
     visible_actors: Optional[List[str]] = None
@@ -258,12 +266,18 @@ async def describe_viewport(request: Request):
     if style == "technical":
         prompt_intro = (
             "Analyze the viewport JSON data and generate a comprehensive technical description. "
+            "The data structure includes:\n"
+            "- camera: {location: [x,y,z], rotation: [pitch,yaw,roll]} for viewport position\n"
+            "- actors: {total, names[], types{}} for scene contents\n"
+            "- lighting: {directional_lights[], point_lights[], spot_lights[]} for illumination\n"
+            "- environment: {fog[], post_process_volumes[], landscape} for atmospheric elements\n"
+            "- selection: {count, actors[]} for currently selected objects\n\n"
             "Structure the response as flowing prose paragraphs that systematically cover:\n"
-            "1. Camera spatial configuration (position coordinates, rotation angles, viewing direction)\n"
-            "2. Complete scene inventory (all visible actors with their types and classifications)\n"
-            "3. Spatial organization (actor distribution, groupings, and layout patterns)\n"
-            "4. Environmental systems (lighting setup, atmospheric elements, post-process effects)\n"
-            "5. Selection state and focus (currently selected actor details if applicable)\n\n"
+            "1. Camera spatial configuration (position coordinates from location, rotation angles, viewing direction)\n"
+            "2. Complete scene inventory (actor counts, types, and specific names from actors data)\n"
+            "3. Lighting configuration (directional, point, and spot lights with their properties)\n"
+            "4. Environmental systems (fog, post-process volumes, landscape elements)\n"
+            "5. Selection state (selected actors with their details)\n\n"
             "Use complete sentences that connect related information. Include all specific names, "
             "coordinate values, class types, and quantitative data. Describe relationships between "
             "elements. Write as detailed technical documentation that thoroughly explains the scene "
@@ -274,11 +288,12 @@ async def describe_viewport(request: Request):
     else:
         prompt_intro = (
             "Analyze the viewport JSON data and generate a detailed technical description. "
-            "Write complete sentences that systematically describe: camera position and orientation, "
-            "all visible actors in the scene, their spatial arrangement, environmental elements, "
-            "and any selection state. Include specific names, values, and technical classifications. "
-            "Connect related information into flowing prose paragraphs. Provide comprehensive coverage "
-            "of all scene elements. Maintain objective, informative tone using precise terminology. "
+            "The data includes camera (location/rotation), actors (counts/types/names), "
+            "lighting (directional/point/spot lights), environment (fog/post-process/landscape), "
+            "and selection state. Write complete sentences that systematically describe all elements. "
+            "Include specific names, values, and technical classifications. Connect related information "
+            "into flowing prose paragraphs. Provide comprehensive coverage of all scene elements. "
+            "Maintain objective, informative tone using precise terminology. "
             "Avoid conversational phrasing, subjective descriptors, and fragmented lists."
         )
 
@@ -334,38 +349,53 @@ async def describe_viewport(request: Request):
         summary = ""
 
     # ------------------------------------------------------------
-    # 6️⃣ Multi-tier fallback logic
+    # 6️⃣ Multi-tier fallback logic (supports v2.0 structure)
     # ------------------------------------------------------------
-    add_info = context.additional_info or {}
-
     if not summary or len(summary.split()) < 4:
-        cam_loc = context.camera_location or "(unknown)"
-        cam_rot = context.camera_rotation or "(unknown)"
-        lvl = add_info.get("level_name", "Unknown")
-        total = add_info.get("total_actors", "?")
-
+        # Try v2.0 structure first
+        camera_data = context.camera or {}
+        actors_data = context.actors or {}
+        lighting_data = context.lighting or {}
+        env_data = context.environment or {}
+        selection_data = context.selection or {}
+        
+        # Extract values with fallbacks
+        cam_loc = camera_data.get("location", context.camera_location or [0,0,0])
+        cam_rot = camera_data.get("rotation", context.camera_rotation or [0,0,0])
+        total = actors_data.get("total", len(context.visible_actors or []))
+        lvl = actors_data.get("level", "Unknown")
+        
         # Tier 1 – minimal technical fallback
         summary = (f"Camera at {cam_loc} facing {cam_rot} "
                    f"in level '{lvl}' with approximately "
                    f"{total} visible actors.")
         print("[Fallback] Basic camera-level summary used.")
 
-        # Tier 2 – offline natural rephrase
+        # Tier 2 – offline natural rephrase using v2.0 data
         try:
-            visible = add_info.get("visible_actors", [])
-            selected = add_info.get("selected_actor", None)
-
-            has_landscape = any("landscape" in str(a).lower() for a in visible)
-            has_lights = any("light" in str(a).lower() for a in visible)
-            has_fog = any("fog" in str(a).lower() for a in visible)
+            actor_names = actors_data.get("names", context.visible_actors or [])
+            selected_actors = selection_data.get("actors", [])
+            
+            has_landscape = env_data.get("landscape") is not None
+            has_lights = (
+                len(lighting_data.get("directional_lights", [])) > 0 or
+                len(lighting_data.get("point_lights", [])) > 0 or
+                len(lighting_data.get("spot_lights", [])) > 0
+            )
+            has_fog = len(env_data.get("fog", [])) > 0
 
             natural_parts: list[str] = []
             if has_landscape:
                 natural_parts.append("a landscape environment")
             if has_lights:
-                natural_parts.append("scene lighting setup")
+                num_lights = (
+                    len(lighting_data.get("directional_lights", [])) +
+                    len(lighting_data.get("point_lights", [])) +
+                    len(lighting_data.get("spot_lights", []))
+                )
+                natural_parts.append(f"{num_lights} light sources")
             if has_fog:
-                natural_parts.append("fog or atmospheric volume")
+                natural_parts.append("fog or atmospheric effects")
 
             scene_desc = (", ".join(natural_parts)
                           if natural_parts else "various actors")
@@ -373,13 +403,17 @@ async def describe_viewport(request: Request):
             readable = (
                 f"The camera is positioned at {cam_loc}, looking toward "
                 f"{cam_rot}, viewing {scene_desc} within level '{lvl}'. "
-                f"There are roughly {total} visible actors in the scene.")
-            if selected:
-                readable += (f" The currently selected actor appears to be "
-                             f"'{selected}'.")
+                f"There are {total} visible actors in the scene.")
+            
+            if selected_actors:
+                selected_names = [a.get("name", "Unknown") for a in selected_actors[:3]]
+                if len(selected_names) == 1:
+                    readable += f" Currently selected: {selected_names[0]}."
+                else:
+                    readable += f" Currently selected: {', '.join(selected_names)}."
 
             summary = readable
-            print("[Offline Fallback] Generated descriptive summary offline.")
+            print("[Offline Fallback] Generated descriptive summary offline (v2.0 data).")
         except Exception as e:
             print(f"[Offline fallback failed]: {e}")
 
