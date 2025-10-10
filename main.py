@@ -178,7 +178,7 @@ async def execute_command(request: dict):
 async def wrap_natural_language(request: dict):
     """
     Takes a factual string from UE (like a viewport summary)
-    and rewrites it conversationally for the user.
+    and converts it to structured technical prose.
     """
     summary_text = request.get("summary", "")
     if not summary_text:
