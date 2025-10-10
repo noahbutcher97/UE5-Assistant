@@ -1,5 +1,5 @@
 import os
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import openai
 from fastapi import FastAPI, Request
@@ -9,16 +9,15 @@ from pydantic import BaseModel
 # CONFIGURATION
 # ============================================================
 
-# Load OpenAI API key from environment variable
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Initialize FastAPI app
 app = FastAPI(
     title="Unreal Engine Viewport Describer",
     description=
-    ("Receives Unreal viewport context and returns a natural-language description. "
-     "Part of the UE5 AI Assistant Integration Project by Noah Butcher."),
-    version="0.1.1",
+    ("Receives Unreal viewport context and returns a natural-language "
+     "description. Part of the UE5 AI Assistant Integration Project by Noah Butcher."
+     ),
+    version="0.2.0",
 )
 
 # ============================================================
@@ -28,113 +27,36 @@ app = FastAPI(
 
 class ViewportContext(BaseModel):
     """
-    Data model describing the Unreal Engine editor viewport context.
+    Describes the Unreal Engine editor viewport context.
+    Compatible with both direct UE calls and tokenized routing.
     """
     camera_location: Optional[List[float]] = None
     camera_rotation: Optional[List[float]] = None
     visible_actors: Optional[List[str]] = None
     selected_actor: Optional[str] = None
-    additional_info: Optional[Dict] = None
+    additional_info: Optional[Dict[str, Any]] = None
 
 
 # ============================================================
-# MAIN ENDPOINT
-# ============================================================
-
-
-@app.post("/describe_viewport")
-async def describe_viewport(request: Request):
-    """
-    Receives viewport info from Unreal. Generates a grounded description of what
-    the user currently sees in the editor, not general UE5 advice.
-    Supports both direct (ViewportContext) and tokenized dict payloads.
-    """
-    try:
-        raw_data = await request.json()
-    except Exception as e:
-        print(f"[Error] Failed to parse JSON: {e}")
-        return {
-            "response": f"Error reading viewport data: {e}",
-            "raw_context": {}
-        }
-
-    # Try to coerce the incoming data into a proper Pydantic model
-    try:
-        context = ViewportContext(**raw_data)
-    except Exception:
-        try:
-            context = ViewportContext.model_validate(raw_data)
-        except Exception:
-            # Fall back to a dummy structure if all else fails
-            context = ViewportContext()
-
-    # Build a focused, scene-specific prompt
-    prompt = (
-        "You are an Unreal Engine 5.6 Editor Assistant. "
-        "The JSON below represents the user's current viewport state "
-        "(camera, rotation, visible actors, and selected object). "
-        "Describe what the user is seeing concisely (3–5 sentences). "
-        "Base your description only on this data — do not explain UE5 concepts.\n\n"
-        f"Viewport JSON:\n{context.model_dump_json(indent=2)}")
-
-    try:
-        response = openai.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{
-                "role": "user",
-                "content": prompt
-            }],
-        )
-        summary = (response.choices[0].message.content or "").strip()
-    except Exception as e:
-        summary = f"Error generating description: {e}"
-
-    # Fallback if GPT produces irrelevant or empty output
-    if not summary or "viewport" in summary.lower():
-        add_info = context.additional_info or {}
-        summary = (f"Camera at {context.camera_location or '?'} "
-                   f"facing {context.camera_rotation or '?'} in level "
-                   f"{add_info.get('level_name', 'Unknown')} "
-                   f"with {add_info.get('total_actors', '?')} actors visible.")
-
-    print("\n[Viewport Summary]")
-    print(summary)
-    print("\n--- End of Response ---\n")
-
-    return {"response": summary, "raw_context": context.model_dump()}
-
-
-# ============================================================
-# SIMPLE HOMEPAGE
+# CORE ROUTES
 # ============================================================
 
 
 @app.get("/")
 async def home():
-    """
-    Simple heartbeat route to verify the API is online.
-    """
+    """Heartbeat route to verify API is online."""
     return {"status": "online", "message": "UE5 AI Assistant running!"}
-
-
-# ============================================================
-# OPTIONAL DEBUG / TEST ROUTES
-# ============================================================
 
 
 @app.get("/test")
 async def test_endpoint():
-    """
-    Quick test route to verify server connectivity.
-    """
+    """Quick test route."""
     return {"status": "ok", "message": "FastAPI test route reachable."}
 
 
 @app.get("/ping_openai")
 async def ping_openai():
-    """
-    Optional test route to verify OpenAI connectivity.
-    """
+    """Verifies OpenAI connectivity."""
     try:
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
@@ -145,7 +67,7 @@ async def ping_openai():
         )
         return {
             "openai_status": "connected",
-            "response": response.choices[0].message.content
+            "response": response.choices[0].message.content,
         }
     except Exception as e:
         return {"openai_status": "error", "details": str(e)}
@@ -154,13 +76,31 @@ async def ping_openai():
 # ============================================================
 # EXECUTE COMMAND
 # ============================================================
+
+
 @app.post("/execute_command")
 async def execute_command(request: dict):
+    """
+    Handles general user prompts from Unreal's AI Command Console.
+    This endpoint can return plain text or control tokens like
+    [UE_REQUEST] describe_viewport, list_actors, get_selected_info.
+    """
     user_input = request.get("prompt", "")
     if not user_input:
         return {"error": "No prompt provided."}
 
     try:
+        # Simple keyword routing for UE actions
+        lower = user_input.lower()
+        if any(k in lower for k in
+               ["what do i see", "viewport", "describe viewport", "scene"]):
+            return {"response": "[UE_REQUEST] describe_viewport"}
+        if "list actors" in lower or "list of actors" in lower:
+            return {"response": "[UE_REQUEST] list_actors"}
+        if "selected" in lower and ("info" in lower or "details" in lower):
+            return {"response": "[UE_REQUEST] get_selected_info"}
+
+        # Otherwise send to OpenAI for general response
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -175,7 +115,6 @@ async def execute_command(request: dict):
             ],
         )
 
-        # ✅ Defensive checks to prevent 'NoneType' errors
         if not response or not getattr(response, "choices", None):
             return {"error": "OpenAI returned no choices."}
 
@@ -192,3 +131,75 @@ async def execute_command(request: dict):
     except Exception as e:
         print(f"[ERROR] {e}")
         return {"error": str(e)}
+
+
+# ============================================================
+# DESCRIBE VIEWPORT (Improved)
+# ============================================================
+
+
+@app.post("/describe_viewport")
+async def describe_viewport(request: Request):
+    """
+    Receives viewport info from Unreal and generates a grounded,
+    scene-specific description of what the user is actually seeing
+    (not generic UE5 advice).
+    Supports both Pydantic model and plain dict payloads.
+    """
+    try:
+        raw_data = await request.json()
+    except Exception as e:
+        print(f"[Error] Failed to parse JSON: {e}")
+        return {
+            "response": f"Error reading viewport data: {e}",
+            "raw_context": {}
+        }
+
+    # Try to coerce dict into a Pydantic model
+    try:
+        context = ViewportContext(**raw_data)
+    except Exception:
+        try:
+            context = ViewportContext.model_validate(raw_data)
+        except Exception:
+            context = ViewportContext()
+
+    # Build scene-specific prompt
+    prompt = (
+        "You are an Unreal Engine 5.6 Editor Assistant. "
+        "The following JSON represents the current viewport state — "
+        "camera position, rotation, visible actors, and level info. "
+        "Describe what the user is seeing in 3–5 concise sentences. "
+        "Base your answer only on the data. Do NOT give UE5 tutorials or advice.\n\n"
+        f"Viewport JSON:\n{context.model_dump_json(indent=2)}")
+
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{
+                "role": "user",
+                "content": prompt
+            }],
+        )
+        summary = (response.choices[0].message.content or "").strip()
+    except Exception as e:
+        summary = f"Error generating description: {e}"
+
+    # Deterministic fallback if GPT output is too generic or empty
+    if not summary or "viewport" in summary.lower():
+        add_info = context.additional_info or {}
+        summary = (f"Camera at {context.camera_location or '?'} "
+                   f"facing {context.camera_rotation or '?'} in level "
+                   f"{add_info.get('level_name', 'Unknown')} "
+                   f"with {add_info.get('total_actors', '?')} visible actors.")
+
+    print("\n[Viewport Summary]")
+    print(summary)
+    print("\n--- End of Response ---\n")
+
+    return {"response": summary, "raw_context": context.model_dump()}
+
+
+# ============================================================
+# END OF FILE
+# ============================================================
