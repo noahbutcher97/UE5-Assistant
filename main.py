@@ -1,8 +1,11 @@
 import os
+from datetime import datetime
 from typing import Any, Dict, List, Optional, cast
 
 import openai
 from fastapi import FastAPI, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 # ============================================================
@@ -44,6 +47,40 @@ class ViewportContext(BaseModel):
     visible_actors: Optional[List[str]] = None
     selected_actor: Optional[str] = None
     additional_info: Optional[Dict[str, Any]] = None
+
+
+class ConversationEntry(BaseModel):
+    """A single conversation exchange."""
+    timestamp: str
+    user_input: str
+    assistant_response: str
+    command_type: str  # "execute_command", "describe_viewport", etc.
+    metadata: Optional[Dict[str, Any]] = None
+
+
+# ============================================================
+# CONVERSATION HISTORY STORAGE
+# ============================================================
+
+# In-memory conversation history (last 100 entries)
+conversation_history: List[Dict[str, Any]] = []
+MAX_HISTORY_SIZE = 100
+
+
+def add_to_history(user_input: str, response: str, cmd_type: str, metadata: Optional[Dict[str, Any]] = None):
+    """Add a conversation entry to history."""
+    entry = {
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "user_input": user_input,
+        "assistant_response": response,
+        "command_type": cmd_type,
+        "metadata": metadata or {}
+    }
+    conversation_history.append(entry)
+    
+    # Keep only last MAX_HISTORY_SIZE entries
+    if len(conversation_history) > MAX_HISTORY_SIZE:
+        conversation_history.pop(0)
 
 
 # ============================================================
@@ -425,6 +462,430 @@ async def describe_viewport(request: Request):
     print("\n--- End of Response ---\n")
 
     return {"response": summary, "raw_context": context.model_dump()}
+
+
+# ============================================================
+# CONVERSATION DASHBOARD API
+# ============================================================
+
+@app.get("/api/conversations")
+async def get_conversations(limit: int = 50):
+    """Get recent conversation history for dashboard."""
+    # Return most recent entries first
+    recent = conversation_history[-limit:] if len(conversation_history) > limit else conversation_history
+    return {
+        "conversations": list(reversed(recent)),
+        "total": len(conversation_history),
+        "max_size": MAX_HISTORY_SIZE
+    }
+
+
+@app.post("/api/log_conversation")
+async def log_conversation(entry: ConversationEntry):
+    """Manually log a conversation (for UE5 client if needed)."""
+    add_to_history(
+        entry.user_input,
+        entry.assistant_response,
+        entry.command_type,
+        entry.metadata
+    )
+    return {"status": "logged", "total_entries": len(conversation_history)}
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard():
+    """Serve the conversation dashboard HTML."""
+    html_content = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UE5 AI Assistant - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .stat-card .label {
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            background: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .tab:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .conversation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .conversation-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        .conversation-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+        
+        .conversation-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .timestamp {
+            color: #999;
+            font-size: 0.85em;
+        }
+        
+        .command-type {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+        
+        .user-input {
+            background: #f5f5f5;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .user-input strong {
+            color: #667eea;
+        }
+        
+        .assistant-response {
+            background: #f9f9f9;
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #764ba2;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .assistant-response strong {
+            color: #764ba2;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+        
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .auto-refresh {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 UE5 AI Assistant Dashboard</h1>
+            <p>Real-time conversation monitoring and analytics</p>
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="number" id="total-conversations">0</div>
+                    <div class="label">Total Conversations</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="recent-conversations">0</div>
+                    <div class="label">Recent (Last 50)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number" id="max-storage">100</div>
+                    <div class="label">Max Storage</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab" onclick="showTab('api')">🔧 API Info</button>
+            <button class="tab" onclick="showTab('about')">ℹ️ About</button>
+        </div>
+        
+        <div id="dashboard" class="tab-content active">
+            <div class="controls">
+                <h2>Recent Conversations</h2>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <label class="auto-refresh">
+                        <input type="checkbox" id="auto-refresh" checked>
+                        Auto-refresh (5s)
+                    </label>
+                    <button class="refresh-btn" onclick="loadConversations()">
+                        <span>🔄</span> Refresh Now
+                    </button>
+                </div>
+            </div>
+            <div id="conversation-list" class="conversation-list">
+                <div class="empty-state">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                    <p>No conversations yet. Start using the AI Assistant in Unreal Engine!</p>
+                </div>
+            </div>
+        </div>
+        
+        <div id="api" class="tab-content">
+            <h2>API Endpoints</h2>
+            <p style="margin: 15px 0;">Available API endpoints for the UE5 AI Assistant:</p>
+            <ul style="list-style: none; line-height: 2;">
+                <li><strong>GET /</strong> - Health check</li>
+                <li><strong>POST /execute_command</strong> - Execute AI commands</li>
+                <li><strong>POST /describe_viewport</strong> - Generate viewport descriptions</li>
+                <li><strong>GET /api/conversations</strong> - Retrieve conversation history</li>
+                <li><strong>POST /api/log_conversation</strong> - Manually log a conversation</li>
+                <li><strong>GET /dashboard</strong> - This dashboard</li>
+            </ul>
+        </div>
+        
+        <div id="about" class="tab-content">
+            <h2>About UE5 AI Assistant</h2>
+            <p style="margin: 15px 0; line-height: 1.6;">
+                This is a FastAPI backend service that provides AI-powered technical documentation 
+                of Unreal Engine 5 editor viewport contexts. The system receives structured viewport 
+                data from the Unreal Engine Python environment and uses OpenAI's GPT models to generate 
+                technical prose descriptions.
+            </p>
+            <p style="margin: 15px 0; line-height: 1.6;">
+                <strong>Version:</strong> 2.0 (Modular Architecture)<br>
+                <strong>Model:</strong> GPT-4o-mini<br>
+                <strong>Project by:</strong> Noah Butcher
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        let autoRefreshInterval = null;
+        
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function formatTimestamp(isoString) {
+            const date = new Date(isoString);
+            return date.toLocaleString();
+        }
+        
+        function truncateText(text, maxLength = 300) {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        }
+        
+        async function loadConversations() {
+            try {
+                const response = await fetch('/api/conversations?limit=50');
+                const data = await response.json();
+                
+                // Update stats
+                document.getElementById('total-conversations').textContent = data.total;
+                document.getElementById('recent-conversations').textContent = data.conversations.length;
+                document.getElementById('max-storage').textContent = data.max_size;
+                
+                // Render conversations
+                const listElement = document.getElementById('conversation-list');
+                
+                if (data.conversations.length === 0) {
+                    listElement.innerHTML = `
+                        <div class="empty-state">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                            <p>No conversations yet. Start using the AI Assistant in Unreal Engine!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                listElement.innerHTML = data.conversations.map(conv => `
+                    <div class="conversation-item">
+                        <div class="conversation-header">
+                            <span class="command-type">${conv.command_type}</span>
+                            <span class="timestamp">${formatTimestamp(conv.timestamp)}</span>
+                        </div>
+                        <div class="user-input">
+                            <strong>User:</strong> ${conv.user_input}
+                        </div>
+                        <div class="assistant-response">
+                            <strong>Assistant:</strong> ${truncateText(conv.assistant_response)}
+                        </div>
+                    </div>
+                `).join('');
+                
+            } catch (error) {
+                console.error('Failed to load conversations:', error);
+            }
+        }
+        
+        // Auto-refresh toggle
+        document.getElementById('auto-refresh').addEventListener('change', function(e) {
+            if (e.target.checked) {
+                autoRefreshInterval = setInterval(loadConversations, 5000);
+            } else {
+                if (autoRefreshInterval) {
+                    clearInterval(autoRefreshInterval);
+                    autoRefreshInterval = null;
+                }
+            }
+        });
+        
+        // Initial load
+        loadConversations();
+        
+        // Start auto-refresh
+        autoRefreshInterval = setInterval(loadConversations, 5000);
+    </script>
+</body>
+</html>
+    """
+    return HTMLResponse(content=html_content)
 
 
 # ============================================================
