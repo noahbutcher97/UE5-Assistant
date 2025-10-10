@@ -18,19 +18,21 @@ __version__ = "2.0.0"
 __author__ = "Noah Butcher"
 
 # Core components
-from . import config
-from . import utils
-from . import api_client
-from . import async_client
-from . import context_collector
-from . import action_executor
-from . import ui_manager
-from . import main
+from . import (
+    action_executor,
+    api_client,
+    async_client,
+    config,
+    context_collector,
+    main,
+    ui_manager,
+    utils,
+)
+from .action_executor import get_executor
+from .config import get_config
 
 # Main entry points for convenience
-from .main import send_command, get_assistant
-from .config import get_config
-from .action_executor import get_executor
+from .main import get_assistant, send_command
 
 __all__ = [
     # Main functions

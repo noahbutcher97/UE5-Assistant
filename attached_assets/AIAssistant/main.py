@@ -2,12 +2,11 @@
 Main entry point for UE5 AI Assistant.
 Supports both sync and async modes.
 """
-import time
 from typing import Optional
 
+from .action_executor import get_executor
 from .api_client import get_client
 from .async_client import get_async_client
-from .action_executor import get_executor
 from .config import get_config
 from .ui_manager import get_ui_manager
 from .utils import Logger
