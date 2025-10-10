@@ -74,7 +74,7 @@ async def ping_openai():
 
 
 # ============================================================
-# EXECUTE COMMAND (contextual memory + clean typing)
+# EXECUTE COMMAND (Context memory + Natural language wrapping)
 # ============================================================
 
 session_messages: List[Dict[str, str]] = [{
@@ -90,7 +90,7 @@ async def execute_command(request: dict):
     """
     Handles user prompts from Unreal's AI Command Console.
     Maintains short-term conversation context across turns.
-    Returns either plain AI replies or [UE_REQUEST] control tokens.
+    Adds natural-language rephrasing for tokenized UE actions.
     """
     user_input = request.get("prompt", "")
     if not user_input:
@@ -99,9 +99,9 @@ async def execute_command(request: dict):
     try:
         lower = user_input.lower()
 
-        # ------------------------------------------------------------------
-        # 1️⃣ Tokenized command routing (local UE-side actions)
-        # ------------------------------------------------------------------
+        # --------------------------------------------------------
+        # 1️⃣ Tokenized command routing
+        # --------------------------------------------------------
         if any(k in lower for k in
                ["what do i see", "viewport", "describe viewport", "scene"]):
             return {"response": "[UE_REQUEST] describe_viewport"}
@@ -110,11 +110,10 @@ async def execute_command(request: dict):
         if "selected" in lower and ("info" in lower or "details" in lower):
             return {"response": "[UE_REQUEST] get_selected_info"}
 
-        # ------------------------------------------------------------------
-        # 2️⃣ Add this user turn to in-memory buffer
-        # ------------------------------------------------------------------
+        # --------------------------------------------------------
+        # 2️⃣ Update memory
+        # --------------------------------------------------------
         session_messages.append({"role": "user", "content": user_input})
-
         max_context_turns = 6
         user_assistant_msgs = [
             m for m in session_messages if m["role"] != "system"
@@ -123,47 +122,85 @@ async def execute_command(request: dict):
             session_messages[:] = session_messages[:1] + user_assistant_msgs[-(
                 max_context_turns * 2):]
 
-        # ------------------------------------------------------------------
-        # 3️⃣ Build typed payload and cast to satisfy SDK type hints
-        # ------------------------------------------------------------------
-        messages_payload: List[Dict[str, str]] = [{
+        # --------------------------------------------------------
+        # 3️⃣ Build typed payload for OpenAI
+        # --------------------------------------------------------
+        messages_payload = [{
             "role": m["role"],
             "content": m["content"]
         } for m in session_messages if "role" in m and "content" in m]
 
-        print("\n[Context Snapshot]")
-        for m in messages_payload[-6:]:
-            print(f"{m['role'].upper()}: {m['content'][:120]}...")
-        print("\n--- Sending to OpenAI ---\n")
-
-        # ------------------------------------------------------------------
-        # 4️⃣ Call OpenAI API (cast to Any to bypass type-check strictness)
-        # ------------------------------------------------------------------
+        # --------------------------------------------------------
+        # 4️⃣ Send initial user prompt to OpenAI
+        # --------------------------------------------------------
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=cast(List[Any], messages_payload),
         )
 
-        # ------------------------------------------------------------------
-        # 5️⃣ Process and store reply
-        # ------------------------------------------------------------------
-        if not response or not getattr(response, "choices", None):
-            return {"error": "OpenAI returned no choices."}
-
-        first_choice = response.choices[0]
-        message_content = getattr(first_choice.message, "content", None)
-        if not message_content:
-            return {"error": "OpenAI response was empty or invalid."}
-
-        reply = message_content.strip()
+        reply = (response.choices[0].message.content or "").strip()
         print(f"[AI Response] {reply}")
 
+        # --------------------------------------------------------
+        # 5️⃣ Handle UE-request tokens (rephrase factual responses)
+        # --------------------------------------------------------
+        if reply.startswith("[UE_REQUEST]"):
+            token = reply.replace("[UE_REQUEST]", "").strip()
+            print(f"[AIConsole] Detected UE token: {token}")
+            # Return token for Unreal to execute (it will send data back)
+            return {"response": f"[UE_REQUEST] {token}"}
+
+        # --------------------------------------------------------
+        # 6️⃣ Append assistant reply to memory and return
+        # --------------------------------------------------------
         session_messages.append({"role": "assistant", "content": reply})
         return {"response": reply}
 
     except Exception as e:
         print(f"[ERROR] {e}")
         return {"error": str(e)}
+
+
+# ============================================================
+#  ADDITIONAL ENDPOINT: POST-TOKEN NATURAL-LANGUAGE WRAPPER
+# ============================================================
+
+
+@app.post("/wrap_natural_language")
+async def wrap_natural_language(request: dict):
+    """
+    Takes a factual string from UE (like a viewport summary)
+    and rewrites it conversationally for the user.
+    """
+    summary_text = request.get("summary", "")
+    if not summary_text:
+        return {"error": "No summary text provided."}
+
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role":
+                    "system",
+                    "content":
+                    ("You are an Unreal Editor assistant speaking directly to the user. "
+                     "Rephrase the following factual scene summary into natural, conversational language. "
+                     "Preserve accuracy but make it feel like you’re describing the scene casually."
+                     ),
+                },
+                {
+                    "role": "user",
+                    "content": summary_text
+                },
+            ],
+        )
+        wrapped = response.choices[0].message.content.strip()
+        print(f"[Natural Wrapper] {wrapped}")
+        return {"response": wrapped}
+    except Exception as e:
+        print(f"[ERROR in wrap_natural_language]: {e}")
+        return {"response": summary_text}
 
 
 # ============================================================
