@@ -14,12 +14,7 @@ __version__ = "2.0.0"
 __author__ = "Noah Butcher"
 
 # Core components will be imported here
-from . import config
-from . import utils
-from . import api_client
-from . import context_collector
-from . import action_executor
-from . import ui_manager
+from . import action_executor, api_client, config, context_collector, ui_manager, utils
 
 __all__ = [
     "config",
