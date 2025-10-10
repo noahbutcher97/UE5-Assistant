@@ -10,6 +10,7 @@ from pydantic import BaseModel
 # ============================================================
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+MODEL_NAME = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
 app = FastAPI(
     title="Unreal Engine Viewport Describer",
@@ -59,7 +60,7 @@ async def ping_openai():
     """Verifies OpenAI connectivity."""
     try:
         response = openai.chat.completions.create(
-            model="gpt-4o-mini",
+            model=MODEL_NAME,
             messages=[{
                 "role": "user",
                 "content": "Say 'pong'"
@@ -67,7 +68,7 @@ async def ping_openai():
         )
         return {
             "openai_status": "connected",
-            "response": response.choices[0].message.content,
+            "response": response.choices[0].message.content or "pong",
         }
     except Exception as e:
         return {"openai_status": "error", "details": str(e)}
@@ -77,6 +78,8 @@ async def ping_openai():
 # EXECUTE COMMAND (Context memory + Natural language wrapping)
 # ============================================================
 
+# NOTE: session_messages is shared global state for single-user UE integration
+# For multi-user deployments, consider session management per user/connection
 session_messages: List[Dict[str, str]] = [{
     "role":
     "system",
@@ -139,7 +142,7 @@ async def execute_command(request: dict):
         # 4️⃣ Send initial user prompt to OpenAI
         # --------------------------------------------------------
         response = openai.chat.completions.create(
-            model="gpt-4o-mini",
+            model=MODEL_NAME,
             messages=cast(List[Any], messages_payload),
         )
 
@@ -183,7 +186,7 @@ async def wrap_natural_language(request: dict):
 
     try:
         response = openai.chat.completions.create(
-            model="gpt-4o-mini",
+            model=MODEL_NAME,
             messages=[
                 {
                     "role":
@@ -300,7 +303,7 @@ async def describe_viewport(request: Request):
     # ------------------------------------------------------------
     try:
         response = openai.chat.completions.create(
-            model="gpt-4o-mini",
+            model=MODEL_NAME,
             messages=[
                 {
                     "role": "system",
