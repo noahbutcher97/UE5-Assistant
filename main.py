@@ -195,7 +195,7 @@ async def wrap_natural_language(request: dict):
                 },
             ],
         )
-        wrapped = response.choices[0].message.content.strip()
+        wrapped = (response.choices[0].message.content or "").strip()
         print(f"[Natural Wrapper] {wrapped}")
         return {"response": wrapped}
     except Exception as e:
@@ -204,7 +204,7 @@ async def wrap_natural_language(request: dict):
 
 
 # ============================================================
-# DESCRIBE VIEWPORT (Improved + Stable)
+# DESCRIBE VIEWPORT (Final + Style + Natural Offline Fallback)
 # ============================================================
 
 
@@ -212,12 +212,12 @@ async def wrap_natural_language(request: dict):
 async def describe_viewport(request: Request):
     """
     Receives viewport info from Unreal and generates a grounded,
-    scene-specific description of what the user is actually seeing
-    (not generic UE5 advice).
-    Supports both Pydantic model and plain dict payloads.
+    scene-specific description of what the user is actually seeing.
+    Supports style = "technical" or "natural".
+    Includes offline fallbacks that remain informative and readable.
     """
     # ------------------------------------------------------------
-    # 1️⃣ Parse the incoming JSON from Unreal
+    # 1️⃣ Parse incoming JSON
     # ------------------------------------------------------------
     try:
         raw_data = await request.json()
@@ -228,8 +228,10 @@ async def describe_viewport(request: Request):
             "raw_context": {}
         }
 
+    style = raw_data.get("style", "technical").lower()
+
     # ------------------------------------------------------------
-    # 2️⃣ Attempt to coerce into Pydantic ViewportContext
+    # 2️⃣ Coerce into ViewportContext
     # ------------------------------------------------------------
     try:
         context = ViewportContext(**raw_data)
@@ -240,32 +242,55 @@ async def describe_viewport(request: Request):
             context = ViewportContext()
 
     # ------------------------------------------------------------
-    # 3️⃣ Build the summarization prompt
+    # 3️⃣ Build summarization prompt
     # ------------------------------------------------------------
-    prompt = (
-        "You are an Unreal Engine 5.6 Editor Assistant. "
-        "The following JSON represents the current viewport state — "
-        "camera position, rotation, visible actors, and level info. "
-        "Describe what the user is seeing in 3–5 concise sentences. "
-        "Focus on what the scene looks like, not the technical parameters. "
-        "Base your answer only on the data. Do NOT give UE5 tutorials or advice.\n\n"
-        f"Viewport JSON:\n{context.model_dump_json(indent=2)}")
+    if style == "technical":
+        prompt_intro = (
+            "You are an Unreal Engine 5.6 technical visualization assistant. "
+            "Below is structured JSON describing the current viewport: "
+            "camera transform, visible actors, and level metadata. "
+            "Generate a precise and factual description of scene contents — "
+            "include actor names, types, counts, approximate spatial layout, "
+            "and notable environmental elements (sky, fog, lights, terrain). "
+            "Use clear, declarative sentences. Avoid adjectives or figurative language."
+        )
+    else:
+        prompt_intro = (
+            "You are an Unreal Engine 5.6 editor assistant. "
+            "Below is structured JSON describing the current viewport. "
+            "Summarize what the user is looking at in natural, readable language "
+            "without inventing details or emotional tone. "
+            "Mention major actors and scene composition but stay grounded in facts."
+        )
+
+    prompt = f"{prompt_intro}\n\nViewport JSON:\n{context.model_dump_json(indent=2)}"
 
     # ------------------------------------------------------------
-    # 4️⃣ Send to OpenAI to generate the natural description
+    # 4️⃣ System message (matches style)
+    # ------------------------------------------------------------
+    if style == "technical":
+        system_msg = (
+            "You are an Unreal Engine technical assistant that converts viewport "
+            "data into an objective, developer-oriented scene report. "
+            "Mention actor names, classes, counts, and spatial organization. "
+            "Avoid creative phrasing or emotion. Be concise, factual, and explicit. "
+            "If information is missing, acknowledge it.")
+    else:
+        system_msg = (
+            "You are an Unreal Engine assistant summarizing what the user sees. "
+            "Describe the scene clearly and factually but in a smooth, readable way. "
+            "Avoid speculation, metaphors, or artistic commentary.")
+
+    # ------------------------------------------------------------
+    # 5️⃣ Send to OpenAI
     # ------------------------------------------------------------
     try:
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {
-                    "role":
-                    "system",
-                    "content":
-                    ("You are an Unreal Engine scene interpreter. "
-                     "Summarize viewport context into natural, descriptive language. "
-                     "Do not use technical jargon unless directly relevant. "
-                     "Do not output JSON or give editing advice."),
+                    "role": "system",
+                    "content": system_msg
                 },
                 {
                     "role": "user",
@@ -275,22 +300,62 @@ async def describe_viewport(request: Request):
         )
         summary = (response.choices[0].message.content or "").strip()
     except Exception as e:
-        summary = f"Error generating description: {e}"
+        print(f"[Error] OpenAI call failed: {e}")
+        summary = ""
 
     # ------------------------------------------------------------
-    # 5️⃣ Fallback logic — only trigger when summary is missing or invalid
+    # 6️⃣ Multi-tier fallback logic
     # ------------------------------------------------------------
-    if not summary or summary.lower().strip() in [
-            "", "none", "n/a", "no data"
-    ]:
-        add_info = context.additional_info or {}
-        summary = (f"Camera at {context.camera_location or '?'} "
-                   f"facing {context.camera_rotation or '?'} in level "
-                   f"{add_info.get('level_name', 'Unknown')} "
-                   f"with {add_info.get('total_actors', '?')} visible actors.")
+    add_info = context.additional_info or {}
+
+    # Tier 1 – if GPT failed completely
+    if not summary or len(summary.split()) < 4:
+        cam_loc = context.camera_location or "(unknown)"
+        cam_rot = context.camera_rotation or "(unknown)"
+        lvl = add_info.get("level_name", "Unknown")
+        total = add_info.get("total_actors", "?")
+
+        # Minimal debug summary (technical fallback)
+        summary = (f"Camera at {cam_loc} facing {cam_rot} "
+                   f"in level '{lvl}' with approximately "
+                   f"{total} visible actors.")
+
+        # Tier 2 – offline natural rephrase
+        try:
+            # Estimate scene type based on available actor data
+            has_landscape = any("landscape" in str(a).lower()
+                                for a in add_info.get("visible_actors", []))
+            has_lights = any("light" in str(a).lower()
+                             for a in add_info.get("visible_actors", []))
+            has_fog = any("fog" in str(a).lower()
+                          for a in add_info.get("visible_actors", []))
+            selected = add_info.get("selected_actor", None)
+
+            natural_parts = []
+            if has_landscape:
+                natural_parts.append("a landscape environment")
+            if has_lights:
+                natural_parts.append("scene lighting setup")
+            if has_fog:
+                natural_parts.append("fog or atmospheric volume")
+
+            scene_desc = ", ".join(
+                natural_parts) if natural_parts else "various actors"
+
+            readable = (
+                f"The camera is positioned at {cam_loc}, looking toward {cam_rot}, "
+                f"viewing {scene_desc} within level '{lvl}'. "
+                f"There are roughly {total} visible actors in the scene.")
+            if selected:
+                readable += f" The currently selected actor appears to be '{selected}'."
+
+            summary = readable
+            print("[Offline Fallback] Generated descriptive summary offline.")
+        except Exception as e:
+            print(f"[Offline fallback failed]: {e}")
 
     # ------------------------------------------------------------
-    # 6️⃣ Logging and response
+    # 7️⃣ Logging and response
     # ------------------------------------------------------------
     print("\n[Viewport Summary]")
     print(summary)
