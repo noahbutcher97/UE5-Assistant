@@ -10,8 +10,8 @@ try:
 except ImportError:
     HAS_UNREAL = False
 
-from .context_collector import get_collector
 from .api_client import get_client
+from .context_collector import get_collector
 from .utils import Logger
 
 

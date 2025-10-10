@@ -4,7 +4,7 @@ True async API client using threading to avoid blocking the editor.
 import json
 import threading
 import time
-from queue import Queue, Empty
+from queue import Empty, Queue
 from typing import Any, Callable, Dict, Optional
 
 try:
