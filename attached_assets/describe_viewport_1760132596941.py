@@ -10,13 +10,14 @@
      ✅ Tested up to UE 5.7-Preview
 ===============================================================================
 """
-import check_dependencies  # type: ignore
-check_dependencies.ensure_dependencies()
-
 import json
 import time
+
+import check_dependencies  # type: ignore
 import requests
 import unreal  # type: ignore
+
+check_dependencies.ensure_dependencies()
 
 # -----------------------------------------------------------------------------
 # CONFIGURATION
@@ -57,9 +58,14 @@ def collect_viewport_data():
     """
     try:
         # --- Actor collection ---
-        actor_subsystem = unreal.get_editor_subsystem(unreal.EditorActorSubsystem)
-        selected_actors = actor_subsystem.get_selected_level_actors() if actor_subsystem else []
-        all_actors = actor_subsystem.get_all_level_actors() if actor_subsystem else []
+        actor_subsystem = unreal.get_editor_subsystem(
+            unreal.EditorActorSubsystem)
+        if actor_subsystem:
+            selected_actors = actor_subsystem.get_selected_level_actors()
+            all_actors = actor_subsystem.get_all_level_actors()
+        else:
+            selected_actors = []
+            all_actors = []
 
         # --- World reference (compatible fallback) ---
         world = None
@@ -76,26 +82,34 @@ def collect_viewport_data():
         camera_rotation = [0, 0, 0]
 
         try:
-            # Newer API in 5.6+: Unreal Editor Subsystem → get_level_viewport_camera_info
-            editor_subsys = unreal.get_editor_subsystem(unreal.UnrealEditorSubsystem)
-            if editor_subsys and hasattr(editor_subsys, "get_level_viewport_camera_info"):
+            # Newer API in 5.6+: get_level_viewport_camera_info
+            editor_subsys = unreal.get_editor_subsystem(
+                unreal.UnrealEditorSubsystem)
+            has_method = hasattr(
+                editor_subsys, "get_level_viewport_camera_info")
+            if editor_subsys and has_method:
                 cam_loc, cam_rot = editor_subsys.get_level_viewport_camera_info()
                 camera_location = [cam_loc.x, cam_loc.y, cam_loc.z]
                 camera_rotation = [cam_rot.pitch, cam_rot.yaw, cam_rot.roll]
             else:
                 # Fallback: legacy EditorLevelLibrary
-                cam_loc, cam_rot = unreal.EditorLevelLibrary.get_level_viewport_camera_info()
+                cam_loc, cam_rot = (
+                    unreal.EditorLevelLibrary
+                    .get_level_viewport_camera_info())
                 camera_location = [cam_loc.x, cam_loc.y, cam_loc.z]
                 camera_rotation = [cam_rot.pitch, cam_rot.yaw, cam_rot.roll]
         except Exception as e:
             log_warn(f"Could not read viewport camera info: {e}")
 
         # --- Construct payload ---
+        visible = [a.get_name() for a in all_actors[:100]]
+        selected = (selected_actors[0].get_name()
+                    if selected_actors else None)
         data = {
             "camera_location": camera_location,
             "camera_rotation": camera_rotation,
-            "visible_actors": [a.get_name() for a in all_actors[:100]],  # limit for brevity
-            "selected_actor": selected_actors[0].get_name() if selected_actors else None,
+            "visible_actors": visible,
+            "selected_actor": selected,
             "additional_info": {
                 "total_actors": len(all_actors),
                 "selected_count": len(selected_actors),
@@ -136,11 +150,14 @@ def send_to_api(data):
                     log_warn("Invalid JSON response from server.")
                     return False
             else:
-                log_warn(f"Server returned status {response.status_code}: {response.text}")
+                msg = (f"Server returned status {response.status_code}: "
+                       f"{response.text}")
+                log_warn(msg)
                 return False
 
         except requests.RequestException as e:
-            log_error(f"Request failed (attempt {attempt}/{MAX_RETRIES}): {e}")
+            msg = f"Request failed (attempt {attempt}/{MAX_RETRIES}): {e}"
+            log_error(msg)
             if attempt < MAX_RETRIES:
                 time.sleep(RETRY_DELAY)
                 log_info("Retrying...")
