@@ -2,7 +2,7 @@ import os
 from typing import Dict, List, Optional
 
 import openai
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
 
 # ============================================================
@@ -43,25 +43,39 @@ class ViewportContext(BaseModel):
 
 
 @app.post("/describe_viewport")
-async def describe_viewport(context: ViewportContext):
+async def describe_viewport(request: Request):
     """
-    Receives viewport info from Unreal. Uses OpenAI to describe what the user
-    is likely seeing or debugging in the editor.
+    Receives viewport info from Unreal. Generates a grounded description of what
+    the user currently sees in the editor, not general UE5 advice.
+    Supports both direct (ViewportContext) and tokenized dict payloads.
     """
+    try:
+        raw_data = await request.json()
+    except Exception as e:
+        print(f"[Error] Failed to parse JSON: {e}")
+        return {
+            "response": f"Error reading viewport data: {e}",
+            "raw_context": {}
+        }
 
+    # Try to coerce the incoming data into a proper Pydantic model
+    try:
+        context = ViewportContext(**raw_data)
+    except Exception:
+        try:
+            context = ViewportContext.model_validate(raw_data)
+        except Exception:
+            # Fall back to a dummy structure if all else fails
+            context = ViewportContext()
+
+    # Build a focused, scene-specific prompt
     prompt = (
-        "You are an Unreal Engine 5.6 Editor assistant. "
-        "Given the following viewport data, describe in plain, natural language "
-        "what the user is likely seeing — focusing on level layout, camera position, "
-        "and notable actor context. Use concise, professional phrasing suitable for "
-        "debugging or level design documentation.\n\n"
-        f"{context.model_dump_json(indent=2)}")
-
-    print("\n[Viewport Received]")
-    print(context.model_dump_json(indent=2))
-
-    # Default response in case of error
-    summary = "No description generated."
+        "You are an Unreal Engine 5.6 Editor Assistant. "
+        "The JSON below represents the user's current viewport state "
+        "(camera, rotation, visible actors, and selected object). "
+        "Describe what the user is seeing concisely (3–5 sentences). "
+        "Base your description only on this data — do not explain UE5 concepts.\n\n"
+        f"Viewport JSON:\n{context.model_dump_json(indent=2)}")
 
     try:
         response = openai.chat.completions.create(
@@ -71,19 +85,23 @@ async def describe_viewport(context: ViewportContext):
                 "content": prompt
             }],
         )
-
-        # Extract description text safely
         summary = (response.choices[0].message.content or "").strip()
-
     except Exception as e:
         summary = f"Error generating description: {e}"
 
-    print("\n[Generated Description]")
+    # Fallback if GPT produces irrelevant or empty output
+    if not summary or "viewport" in summary.lower():
+        add_info = context.additional_info or {}
+        summary = (f"Camera at {context.camera_location or '?'} "
+                   f"facing {context.camera_rotation or '?'} in level "
+                   f"{add_info.get('level_name', 'Unknown')} "
+                   f"with {add_info.get('total_actors', '?')} actors visible.")
+
+    print("\n[Viewport Summary]")
     print(summary)
     print("\n--- End of Response ---\n")
 
-    # Convert context to dict before returning to avoid Pydantic serialization issues
-    return {"description": summary, "raw_context": context.model_dump()}
+    return {"response": summary, "raw_context": context.model_dump()}
 
 
 # ============================================================
