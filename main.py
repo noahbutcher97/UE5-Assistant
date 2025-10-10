@@ -156,7 +156,21 @@ async def execute_command(request: dict):
                 },
             ],
         )
-        reply = response.choices[0].message.content.strip()
+
+        # ✅ Defensive checks to prevent 'NoneType' errors
+        if not response or not getattr(response, "choices", None):
+            return {"error": "OpenAI returned no choices."}
+
+        first_choice = response.choices[0]
+        message_content = getattr(first_choice.message, "content", None)
+
+        if not message_content:
+            return {"error": "OpenAI response was empty or invalid."}
+
+        reply = message_content.strip()
+        print(f"[AI Response] {reply}")
         return {"response": reply}
+
     except Exception as e:
+        print(f"[ERROR] {e}")
         return {"error": str(e)}
