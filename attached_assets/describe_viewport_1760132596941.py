@@ -10,13 +10,13 @@
      ✅ Tested up to UE 5.7-Preview
 ===============================================================================
 """
-import check_dependencies
+import check_dependencies  # type: ignore
 check_dependencies.ensure_dependencies()
 
 import json
 import time
 import requests
-import unreal
+import unreal  # type: ignore
 
 # -----------------------------------------------------------------------------
 # CONFIGURATION

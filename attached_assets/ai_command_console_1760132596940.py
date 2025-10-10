@@ -16,14 +16,14 @@
 #
 # ============================================================
 
-import unreal
-import requests
-import os
-import json
 import datetime
-import traceback
 import importlib
+import json
+import traceback
 from pathlib import Path
+
+import requests
+import unreal  # type: ignore
 
 # ============================================================
 # CONFIGURATION
@@ -134,7 +134,7 @@ def _handle_describe_viewport() -> str:
     POST to /describe_viewport, and return the summarized text.
     """
     try:
-        import describe_viewport
+        import describe_viewport  # type: ignore
         importlib.reload(describe_viewport)
     except Exception as e:
         _log(f"Cannot import describe_viewport: {e}")
