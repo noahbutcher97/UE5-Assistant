@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional, cast
 import openai
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 # ============================================================
