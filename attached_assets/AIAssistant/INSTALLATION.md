@@ -59,9 +59,12 @@ That's the only Blueprint change needed! Everything else stays the same.
 1. Open your Editor Utility Widget
 2. Type: "what do I see?"
 3. Click "Send Prompt To AI"
-4. Wait for response to appear
+4. **Wait 15-20 seconds** (normal - API call in progress)
+5. Response appears with full scene details
 
 ✅ Done!
+
+**Note:** The brief wait is normal and ensures thread-safe operation. All UE API calls execute correctly on the main thread.
 
 ## 📋 Verification Checklist
 

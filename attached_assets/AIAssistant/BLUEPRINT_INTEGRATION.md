@@ -29,16 +29,19 @@ import AIAssistant; AIAssistant.send_command('{0}')
    - Execution Mode: `ExecuteFile`
    - File Execution Scope: `Project`
 
-### Option 2: With Async Control
+### Option 2: Sync Mode (Default - Recommended)
 
-If you want to control sync/async behavior from Blueprint:
+The system uses synchronous mode by default for thread safety:
 
 ```python
-import AIAssistant; AIAssistant.send_command('{0}', use_async=True)
+import AIAssistant; AIAssistant.send_command('{0}')
 ```
 
-- `use_async=True`: Non-blocking (default, recommended)
-- `use_async=False`: Blocks until complete (simpler, but freezes UI)
+- Default behavior: Blocks briefly (~15-20s) during API call
+- Thread-safe: All UE API calls on main thread
+- Reliable: Complete context collection works correctly
+
+⚠️ **Async mode is not recommended** due to thread safety issues with UE APIs.
 
 ## Blueprint Visual Update
 

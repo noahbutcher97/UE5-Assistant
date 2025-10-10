@@ -1,0 +1,29 @@
+AssetCheck: /Game/EditorTools/AI_CommandConsole/AI_CommandConsole Validating asset
+LogUObjectHash: Compacting FUObjectHashTables data took   1.11ms
+LogPython: import importlib, ai_command_console
+importlib.reload(ai_command_console)
+LogPython: [AIAssistant] ℹ️ User: Describe my scene
+LogPython: [AIAssistant] ℹ️ User: Describe my scene
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+23f3, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: [ActionExecutor] ℹ️ Executing: describe_viewport
+LogPython: [ActionExecutor] ℹ️ Executing: describe_viewport
+LogPython: Warning: [ContextCollector] ⚠️ Camera data unavailable: UnrealEditorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogPython: [ContextCollector] ⚠️ Camera data unavailable: UnrealEditorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogPython: Warning: [ContextCollector] ⚠️ Actor data unavailable: EditorActorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogPython: [ContextCollector] ⚠️ Actor data unavailable: EditorActorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogPython: Warning: [ContextCollector] ⚠️ Lighting data unavailable: EditorActorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogPython: [ContextCollector] ⚠️ Lighting data unavailable: EditorActorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: Warning: [ContextCollector] ⚠️ Environment data unavailable: EditorActorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogPython: [ContextCollector] ⚠️ Environment data unavailable: EditorActorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogPython: Warning: [ContextCollector] ⚠️ Selection data unavailable: EditorActorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogPython: [ContextCollector] ⚠️ Selection data unavailable: EditorActorSubsystem: Attempted to access Unreal API from outside the main game thread.
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ActionExecutor] ✅ Action completed: describe_viewport
+LogPython: [ActionExecutor] ✅ Action completed: describe_viewport
+LogPython: Error: [AIAssistant] ❌ Async callback failed: Paths: Attempted to access Unreal API from outside the main game thread.
+LogPython: [AIAssistant] ❌ Async callback failed: Paths: Attempted to access Unreal API from outside the main game thread.

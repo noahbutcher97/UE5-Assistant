@@ -12,10 +12,10 @@ The project is part of the UE5 AI Assistant Integration by Noah Butcher and is d
 - **Modular Rewrite**: Complete architectural overhaul with separation of concerns - config, API client, async client, context collector, action executor, UI manager, and main orchestrator as independent modules
 - **Blueprint Integration**: Seamless integration with Editor Utility Widget via file-based communication. Simple one-line Python command update to migrate from v1.0
 - **Enhanced Context Collection**: Automatic collection of lighting (directional, point, spot), materials, environment (fog, post-process), landscape, and detailed selection data
-- **Async Support**: Background threading for API calls prevents editor freezing. Thread-safe file-based communication ensures all UE API calls happen on main thread
+- **Thread Safety Fix**: Discovered async mode causes "Attempted to access Unreal API from outside the main game thread" errors. System now defaults to synchronous mode (use_async=False) for reliable operation. Brief blocking (~15-20s) is acceptable for editor tools and ensures all UE API calls execute correctly
 - **Extensibility**: Command registry pattern allows custom actions to be registered from Blueprint or Python. Configuration system with runtime modification support
 - **Code Quality**: All pyright-extended linting errors resolved with documented type guards for environment-specific modules (unreal, requests)
-- **Performance**: Same optimizations as before - direct prose generation from /describe_viewport, 50% latency reduction vs v1.0
+- **Performance**: Direct prose generation from /describe_viewport, 50% latency reduction vs v1.0
 
 ## User Preferences
 

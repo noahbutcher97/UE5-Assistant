@@ -260,40 +260,43 @@ Logs are written to:
 - `list_actors` - List all actors in level
 - `get_selected_info` - Details about selected actors
 
-## ⚡ Async vs Sync Mode
+## ⚠️ Execution Mode: Sync (Thread-Safe)
 
-The system supports both execution modes. **Your Blueprint works with both automatically.**
+**Important:** The system uses **synchronous execution by default** for thread safety.
 
 ### Default Behavior (Recommended)
 ```python
-AIAssistant.send_command(text)  # Async by default
+AIAssistant.send_command(text)  # Sync mode (safe, reliable)
 ```
 
-- ✅ Non-blocking: Background thread handles API requests
-- ✅ Editor responsive: No freezing during network calls
-- ✅ Safe: All UE API calls happen on main thread via file writes
-- ✅ Blueprint compatible: File-based communication works perfectly
+- ✅ **Thread-safe**: All UE API calls on main game thread
+- ✅ **Reliable**: Complete context collection (camera, actors, lighting)
+- ✅ **No errors**: No thread safety warnings
+- ⚠️ **Blocks briefly**: 15-20 seconds during API call (acceptable for editor tools)
+- ✅ **Blueprint compatible**: File-based communication works perfectly
 
-### Synchronous Mode (Optional)
+### Why Sync Mode?
+
+Unreal Engine requires all API calls to run on the main thread. Async mode attempts to execute UE APIs from background threads, causing:
+```
+❌ "Attempted to access Unreal API from outside the main game thread"
+❌ Failed context collection (no camera, actors, or lighting data)
+❌ File write errors
+```
+
+**Sync mode is the only reliable option until proper UE async implementation is added.**
+
+### Async Mode (Experimental - Not Recommended)
 ```python
-AIAssistant.send_command(text, use_async=False)
+AIAssistant.send_command(text, use_async=True)  # Has thread errors
 ```
 
-- ⚠️ Blocks editor for 15-20 seconds during API call
-- ✅ Simpler: Immediate return value
-- ✅ Safe: All execution on main thread
+- ❌ **Thread errors**: UE API calls fail on worker threads  
+- ❌ **Incomplete data**: Context collection fails
+- ✅ **Non-blocking**: Network request doesn't freeze editor
+- ❌ **Not reliable**: Use sync mode instead
 
-### How Blueprint Async Works
-
-Your Blueprint's file-based pattern naturally supports async:
-
-1. **Button clicked** → Execute Python command
-2. **Python returns immediately** (async processing starts)
-3. **Background thread** makes API call
-4. **Response file updated** when complete
-5. **Blueprint reads file** to display response
-
-The file write/read mechanism ensures thread safety - background threads never touch UE APIs directly.
+See `THREAD_SAFETY.md` for technical details and future implementation options.
 
 ## 🔄 Migration from v1.0
 

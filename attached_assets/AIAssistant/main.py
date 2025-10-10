@@ -45,7 +45,7 @@ class AIAssistant:
         self._async_in_progress = False
 
     def process_command(
-        self, user_input: str, use_async: bool = True
+        self, user_input: str, use_async: bool = False
     ) -> str:
         """
         Main command processing flow.
@@ -54,6 +54,7 @@ class AIAssistant:
             user_input: User's command text
             use_async: If True, uses async (non-blocking) execution.
                       If False, uses sync (blocks editor).
+                      Default: False (sync is safe for UE thread model)
 
         Returns:
             Response text (or status if async)
@@ -251,27 +252,28 @@ def get_assistant() -> AIAssistant:
     return _assistant
 
 
-def send_command(user_input: str, use_async: bool = True) -> str:
+def send_command(user_input: str, use_async: bool = False) -> str:
     """
     Main entry point for Editor Utility Widget.
 
     Args:
         user_input: The user's command text
-        use_async: If True (default), uses non-blocking async execution.
-                   If False, blocks the editor until complete.
+        use_async: If True, uses non-blocking async execution.
+                   If False (default), blocks editor but is thread-safe.
+                   
+    IMPORTANT: Async mode has thread safety issues with UE API calls.
+    Use sync mode (default) for reliable operation.
 
-    Usage (Async - Recommended):
+    Usage (Recommended - Sync):
         import AIAssistant
         AIAssistant.send_command("what do I see?")
-        # Returns immediately with "Processing..."
-        # Response written to Saved/AIConsole/last_reply.txt when ready
+        # Blocks briefly (~15-20s) but all UE API calls are safe
+        # Response written to Saved/AIConsole/last_reply.txt
 
-    Usage (Sync - Simple but blocks):
+    Usage (Experimental - Async):
         import AIAssistant
-        response = AIAssistant.send_command(
-            "what do I see?", use_async=False
-        )
-        # Editor freezes until response arrives
+        AIAssistant.send_command("what do I see?", use_async=True)
+        # Non-blocking but may fail with thread errors
     """
     assistant = get_assistant()
     return assistant.process_command(user_input, use_async=use_async)
