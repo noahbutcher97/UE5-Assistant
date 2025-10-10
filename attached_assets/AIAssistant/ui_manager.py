@@ -2,15 +2,14 @@
 UI Manager for communication between Python and Editor Utility Widgets.
 Handles response formatting and file-based state management.
 """
-from pathlib import Path
 from typing import Optional
 
 from .utils import (
     Logger,
     get_ai_console_dir,
     log_conversation,
-    write_file,
     read_file,
+    write_file,
 )
 
 
