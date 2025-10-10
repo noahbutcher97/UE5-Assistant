@@ -131,3 +131,32 @@ async def ping_openai():
         }
     except Exception as e:
         return {"openai_status": "error", "details": str(e)}
+
+
+# ============================================================
+# EXECUTE COMMAND
+# ============================================================
+@app.post("/execute_command")
+async def execute_command(request: dict):
+    user_input = request.get("prompt", "")
+    if not user_input:
+        return {"error": "No prompt provided."}
+
+    try:
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are an Unreal Engine 5 assistant."
+                },
+                {
+                    "role": "user",
+                    "content": user_input
+                },
+            ],
+        )
+        reply = response.choices[0].message.content.strip()
+        return {"response": reply}
+    except Exception as e:
+        return {"error": str(e)}
