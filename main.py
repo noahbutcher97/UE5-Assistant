@@ -167,7 +167,7 @@ async def execute_command(request: dict):
 
 
 # ============================================================
-# DESCRIBE VIEWPORT (Improved)
+# DESCRIBE VIEWPORT (Improved + Stable)
 # ============================================================
 
 
@@ -179,6 +179,9 @@ async def describe_viewport(request: Request):
     (not generic UE5 advice).
     Supports both Pydantic model and plain dict payloads.
     """
+    # ------------------------------------------------------------
+    # 1️⃣ Parse the incoming JSON from Unreal
+    # ------------------------------------------------------------
     try:
         raw_data = await request.json()
     except Exception as e:
@@ -188,7 +191,9 @@ async def describe_viewport(request: Request):
             "raw_context": {}
         }
 
-    # Try to coerce dict into a Pydantic model
+    # ------------------------------------------------------------
+    # 2️⃣ Attempt to coerce into Pydantic ViewportContext
+    # ------------------------------------------------------------
     try:
         context = ViewportContext(**raw_data)
     except Exception:
@@ -197,35 +202,59 @@ async def describe_viewport(request: Request):
         except Exception:
             context = ViewportContext()
 
-    # Build scene-specific prompt
+    # ------------------------------------------------------------
+    # 3️⃣ Build the summarization prompt
+    # ------------------------------------------------------------
     prompt = (
         "You are an Unreal Engine 5.6 Editor Assistant. "
         "The following JSON represents the current viewport state — "
         "camera position, rotation, visible actors, and level info. "
         "Describe what the user is seeing in 3–5 concise sentences. "
+        "Focus on what the scene looks like, not the technical parameters. "
         "Base your answer only on the data. Do NOT give UE5 tutorials or advice.\n\n"
         f"Viewport JSON:\n{context.model_dump_json(indent=2)}")
 
+    # ------------------------------------------------------------
+    # 4️⃣ Send to OpenAI to generate the natural description
+    # ------------------------------------------------------------
     try:
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{
-                "role": "user",
-                "content": prompt
-            }],
+            messages=[
+                {
+                    "role":
+                    "system",
+                    "content":
+                    ("You are an Unreal Engine scene interpreter. "
+                     "Summarize viewport context into natural, descriptive language. "
+                     "Do not use technical jargon unless directly relevant. "
+                     "Do not output JSON or give editing advice."),
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                },
+            ],
         )
         summary = (response.choices[0].message.content or "").strip()
     except Exception as e:
         summary = f"Error generating description: {e}"
 
-    # Deterministic fallback if GPT output is too generic or empty
-    if not summary or "viewport" in summary.lower():
+    # ------------------------------------------------------------
+    # 5️⃣ Fallback logic — only trigger when summary is missing or invalid
+    # ------------------------------------------------------------
+    if not summary or summary.lower().strip() in [
+            "", "none", "n/a", "no data"
+    ]:
         add_info = context.additional_info or {}
         summary = (f"Camera at {context.camera_location or '?'} "
                    f"facing {context.camera_rotation or '?'} in level "
                    f"{add_info.get('level_name', 'Unknown')} "
                    f"with {add_info.get('total_actors', '?')} visible actors.")
 
+    # ------------------------------------------------------------
+    # 6️⃣ Logging and response
+    # ------------------------------------------------------------
     print("\n[Viewport Summary]")
     print(summary)
     print("\n--- End of Response ---\n")
