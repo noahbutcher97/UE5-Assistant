@@ -254,22 +254,22 @@ async def describe_viewport(request: Request):
     # ------------------------------------------------------------
     if style == "technical":
         prompt_intro = (
-            "You are an Unreal Engine 5.6 technical visualization assistant. "
-            "Below is structured JSON describing the current viewport: "
-            "camera transform, visible actors, and level metadata. "
-            "Generate a precise and factual description of scene contents — "
-            "include actor names, types, counts, approximate spatial layout, "
-            "and notable environmental elements (sky, fog, lights, terrain). "
-            "Use clear, declarative sentences. Avoid adjectives or "
-            "figurative language.")
+            "Generate a technical summary of viewport contents from the JSON data below. "
+            "Organize into logical sections: camera position/orientation (precise coordinates), "
+            "scene composition (actor types and counts), spatial organization (grouping by location), "
+            "and environmental systems (lighting, atmosphere). "
+            "Use technical prose with specific actor names and quantitative data. "
+            "Include coordinate values, class names, and system states. "
+            "Write as structured technical documentation."
+        )
     else:
         prompt_intro = (
-            "You are an Unreal Engine 5.6 editor assistant. "
-            "Below is structured JSON describing the current viewport. "
-            "Summarize what the user is looking at in natural, readable "
-            "language without inventing details or emotional tone. "
-            "Mention major actors and scene composition but stay grounded "
-            "in facts.")
+            "Generate a technical viewport summary from the JSON data below. "
+            "Describe camera position, actor composition, and scene organization. "
+            "Use precise terminology and include specific names and values. "
+            "Write as technical prose, not conversational text. "
+            "Focus on factual description without interpretation."
+        )
 
     prompt = (f"{prompt_intro}\n\nViewport JSON:\n"
               f"{context.model_dump_json(indent=2)}")
@@ -279,18 +279,21 @@ async def describe_viewport(request: Request):
     # ------------------------------------------------------------
     if style == "technical":
         system_msg = (
-            "You are an Unreal Engine technical assistant that converts "
-            "viewport data into an objective, developer-oriented scene "
-            "report. Mention actor names, classes, counts, and spatial "
-            "organization. Avoid creative phrasing or emotion. "
-            "Be concise, factual, and explicit. If information is missing, "
-            "acknowledge it.")
+            "You are a technical documentation system for Unreal Engine 5.6. "
+            "Convert viewport data into structured technical prose organized into logical sections. "
+            "Include specific actor names, coordinate values, type classifications, and system states. "
+            "Use declarative statements with precise terminology. "
+            "No conversational phrasing, no subjective descriptions, no interpretations. "
+            "If data is missing, state it explicitly."
+        )
     else:
         system_msg = (
-            "You are an Unreal Engine assistant summarizing what the user "
-            "sees. Describe the scene clearly and factually, "
-            "and in a readable way. Avoid speculation, metaphors, or artistic "
-            "commentary.")
+            "You are a technical documentation system for Unreal Engine 5.6. "
+            "Convert viewport data into technical prose describing scene composition. "
+            "State facts about actors, positions, and systems using precise terminology. "
+            "Write declaratively without conversational tone or subjective language. "
+            "Include specific names and values where available."
+        )
 
     # ------------------------------------------------------------
     # 5️⃣ Send to OpenAI
