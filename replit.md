@@ -6,6 +6,13 @@ This is a FastAPI backend service that provides AI-powered technical documentati
 
 The project is part of the UE5 AI Assistant Integration by Noah Butcher and is designed to bridge Unreal Engine's Python scripting capabilities with cloud-based AI services.
 
+## Recent Changes
+
+### October 2025: Performance Optimization & Prose Enhancement
+- **Performance Fix**: Eliminated redundant API call in viewport description flow. Previously, the system made two sequential OpenAI calls (describe_viewport + wrap_natural_language), causing 30-40 second response times. Now outputs formatted prose directly from /describe_viewport endpoint, reducing latency by ~50%.
+- **Enhanced Prompts**: Updated AI prompts to generate comprehensive, flowing prose paragraphs instead of fragmented lists. Descriptions now systematically cover: camera configuration, complete actor inventory, spatial relationships, environmental systems, and selection state using connected sentences with technical precision.
+- **Output Style**: Maintains factual, objective tone without conversational phrasing or subjective qualifiers, per user preference for "technical prose in programming sense, not code, but not conversational or vibes-heavy".
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
