@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, cast
 
 import openai
 from fastapi import FastAPI, Request
@@ -74,24 +74,34 @@ async def ping_openai():
 
 
 # ============================================================
-# EXECUTE COMMAND
+# EXECUTE COMMAND (contextual memory + clean typing)
 # ============================================================
+
+session_messages: List[Dict[str, str]] = [{
+    "role":
+    "system",
+    "content":
+    "You are an Unreal Engine 5.6 Editor assistant."
+}]
 
 
 @app.post("/execute_command")
 async def execute_command(request: dict):
     """
-    Handles general user prompts from Unreal's AI Command Console.
-    This endpoint can return plain text or control tokens like
-    [UE_REQUEST] describe_viewport, list_actors, get_selected_info.
+    Handles user prompts from Unreal's AI Command Console.
+    Maintains short-term conversation context across turns.
+    Returns either plain AI replies or [UE_REQUEST] control tokens.
     """
     user_input = request.get("prompt", "")
     if not user_input:
         return {"error": "No prompt provided."}
 
     try:
-        # Simple keyword routing for UE actions
         lower = user_input.lower()
+
+        # ------------------------------------------------------------------
+        # 1️⃣ Tokenized command routing (local UE-side actions)
+        # ------------------------------------------------------------------
         if any(k in lower for k in
                ["what do i see", "viewport", "describe viewport", "scene"]):
             return {"response": "[UE_REQUEST] describe_viewport"}
@@ -100,32 +110,55 @@ async def execute_command(request: dict):
         if "selected" in lower and ("info" in lower or "details" in lower):
             return {"response": "[UE_REQUEST] get_selected_info"}
 
-        # Otherwise send to OpenAI for general response
+        # ------------------------------------------------------------------
+        # 2️⃣ Add this user turn to in-memory buffer
+        # ------------------------------------------------------------------
+        session_messages.append({"role": "user", "content": user_input})
+
+        max_context_turns = 6
+        user_assistant_msgs = [
+            m for m in session_messages if m["role"] != "system"
+        ]
+        if len(user_assistant_msgs) > max_context_turns * 2:
+            session_messages[:] = session_messages[:1] + user_assistant_msgs[-(
+                max_context_turns * 2):]
+
+        # ------------------------------------------------------------------
+        # 3️⃣ Build typed payload and cast to satisfy SDK type hints
+        # ------------------------------------------------------------------
+        messages_payload: List[Dict[str, str]] = [{
+            "role": m["role"],
+            "content": m["content"]
+        } for m in session_messages if "role" in m and "content" in m]
+
+        print("\n[Context Snapshot]")
+        for m in messages_payload[-6:]:
+            print(f"{m['role'].upper()}: {m['content'][:120]}...")
+        print("\n--- Sending to OpenAI ---\n")
+
+        # ------------------------------------------------------------------
+        # 4️⃣ Call OpenAI API (cast to Any to bypass type-check strictness)
+        # ------------------------------------------------------------------
         response = openai.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are an Unreal Engine 5 assistant."
-                },
-                {
-                    "role": "user",
-                    "content": user_input
-                },
-            ],
+            messages=cast(List[Any], messages_payload),
         )
 
+        # ------------------------------------------------------------------
+        # 5️⃣ Process and store reply
+        # ------------------------------------------------------------------
         if not response or not getattr(response, "choices", None):
             return {"error": "OpenAI returned no choices."}
 
         first_choice = response.choices[0]
         message_content = getattr(first_choice.message, "content", None)
-
         if not message_content:
             return {"error": "OpenAI response was empty or invalid."}
 
         reply = message_content.strip()
         print(f"[AI Response] {reply}")
+
+        session_messages.append({"role": "assistant", "content": reply})
         return {"response": reply}
 
     except Exception as e:
