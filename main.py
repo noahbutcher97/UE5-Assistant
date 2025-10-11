@@ -1,5 +1,7 @@
 import os
+import json
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Dict, List, Optional, cast
 
 import openai
@@ -8,19 +10,64 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel
 
 # ============================================================
-# CONFIGURATION
+# CONFIGURATION MANAGEMENT
 # ============================================================
 
+# Config file path
+CONFIG_FILE = Path("config.json")
+
+# Default configuration
+DEFAULT_CONFIG = {
+    "model": "gpt-4o-mini",
+    "temperature": 0.7,
+    "max_context_turns": 6,
+    "timeout": 25,
+    "max_retries": 3,
+    "retry_delay": 2.5,
+    "verbose": False
+}
+
+# Global config (loaded from file or defaults)
+app_config: Dict[str, Any] = {}
+
+
+def load_config() -> Dict[str, Any]:
+    """Load configuration from file or use defaults."""
+    if CONFIG_FILE.exists():
+        try:
+            with open(CONFIG_FILE, 'r') as f:
+                config = json.load(f)
+                # Merge with defaults for any missing keys
+                return {**DEFAULT_CONFIG, **config}
+        except Exception as e:
+            print(f"Error loading config: {e}, using defaults")
+    return DEFAULT_CONFIG.copy()
+
+
+def save_config(config: Dict[str, Any]) -> None:
+    """Save configuration to file."""
+    try:
+        with open(CONFIG_FILE, 'w') as f:
+            json.dump(config, f, indent=2)
+    except Exception as e:
+        print(f"Error saving config: {e}")
+
+
+# Load initial config
+app_config = load_config()
+
+# OpenAI setup
 openai.api_key = os.getenv("OPENAI_API_KEY")
-MODEL_NAME = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+MODEL_NAME = app_config.get("model", "gpt-4o-mini")
 
 app = FastAPI(
     title="Unreal Engine Viewport Describer",
-    description=
-    ("Receives Unreal viewport context and returns a natural-language "
-     "description. Part of the UE5 AI Assistant Integration Project by Noah Butcher."
-     ),
-    version="0.2.0",
+    description=(
+        "Receives Unreal viewport context and returns "
+        "a natural-language description. "
+        "Part of the UE5 AI Assistant Integration by Noah Butcher."
+    ),
+    version="2.0",
 )
 
 # ============================================================
@@ -55,6 +102,17 @@ class ConversationEntry(BaseModel):
     assistant_response: str
     command_type: str  # "execute_command", "describe_viewport", etc.
     metadata: Optional[Dict[str, Any]] = None
+
+
+class ConfigUpdate(BaseModel):
+    """Configuration update model."""
+    model: Optional[str] = None
+    temperature: Optional[float] = None
+    max_context_turns: Optional[int] = None
+    timeout: Optional[int] = None
+    max_retries: Optional[int] = None
+    retry_delay: Optional[float] = None
+    verbose: Optional[bool] = None
 
 
 # ============================================================
@@ -511,6 +569,41 @@ async def get_conversations(limit: int = 50):
         "conversations": list(reversed(recent)),
         "total": len(conversation_history),
         "max_size": MAX_HISTORY_SIZE
+    }
+
+
+@app.get("/api/config")
+async def get_config():
+    """Get current configuration."""
+    return {
+        "config": app_config,
+        "defaults": DEFAULT_CONFIG
+    }
+
+
+@app.post("/api/config")
+async def update_config(updates: ConfigUpdate):
+    """Update configuration settings."""
+    global app_config, MODEL_NAME
+    
+    # Update config with provided values
+    update_dict = updates.model_dump(exclude_none=True)
+    
+    for key, value in update_dict.items():
+        if key in app_config:
+            app_config[key] = value
+    
+    # Update MODEL_NAME if model changed
+    if "model" in update_dict:
+        MODEL_NAME = update_dict["model"]
+    
+    # Save to file
+    save_config(app_config)
+    
+    return {
+        "success": True,
+        "message": "Configuration updated successfully",
+        "config": app_config
     }
 
 
