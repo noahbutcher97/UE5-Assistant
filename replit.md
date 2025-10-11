@@ -17,7 +17,14 @@ The project is part of the UE5 AI Assistant Integration by Noah Butcher and is d
   - app/services/filtering.py - Intelligent viewport data filtering per response style
   - app/services/conversation.py - Conversation history with file persistence
   - app/dashboard.py - Interactive web dashboard HTML generation
+  - app/data/ - Persistent data storage (config.json, conversations.jsonl)
+  - app/Documentation/ - Comprehensive technical documentation (7 .md files)
   - main.py - Simple app factory (47 lines) wiring components together
+- **File Organization**: Organized backend and UE5 directories with proper separation of concerns:
+  - Data files moved to app/data/ for clean project structure
+  - Created comprehensive backend documentation in app/Documentation/
+  - UE5 test files organized in attached_assets/AIAssistant/tests/
+  - Added .gitignore for proper version control of data files
 - **Response Style Synchronization**: UE5 config.py now mirrors backend RESPONSE_STYLES structure with max_tokens, data_filter, temperature_override, and focus fields for each of 7 styles (descriptive, technical, natural, balanced, concise, detailed, creative)
 - **Intelligent Data Filtering**: Backend applies style-aware filtering (minimal/highlights/balanced/standard/technical/complete) before AI processing, optimizing token usage and response quality
 - **Project Metadata Integration**: UE5 action_executor properly checks collect_project_metadata config flag and includes comprehensive project context (asset counts, source code stats, content folder analysis) in viewport descriptions when enabled
@@ -116,3 +123,53 @@ Preferred communication style: Simple, everyday language.
 - **HTTP/HTTPS**: REST API communication between UE5 client and FastAPI backend
 - **JSON**: Data serialization format for all API requests and responses
 - **File I/O**: Local file storage for conversation logs and response caching in UE project directories
+
+## Project File Structure
+
+### Backend Organization
+```
+app/
+├── __init__.py
+├── config.py              # Configuration with 7 response styles
+├── models.py              # Pydantic data models
+├── routes.py              # FastAPI endpoints
+├── dashboard.py           # Web dashboard HTML generation
+├── data/                  # Persistent data storage
+│   ├── config.json        # Runtime configuration
+│   └── conversations.jsonl # Conversation history
+├── services/
+│   ├── __init__.py
+│   ├── openai_client.py   # OpenAI API integration
+│   ├── filtering.py       # Intelligent data filtering
+│   └── conversation.py    # Conversation history management
+└── Documentation/         # Technical documentation
+    ├── README.md          # Documentation index
+    ├── ARCHITECTURE.md    # System architecture overview
+    ├── MODELS.md          # Data models documentation
+    ├── ROUTES.md          # API endpoints reference
+    ├── SERVICES.md        # Services layer documentation
+    ├── FILTERING.md       # Filtering system deep dive
+    └── CONFIGURATION.md   # Configuration guide
+```
+
+### UE5 Client Organization
+```
+attached_assets/AIAssistant/
+├── main.py                # Main orchestrator
+├── config.py              # UE5 configuration
+├── api_client.py          # HTTP client for backend
+├── context_collector.py   # Viewport data collection
+├── action_executor.py     # Command execution
+├── ui_manager.py          # UI display management
+├── tests/
+│   └── DEBUG_TEST.py      # Test utilities
+└── Documentation/         # UE5 client documentation
+    └── README.md          # Client documentation index
+```
+
+### Documentation Access
+
+- **Backend Docs**: `/app/Documentation/` - 7 comprehensive technical guides
+- **UE5 Docs**: `/attached_assets/AIAssistant/Documentation/` - Client-side documentation
+- **API Docs**: `http://localhost:5000/docs` - FastAPI auto-generated Swagger UI
+- **Interactive Dashboard**: `http://localhost:5000/dashboard` - Real-time config and monitoring
