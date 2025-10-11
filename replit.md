@@ -3,6 +3,41 @@
 ## Overview
 This project provides a FastAPI backend service that generates AI-powered technical documentation for Unreal Engine 5 editor viewport contexts. It receives structured viewport data from Unreal Engine's Python environment and uses OpenAI's GPT models to produce precise, factual prose descriptions of 3D scenes and level designs. The system aims to bridge Unreal Engine's scripting capabilities with cloud-based AI services, offering UE5 developers advanced insights and implementation guidance within their workflows. Key capabilities include context-aware implementation advice, Blueprint screenshot analysis, and secure file system interactions within the UE5 project.
 
+## File Structure & Deployment
+
+### Replit Project Structure
+```
+Root/
+├── app/                                    # FastAPI backend (cloud-hosted)
+│   ├── models.py
+│   ├── routes.py
+│   ├── config.py
+│   └── services/
+├── attached_assets/
+│   └── AIAssistant/                        # ✅ UE5 CLIENT - Deploy this to Unreal
+│       ├── main.py
+│       ├── config.py
+│       ├── api_client.py
+│       ├── context_collector.py
+│       ├── action_executor.py
+│       ├── project_metadata_collector.py
+│       ├── blueprint_capture.py
+│       └── Documentation/
+└── ue5_client_tests/                       # ❌ Replit-only testing (DO NOT deploy)
+    ├── mock_unreal.py
+    ├── test_runner.py
+    └── mock_project/
+```
+
+### Deployment Workflow
+**To deploy UE5 client to your Unreal Engine project:**
+1. Download entire `attached_assets/AIAssistant/` folder from Replit
+2. Paste to: `D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant`
+3. Overwrite previous versions
+4. **DO NOT** include `ue5_client_tests/` folder (Replit testing infrastructure only)
+
+**Backend:** FastAPI server runs on Replit at `https://ue5-assistant-noahbutcher97.replit.app`
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
