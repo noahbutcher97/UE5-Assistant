@@ -16,8 +16,20 @@ from .blueprint_capture import BlueprintCapture
 from .config import get_config
 from .context_collector import get_collector
 from .file_collector import FileCollector
-from .project_metadata_collector import get_collector as get_metadata_collector
+from .project_metadata_collector import (
+    get_collector as get_metadata_collector
+)
 from .utils import Logger
+
+# Import new orchestration systems
+try:
+    from .scene_orchestrator import get_orchestrator
+    from .viewport_controller import get_viewport_controller
+    from .actor_manipulator import get_manipulator
+    from .editor_utility_generator import get_utility_generator
+    HAS_ORCHESTRATION = True
+except ImportError:
+    HAS_ORCHESTRATION = False
 
 
 class ActionExecutor:
@@ -36,6 +48,13 @@ class ActionExecutor:
         self.metadata_collector.cache_ttl_seconds = cache_ttl
         
         self._register_default_actions()
+        
+        # Add orchestration action implementations
+        if HAS_ORCHESTRATION:
+            from .action_executor_extensions import (
+                add_orchestration_actions
+            )
+            add_orchestration_actions(self)
 
     def _register_default_actions(self) -> None:
         """Register the default action set."""
@@ -44,7 +63,7 @@ class ActionExecutor:
         self.register("list_actors", self._list_actors)
         self.register("get_selected_info", self._get_selected_info)
         
-        # New file operation actions
+        # File operation actions
         self.register("browse_files", self._browse_files)
         self.register("read_source_files", self._read_source_files)
         self.register("search_files", self._search_files)
@@ -56,6 +75,28 @@ class ActionExecutor:
         # Blueprint capture actions
         self.register("capture_blueprint", self._capture_blueprint)
         self.register("list_blueprints", self._list_blueprints)
+        
+        # NEW: Orchestration actions (scene building)
+        if HAS_ORCHESTRATION:
+            self.register("spawn_actor", self._spawn_actor)
+            self.register("spawn_primitive", self._spawn_primitive)
+            self.register("build_scene", self._build_scene)
+            
+            # Viewport control actions
+            self.register("focus_camera", self._focus_camera)
+            self.register("move_camera", self._move_camera)
+            self.register("orbit_camera", self._orbit_camera)
+            self.register("top_down_view", self._top_down_view)
+            
+            # Actor manipulation actions
+            self.register("align_actors", self._align_actors)
+            self.register("distribute_actors", self._distribute_actors)
+            self.register("arrange_grid", self._arrange_grid)
+            self.register("arrange_circle", self._arrange_circle)
+            self.register("snap_to_grid", self._snap_to_grid)
+            
+            # Editor utility generation
+            self.register("generate_tool", self._generate_editor_tool)
 
     def register(
         self, action_name: str, handler: Callable[[], str]
