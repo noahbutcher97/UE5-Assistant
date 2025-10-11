@@ -2,8 +2,9 @@
 Blueprint Integration Helpers for UE5 AI Assistant
 ==================================================
 
-This module contains helper functions for Blueprint communication using file-based I/O.
-All functions write their output to files that Blueprint can read using "Load File to String".
+This module contains helper functions for Blueprint communication using
+file-based I/O. All functions write their output to files that Blueprint
+can read using "Load File to String".
 
 Output files are written to: [YourProject]/Saved/AIConsole/
 
@@ -15,23 +16,28 @@ Usage in Blueprint:
 """
 
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from AIAssistant import config
 
 if TYPE_CHECKING:
-    import unreal
+    import unreal  # type: ignore
+    HAS_UNREAL = True
 else:
     try:
-        import unreal
+        import unreal  # type: ignore
+        HAS_UNREAL = True
     except ImportError:
         unreal = None  # type: ignore
+        HAS_UNREAL = False
 
 
 def get_output_path(filename: str) -> Path:
     """Get the output file path for Blueprint communication."""
-    if unreal is not None:
-        saved_dir = Path(unreal.Paths.project_saved_dir())  # type: ignore
+    if HAS_UNREAL and unreal is not None:
+        saved_dir = Path(
+            unreal.Paths.project_saved_dir()  # type: ignore
+        )
     else:
         saved_dir = Path.cwd() / "Saved"
     
@@ -75,9 +81,11 @@ def switch_server(server_name: str) -> None:
     Content: "success|[url]" or "error|[message]"
     
     Blueprint usage:
-        Execute Python Script: switch_server('{0}')  # Use String Format to inject server name
+        Execute Python Script: switch_server('{0}')
+        (Use String Format to inject server name)
         Delay: 0.1 seconds
-        Load File to String: "[Project]/Saved/AIConsole/server_switch_result.txt"
+        Load File to String: 
+            "[Project]/Saved/AIConsole/server_switch_result.txt"
         Split String by "|" to get [status, message]
     """
     cfg = config.get_config()
@@ -188,7 +196,8 @@ from pathlib import Path
 cfg = config.get_config()
 active = cfg.get_active_server()
 
-output_path = Path(unreal.Paths.project_saved_dir()) / "AIConsole" / "server_status.txt"
+saved_dir = Path(unreal.Paths.project_saved_dir())
+output_path = saved_dir / "AIConsole" / "server_status.txt"
 output_path.parent.mkdir(parents=True, exist_ok=True)
 output_path.write_text(active, encoding='utf-8')
 
@@ -202,7 +211,8 @@ selected = '{0}'  # Inject via String Format
 cfg = config.get_config()
 success = cfg.switch_server(selected)
 
-output_path = Path(unreal.Paths.project_saved_dir()) / "AIConsole" / "server_switch_result.txt"
+saved_dir = Path(unreal.Paths.project_saved_dir())
+output_path = saved_dir / "AIConsole" / "server_switch_result.txt"
 output_path.parent.mkdir(parents=True, exist_ok=True)
 
 if success:
@@ -223,7 +233,8 @@ active = cfg.get_active_server()
 url = cfg.api_url
 status = f"{active} → {url}"
 
-output_path = Path(unreal.Paths.project_saved_dir()) / "AIConsole" / "server_display.txt"
+saved_dir = Path(unreal.Paths.project_saved_dir())
+output_path = saved_dir / "AIConsole" / "server_display.txt"
 output_path.parent.mkdir(parents=True, exist_ok=True)
 output_path.write_text(status, encoding='utf-8')
 """

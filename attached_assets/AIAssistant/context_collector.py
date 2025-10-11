@@ -2,13 +2,18 @@
 Enhanced context collection for UE5 scenes.
 Gathers viewport, lighting, materials, and environmental data.
 """
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
-try:
+if TYPE_CHECKING:
     import unreal  # type: ignore
     HAS_UNREAL = True
-except ImportError:
-    HAS_UNREAL = False
+else:
+    try:
+        import unreal  # type: ignore
+        HAS_UNREAL = True
+    except ImportError:
+        unreal = None  # type: ignore
+        HAS_UNREAL = False
 
 from .utils import Logger
 
@@ -19,14 +24,17 @@ class ContextCollector:
     def __init__(self):
         self.logger = Logger("ContextCollector", verbose=False)
 
-    def collect_viewport_data(self, include_project_metadata: bool = False) -> Dict[str, Any]:
+    def collect_viewport_data(
+        self,
+        include_project_metadata: bool = False
+    ) -> Dict[str, Any]:
         """
         Collect comprehensive viewport and scene data.
         Includes camera, actors, lighting, materials, and environment.
-        Optionally includes project-level metadata for enhanced AI context.
+        Optionally includes project-level metadata for enhanced context.
         
         Args:
-            include_project_metadata: If True, adds project metadata to the response
+            include_project_metadata: If True, adds project metadata
         """
         if not HAS_UNREAL:
             self.logger.error("Unreal module not available")
@@ -54,9 +62,12 @@ class ContextCollector:
 
     def _collect_camera_data(self) -> Dict[str, Any]:
         """Collect camera position and rotation."""
+        if not HAS_UNREAL or unreal is None:
+            return {}
+            
         try:
-            editor_subsys = unreal.get_editor_subsystem(
-                unreal.UnrealEditorSubsystem
+            editor_subsys = unreal.get_editor_subsystem(  # type: ignore  # type: ignore
+                unreal.UnrealEditorSubsystem  # type: ignore
             )
 
             has_method = hasattr(
@@ -69,7 +80,7 @@ class ContextCollector:
                 )
             else:
                 cam_loc, cam_rot = (
-                    unreal.EditorLevelLibrary
+                    unreal.EditorLevelLibrary  # type: ignore
                     .get_level_viewport_camera_info()
                 )
 
@@ -87,9 +98,12 @@ class ContextCollector:
 
     def _collect_actor_data(self) -> Dict[str, Any]:
         """Collect actor list with types and counts."""
+        if not HAS_UNREAL or unreal is None:
+            return {}
+            
         try:
-            actor_subsys = unreal.get_editor_subsystem(
-                unreal.EditorActorSubsystem
+            actor_subsys = unreal.get_editor_subsystem(  # type: ignore  # type: ignore
+                unreal.EditorActorSubsystem  # type: ignore
             )
 
             all_actors = actor_subsys.get_all_level_actors() if actor_subsys else []
@@ -130,8 +144,11 @@ class ContextCollector:
 
     def _collect_lighting_data(self) -> Dict[str, Any]:
         """Collect lighting setup information."""
+        if not HAS_UNREAL or unreal is None:
+            return {}
+            
         try:
-            actor_subsys = unreal.get_editor_subsystem(
+            actor_subsys = unreal.get_editor_subsystem(  # type: ignore
                 unreal.EditorActorSubsystem
             )
 
@@ -218,8 +235,11 @@ class ContextCollector:
 
     def _collect_environment_data(self) -> Dict[str, Any]:
         """Collect environmental elements (fog, PP volumes, etc.)."""
+        if not HAS_UNREAL or unreal is None:
+            return {}
+            
         try:
-            actor_subsys = unreal.get_editor_subsystem(
+            actor_subsys = unreal.get_editor_subsystem(  # type: ignore
                 unreal.EditorActorSubsystem
             )
 
@@ -256,8 +276,11 @@ class ContextCollector:
 
     def _collect_selection_data(self) -> Dict[str, Any]:
         """Collect selected actor information with materials."""
+        if not HAS_UNREAL or unreal is None:
+            return {}
+            
         try:
-            actor_subsys = unreal.get_editor_subsystem(
+            actor_subsys = unreal.get_editor_subsystem(  # type: ignore
                 unreal.EditorActorSubsystem
             )
 
@@ -320,11 +343,10 @@ class ContextCollector:
         Collect project-level metadata for enhanced AI context.
         Includes project name, size, content folder stats, and asset summaries.
         """
-        if not HAS_UNREAL:
+        if not HAS_UNREAL or unreal is None:
             return {}
 
         try:
-            import os
             from pathlib import Path
 
             metadata = {
