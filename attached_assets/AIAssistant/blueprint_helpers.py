@@ -14,22 +14,22 @@ Usage in Blueprint:
 4. Parse the result string as needed
 """
 
-from AIAssistant import config
 from pathlib import Path
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    import unreal
-else:
-    try:
-        import unreal
-    except ImportError:
-        unreal = None  # type: ignore
+from AIAssistant import config
+
+try:
+    import unreal  # type: ignore[import-untyped]
+
+    HAS_UNREAL = True
+except ImportError:
+    HAS_UNREAL = False
+    unreal = None  # type: ignore[assignment]
 
 
 def get_output_path(filename: str) -> Path:
     """Get the output file path for Blueprint communication."""
-    if unreal is not None:
+    if HAS_UNREAL and unreal is not None:
         saved_dir = Path(unreal.Paths.project_saved_dir())  # type: ignore
     else:
         saved_dir = Path.cwd() / "Saved"

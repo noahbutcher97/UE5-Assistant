@@ -1,8 +1,8 @@
-# UE5 AI Assistant - Modular Architecture v2.0
+# UE5 AI Assistant - Modular Architecture v3.0
 
-A modular, extensible AI assistant system for Unreal Engine 5.6+ with enhanced context awareness and robust API communication.
+A modular, extensible AI assistant system for Unreal Engine 5.6+ with enhanced context awareness, server selection, and Blueprint integration.
 
-**🎯 Blueprint Integration**: See [BLUEPRINT_INTEGRATION.md](BLUEPRINT_INTEGRATION.md) for complete Editor Utility Widget setup instructions.
+**🎯 Blueprint Integration**: See [BLUEPRINT_INTEGRATION.md](BLUEPRINT_INTEGRATION.md) for server selector setup in Editor Utility Widgets.
 
 ## 📁 Installation
 
@@ -26,6 +26,23 @@ A modular, extensible AI assistant system for Unreal Engine 5.6+ with enhanced c
 
 ## 🚀 Quick Start
 
+### Server Selection (New in v3.0)
+
+Switch between production, dev, and localhost servers:
+
+```python
+from AIAssistant import config
+cfg = config.get_config()
+
+# List available servers
+cfg.list_servers()
+
+# Switch to dev server
+cfg.switch_server("dev")
+```
+
+📘 **[Complete Blueprint Server Selector Guide →](BLUEPRINT_INTEGRATION.md)**
+
 ### From Editor Utility Widget Blueprint (Recommended)
 
 **Update your "Execute Python Command" node to:**
@@ -35,8 +52,6 @@ import AIAssistant; AIAssistant.send_command('{0}')
 ```
 
 **That's it!** Your existing Blueprint logic (text input → format → execute → read response file) works unchanged.
-
-📘 **[Complete Blueprint Integration Guide →](BLUEPRINT_INTEGRATION.md)**
 
 ### From Python Console
 

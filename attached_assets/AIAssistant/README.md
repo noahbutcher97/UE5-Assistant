@@ -102,7 +102,9 @@ Or edit directly: `[Project]/Saved/AIConsole/config.json`
 
 ## 📚 Documentation
 
-- **`BLUEPRINT_INTEGRATION.md`** - Blueprint widget integration guide
+- **`Documentation/`** - Complete technical documentation
+  - **`BLUEPRINT_INTEGRATION.md`** - Server selection guide for Blueprint
+  - Plus 7 other technical guides
 - **`tests/DEBUG_TEST.py`** - Test utilities and examples
 - **Backend Docs**: See `/app/Documentation/` for API reference
 

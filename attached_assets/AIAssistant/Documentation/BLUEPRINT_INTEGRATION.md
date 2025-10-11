@@ -1,215 +1,219 @@
-# Blueprint Integration Guide
+# Blueprint Integration Guide - Server Selection
 
-## Overview
+Quick reference for adding server selection to your Editor Utility Widget.
 
-This guide shows how to integrate the modular AIAssistant v2.0 with your Editor Utility Widget Blueprint.
+## 📁 Files Included
 
-## Current Blueprint Setup (From Images)
+- `blueprint_helpers.py` - File-based communication functions
+- All helpers write output to `[Project]/Saved/AIConsole/*.txt` files
 
-Your current Blueprint executes:
+## 🎯 Quick Setup - ComboBox Server Selector
+
+### 1. Add UI Elements
+
+In your **Editor Utility Widget Designer**:
+
+| Element Type | Name | Settings |
+|-------------|------|----------|
+| Text | - | Text: "Server:" |
+| ComboBox (String) | `ServerComboBox` | Default: empty |
+| Text Block | `ServerStatusText` | Text: "" (optional) |
+
+### 2. Initialize ComboBox (Event Construct)
+
+```
+Event Construct
+  ↓
+Clear Options (ServerComboBox)
+  ↓
+Add Option (ServerComboBox) - "production"
+  ↓
+Add Option (ServerComboBox) - "dev"  
+  ↓
+Add Option (ServerComboBox) - "localhost"
+  ↓
+Execute Python Script:
+────────────────────────────────────────────────
+from AIAssistant import blueprint_helpers
+blueprint_helpers.get_active_server()
+────────────────────────────────────────────────
+  ↓
+Delay (0.1 seconds)
+  ↓
+Load File to String
+  - Filename: "[YourProject]/Saved/AIConsole/server_status.txt"
+  ↓
+Set Selected Option (ServerComboBox) - [Result]
+```
+
+### 3. Handle Selection Change
+
+```
+On Selection Changed (ServerComboBox)
+  ↓
+Get Selected Option → [Selected Server]
+  ↓
+Format String: "{0}" with [Selected Server]
+  ↓
+Execute Python Script:
+────────────────────────────────────────────────
+from AIAssistant import blueprint_helpers
+blueprint_helpers.switch_server('{0}')
+────────────────────────────────────────────────
+  ↓
+Delay (0.1 seconds)
+  ↓
+Load File to String
+  - Filename: "[Project]/Saved/AIConsole/server_switch_result.txt"
+  ↓
+Split String (by delimiter "|") → [Status, URL]
+  ↓
+Branch (Status == "success"):
+  TRUE → Set Text (ServerStatusText) to "✅ Connected: [URL]"
+  FALSE → Set Text (ServerStatusText) to "❌ [URL]"
+```
+
+## 📋 Copy-Paste Python Scripts
+
+### Get Active Server
 ```python
-import ai_command_console
-ai_command_console.send_and_store('{user_input}')
+from AIAssistant import blueprint_helpers
+blueprint_helpers.get_active_server()
 ```
+**Read from:** `server_status.txt`  
+**Output:** `"production"` | `"dev"` | `"localhost"`
 
-## Updated Blueprint Configuration
+---
 
-### Option 1: Simple Update (Recommended)
-
-**Change your Python command format to:**
+### Switch Server (use with String Format)
 ```python
-import AIAssistant; AIAssistant.send_command('{0}')
+from AIAssistant import blueprint_helpers
+blueprint_helpers.switch_server('{0}')
 ```
+**Inject:** Server name via String Format into `{0}`  
+**Read from:** `server_switch_result.txt`  
+**Output:** `"success|https://..."` or `"error|Invalid server"`  
+**Parse:** Split by `"|"` to get `[status, message]`
 
-**Blueprint Node Configuration:**
-1. **Format Text Node**: `import AIAssistant; AIAssistant.send_command('{0}')`
-2. **Text Box**: Connect to `{0}` parameter
-3. **Execute Python Command (Animated)**: 
-   - Command: Result from Format Text
-   - Execution Mode: `ExecuteFile`
-   - File Execution Scope: `Project`
+---
 
-### Option 2: Sync Mode (Default - Recommended)
-
-The system uses synchronous mode by default for thread safety:
-
+### Get Server Display
 ```python
-import AIAssistant; AIAssistant.send_command('{0}')
+from AIAssistant import blueprint_helpers
+blueprint_helpers.get_server_display()
 ```
+**Read from:** `server_display.txt`  
+**Output:** `"production → https://..."`
 
-- Default behavior: Blocks briefly (~15-20s) during API call
-- Thread-safe: All UE API calls on main thread
-- Reliable: Complete context collection works correctly
+---
 
-⚠️ **Async mode is not recommended** due to thread safety issues with UE APIs.
-
-## Blueprint Visual Update
-
-### Before (Old System):
-```
-[Button Clicked] → [Format: "import ai_command_console..."] → [Execute Python]
-```
-
-### After (New System):
-```
-[Button Clicked] → [Format: "import AIAssistant..."] → [Execute Python]
-```
-
-**The rest of your Blueprint remains exactly the same!**
-
-## Reading the Response
-
-Your existing "Find Body Text Ref" logic works unchanged:
-- Response file: `Saved/AIConsole/last_reply.txt`
-- Read this file and display in your text box
-
-## Complete Blueprint Flow
-
-1. **User types** in text box → Stored in variable
-2. **Click "Send Prompt To AI"** button
-3. **Format Text**: `import AIAssistant; AIAssistant.send_command('{user_input}')`
-4. **Execute Python Command (Animated)**: Runs the formatted command
-5. **Python writes** response to `Saved/AIConsole/last_reply.txt`
-6. **Find Body Text Ref**: Reads the response file
-7. **Display** response in output text box
-
-## Configuration Options
-
-### From Blueprint (Optional)
-
-Add a configuration step before sending commands:
-
+### List All Servers
 ```python
-import AIAssistant; AIAssistant.get_config().set('verbose_logging', True)
+from AIAssistant import blueprint_helpers
+blueprint_helpers.list_servers()
 ```
+**Read from:** `server_list.txt`  
+**Output:** `"production,dev,localhost"`  
+**Parse:** Split by `","` to get array
 
-### Configuration File
+## 🔄 Alternative: Direct Inline Scripts
 
-Edit `Saved/AIConsole/config.json` to customize:
+If you prefer not to import `blueprint_helpers`:
 
-```json
-{
-  "api_base_url": "https://ue5-assistant-noahbutcher97.replit.app",
-  "model": "gpt-4o-mini",
-  "timeout": 25,
-  "verbose_logging": false,
-  "max_context_turns": 6
-}
-```
+<details>
+<summary>Click to expand inline scripts</summary>
 
-## Enhanced Features Available
-
-### Smart Context Detection
-
-The system now automatically collects:
-- Camera position and rotation
-- All actors in scene with types
-- Lighting setup (directional, point, spot lights)
-- Selected actors with details
-- Materials and components
-- Environment settings
-
-**No Blueprint changes needed** - just use the new Python import!
-
-### Action Commands
-
-These work automatically:
-- "what do I see?" → Viewport description
-- "describe scene" → Full scene analysis  
-- "list actors" → Actor inventory
-- "selected" → Selection details
-
-### Conversation Memory
-
-The system remembers context across commands:
+### Get Active Server (Inline)
 ```python
-# First command
-AIAssistant.send_command("what lights are in the scene?")
+from AIAssistant import config
+import unreal
+from pathlib import Path
 
-# Follow-up command (remembers context)
-AIAssistant.send_command("make them brighter")
+cfg = config.get_config()
+active = cfg.get_active_server()
+
+output_path = (
+    Path(unreal.Paths.project_saved_dir())
+    / "AIConsole"
+    / "server_status.txt"
+)
+output_path.parent.mkdir(parents=True, exist_ok=True)
+output_path.write_text(active, encoding='utf-8')
 ```
 
-## Troubleshooting
-
-### "Module 'AIAssistant' not found"
-
-Ensure the folder structure is correct:
-```
-YourProject/Content/Python/AIAssistant/
-├── __init__.py
-├── main.py
-├── config.py
-└── ... (other files)
-```
-
-### Response not appearing
-
-1. Check the Python Output Log for errors
-2. Verify `Saved/AIConsole/last_reply.txt` exists
-3. Enable verbose logging:
-   ```python
-   import AIAssistant
-   AIAssistant.get_config().set('verbose_logging', True)
-   ```
-
-### Timeout errors
-
-Increase timeout in Blueprint:
+### Switch Server (Inline)
 ```python
-import AIAssistant; c = AIAssistant.get_config(); c.set('timeout', 60); AIAssistant.send_command('{0}')
+from AIAssistant import config
+import unreal
+from pathlib import Path
+
+selected = '{0}'  # Inject via String Format
+cfg = config.get_config()
+success = cfg.switch_server(selected)
+
+output_path = (
+    Path(unreal.Paths.project_saved_dir())
+    / "AIConsole"
+    / "server_switch_result.txt"
+)
+output_path.parent.mkdir(parents=True, exist_ok=True)
+
+if success:
+    result = f"success|{cfg.api_url}"
+else:
+    result = f"error|Invalid server: {selected}"
+
+output_path.write_text(result, encoding='utf-8')
 ```
 
-Or edit `Saved/AIConsole/config.json`:
-```json
-{
-  "timeout": 60
-}
-```
-
-## Advanced: Multi-Step Blueprint Commands
-
-### Example: Configure then Execute
-
-**Node 1** - Configure:
+### Get Server Display (Inline)
 ```python
-import AIAssistant; AIAssistant.get_config().set('verbose_logging', True)
+from AIAssistant import config
+import unreal
+from pathlib import Path
+
+cfg = config.get_config()
+active = cfg.get_active_server()
+url = cfg.api_url
+status = f"{active} → {url}"
+
+output_path = (
+    Path(unreal.Paths.project_saved_dir())
+    / "AIConsole"
+    / "server_display.txt"
+)
+output_path.parent.mkdir(parents=True, exist_ok=True)
+output_path.write_text(status, encoding='utf-8')
 ```
 
-**Node 2** - Send Command:
-```python
-import AIAssistant; AIAssistant.send_command('{0}')
-```
+</details>
 
-### Example: Custom Actions
+## 📍 Available Servers
 
-Register custom actions from Blueprint:
+| Server | URL | Use Case |
+|--------|-----|----------|
+| **production** | `https://ue5-assistant-noahbutcher97.replit.app` | Stable deployed version |
+| **dev** | `https://...-janeway.replit.dev` | Latest development changes |
+| **localhost** | `http://localhost:5000` | Local testing |
 
-```python
-import AIAssistant; exec('''
-def my_action():
-    import unreal
-    unreal.log("Custom action executed!")
-    return "Action complete"
+## 💡 Tips
 
-AIAssistant.get_executor().register("my_action", my_action)
-''')
-```
+- **Server setting persists** across UE5 sessions (saved to config.json)
+- **Always add 0.1s Delay** between Python execution and file reading
+- **File paths** use forward slashes: `[Project]/Saved/AIConsole/filename.txt`
+- **Test**: Switch to `dev` server, then check dashboard for conversations!
 
-## Migration Checklist
+## 🐛 Troubleshooting
 
-- [ ] Copy `AIAssistant` folder to `Content/Python/`
-- [ ] Update Blueprint Format Text node
-- [ ] Test with a simple command ("what do I see?")
-- [ ] Verify response appears in text box
-- [ ] Configure settings in `config.json` if needed
-- [ ] Enable verbose logging for debugging if needed
+**ComboBox shows wrong server?**
+- Add Delay node between Python execution and file reading
+- Check file path is correct for your project
 
-## Quick Reference
+**Server switch doesn't work?**
+- Verify String Format injects server name into `{0}`
+- Check Python Output Log for errors
 
-| Old Command | New Command |
-|-------------|-------------|
-| `import ai_command_console` | `import AIAssistant` |
-| `ai_command_console.send_and_store(text)` | `AIAssistant.send_command(text)` |
-| Response file: Same location | `Saved/AIConsole/last_reply.txt` |
-| Conversation log: Same location | `Saved/AIConsole/conversation_log.txt` |
+**Can't see conversations in dashboard?**
+- Confirm you're viewing correct server's dashboard
+- `production` → `replit.app` URL
+- `dev` → `janeway.replit.dev` URL
