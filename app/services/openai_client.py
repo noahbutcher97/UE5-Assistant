@@ -2,6 +2,7 @@
 import json
 import os
 from typing import Any, Dict
+
 import openai
 
 # Initialize OpenAI API
