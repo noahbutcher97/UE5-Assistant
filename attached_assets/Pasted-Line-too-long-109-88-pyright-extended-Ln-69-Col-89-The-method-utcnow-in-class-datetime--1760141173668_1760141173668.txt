@@ -1,0 +1,186 @@
+Line too long (109 > 88)
+(pyright-extended)
+Ln 69, Col 89
+The method "utcnow" in class "datetime" is deprecated   Use timezone-aware objects to represent datetimes in UTC; e.g. by calling .now(datetime.UTC)
+(pyright-extended)
+Ln 72, Col 31
+Line too long (89 > 88)
+(pyright-extended)
+Ln 99, Col 89
+Line too long (90 > 88)
+(pyright-extended)
+Ln 138, Col 89
+Line too long (101 > 88)
+(pyright-extended)
+Ln 139, Col 89
+Line too long (117 > 88)
+(pyright-extended)
+Ln 140, Col 89
+Line too long (93 > 88)
+(pyright-extended)
+Ln 224, Col 89
+Line too long (93 > 88)
+(pyright-extended)
+Ln 251, Col 89
+Line too long (114 > 88)
+(pyright-extended)
+Ln 252, Col 89
+Line too long (97 > 88)
+(pyright-extended)
+Ln 316, Col 89
+Line too long (95 > 88)
+(pyright-extended)
+Ln 318, Col 89
+Line too long (98 > 88)
+(pyright-extended)
+Ln 320, Col 89
+Line too long (98 > 88)
+(pyright-extended)
+Ln 321, Col 89
+Line too long (93 > 88)
+(pyright-extended)
+Ln 323, Col 89
+Line too long (120 > 88)
+(pyright-extended)
+Ln 324, Col 89
+Line too long (102 > 88)
+(pyright-extended)
+Ln 325, Col 89
+Line too long (101 > 88)
+(pyright-extended)
+Ln 326, Col 89
+Line too long (99 > 88)
+(pyright-extended)
+Ln 329, Col 89
+Line too long (100 > 88)
+(pyright-extended)
+Ln 330, Col 89
+Line too long (101 > 88)
+(pyright-extended)
+Ln 331, Col 89
+Line too long (97 > 88)
+(pyright-extended)
+Ln 332, Col 89
+Line too long (99 > 88)
+(pyright-extended)
+Ln 333, Col 89
+Line too long (92 > 88)
+(pyright-extended)
+Ln 338, Col 89
+Line too long (89 > 88)
+(pyright-extended)
+Ln 339, Col 89
+Line too long (98 > 88)
+(pyright-extended)
+Ln 340, Col 89
+Line too long (103 > 88)
+(pyright-extended)
+Ln 341, Col 89
+Line too long (105 > 88)
+(pyright-extended)
+Ln 342, Col 89
+Line too long (99 > 88)
+(pyright-extended)
+Ln 343, Col 89
+Line too long (90 > 88)
+(pyright-extended)
+Ln 345, Col 89
+Line too long (110 > 88)
+(pyright-extended)
+Ln 357, Col 89
+Line too long (109 > 88)
+(pyright-extended)
+Ln 358, Col 89
+Line too long (110 > 88)
+(pyright-extended)
+Ln 359, Col 89
+Line too long (107 > 88)
+(pyright-extended)
+Ln 360, Col 89
+Line too long (104 > 88)
+(pyright-extended)
+Ln 361, Col 89
+Line too long (100 > 88)
+(pyright-extended)
+Ln 362, Col 89
+Line too long (105 > 88)
+(pyright-extended)
+Ln 363, Col 89
+Line too long (111 > 88)
+(pyright-extended)
+Ln 369, Col 89
+Line too long (111 > 88)
+(pyright-extended)
+Ln 370, Col 89
+Line too long (103 > 88)
+(pyright-extended)
+Ln 371, Col 89
+Line too long (110 > 88)
+(pyright-extended)
+Ln 372, Col 89
+Line too long (102 > 88)
+(pyright-extended)
+Ln 373, Col 89
+Line too long (90 > 88)
+(pyright-extended)
+Ln 464, Col 89
+"actors_data" is possibly unbound
+(pyright-extended)
+Ln 478, Col 25
+"selection_data" is possibly unbound
+(pyright-extended)
+Ln 479, Col 26
+Line too long (102 > 88)
+(pyright-extended)
+Ln 479, Col 89
+Line too long (105 > 88)
+(pyright-extended)
+Ln 494, Col 89
+Line too long (118 > 88)
+(pyright-extended)
+Ln 532, Col 89
+Line too long (91 > 88)
+(pyright-extended)
+Ln 757, Col 88
+Line too long (263 > 88)
+(pyright-extended)
+Ln 778, Col 89
+Line too long (95 > 88)
+(pyright-extended)
+Ln 780, Col 89
+Line too long (92 > 88)
+(pyright-extended)
+Ln 787, Col 89
+Line too long (98 > 88)
+(pyright-extended)
+Ln 791, Col 89
+Line too long (96 > 88)
+(pyright-extended)
+Ln 792, Col 89
+Line too long (98 > 88)
+(pyright-extended)
+Ln 793, Col 89
+Line too long (99 > 88)
+(pyright-extended)
+Ln 801, Col 89
+Line too long (101 > 88)
+(pyright-extended)
+Ln 802, Col 89
+Line too long (104 > 88)
+(pyright-extended)
+Ln 803, Col 89
+Line too long (104 > 88)
+(pyright-extended)
+Ln 848, Col 89
+Line too long (271 > 88)
+(pyright-extended)
+Ln 858, Col 89
+Line too long (103 > 88)
+(pyright-extended)
+Ln 860, Col 89
+Line too long (93 > 88)
+(pyright-extended)
+Ln 870, Col 89
+Line too long (96 > 88)
+(pyright-extended)
+Ln 876, Col 89

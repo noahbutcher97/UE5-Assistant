@@ -1,5 +1,5 @@
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, cast
 
 import openai
@@ -66,10 +66,15 @@ conversation_history: List[Dict[str, Any]] = []
 MAX_HISTORY_SIZE = 100
 
 
-def add_to_history(user_input: str, response: str, cmd_type: str, metadata: Optional[Dict[str, Any]] = None):
+def add_to_history(
+    user_input: str,
+    response: str,
+    cmd_type: str,
+    metadata: Optional[Dict[str, Any]] = None
+):
     """Add a conversation entry to history."""
     entry = {
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "user_input": user_input,
         "assistant_response": response,
         "command_type": cmd_type,
@@ -474,11 +479,21 @@ async def describe_viewport(request: Request):
     
     # Log to conversation history
     user_prompt = "Describe viewport"
+    # Extract metadata from context (already parsed above)
+    actors_count = (
+        context.actors.get("total", 0) if context.actors else 0
+    )
+    has_selection = (
+        context.selection.get("count", 0) > 0
+        if context.selection else False
+    )
     metadata = {
-        "actors_count": actors_data.get("total", 0) if 'actors_data' in locals() else 0,
-        "has_selection": selection_data.get("count", 0) > 0 if 'selection_data' in locals() else False
+        "actors_count": actors_count,
+        "has_selection": has_selection
     }
-    add_to_history(user_prompt, summary, "describe_viewport", metadata)
+    add_to_history(
+        user_prompt, summary, "describe_viewport", metadata
+    )
 
     return {"response": summary, "raw_context": context.model_dump()}
 
