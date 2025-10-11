@@ -1,0 +1,58 @@
+LogPython: Display: Generating Python API stub file...
+LogPython: Display:   ...generating Python API: glue code (types)
+LogPython: Display:   ...generating Python API: glue code (methods)
+LogPython: Display:   ...generating Python API: additional code
+LogPython: Display:   ...generated: D:/UnrealProjects/5.6/UE5_Assistant/Intermediate/PythonStub/unreal.py
+LogPython: [AIAssistant] ℹ️ User: give me a breakdown of my project
+LogPython: [AIAssistant] ℹ️ User: give me a breakdown of my project
+LogPython: [ActionExecutor] ℹ️ Executing: get_project_info
+LogPython: [ActionExecutor] ℹ️ Executing: get_project_info
+LogPython: [ActionExecutor] ✅ Action completed: get_project_info
+LogPython: [ActionExecutor] ✅ Action completed: get_project_info
+LogSlate: Took 0.003427 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' (3848K)
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Last resort fallback font was requested. Font: '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf', Character: 'ℹ (U+2139)'
+LogSlate: Took 0.004537 seconds to synchronously load lazily loaded font '../../../Engine/Content/SlateDebug/Fonts/LastResort.ttf' (5269K)
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: [AIAssistant] ℹ️ User: give me a breakdown of my project with lots of detail
+LogPython: [AIAssistant] ℹ️ User: give me a breakdown of my project with lots of detail
+LogPython: [ActionExecutor] ℹ️ Executing: get_project_info
+LogPython: [ActionExecutor] ℹ️ Executing: get_project_info
+LogPython: [ActionExecutor] ✅ Action completed: get_project_info
+LogPython: [ActionExecutor] ✅ Action completed: get_project_info
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: [AIAssistant] ℹ️ User: give me a breakdown of my project with lots of detail
+LogPython: [AIAssistant] ℹ️ User: give me a breakdown of my project with lots of detail
+LogPython: [ActionExecutor] ℹ️ Executing: get_project_info
+LogPython: [ActionExecutor] ℹ️ Executing: get_project_info
+LogPython: [ActionExecutor] ✅ Action completed: get_project_info
+LogPython: [ActionExecutor] ✅ Action completed: get_project_info
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: [AIAssistant] ℹ️ User: what tabs do i have open
+LogPython: [AIAssistant] ℹ️ User: what tabs do i have open
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: [AIAssistant] ℹ️ User: what is my project name
+LogPython: [AIAssistant] ℹ️ User: what is my project name
+LogPython: [ActionExecutor] ℹ️ Executing: get_project_info
+LogPython: [ActionExecutor] ℹ️ Executing: get_project_info
+LogPython: [ActionExecutor] ✅ Action completed: get_project_info
+LogPython: [ActionExecutor] ✅ Action completed: get_project_info
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogDerivedDataCache: C:/Users/posne/AppData/Local/UnrealEngine/Common/DerivedDataCache: Maintenance finished in +00:00:00.120 and 
