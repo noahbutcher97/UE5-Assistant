@@ -376,6 +376,101 @@ def get_dashboard_html() -> str:
         color: #ef4444;
         border: 1px solid rgba(239, 68, 68, 0.3);
     }
+    
+    /* Mobile Responsive Design */
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+            background-size: 30px 30px;
+        }
+        
+        .container {
+            max-width: 100%;
+        }
+        
+        .header {
+            padding: 20px 15px;
+        }
+        
+        .header h1 {
+            font-size: 1.5em;
+        }
+        
+        .stats {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .stat-card {
+            padding: 12px;
+        }
+        
+        .tabs {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .tab {
+            padding: 10px 16px;
+            font-size: 14px;
+            flex: 1 1 auto;
+            min-width: fit-content;
+        }
+        
+        .card {
+            padding: 20px 15px;
+        }
+        
+        .settings-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .conversation-item {
+            padding: 15px;
+        }
+        
+        .conversation-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        
+        h2 {
+            font-size: 1.5em;
+        }
+        
+        h3 {
+            font-size: 1.2em;
+        }
+        
+        ul {
+            padding-left: 20px;
+        }
+        
+        .setting-input,
+        .setting-select {
+            font-size: 16px; /* Prevents zoom on iOS */
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .header h1 {
+            font-size: 1.3em;
+        }
+        
+        .stat-card .number {
+            font-size: 1.5em;
+        }
+        
+        .tab {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+        
+        .card {
+            padding: 15px 10px;
+        }
+    }
 </style>
 </head>
 <body>
@@ -525,31 +620,84 @@ def get_dashboard_html() -> str:
     </div>
     
     <div id="api" class="tab-content">
-        <h2>API Endpoints</h2>
-        <p style="margin: 15px 0; color: #94a3b8;">Available API endpoints for the UE5 AI Assistant:</p>
+        <h2>API Endpoints (v3.1)</h2>
+        <p style="margin: 15px 0; color: #94a3b8;">Comprehensive API endpoints for the UE5 AI Assistant:</p>
+        
+        <h3 style="color: #00f5ff; margin-top: 25px; margin-bottom: 10px;">Core Endpoints</h3>
         <ul style="list-style: none; line-height: 2;">
-            <li><strong style="color: #00f5ff;">GET /</strong> <span style="color: #94a3b8;">- Health check</span></li>
-            <li><strong style="color: #00f5ff;">POST /execute_command</strong> <span style="color: #94a3b8;">- Execute AI commands</span></li>
-            <li><strong style="color: #00f5ff;">POST /describe_viewport</strong> <span style="color: #94a3b8;">- Generate viewport descriptions</span></li>
+            <li><strong style="color: #00f5ff;">GET /health</strong> <span style="color: #94a3b8;">- Health check & version info</span></li>
+            <li><strong style="color: #00f5ff;">POST /execute_command</strong> <span style="color: #94a3b8;">- Execute AI commands with context</span></li>
+            <li><strong style="color: #00f5ff;">POST /describe_viewport</strong> <span style="color: #94a3b8;">- Generate technical viewport descriptions</span></li>
+            <li><strong style="color: #00f5ff;">GET /ping_openai</strong> <span style="color: #94a3b8;">- Test OpenAI connectivity</span></li>
+        </ul>
+        
+        <h3 style="color: #00f5ff; margin-top: 25px; margin-bottom: 10px;">File System Operations (v3.1)</h3>
+        <ul style="list-style: none; line-height: 2;">
+            <li><strong style="color: #00f5ff;">POST /api/files/list</strong> <span style="color: #94a3b8;">- Browse project files (secure, read-only)</span></li>
+            <li><strong style="color: #00f5ff;">POST /api/files/read</strong> <span style="color: #94a3b8;">- Read file contents (path validated)</span></li>
+            <li><strong style="color: #00f5ff;">POST /api/files/search</strong> <span style="color: #94a3b8;">- Search files by pattern</span></li>
+        </ul>
+        
+        <h3 style="color: #00f5ff; margin-top: 25px; margin-bottom: 10px;">Project Intelligence (v3.1)</h3>
+        <ul style="list-style: none; line-height: 2;">
+            <li><strong style="color: #00f5ff;">GET /api/project/metadata</strong> <span style="color: #94a3b8;">- Get project profile & stats</span></li>
+            <li><strong style="color: #00f5ff;">POST /api/project/metadata</strong> <span style="color: #94a3b8;">- Update project metadata</span></li>
+            <li><strong style="color: #00f5ff;">POST /api/guidance</strong> <span style="color: #94a3b8;">- Context-aware implementation guidance</span></li>
+        </ul>
+        
+        <h3 style="color: #00f5ff; margin-top: 25px; margin-bottom: 10px;">Blueprint Vision (v3.1)</h3>
+        <ul style="list-style: none; line-height: 2;">
+            <li><strong style="color: #00f5ff;">POST /api/blueprints/capture</strong> <span style="color: #94a3b8;">- Capture & analyze Blueprint screenshots (multi-modal)</span></li>
+            <li><strong style="color: #00f5ff;">GET /api/blueprints/{id}</strong> <span style="color: #94a3b8;">- Retrieve Blueprint capture by ID</span></li>
+            <li><strong style="color: #00f5ff;">GET /api/blueprints</strong> <span style="color: #94a3b8;">- List all Blueprint captures</span></li>
+        </ul>
+        
+        <h3 style="color: #00f5ff; margin-top: 25px; margin-bottom: 10px;">Configuration & Data</h3>
+        <ul style="list-style: none; line-height: 2;">
+            <li><strong style="color: #00f5ff;">GET /api/config</strong> <span style="color: #94a3b8;">- Get current configuration</span></li>
+            <li><strong style="color: #00f5ff;">POST /api/config</strong> <span style="color: #94a3b8;">- Update configuration</span></li>
             <li><strong style="color: #00f5ff;">GET /api/conversations</strong> <span style="color: #94a3b8;">- Retrieve conversation history</span></li>
-            <li><strong style="color: #00f5ff;">POST /api/log_conversation</strong> <span style="color: #94a3b8;">- Manually log a conversation</span></li>
-            <li><strong style="color: #00f5ff;">DELETE /api/conversations</strong> <span style="color: #94a3b8;">- Clear all conversation history</span></li>
-            <li><strong style="color: #00f5ff;">GET /dashboard</strong> <span style="color: #94a3b8;">- This dashboard</span></li>
+            <li><strong style="color: #00f5ff;">DELETE /api/conversations</strong> <span style="color: #94a3b8;">- Clear conversation history</span></li>
+            <li><strong style="color: #00f5ff;">GET /dashboard</strong> <span style="color: #94a3b8;">- Interactive web dashboard</span></li>
         </ul>
     </div>
     
     <div id="about" class="tab-content">
-        <h2>About UE5 AI Assistant</h2>
-        <p style="margin: 15px 0; line-height: 1.6; color: #94a3b8;">
-            This is a FastAPI backend service that provides AI-powered technical documentation 
-            of Unreal Engine 5 editor viewport contexts. The system receives structured viewport 
-            data from the Unreal Engine Python environment and uses OpenAI's GPT models to generate 
-            technical prose descriptions.
+        <h2>About UE5 AI Assistant v3.1</h2>
+        
+        <h3 style="color: #00f5ff; margin-top: 20px; margin-bottom: 10px;">Overview</h3>
+        <p style="margin: 15px 0; line-height: 1.8; color: #cbd5e1;">
+            Advanced AI-powered assistant for Unreal Engine 5.6+ with comprehensive project intelligence, 
+            multi-modal Blueprint vision analysis, secure file system operations, and context-aware 
+            implementation guidance. Seamlessly integrates with UE5 Python environment via FastAPI backend.
         </p>
-        <p style="margin: 15px 0; line-height: 1.6; color: #cbd5e1;">
-            <strong style="color: #00f5ff;">Version:</strong> 2.0 (Modular Architecture)<br>
-            <strong style="color: #00f5ff;">Model:</strong> GPT-4o-mini<br>
+        
+        <h3 style="color: #00f5ff; margin-top: 25px; margin-bottom: 10px;">Key Capabilities</h3>
+        <ul style="line-height: 2; color: #cbd5e1;">
+            <li><strong style="color: #00f5ff;">Viewport Analysis:</strong> Technical prose generation from 3D scene data with 7 customizable response styles</li>
+            <li><strong style="color: #00f5ff;">Blueprint Vision:</strong> Multi-modal AI analysis of Blueprint screenshots using GPT-4o vision API</li>
+            <li><strong style="color: #00f5ff;">Project Intelligence:</strong> Automated extraction of modules, plugins, assets, and source code statistics</li>
+            <li><strong style="color: #00f5ff;">File Operations:</strong> Secure read-only file browsing with path traversal protection</li>
+            <li><strong style="color: #00f5ff;">Implementation Guidance:</strong> Context-aware AI recommendations tailored to your project structure</li>
+            <li><strong style="color: #00f5ff;">Conversation Persistence:</strong> Full history with JSONL storage and real-time monitoring</li>
+        </ul>
+        
+        <h3 style="color: #00f5ff; margin-top: 25px; margin-bottom: 10px;">System Info</h3>
+        <p style="margin: 15px 0; line-height: 1.8; color: #cbd5e1;">
+            <strong style="color: #00f5ff;">Version:</strong> 3.1 (Advanced Context & Testing Infrastructure)<br>
+            <strong style="color: #00f5ff;">Model:</strong> <span id="current-model-display">Loading...</span><br>
+            <strong style="color: #00f5ff;">Backend:</strong> FastAPI + Python 3.11.9<br>
+            <strong style="color: #00f5ff;">UE5 Integration:</strong> Python 3.11.8 (UE5.6 API Compliant)<br>
+            <strong style="color: #00f5ff;">AI Provider:</strong> OpenAI (GPT-4o, GPT-4o-mini)<br>
             <strong style="color: #00f5ff;">Project by:</strong> Noah Butcher
+        </p>
+        
+        <h3 style="color: #00f5ff; margin-top: 25px; margin-bottom: 10px;">Architecture</h3>
+        <p style="margin: 15px 0; line-height: 1.8; color: #cbd5e1;">
+            Modular FastAPI backend with specialized services for file systems, guidance generation, 
+            and OpenAI integration. UE5 client features file collection, Blueprint capture, project metadata 
+            extraction, and action execution. Includes complete mock testing environment for Replit-based 
+            development without UE5 editor dependency.
         </p>
     </div>
 </div>
@@ -662,6 +810,19 @@ def get_dashboard_html() -> str:
             
             // Populate form fields
             document.getElementById('model').value = config.model || 'gpt-4o-mini';
+            
+            // Update About page with current model
+            const modelDisplay = document.getElementById('current-model-display');
+            if (modelDisplay) {
+                const modelNames = {
+                    'gpt-4o-mini': 'GPT-4o Mini (Fast & Efficient)',
+                    'gpt-4o': 'GPT-4o (Balanced)',
+                    'gpt-4-turbo': 'GPT-4 Turbo (Powerful)',
+                    'gpt-3.5-turbo': 'GPT-3.5 Turbo (Legacy)'
+                };
+                modelDisplay.textContent = modelNames[config.model] || config.model;
+                modelDisplay.style.color = '#00f5ff';
+            }
             document.getElementById('response_style').value = config.response_style || 'descriptive';
             document.getElementById('temperature').value = config.temperature || 0.7;
             document.getElementById('temp-value').textContent = config.temperature || 0.7;
