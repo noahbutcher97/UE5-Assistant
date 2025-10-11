@@ -771,10 +771,8 @@ def get_dashboard_html() -> str:
             
             if (result.success) {
                 showStatus('✅ All conversation history cleared', 'success');
-                // Refresh conversation list if on that tab
-                if (document.getElementById('conversations').classList.contains('active')) {
-                    fetchConversations();
-                }
+                // Refresh conversation list
+                loadConversations();
             } else {
                 showStatus('❌ ' + result.message, 'error');
             }
