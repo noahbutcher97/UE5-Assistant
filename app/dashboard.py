@@ -618,6 +618,13 @@ def get_dashboard_html() -> str:
         <button class="tab" onclick="showTab('about')">ℹ️ About</button>
     </div>
     
+    <div style="margin: 15px 0; padding: 15px; background: rgba(0, 217, 255, 0.1); border-radius: 8px; border: 1px solid rgba(0, 217, 255, 0.3);">
+        <strong style="color: #00d9ff;">🎮 NEW: Project Hub</strong> - 
+        <a href="/dashboard/project-hub" style="color: #00d9ff; text-decoration: underline;">
+            Query your project with AI & generate editor utilities →
+        </a>
+    </div>
+    
     <div id="dashboard" class="tab-content active">
         <div class="controls">
             <h2>Recent Conversations</h2>

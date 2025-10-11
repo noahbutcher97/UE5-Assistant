@@ -103,7 +103,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         Maintains short-term conversation context across turns.
         """
         import openai
-        user_input = request.get("prompt", "")
+        # Accept both "prompt" (new) and "user_input" (legacy) for backwards compatibility
+        user_input = request.get("prompt") or request.get("user_input", "")
         if not user_input:
             return {"error": "No prompt provided."}
 
@@ -610,8 +611,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             return {"error": "No query provided"}
         
         try:
-            # Use context-aware routing
-            command_response = await execute_command({"user_input": query})
+            # Use context-aware routing (execute_command expects "prompt" key)
+            command_response = await execute_command({"prompt": query})
             return {"response": command_response.get("response", "")}
         except Exception as e:
             return {"error": str(e)}

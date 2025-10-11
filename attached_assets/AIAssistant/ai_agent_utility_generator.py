@@ -101,7 +101,7 @@ class {name}(unreal.EditorUtilityWidget):
         # Query backend for action plan
         response = self.api_client.post_json(
             "/execute_command",
-            {"user_input": query}
+            {"prompt": query}
         )
         
         ai_response = response.get("response", "")
@@ -121,7 +121,7 @@ class {name}(unreal.EditorUtilityWidget):
         # Ask AI to determine best camera position
         response = self.api_client.post_json(
             "/execute_command",
-            {"user_input": "Focus camera on selected with best framing"}
+            {"prompt": "Focus camera on selected with best framing"}
         )
         
         # Execute camera action
@@ -140,7 +140,7 @@ class {name}(unreal.EditorUtilityWidget):
         # Use context-aware query
         response = self.api_client.post_json(
             "/execute_command",
-            {"user_input": question}
+            {"prompt": question}
         )
         
         answer = response.get("response", "No response")
