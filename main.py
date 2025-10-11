@@ -1381,6 +1381,33 @@ async def dashboard():
             }
         }
         
+        async function clearHistory() {
+            if (!confirm('⚠️ Are you sure you want to delete ALL conversation history? This cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/conversations', {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('✅ All conversation history cleared', 'success');
+                    // Refresh conversation list if on that tab
+                    if (document.getElementById('conversations').classList.contains('active')) {
+                        fetchConversations();
+                    }
+                } else {
+                    showStatus('❌ ' + result.message, 'error');
+                }
+            } catch (error) {
+                console.error('Failed to clear history:', error);
+                showStatus('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
         function showStatus(message, type) {
             const statusEl = document.getElementById('save-status');
             statusEl.textContent = message;
