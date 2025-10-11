@@ -8,6 +8,14 @@ The project is part of the UE5 AI Assistant Integration by Noah Butcher and is d
 
 ## Recent Changes
 
+### October 11, 2025: Server Selection System for Blueprint Integration
+- **Server Selection Feature**: UE5 config now supports switching between production/dev/localhost servers with `switch_server()`, `list_servers()`, and `get_active_server()` methods
+- **Blueprint Helper Module**: Created `blueprint_helpers.py` with file-based I/O functions for Editor Utility Widget integration. Functions write output to files that Blueprint can read with "Load File to String"
+- **Server Presets**: Three predefined servers in config - production (replit.app), dev (janeway.replit.dev), and localhost (port 5000)
+- **Blueprint Integration Guide**: Added `BLUEPRINT_INTEGRATION.md` with complete step-by-step instructions for adding ComboBox server selector to Editor Utility Widgets, including copy-paste scripts and troubleshooting
+- **Persistent Server Selection**: Active server choice saves to config.json and persists across UE5 sessions
+- **File Communication Protocol**: All Blueprint helpers use standardized file I/O pattern - Python writes to `[Project]/Saved/AIConsole/*.txt`, Blueprint reads with 0.1s delay
+
 ### October 11, 2025: v3.0 Modular Architecture & Full-Stack Alignment
 - **Backend Modular Refactoring**: Restructured monolithic main.py (~1600 lines) into clean app/ package:
   - app/models.py - Pydantic data models with v2.0 structure support
@@ -155,16 +163,18 @@ app/
 ### UE5 Client Organization
 ```
 attached_assets/AIAssistant/
-├── main.py                # Main orchestrator
-├── config.py              # UE5 configuration
-├── api_client.py          # HTTP client for backend
-├── context_collector.py   # Viewport data collection
-├── action_executor.py     # Command execution
-├── ui_manager.py          # UI display management
+├── main.py                      # Main orchestrator
+├── config.py                    # UE5 configuration with server selection
+├── api_client.py                # HTTP client for backend
+├── context_collector.py         # Viewport data collection
+├── action_executor.py           # Command execution
+├── ui_manager.py                # UI display management
+├── blueprint_helpers.py         # Blueprint integration helpers (file-based I/O)
 ├── tests/
-│   └── DEBUG_TEST.py      # Test utilities
-└── Documentation/         # UE5 client documentation
-    └── README.md          # Client documentation index
+│   └── DEBUG_TEST.py            # Test utilities
+└── Documentation/               # UE5 client documentation
+    ├── README.md                # Client documentation index
+    └── BLUEPRINT_INTEGRATION.md # Blueprint server selector guide
 ```
 
 ### Documentation Access
