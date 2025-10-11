@@ -1,7 +1,7 @@
 """API routes for the UE5 AI Assistant backend."""
 import json
-from typing import Any, Dict, List, cast
-from fastapi import Request
+from typing import Any, Dict, List, Optional, cast
+from fastapi import Request, HTTPException
 from fastapi.responses import RedirectResponse, HTMLResponse
 
 from app.models import (
@@ -344,6 +344,43 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             return {"success": False, "error": str(e), "type": "permission"}
         except Exception as e:
             return {"success": False, "error": str(e), "type": "general"}
+
+    # Project Metadata Routes
+    project_metadata_cache: Dict[str, ProjectProfile] = {}
+    
+    @app.post("/api/project/metadata")
+    async def submit_project_metadata(profile: ProjectProfile):
+        """Receive and cache project metadata from UE5."""
+        project_metadata_cache[profile.project_name] = profile
+        return {
+            "success": True,
+            "message": "Project metadata cached successfully",
+            "project": profile.project_name
+        }
+    
+    @app.get("/api/project/metadata")
+    async def get_project_metadata(project_name: Optional[str] = None):
+        """Get cached project metadata."""
+        if project_name:
+            if project_name in project_metadata_cache:
+                return {
+                    "success": True,
+                    "data": project_metadata_cache[project_name].model_dump()
+                }
+            else:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"No metadata found for project: {project_name}"
+                )
+        else:
+            return {
+                "success": True,
+                "data": {
+                    name: profile.model_dump()
+                    for name, profile in project_metadata_cache.items()
+                },
+                "count": len(project_metadata_cache)
+            }
 
     @app.get("/dashboard", response_class=HTMLResponse)
     async def dashboard():
