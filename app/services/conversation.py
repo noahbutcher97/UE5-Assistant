@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-CONVERSATIONS_FILE = Path("conversations.jsonl")
+CONVERSATIONS_FILE = Path("app/data/conversations.jsonl")
 MAX_HISTORY_SIZE = 100
 
 # In-memory conversation ring buffer

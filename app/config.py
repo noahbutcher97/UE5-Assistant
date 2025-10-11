@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-CONFIG_FILE = Path("config.json")
+CONFIG_FILE = Path("app/data/config.json")
 
 # Response style presets with intelligent filtering and output control
 RESPONSE_STYLES = {
