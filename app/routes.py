@@ -420,6 +420,52 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 "error": str(e)
             }
 
+    # Blueprint Capture Routes
+    blueprint_capture_cache: Dict[str, BlueprintCapture] = {}
+    
+    @app.post("/api/blueprints/capture")
+    async def submit_blueprint_capture(capture: BlueprintCapture):
+        """Store a blueprint screenshot capture."""
+        blueprint_capture_cache[capture.capture_id] = capture
+        return {
+            "success": True,
+            "message": "Blueprint capture stored successfully",
+            "capture_id": capture.capture_id,
+            "blueprint_name": capture.blueprint_name
+        }
+    
+    @app.get("/api/blueprints/{capture_id}")
+    async def get_blueprint_capture(capture_id: str):
+        """Retrieve a specific blueprint capture."""
+        if capture_id in blueprint_capture_cache:
+            return {
+                "success": True,
+                "data": blueprint_capture_cache[capture_id].model_dump()
+            }
+        else:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Blueprint capture not found: {capture_id}"
+            )
+    
+    @app.get("/api/blueprints")
+    async def list_blueprint_captures():
+        """List all stored blueprint captures."""
+        return {
+            "success": True,
+            "captures": [
+                {
+                    "capture_id": capture.capture_id,
+                    "blueprint_name": capture.blueprint_name,
+                    "blueprint_path": capture.blueprint_path,
+                    "timestamp": capture.timestamp,
+                    "has_image": bool(capture.image_base64 or capture.image_url)
+                }
+                for capture in blueprint_capture_cache.values()
+            ],
+            "count": len(blueprint_capture_cache)
+        }
+
     @app.get("/dashboard", response_class=HTMLResponse)
     async def dashboard():
         """Serve the conversation dashboard HTML."""
