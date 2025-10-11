@@ -1,8 +1,26 @@
-# UE5 AI Assistant - Modular Architecture v3.0
+# UE5 AI Assistant - Documentation v3.1
 
-A modular, extensible AI assistant system for Unreal Engine 5.6+ with enhanced context awareness, server selection, and Blueprint integration.
+A modular, extensible AI assistant system for Unreal Engine 5.6+ with advanced context awareness, multi-modal vision, secure file operations, and comprehensive Blueprint integration.
 
-**🎯 Blueprint Integration**: See [BLUEPRINT_INTEGRATION.md](BLUEPRINT_INTEGRATION.md) for server selector setup in Editor Utility Widgets.
+## 📚 Documentation Guides
+
+### **🎯 [BLUEPRINT_INTEGRATION.md](BLUEPRINT_INTEGRATION.md)** ⭐ **START HERE**
+**Complete node-by-node Blueprint guide with copy-paste examples**
+- Server management with real paths
+- AI commands & viewport analysis
+- File system operations
+- Project intelligence gathering
+- Blueprint screenshot capture
+- Full widget examples
+
+### **📦 [INSTALLATION.md](INSTALLATION.md)**
+Installation and setup instructions
+
+### **🧵 [THREAD_SAFETY.md](THREAD_SAFETY.md)**
+Thread safety considerations and execution modes
+
+### **🎨 [INTELLIGENT_RESPONSE_SYSTEM.md](INTELLIGENT_RESPONSE_SYSTEM.md)**
+Response styles and AI behavior configuration
 
 ## 📁 Installation
 
@@ -405,6 +423,22 @@ Check:
 3. Verbose logging for detailed errors
 
 ## 📝 Version History
+
+### v3.1.0 (October 2025)
+- **Project Intelligence**: Automated metadata extraction (modules, plugins, assets, source code)
+- **Multi-Modal Vision**: Blueprint screenshot capture with GPT-4o vision analysis
+- **Secure File Operations**: Read-only file browsing with path traversal protection
+- **Context-Aware Guidance**: Implementation advice tailored to project structure
+- **Testing Infrastructure**: Mock UE5 environment for Replit-based development
+- **Enhanced Dashboard**: Mobile-responsive web UI with dynamic configuration
+- **Blueprint Helpers**: Complete file-based communication system
+- **Feature Flags**: Granular control over system capabilities
+
+### v3.0.0 (October 2025)
+- Server selection system (production/dev/localhost)
+- Blueprint integration helpers
+- File-based communication protocol
+- Configuration persistence
 
 ### v2.0.0 (October 2025)
 - Modular architecture with separate components
