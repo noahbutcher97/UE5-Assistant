@@ -23,6 +23,162 @@ from app.services.openai_client import (
     test_openai_connection,
 )
 
+
+def generate_ue56_utility_script(name: str, desc: str, capabilities: list) -> str:
+    """Generate UE 5.6 compliant utility script."""
+    script = f'''"""
+{name} - {desc}
+AI-Powered Editor Utility Widget
+UE 5.6 Compatible
+"""
+import unreal
+
+
+@unreal.uclass()
+class {name}(unreal.EditorUtilityWidget):
+    """
+    {desc}
+    
+    Capabilities: {", ".join(capabilities)}
+    """
+    
+    def __init__(self):
+        super().__init__()
+        # Load AI Assistant client
+        try:
+            import sys
+            import os
+            project_dir = unreal.Paths.project_dir()
+            python_dir = os.path.join(project_dir, "Content", "Python")
+            if python_dir not in sys.path:
+                sys.path.append(python_dir)
+            
+            from AIAssistant.api_client import get_client
+            self.api_client = get_client()
+        except Exception as e:
+            unreal.log_error(f"Failed to load AI client: {{e}}")
+            self.api_client = None
+'''
+
+    if 'spawn_actors' in capabilities:
+        script += '''
+    
+    @unreal.ufunction(ret=None, params=[str])
+    def spawn_from_description(self, description):
+        """Spawn actors based on natural language description."""
+        if not self.api_client:
+            unreal.log_error("AI client not available")
+            return
+        
+        try:
+            response = self.api_client.post_json(
+                "/api/generate_action_plan",
+                {"description": description}
+            )
+            
+            if response.get("success") and response.get("plan"):
+                self._execute_plan(response["plan"])
+            else:
+                unreal.log_warning("Failed to generate plan")
+        except Exception as e:
+            unreal.log_error(f"Spawn error: {e}")
+    
+    def _execute_plan(self, plan):
+        """Execute AI-generated action plan."""
+        actor_subsystem = unreal.get_editor_subsystem(
+            unreal.EditorActorSubsystem
+        )
+        asset_library = unreal.EditorAssetLibrary
+        
+        for action in plan:
+            action_type = action.get("type")
+            
+            if action_type == "spawn":
+                asset_path = action.get("asset", "")
+                location = action.get("location", [0, 0, 0])
+                rotation = action.get("rotation", [0, 0, 0])
+                
+                # Load and spawn the requested asset
+                if asset_path:
+                    try:
+                        # Load the asset (Blueprint/Class)
+                        asset = asset_library.load_asset(asset_path)
+                        
+                        if asset:
+                            # Get the generated class from Blueprint
+                            if isinstance(asset, unreal.Blueprint):
+                                actor_class = asset.generated_class
+                            else:
+                                actor_class = asset
+                            
+                            # Spawn with transform
+                            spawned = actor_subsystem.spawn_actor_from_class(
+                                actor_class,
+                                unreal.Vector(location[0], location[1], location[2]),
+                                unreal.Rotator(rotation[0], rotation[1], rotation[2])
+                            )
+                            
+                            if spawned:
+                                unreal.log(f"✅ Spawned: {asset_path}")
+                            else:
+                                unreal.log_warning(f"Failed to spawn: {asset_path}")
+                        else:
+                            unreal.log_warning(f"Asset not found: {asset_path}")
+                    except Exception as e:
+                        unreal.log_error(f"Spawn error: {e}")
+                else:
+                    # Fallback: spawn generic actor
+                    actor_subsystem.spawn_actor_from_class(
+                        unreal.Actor,
+                        unreal.Vector(location[0], location[1], location[2])
+                    )
+'''
+
+    if 'query_project' in capabilities:
+        script += '''
+    
+    @unreal.ufunction(ret=None, params=[str])
+    def query_ai(self, question):
+        """Query AI about the project."""
+        if not self.api_client:
+            unreal.log_error("AI client not available")
+            return
+        
+        try:
+            response = self.api_client.post_json(
+                "/api/project_query",
+                {"query": question}
+            )
+            
+            answer = response.get("response", "No response")
+            unreal.log(f"AI: {answer}")
+            
+            # Write to file for Blueprint to read
+            import os
+            project_dir = unreal.Paths.project_dir()
+            response_file = os.path.join(
+                project_dir, "Saved", "AIConsole", "utility_response.txt"
+            )
+            os.makedirs(os.path.dirname(response_file), exist_ok=True)
+            with open(response_file, 'w') as f:
+                f.write(answer)
+                
+        except Exception as e:
+            unreal.log_error(f"Query error: {e}")
+'''
+
+    script += '''
+
+    @unreal.ufunction(ret=str, params=[])
+    def get_status(self):
+        """Get utility status."""
+        if self.api_client:
+            return "✅ Connected to AI Backend"
+        return "❌ Not connected"
+'''
+
+    return script
+
 # Session messages for execute_command context (global state for single-user UE integration)
 session_messages: List[Dict[str, str]] = []
 
@@ -691,7 +847,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     
     @app.post("/api/generate_utility")
     async def generate_utility(request: dict):
-        """Generate editor utility widget from browser."""
+        """Generate UE 5.6 compliant editor utility widget."""
+        from app.project_registry import get_registry
         import json
         
         name = request.get("name", "CustomTool")
@@ -699,21 +856,33 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         capabilities = request.get("capabilities", [])
         
         try:
-            # Create AI agent utility spec
-            spec = {
-                "action": "generate_ai_agent",
-                "name": name,
-                "description": description,
-                "capabilities": capabilities
-            }
+            # Get active project for correct path
+            registry = get_registry()
+            active_project = registry.get_active_project()
             
-            # This would be processed by UE5 client
+            # Generate UE 5.6 compliant Python script
+            script = generate_ue56_utility_script(
+                name, description, capabilities
+            )
+            
+            # Determine save path
+            if active_project:
+                project_path = active_project.get('path', '')
+                script_path = f"{project_path}Content/Python/AIAgentUtilities/{name}.py"
+            else:
+                script_path = f"Content/Python/AIAgentUtilities/{name}.py"
+            
             return {
                 "success": True,
                 "widget_name": name,
-                "script_path": f"Content/Python/AIAgentUtilities/{name}.py",
-                "message": "Send this spec to UE5 client for generation",
-                "spec": spec
+                "script_path": script_path,
+                "script_content": script,
+                "instructions": [
+                    "1. Copy the generated script to your project",
+                    "2. Restart Unreal Editor to load the utility",
+                    "3. Find in Content Browser under Python/AIAgentUtilities",
+                    "4. Right-click and execute"
+                ]
             }
         except Exception as e:
             return {"error": str(e)}

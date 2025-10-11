@@ -1,7 +1,7 @@
 # Unreal Engine AI Viewport Assistant
 
 ## Overview
-This project provides a FastAPI backend service that generates AI-powered technical documentation for Unreal Engine 5 editor viewport contexts. It receives structured viewport data from Unreal Engine's Python environment and uses OpenAI's GPT models to produce precise, factual prose descriptions of 3D scenes and level designs. The system aims to bridge Unreal Engine's scripting capabilities with cloud-based AI services, offering UE5 developers advanced insights and implementation guidance within their workflows. Key capabilities include context-aware implementation advice, Blueprint screenshot analysis, secure file system interactions, **two-phase context-aware AI responses** (v3.2+) that provide natural language answers instead of canned data dumps, and **comprehensive editor orchestration** (v3.2+) including scene building, camera control, actor manipulation, and AI-powered editor utility generation.
+This project provides a FastAPI backend service that generates AI-powered technical documentation for Unreal Engine 5 editor viewport contexts. It receives structured viewport data from Unreal Engine's Python environment and uses OpenAI's GPT models to produce precise, factual prose descriptions of 3D scenes and level designs. The system aims to bridge Unreal Engine's scripting capabilities with cloud-based AI services, offering UE5 developers advanced insights and implementation guidance within their workflows. Key capabilities include **multi-project management** with browser-based project selection, **context-aware AI responses** using active project metadata, **UE 5.6 compliant utility generation**, **comprehensive editor orchestration** (scene building, camera control, actor manipulation), and **unified control dashboard** that serves as the main interface for all operations.
 
 ## File Structure & Deployment
 
@@ -60,17 +60,20 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### UI/UX Decisions
-- **Interactive Settings Dashboard**: A web-based GUI `/dashboard` allows real-time configuration of AI model, response style presets, temperature, max context turns, and timeout controls. Settings persist to `config.json`.
-- **Dark Theme Dashboard**: Features a sleek cyberpunk aesthetic with a dark navy background, cyan accents, and glass morphism cards.
+- **Unified Control Center**: The main `/dashboard` now features a unified interface with Project Hub as the primary tab, alongside Conversations, Settings, API Info, and About tabs.
+- **Project Selector**: Browser-based dropdown for selecting active UE5 project, with real-time connection status indicator.
+- **Dark Theme Dashboard**: Sleek cyberpunk aesthetic with dark navy background, cyan accents, and glass morphism cards.
 - **Console Feedback**: Emoji-based status indicators in the Unreal Engine console for clarity.
 
 ### Technical Implementations
 - **Backend Framework**: FastAPI for its async capabilities, automatic API documentation, and Pydantic-based type validation.
-- **AI Integration**: Uses OpenAI GPT models (default: gpt-4o-mini) for technical prose generation, with configurable model selection and output style focused on factual documentation.
-- **Context-Aware AI Responses (v3.2+)**: Two-phase flow using `[UE_CONTEXT_REQUEST]` tokens and `/answer_with_context` endpoint. System collects UE5 context (project metadata, blueprints, files), sends to AI with original question, and returns natural language answers instead of raw data dumps.
-- **Editor Orchestration Systems (v3.2+)**: Complete scene building and manipulation via SceneOrchestrator (spawn actors/primitives/blueprints), ViewportController (camera focus/movement/orbit), and ActorManipulator (align/distribute/arrange actors).
-- **AI Agent Utility Generator (v3.2+)**: Generates intelligent Editor Utility Widgets with full backend API integration, allowing utilities to query AI, execute action plans, and make context-aware decisions.
-- **Project Hub Dashboard (v3.2+)**: Browser-based interface at `/dashboard/project-hub` for querying project intelligence, generating editor utilities, and creating AI action plans - all without opening UE5.
+- **AI Integration**: Uses OpenAI GPT models (default: gpt-4o-mini) for technical prose generation, with configurable model selection and output style.
+- **Multi-Project Registry**: Backend tracks multiple UE5 projects with metadata, allowing browser-based project selection and context-aware queries.
+- **Auto-Registration**: UE5 client automatically registers projects on startup, uploading metadata (blueprints count, modules, file structure) to backend.
+- **Context-Aware Queries**: Project queries enriched with active project context for accurate, project-specific AI responses.
+- **Editor Orchestration Systems**: Complete scene building via SceneOrchestrator (spawn actors/primitives/blueprints), ViewportController (camera control), and ActorManipulator (align/distribute/arrange).
+- **UE 5.6 Compliant Utility Generator**: Generates Editor Utility Widgets with proper @unreal.uclass() decorators, EditorUtilityWidget base class, @unreal.ufunction methods, and full backend API integration.
+- **Unified Dashboard**: Main interface at `/dashboard` with Project Hub as primary tab, replacing separate dashboard pages.
 - **Data Flow**: Unreal Engine Python scripts collect viewport data and POST it to FastAPI endpoints. Pydantic models validate requests. AI processes data, and descriptions are returned to UE5.
 - **UE5 Python Integration**: Automatic installation of dependencies, bi-directional HTTP communication, file-based state management (`Saved/AIConsole`), persistent conversation logging, and intelligent context-aware command routing with expanded keyword detection.
 - **Context-Aware Command Routing**: Backend intelligently detects user intent and routes context-specific queries (project info, blueprint capture, file browsing) to appropriate UE5 data collection actions while maintaining AI-powered responses for general guidance questions.

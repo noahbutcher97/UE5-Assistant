@@ -557,8 +557,8 @@
                 if (data.conversations && data.conversations.length > 0) {
                     list.innerHTML = data.conversations.map(conv => `
                         <div style="padding: 15px; border-bottom: 1px solid rgba(0,217,255,0.1);">
-                            <strong style="color: #00d9ff;">User:</strong> ${conv.user_input}<br>
-                            <strong style="color: #8b95a5;">AI:</strong> ${conv.ai_response.substring(0, 200)}...
+                            <strong style="color: #00d9ff;">User:</strong> ${conv.user_input || 'N/A'}<br>
+                            <strong style="color: #8b95a5;">AI:</strong> ${(conv.ai_response || '').substring(0, 200)}${conv.ai_response && conv.ai_response.length > 200 ? '...' : ''}
                         </div>
                     `).join('');
                 } else {
