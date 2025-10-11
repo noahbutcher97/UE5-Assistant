@@ -4,7 +4,7 @@ from typing import Any, Dict, List, Optional, cast
 
 import openai
 from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, RedirectResponse
 from pydantic import BaseModel
 
 # ============================================================
@@ -89,8 +89,14 @@ def add_to_history(user_input: str, response: str, cmd_type: str, metadata: Opti
 
 @app.get("/")
 async def home():
-    """Heartbeat route to verify API is online."""
-    return {"status": "online", "message": "UE5 AI Assistant running!"}
+    """Redirect to dashboard."""
+    return RedirectResponse(url="/dashboard", status_code=307)
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for API monitoring."""
+    return {"status": "online", "message": "UE5 AI Assistant running!", "version": "2.0"}
 
 
 @app.get("/test")
@@ -206,11 +212,17 @@ async def execute_command(request: dict):
         # 6️⃣ Append assistant reply to memory and return
         # --------------------------------------------------------
         session_messages.append({"role": "assistant", "content": reply})
+        
+        # Log to conversation history
+        add_to_history(user_input, reply, "execute_command")
+        
         return {"response": reply}
 
     except Exception as e:
         print(f"[ERROR] {e}")
-        return {"error": str(e)}
+        error_msg = str(e)
+        add_to_history(user_input, f"ERROR: {error_msg}", "execute_command", {"error": True})
+        return {"error": error_msg}
 
 
 # ============================================================
@@ -459,6 +471,14 @@ async def describe_viewport(request: Request):
     print("\n[Viewport Summary]")
     print(summary)
     print("\n--- End of Response ---\n")
+    
+    # Log to conversation history
+    user_prompt = "Describe viewport"
+    metadata = {
+        "actors_count": actors_data.get("total", 0) if 'actors_data' in locals() else 0,
+        "has_selection": selection_data.get("count", 0) > 0 if 'selection_data' in locals() else False
+    }
+    add_to_history(user_prompt, summary, "describe_viewport", metadata)
 
     return {"response": summary, "raw_context": context.model_dump()}
 
