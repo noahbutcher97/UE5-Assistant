@@ -4,11 +4,15 @@ from typing import Any, Dict, List, cast
 from fastapi import Request
 from fastapi.responses import RedirectResponse, HTMLResponse
 
-from app.models import ViewportContext, ConversationEntry, ConfigUpdate
+from app.models import (
+    ViewportContext, ConversationEntry, ConfigUpdate,
+    FileContext, FileEntry, ProjectProfile, GuidanceRequest, BlueprintCapture
+)
 from app.config import RESPONSE_STYLES, DEFAULT_CONFIG
 from app.services.filtering import filter_viewport_data
 from app.services.openai_client import generate_viewport_description, test_openai_connection
 from app.services import conversation
+from app.services.file_system import FileSystemService
 from app.dashboard import get_dashboard_html
 
 # Session messages for execute_command context (global state for single-user UE integration)
@@ -291,6 +295,55 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 "success": False,
                 "message": f"Failed to clear history: {str(e)}"
             }
+
+    # File System Routes
+    file_service = FileSystemService(max_depth=10)
+    
+    @app.post("/api/files/list")
+    async def list_files(request: dict):
+        """List files in a directory."""
+        directory_path = request.get("path", ".")
+        recursive = request.get("recursive", False)
+        
+        try:
+            result = file_service.list_directory(directory_path, recursive)
+            return {"success": True, "data": result.model_dump()}
+        except PermissionError as e:
+            return {"success": False, "error": str(e), "type": "permission"}
+        except Exception as e:
+            return {"success": False, "error": str(e), "type": "general"}
+    
+    @app.post("/api/files/read")
+    async def read_file(request: dict):
+        """Read a file's content."""
+        file_path = request.get("path")
+        
+        if not file_path:
+            return {"success": False, "error": "No file path provided"}
+        
+        try:
+            result = file_service.read_file(file_path)
+            return {"success": True, "data": result.model_dump()}
+        except PermissionError as e:
+            return {"success": False, "error": str(e), "type": "permission"}
+        except Exception as e:
+            return {"success": False, "error": str(e), "type": "general"}
+    
+    @app.post("/api/files/search")
+    async def search_files(request: dict):
+        """Search for files matching criteria."""
+        root_path = request.get("root_path", ".")
+        pattern = request.get("pattern")
+        extension = request.get("extension")
+        max_results = request.get("max_results", 100)
+        
+        try:
+            result = file_service.search_files(root_path, pattern, extension, max_results)
+            return {"success": True, "data": result.model_dump()}
+        except PermissionError as e:
+            return {"success": False, "error": str(e), "type": "permission"}
+        except Exception as e:
+            return {"success": False, "error": str(e), "type": "general"}
 
     @app.get("/dashboard", response_class=HTMLResponse)
     async def dashboard():
