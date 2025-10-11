@@ -590,3 +590,115 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     async def dashboard():
         """Serve the conversation dashboard HTML."""
         return HTMLResponse(content=get_dashboard_html())
+    
+    @app.get("/dashboard/project-hub", response_class=HTMLResponse)
+    async def project_hub():
+        """Serve the Project Hub HTML page."""
+        from pathlib import Path
+        hub_path = Path(__file__).parent / "templates" / "dashboard_project_hub.html"
+        return HTMLResponse(content=hub_path.read_text())
+    
+    @app.post("/api/project_query")
+    async def project_query(request: dict):
+        """
+        Handle project intelligence queries from browser.
+        Routes through context-aware AI system.
+        """
+        query = request.get("query", "")
+        
+        if not query:
+            return {"error": "No query provided"}
+        
+        try:
+            # Use context-aware routing
+            command_response = await execute_command({"user_input": query})
+            return {"response": command_response.get("response", "")}
+        except Exception as e:
+            return {"error": str(e)}
+    
+    @app.post("/api/generate_utility")
+    async def generate_utility(request: dict):
+        """Generate editor utility widget from browser."""
+        import json
+        
+        name = request.get("name", "CustomTool")
+        description = request.get("description", "")
+        capabilities = request.get("capabilities", [])
+        
+        try:
+            # Create AI agent utility spec
+            spec = {
+                "action": "generate_ai_agent",
+                "name": name,
+                "description": description,
+                "capabilities": capabilities
+            }
+            
+            # This would be processed by UE5 client
+            return {
+                "success": True,
+                "widget_name": name,
+                "script_path": f"Content/Python/AIAgentUtilities/{name}.py",
+                "message": "Send this spec to UE5 client for generation",
+                "spec": spec
+            }
+        except Exception as e:
+            return {"error": str(e)}
+    
+    @app.post("/api/generate_action_plan")
+    async def generate_action_plan(request: dict):
+        """Generate AI action plan for scene building."""
+        import openai
+        
+        description = request.get("description", "")
+        
+        if not description:
+            return {"error": "No description provided"}
+        
+        try:
+            # Ask AI to create action plan
+            model_name = app_config.get("model", "gpt-4o-mini")
+            
+            prompt = f"""Create a detailed action plan for building this scene in Unreal Engine:
+
+{description}
+
+Return a JSON array of actions. Each action should have:
+- type: "spawn", "align", "camera", etc.
+- asset: asset path (for spawn actions)
+- location: [x, y, z]
+- rotation: [pitch, yaw, roll]
+- parameters: additional params
+
+Example:
+[
+  {{"type": "spawn", "asset": "/Game/Meshes/House", "location": [0, 0, 0]}},
+  {{"type": "align", "axis": "z", "align_to": "min"}}
+]
+
+Return ONLY the JSON array, no explanation."""
+
+            response = openai.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": "You are a UE5 scene planning AI. Generate precise action plans."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7
+            )
+            
+            plan_text = response.choices[0].message.content or ""
+            
+            # Try to parse JSON
+            import json
+            start = plan_text.find('[')
+            end = plan_text.rfind(']') + 1
+            
+            if start != -1 and end > start:
+                plan = json.loads(plan_text[start:end])
+                return {"success": True, "plan": plan}
+            else:
+                return {"success": True, "plan": [], "raw_response": plan_text}
+                
+        except Exception as e:
+            return {"error": str(e)}
