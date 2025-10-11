@@ -146,12 +146,29 @@ class ConfigUpdate(BaseModel):
 
 
 # ============================================================
-# CONVERSATION HISTORY STORAGE
+# CONVERSATION HISTORY STORAGE (File-based persistence)
 # ============================================================
 
-# In-memory conversation history (last 100 entries)
+CONVERSATIONS_FILE = Path("conversations.jsonl")
 conversation_history: List[Dict[str, Any]] = []
 MAX_HISTORY_SIZE = 100
+
+
+def load_conversations() -> None:
+    """Load conversation history from file on startup."""
+    global conversation_history
+    if not CONVERSATIONS_FILE.exists():
+        return
+    
+    try:
+        with open(CONVERSATIONS_FILE, 'r', encoding='utf-8') as f:
+            # Load all lines and keep last MAX_HISTORY_SIZE entries
+            all_conversations = [json.loads(line) for line in f if line.strip()]
+            conversation_history = all_conversations[-MAX_HISTORY_SIZE:]
+        print(f"[Startup] Loaded {len(conversation_history)} conversations from file")
+    except Exception as e:
+        print(f"[Error] Failed to load conversations: {e}")
+        conversation_history = []
 
 
 def add_to_history(
@@ -160,7 +177,7 @@ def add_to_history(
     cmd_type: str,
     metadata: Optional[Dict[str, Any]] = None
 ):
-    """Add a conversation entry to history."""
+    """Add a conversation entry to history and persist to file."""
     entry = {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "user_input": user_input,
@@ -170,9 +187,20 @@ def add_to_history(
     }
     conversation_history.append(entry)
     
-    # Keep only last MAX_HISTORY_SIZE entries
+    # Keep only last MAX_HISTORY_SIZE entries in memory
     if len(conversation_history) > MAX_HISTORY_SIZE:
         conversation_history.pop(0)
+    
+    # Append to file (persist forever)
+    try:
+        with open(CONVERSATIONS_FILE, 'a', encoding='utf-8') as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + '\n')
+    except Exception as e:
+        print(f"[Error] Failed to persist conversation: {e}")
+
+
+# Load existing conversations on startup
+load_conversations()
 
 
 # ============================================================
