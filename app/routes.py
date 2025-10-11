@@ -126,22 +126,25 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             if "selected" in lower and ("info" in lower or "details" in lower):
                 return {"response": "[UE_REQUEST] get_selected_info"}
             
-            # Project-specific queries
+            # Project-specific queries - need AI interpretation
             if any(k in lower for k in [
                 "my project", "project name", "project called",
                 "what am i working on", "current project",
-                "this project", "project info"
+                "this project", "project info", "breakdown"
             ]):
-                return {"response": "[UE_REQUEST] get_project_info"}
+                # Signal UE5 to collect context and send for AI processing
+                return {"response": f"[UE_CONTEXT_REQUEST] project_info|{user_input}"}
             
-            # Blueprint capture requests
+            # Blueprint capture requests - need AI interpretation
             if any(k in lower for k in [
                 "capture", "screenshot", "screen shot",
                 "show blueprint", "picture of", "image of"
             ]) and any(b in lower for b in [
                 "blueprint", "bp_", "graph", "node"
             ]):
-                return {"response": "[UE_REQUEST] capture_blueprint"}
+                return {
+                    "response": f"[UE_CONTEXT_REQUEST] blueprint_capture|{user_input}"
+                }
             
             # File/Asset browsing
             if any(k in lower for k in [
@@ -190,6 +193,60 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             conversation.add_to_history(user_input, f"ERROR: {error_msg}", "execute_command", {"error": True})
             return {"error": error_msg}
 
+    @app.post("/answer_with_context")
+    async def answer_with_context(request: dict):
+        """
+        Answer user question using collected context data and AI.
+        This allows natural language responses instead of canned summaries.
+        """
+        import json
+        import openai
+        user_question = request.get("question", "")
+        context_data = request.get("context", {})
+        context_type = request.get("context_type", "unknown")
+        
+        if not user_question:
+            return {"error": "No question provided"}
+        
+        try:
+            # Build context-aware prompt
+            context_str = json.dumps(context_data, indent=2)
+            
+            prompt = (
+                f"User question: {user_question}\n\n"
+                f"Context data ({context_type}):\n{context_str}\n\n"
+                f"Answer the user's specific question using the context data. "
+                f"Be concise and answer exactly what they asked - don't provide "
+                f"extra information they didn't request."
+            )
+            
+            # Get AI response
+            model_name = app_config.get("model", "gpt-4o-mini")
+            response = openai.chat.completions.create(
+                model=model_name,
+                messages=[
+                    {"role": "system", "content": get_system_message(app_config)},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=app_config.get("temperature", 0.7),
+            )
+            
+            reply = (response.choices[0].message.content or "").strip()
+            
+            # Log to conversation history
+            conversation.add_to_history(
+                user_question,
+                reply,
+                "answer_with_context",
+                {"context_type": context_type}
+            )
+            
+            return {"response": reply}
+            
+        except Exception as e:
+            print(f"[ERROR] answer_with_context: {e}")
+            return {"error": str(e)}
+    
     @app.post("/wrap_natural_language")
     async def wrap_natural_language(request: dict):
         """

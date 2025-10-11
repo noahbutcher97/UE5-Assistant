@@ -1,7 +1,7 @@
 # Unreal Engine AI Viewport Assistant
 
 ## Overview
-This project provides a FastAPI backend service that generates AI-powered technical documentation for Unreal Engine 5 editor viewport contexts. It receives structured viewport data from Unreal Engine's Python environment and uses OpenAI's GPT models to produce precise, factual prose descriptions of 3D scenes and level designs. The system aims to bridge Unreal Engine's scripting capabilities with cloud-based AI services, offering UE5 developers advanced insights and implementation guidance within their workflows. Key capabilities include context-aware implementation advice, Blueprint screenshot analysis, and secure file system interactions within the UE5 project.
+This project provides a FastAPI backend service that generates AI-powered technical documentation for Unreal Engine 5 editor viewport contexts. It receives structured viewport data from Unreal Engine's Python environment and uses OpenAI's GPT models to produce precise, factual prose descriptions of 3D scenes and level designs. The system aims to bridge Unreal Engine's scripting capabilities with cloud-based AI services, offering UE5 developers advanced insights and implementation guidance within their workflows. Key capabilities include context-aware implementation advice, Blueprint screenshot analysis, secure file system interactions, and **two-phase context-aware AI responses** (v3.2+) that provide natural language answers instead of canned data dumps.
 
 ## File Structure & Deployment
 
@@ -67,6 +67,7 @@ Preferred communication style: Simple, everyday language.
 ### Technical Implementations
 - **Backend Framework**: FastAPI for its async capabilities, automatic API documentation, and Pydantic-based type validation.
 - **AI Integration**: Uses OpenAI GPT models (default: gpt-4o-mini) for technical prose generation, with configurable model selection and output style focused on factual documentation.
+- **Context-Aware AI Responses (v3.2+)**: Two-phase flow using `[UE_CONTEXT_REQUEST]` tokens and `/answer_with_context` endpoint. System collects UE5 context (project metadata, blueprints, files), sends to AI with original question, and returns natural language answers instead of raw data dumps.
 - **Data Flow**: Unreal Engine Python scripts collect viewport data and POST it to FastAPI endpoints. Pydantic models validate requests. AI processes data, and descriptions are returned to UE5.
 - **UE5 Python Integration**: Automatic installation of dependencies, bi-directional HTTP communication, file-based state management (`Saved/AIConsole`), persistent conversation logging, and intelligent context-aware command routing with expanded keyword detection.
 - **Context-Aware Command Routing**: Backend intelligently detects user intent and routes context-specific queries (project info, blueprint capture, file browsing) to appropriate UE5 data collection actions while maintaining AI-powered responses for general guidance questions.

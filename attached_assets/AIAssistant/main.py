@@ -93,10 +93,19 @@ class AIAssistant:
         """
         response = self._process_with_ai_sync(user_input)
 
-        # Handle UE_REQUEST tokens
+        # Handle UE_REQUEST tokens (direct actions)
         if response.startswith("[UE_REQUEST]"):
             token = response.replace("[UE_REQUEST]", "").strip()
             response = self.executor.execute(token)
+        
+        # Handle UE_CONTEXT_REQUEST tokens (collect context, send to AI)
+        elif response.startswith("[UE_CONTEXT_REQUEST]"):
+            parts = response.replace("[UE_CONTEXT_REQUEST]", "").strip()
+            context_type, original_question = parts.split("|", 1)
+            response = self._process_context_request(
+                context_type.strip(),
+                original_question.strip()
+            )
 
         self.ui.show_response(response)
         self.ui.log_exchange(user_input, response)
@@ -132,12 +141,23 @@ class AIAssistant:
                     )
                     response = self.ui.format_error(error)
 
-                # Handle UE_REQUEST tokens
+                # Handle UE_REQUEST tokens (direct actions)
                 if response.startswith("[UE_REQUEST]"):
                     token = response.replace(
                         "[UE_REQUEST]", ""
                     ).strip()
                     response = self.executor.execute(token)
+                
+                # Handle UE_CONTEXT_REQUEST tokens (collect, send to AI)
+                elif response.startswith("[UE_CONTEXT_REQUEST]"):
+                    parts = response.replace(
+                        "[UE_CONTEXT_REQUEST]", ""
+                    ).strip()
+                    context_type, original_question = parts.split("|", 1)
+                    response = self._process_context_request(
+                        context_type.strip(),
+                        original_question.strip()
+                    )
                 else:
                     # Add to history
                     self.session_messages.append(
@@ -194,6 +214,65 @@ class AIAssistant:
             )
 
         return response
+    
+    def _process_context_request(
+        self, context_type: str, original_question: str
+    ) -> str:
+        """
+        Collect context and send to AI for natural language processing.
+        
+        Args:
+            context_type: Type of context (e.g., 'project_info')
+            original_question: User's original question
+        """
+        try:
+            # Collect appropriate context
+            context_data = {}
+            
+            if context_type == "project_info":
+                # Get raw project metadata
+                metadata_collector = self.executor.metadata_collector
+                context_data = metadata_collector.collect_all_metadata()
+            
+            elif context_type == "blueprint_capture":
+                # Capture blueprint screenshot
+                from .blueprint_capture import capture_blueprint_screenshot
+                result = capture_blueprint_screenshot()
+                if "error" in result:
+                    return self.ui.format_error(result["error"])
+                context_data = result
+            
+            elif context_type == "browse_files":
+                # Browse project files
+                from .action_executor import browse_project_files
+                file_tree = browse_project_files()
+                context_data = {"file_tree": file_tree}
+            
+            else:
+                return f"[UE_ERROR] Unknown context type: {context_type}"
+            
+            # Send to AI for interpretation
+            api_client = get_client()
+            payload = {
+                "question": original_question,
+                "context": context_data,
+                "context_type": context_type
+            }
+            
+            response_data = api_client.post_json(
+                "/answer_with_context",
+                payload
+            )
+            
+            if response_data.get("error"):
+                return self.ui.format_error(response_data["error"])
+            
+            return response_data.get("response", "")
+            
+        except Exception as e:
+            return self.ui.format_error(
+                f"Context request failed: {e}"
+            )
 
     def _trim_history(self) -> None:
         """Trim conversation history to max turns."""
