@@ -82,7 +82,7 @@ class GuidanceService:
         return "\n\n".join(context_parts)
     
     def generate_guidance(self, request: GuidanceRequest) -> str:
-        """Generate context-aware implementation guidance."""
+        """Generate context-aware implementation guidance with multi-modal support."""
         
         context_summary = self._build_context_summary(request)
         
@@ -98,7 +98,7 @@ class GuidanceService:
             f"{focus_modifier}"
         )
         
-        user_message = f"""# User Query
+        user_text = f"""# User Query
 {request.query}
 
 # Available Context
@@ -111,15 +111,46 @@ Based on this context, provide detailed implementation guidance. Include:
 4. Potential pitfalls and how to avoid them
 5. Best practices specific to this project's structure"""
         
-        messages = [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_message}
-        ]
-        
-        response = openai.chat.completions.create(
-            model=self.model,
-            messages=cast(List[Any], messages),
-            temperature=self.temperature,
+        has_images = (
+            request.blueprint_captures is not None and 
+            any(bp.image_base64 for bp in request.blueprint_captures)
         )
+        
+        if has_images and request.blueprint_captures:
+            user_content: List[Dict[str, Any]] = [{"type": "text", "text": user_text}]
+            
+            for bp in request.blueprint_captures:
+                if bp.image_base64:
+                    user_content.append({
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/png;base64,{bp.image_base64}",
+                            "detail": "high"
+                        }
+                    })
+            
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_content}
+            ]
+            
+            vision_model = "gpt-4o" if self.model in ["gpt-4o-mini", "gpt-3.5-turbo"] else self.model
+        else:
+            messages = [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_text}
+            ]
+            vision_model = self.model
+        
+        api_params: Dict[str, Any] = {
+            "model": vision_model,
+            "messages": cast(List[Any], messages),
+            "temperature": self.temperature
+        }
+        
+        if has_images:
+            api_params["max_tokens"] = 4096
+        
+        response = openai.chat.completions.create(**api_params)
         
         return (response.choices[0].message.content or "").strip()
