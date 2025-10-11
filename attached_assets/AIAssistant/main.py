@@ -43,6 +43,9 @@ class AIAssistant:
         # Async state
         self._async_response: Optional[str] = None
         self._async_in_progress = False
+        
+        # Auto-register project with backend
+        self._auto_register_project()
 
     def process_command(
         self, user_input: str, use_async: bool = False
@@ -321,6 +324,15 @@ class AIAssistant:
 
 # Global assistant instance
 _assistant: Optional[AIAssistant] = None
+
+
+    def _auto_register_project(self):
+        """Auto-register project on initialization."""
+        try:
+            from .project_registration import auto_register_project
+            auto_register_project(self.sync_client)
+        except Exception as e:
+            self.logger.warning(f"Project auto-registration failed: {e}")
 
 
 def get_assistant() -> AIAssistant:

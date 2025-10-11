@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UE5 AI Assistant - Control Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6ed;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(26, 31, 58, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid rgba(0, 217, 255, 0.3);
+            padding: 20px;
+        }
+
+        .header h1 {
+            color: #00d9ff;
+            font-size: 2em;
+            text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+        }
+
+        .project-selector {
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .project-selector label {
+            color: #8b95a5;
+        }
+
+        .project-selector select {
+            padding: 8px 15px;
+            background: rgba(10, 14, 39, 0.8);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 6px;
+            color: #e0e6ed;
+            font-size: 1em;
+        }
+
+        .project-status {
+            padding: 8px 15px;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 6px;
+            color: #00d9ff;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(26, 31, 58, 0.6);
+            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            color: #8b95a5;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            background: rgba(0, 217, 255, 0.1);
+            color: #00d9ff;
+        }
+
+        .tab.active {
+            color: #00d9ff;
+            border-bottom-color: #00d9ff;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: rgba(26, 31, 58, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            color: #00d9ff;
+            margin-bottom: 15px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #8b95a5;
+            font-size: 0.9em;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(10, 14, 39, 0.8);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 6px;
+            color: #e0e6ed;
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
+            border: none;
+            border-radius: 6px;
+            color: #0a0e27;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+        }
+
+        .output-box {
+            background: rgba(10, 14, 39, 0.9);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 6px;
+            padding: 15px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .api-endpoint {
+            background: rgba(10, 14, 39, 0.8);
+            border-left: 3px solid #00d9ff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .api-endpoint code {
+            color: #00d9ff;
+        }
+
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
+        }
+
+        .feature-list li:before {
+            content: "✅ ";
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎮 UE5 AI Assistant - Control Center</h1>
+        <div class="project-selector">
+            <label>Active Project:</label>
+            <select id="projectSelect" onchange="selectProject()">
+                <option value="">No project selected</option>
+            </select>
+            <span class="project-status" id="projectStatus">Not connected</span>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="showTab('project-hub')">🎮 Project Hub</button>
+        <button class="tab" onclick="showTab('conversations')">💬 Conversations</button>
+        <button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
+        <button class="tab" onclick="showTab('api')">🔧 API Info</button>
+        <button class="tab" onclick="showTab('about')">ℹ️ About</button>
+    </div>
+
+    <!-- Project Hub Tab -->
+    <div id="project-hub" class="tab-content active">
+        <div class="grid">
+            <div class="card">
+                <h2>📊 Project Intelligence</h2>
+                <p style="color: #8b95a5; margin-bottom: 15px;">
+                    Query your active UE5 project with AI-powered intelligence
+                </p>
+                
+                <div class="input-group">
+                    <label>Your Question</label>
+                    <input type="text" id="projectQuery" 
+                        placeholder="What blueprints inherit from Character?">
+                </div>
+
+                <button onclick="queryProject()">🔍 Query Project</button>
+
+                <div class="input-group" style="margin-top: 15px;">
+                    <label>AI Response</label>
+                    <div class="output-box" id="queryOutput">
+                        Response will appear here...
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🛠️ AI Agent Utility Generator</h2>
+                <p style="color: #8b95a5; margin-bottom: 15px;">
+                    Generate intelligent editor utilities with backend integration
+                </p>
+
+                <div class="input-group">
+                    <label>Utility Name</label>
+                    <input type="text" id="utilityName" 
+                        placeholder="SmartSceneBuilder">
+                </div>
+
+                <div class="input-group">
+                    <label>Description</label>
+                    <textarea id="utilityDesc" 
+                        placeholder="AI-powered scene builder"></textarea>
+                </div>
+
+                <button onclick="generateUtility()">✨ Generate Utility</button>
+
+                <div class="output-box" id="utilityOutput" style="margin-top: 15px;">
+                    Generation result will appear here...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversations Tab -->
+    <div id="conversations" class="tab-content">
+        <div class="card">
+            <h2>💬 Recent Conversations</h2>
+            <div id="conversation-list" style="margin-top: 20px;">
+                <div style="text-align: center; padding: 40px; color: #8b95a5;">
+                    <p>Loading conversations...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settings" class="tab-content">
+        <div class="card">
+            <h2>⚙️ AI Configuration</h2>
+            <div class="input-group">
+                <label>AI Model</label>
+                <select id="modelSelect">
+                    <option value="gpt-4o-mini">GPT-4o Mini (Fast, Cost-effective)</option>
+                    <option value="gpt-4o">GPT-4o (Advanced)</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <label>Response Style</label>
+                <select id="styleSelect">
+                    <option value="concise">Concise</option>
+                    <option value="balanced">Balanced</option>
+                    <option value="detailed">Detailed</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Temperature (Creativity): <span id="tempValue">0.7</span></label>
+                <input type="range" id="tempSlider" min="0" max="1" step="0.1" value="0.7" 
+                    oninput="document.getElementById('tempValue').textContent = this.value"
+                    style="width: 100%; padding: 0;">
+            </div>
+
+            <button onclick="saveSettings()">💾 Save Settings</button>
+        </div>
+    </div>
+
+    <!-- API Info Tab -->
+    <div id="api" class="tab-content">
+        <div class="card">
+            <h2>🔧 API Endpoints</h2>
+            
+            <h3 style="color: #00d9ff; margin-top: 20px;">Project Management</h3>
+            <div class="api-endpoint">
+                <code>POST /api/register_project</code>
+                <p>Register UE5 project from client</p>
+            </div>
+            <div class="api-endpoint">
+                <code>GET /api/projects</code>
+                <p>List all registered projects</p>
+            </div>
+            <div class="api-endpoint">
+                <code>POST /api/set_active_project</code>
+                <p>Set active project for queries</p>
+            </div>
+
+            <h3 style="color: #00d9ff; margin-top: 20px;">AI Interaction</h3>
+            <div class="api-endpoint">
+                <code>POST /execute_command</code>
+                <p>Send commands to AI (supports "prompt" or "user_input")</p>
+            </div>
+            <div class="api-endpoint">
+                <code>POST /api/project_query</code>
+                <p>Query active project with AI</p>
+            </div>
+
+            <h3 style="color: #00d9ff; margin-top: 20px;">Utility Generation</h3>
+            <div class="api-endpoint">
+                <code>POST /api/generate_utility</code>
+                <p>Generate AI agent editor utilities</p>
+            </div>
+            <div class="api-endpoint">
+                <code>POST /api/generate_action_plan</code>
+                <p>Generate scene building action plans</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Tab -->
+    <div id="about" class="tab-content">
+        <div class="card">
+            <h2>ℹ️ About UE5 AI Assistant v3.2</h2>
+            
+            <h3 style="color: #00d9ff; margin: 20px 0 10px;">Core Capabilities</h3>
+            <ul class="feature-list">
+                <li>Multi-project management with browser-based project selection</li>
+                <li>Context-aware AI responses using active project metadata</li>
+                <li>AI-powered Editor Utility Widget generation (UE 5.6 compliant)</li>
+                <li>Scene orchestration (spawn actors, primitives, blueprints)</li>
+                <li>Viewport control (camera focus, movement, orbit)</li>
+                <li>Actor manipulation (align, distribute, grid/circle arrangement)</li>
+                <li>Blueprint screenshot capture and analysis</li>
+                <li>Project file browsing and source code analysis</li>
+            </ul>
+
+            <h3 style="color: #00d9ff; margin: 20px 0 10px;">Architecture</h3>
+            <p style="line-height: 1.8; color: #8b95a5;">
+                The system consists of a <strong>FastAPI backend</strong> (hosted on Replit) 
+                and a <strong>UE5 Python client</strong> (runs in your editor). The client 
+                automatically registers your project on startup, uploading metadata to the backend. 
+                You can then query your project from any browser using the Project Hub dashboard.
+            </p>
+
+            <h3 style="color: #00d9ff; margin: 20px 0 10px;">Technology Stack</h3>
+            <ul class="feature-list">
+                <li>Backend: FastAPI + OpenAI API (GPT-4o)</li>
+                <li>Frontend: Vanilla JS + Modern CSS</li>
+                <li>UE5 Client: Python 3.11 + Unreal Python API</li>
+                <li>Communication: RESTful HTTP/JSON</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 'project-hub';
+
+        // Load projects on page load
+        loadProjects();
+        loadConversations();
+        loadConfig();
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            currentTab = tabName;
+        }
+
+        async function loadProjects() {
+            try {
+                const response = await fetch('/api/projects');
+                const data = await response.json();
+                
+                const select = document.getElementById('projectSelect');
+                select.innerHTML = '<option value="">No project selected</option>';
+                
+                if (data.success && data.projects.length > 0) {
+                    data.projects.forEach(project => {
+                        const option = document.createElement('option');
+                        option.value = project.project_id;
+                        option.textContent = `${project.name} (${project.version})`;
+                        if (project.is_active) {
+                            option.selected = true;
+                            updateProjectStatus(project);
+                        }
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load projects:', error);
+            }
+        }
+
+        async function selectProject() {
+            const projectId = document.getElementById('projectSelect').value;
+            
+            if (!projectId) {
+                document.getElementById('projectStatus').textContent = 'Not connected';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/set_active_project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ project_id: projectId })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateProjectStatus(data.project);
+                }
+            } catch (error) {
+                console.error('Failed to set active project:', error);
+            }
+        }
+
+        function updateProjectStatus(project) {
+            const status = document.getElementById('projectStatus');
+            status.textContent = `✅ ${project.name} Connected`;
+            status.style.background = 'rgba(0, 255, 136, 0.1)';
+            status.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+            status.style.color = '#00ff88';
+        }
+
+        async function queryProject() {
+            const query = document.getElementById('projectQuery').value;
+            const output = document.getElementById('queryOutput');
+
+            if (!query) {
+                output.textContent = 'Please enter a question';
+                return;
+            }
+
+            output.textContent = 'Querying AI...';
+
+            try {
+                const response = await fetch('/api/project_query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    output.textContent = `Error: ${data.error}`;
+                } else {
+                    const context = data.project_context ? `[${data.project_context}]\n\n` : '';
+                    output.textContent = context + data.response;
+                }
+            } catch (error) {
+                output.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function generateUtility() {
+            const name = document.getElementById('utilityName').value;
+            const desc = document.getElementById('utilityDesc').value;
+            const output = document.getElementById('utilityOutput');
+
+            if (!name || !desc) {
+                output.textContent = 'Please fill in name and description';
+                return;
+            }
+
+            output.textContent = 'Generating utility...';
+
+            try {
+                const response = await fetch('/api/generate_utility', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        name, 
+                        description: desc, 
+                        capabilities: ['spawn_actors', 'execute_plans'] 
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    output.textContent = `Error: ${data.error}`;
+                } else {
+                    output.textContent = `✅ Generated: ${data.widget_name}\n\n` +
+                        `📁 Script Path: ${data.script_path}\n\n` +
+                        `To use:\n1. Download AIAssistant folder\n2. Restart Unreal Editor\n3. Run the utility`;
+                }
+            } catch (error) {
+                output.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function loadConversations() {
+            try {
+                const response = await fetch('/api/conversations?limit=50');
+                const data = await response.json();
+                
+                const list = document.getElementById('conversation-list');
+                
+                if (data.conversations && data.conversations.length > 0) {
+                    list.innerHTML = data.conversations.map(conv => `
+                        <div style="padding: 15px; border-bottom: 1px solid rgba(0,217,255,0.1);">
+                            <strong style="color: #00d9ff;">User:</strong> ${conv.user_input}<br>
+                            <strong style="color: #8b95a5;">AI:</strong> ${conv.ai_response.substring(0, 200)}...
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<p style="text-align: center; color: #8b95a5;">No conversations yet</p>';
+                }
+            } catch (error) {
+                console.error('Failed to load conversations:', error);
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const config = await response.json();
+                
+                document.getElementById('modelSelect').value = config.model;
+                document.getElementById('styleSelect').value = config.response_style;
+                document.getElementById('tempSlider').value = config.temperature;
+                document.getElementById('tempValue').textContent = config.temperature;
+            } catch (error) {
+                console.error('Failed to load config:', error);
+            }
+        }
+
+        async function saveSettings() {
+            const config = {
+                model: document.getElementById('modelSelect').value,
+                response_style: document.getElementById('styleSelect').value,
+                temperature: parseFloat(document.getElementById('tempSlider').value)
+            };
+
+            try {
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(config)
+                });
+
+                if (response.ok) {
+                    alert('✅ Settings saved successfully!');
+                }
+            } catch (error) {
+                alert('❌ Failed to save settings');
+            }
+        }
+
+        // Enter key support
+        document.getElementById('projectQuery').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') queryProject();
+        });
+    </script>
+</body>
+</html>

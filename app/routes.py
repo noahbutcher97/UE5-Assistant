@@ -587,10 +587,65 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             "count": len(blueprint_capture_cache)
         }
 
+    # Project Registry Endpoints
+    @app.post("/api/register_project")
+    async def register_project(request: dict):
+        """Register a UE5 project from the client."""
+        from app.project_registry import get_registry
+        
+        project_id = request.get("project_id", "")
+        project_data = request.get("project_data", {})
+        
+        if not project_id:
+            return {"success": False, "error": "No project_id provided"}
+        
+        registry = get_registry()
+        result = registry.register_project(project_id, project_data)
+        return result
+    
+    @app.get("/api/projects")
+    async def list_projects():
+        """List all registered projects."""
+        from app.project_registry import get_registry
+        
+        registry = get_registry()
+        return {
+            "success": True,
+            "projects": registry.list_projects()
+        }
+    
+    @app.get("/api/active_project")
+    async def get_active_project():
+        """Get the currently active project."""
+        from app.project_registry import get_registry
+        
+        registry = get_registry()
+        project = registry.get_active_project()
+        
+        if project:
+            return {"success": True, "project": project}
+        else:
+            return {"success": False, "message": "No active project"}
+    
+    @app.post("/api/set_active_project")
+    async def set_active_project(request: dict):
+        """Set the active project."""
+        from app.project_registry import get_registry
+        
+        project_id = request.get("project_id", "")
+        
+        if not project_id:
+            return {"success": False, "error": "No project_id provided"}
+        
+        registry = get_registry()
+        return registry.set_active_project(project_id)
+
     @app.get("/dashboard", response_class=HTMLResponse)
     async def dashboard():
-        """Serve the conversation dashboard HTML."""
-        return HTMLResponse(content=get_dashboard_html())
+        """Serve the unified dashboard with Project Hub."""
+        from pathlib import Path
+        dashboard_path = Path(__file__).parent / "templates" / "unified_dashboard.html"
+        return HTMLResponse(content=dashboard_path.read_text())
     
     @app.get("/dashboard/project-hub", response_class=HTMLResponse)
     async def project_hub():
@@ -603,17 +658,34 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     async def project_query(request: dict):
         """
         Handle project intelligence queries from browser.
-        Routes through context-aware AI system.
+        Uses active project context for accurate responses.
         """
+        from app.project_registry import get_registry
+        
         query = request.get("query", "")
         
         if not query:
             return {"error": "No query provided"}
         
         try:
+            # Get active project context
+            registry = get_registry()
+            active_project = registry.get_active_project()
+            
+            # Enrich query with project context if available
+            if active_project:
+                context_prefix = f"[Project: {active_project['name']}] "
+                enriched_query = context_prefix + query
+            else:
+                enriched_query = query
+            
             # Use context-aware routing (execute_command expects "prompt" key)
-            command_response = await execute_command({"prompt": query})
-            return {"response": command_response.get("response", "")}
+            command_response = await execute_command({"prompt": enriched_query})
+            
+            return {
+                "response": command_response.get("response", ""),
+                "project_context": active_project["name"] if active_project else None
+            }
         except Exception as e:
             return {"error": str(e)}
     
