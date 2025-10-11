@@ -16,7 +16,7 @@ Usage in Blueprint:
 """
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from AIAssistant import config
 
@@ -35,12 +35,11 @@ else:
 def get_output_path(filename: str) -> Path:
     """Get the output file path for Blueprint communication."""
     if HAS_UNREAL and unreal is not None:
-        saved_dir = Path(
-            unreal.Paths.project_saved_dir()  # type: ignore
-        )
+        saved_dir = Path(unreal.Paths.project_saved_dir()  # type: ignore
+                         )
     else:
         saved_dir = Path.cwd() / "Saved"
-    
+
     output_path = saved_dir / "AIConsole" / filename
     output_path.parent.mkdir(parents=True, exist_ok=True)
     return output_path
@@ -49,6 +48,7 @@ def get_output_path(filename: str) -> Path:
 # ============================================================================
 # SERVER SELECTION FUNCTIONS
 # ============================================================================
+
 
 def get_active_server() -> None:
     """
@@ -64,7 +64,7 @@ def get_active_server() -> None:
     """
     cfg = config.get_config()
     active_server = cfg.get_active_server()
-    
+
     output_path = get_output_path("server_status.txt")
     output_path.write_text(active_server, encoding='utf-8')
     print(f"[Blueprint Helper] Active server: {active_server}")
@@ -90,14 +90,14 @@ def switch_server(server_name: str) -> None:
     """
     cfg = config.get_config()
     success = cfg.switch_server(server_name)
-    
+
     output_path = get_output_path("server_switch_result.txt")
-    
+
     if success:
         result = f"success|{cfg.api_url}"
     else:
         result = f"error|Invalid server: {server_name}"
-    
+
     output_path.write_text(result, encoding='utf-8')
     print(f"[Blueprint Helper] Server switch: {result}")
 
@@ -118,7 +118,7 @@ def get_server_display() -> None:
     active = cfg.get_active_server()
     url = cfg.api_url
     status = f"{active} → {url}"
-    
+
     output_path = get_output_path("server_display.txt")
     output_path.write_text(status, encoding='utf-8')
     print(f"[Blueprint Helper] Display: {status}")
@@ -139,7 +139,7 @@ def list_servers() -> None:
     """
     cfg = config.get_config()
     servers = ",".join(cfg.SERVER_PRESETS.keys())
-    
+
     output_path = get_output_path("server_list.txt")
     output_path.write_text(servers, encoding='utf-8')
     print(f"[Blueprint Helper] Available servers: {servers}")
@@ -148,7 +148,6 @@ def list_servers() -> None:
 # ============================================================================
 # INLINE SCRIPTS FOR BLUEPRINT (COPY-PASTE READY)
 # ============================================================================
-
 """
 SCRIPT 1: Get Active Server
 ----------------------------

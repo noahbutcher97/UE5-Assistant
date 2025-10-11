@@ -3,12 +3,12 @@ Comprehensive tests for v3.1 backend endpoints.
 Tests file operations, project metadata, guidance, and blueprint capture routes.
 """
 
-import pytest
-from fastapi.testclient import TestClient
+import base64
 import sys
 from pathlib import Path
-import base64
-import json
+
+import pytest
+from fastapi.testclient import TestClient
 
 # Add parent directory to path to import main
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -162,7 +162,13 @@ class TestBlueprintCapture:
     def test_capture_blueprint_basic(self):
         """Test basic blueprint capture."""
         # Create a small test image (1x1 pixel)
-        test_image_data = base64.b64encode(b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82').decode('utf-8')
+        png_bytes = (
+            b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01'
+            b'\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89'
+            b'\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01'
+            b'\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82'
+        )
+        test_image_data = base64.b64encode(png_bytes).decode('utf-8')
         
         request = {
             "blueprint_name": "BP_TestCharacter",
@@ -236,7 +242,7 @@ class TestSecurityAndValidation:
         """Test handling of invalid JSON in POST requests."""
         response = client.post(
             "/api/guidance",
-            data="invalid json",
+            content=b"invalid json",
             headers={"Content-Type": "application/json"}
         )
         assert response.status_code == 422  # Unprocessable Entity
