@@ -8,12 +8,15 @@ The project is part of the UE5 AI Assistant Integration by Noah Butcher and is d
 
 ## Recent Changes
 
-### October 2025: Modular Architecture v2.0 & Blueprint Integration
+### October 2025: Modular Architecture v2.0 & Interactive Settings Dashboard
 - **Modular Rewrite**: Complete architectural overhaul with separation of concerns - config, API client, async client, context collector, action executor, UI manager, and main orchestrator as independent modules
 - **Blueprint Integration**: Seamless integration with Editor Utility Widget via file-based communication. Simple one-line Python command update to migrate from v1.0
 - **Enhanced Context Collection**: Automatic collection of lighting (directional, point, spot), materials, environment (fog, post-process), landscape, and detailed selection data
 - **Thread Safety Fix**: Discovered async mode causes "Attempted to access Unreal API from outside the main game thread" errors. System now defaults to synchronous mode (use_async=False) for reliable operation. Brief blocking (~15-20s) is acceptable for editor tools and ensures all UE API calls execute correctly
 - **Critical Data Structure Bug Fix**: Resolved mismatch between v2.0 modular client (nested structure) and v1.0 FastAPI backend (flat structure). Backend now accepts v2.0 format with camera{location, rotation}, actors{total, names, types}, lighting{}, environment{}, selection{} structure. This fixed "null data" responses where AI couldn't describe viewport
+- **Interactive Settings Dashboard**: Web-based GUI at /dashboard for real-time configuration without code changes. Features AI model selector, 6 response style presets (descriptive, technical, natural, balanced, concise, detailed), temperature slider, max context turns, and timeout controls. All settings persist to config.json and apply immediately to OpenAI API calls
+- **Configuration System Overhaul**: JSON-based config with GET/POST /api/config endpoints. Settings dynamically affect runtime behavior (temperature, model, response_style, max_context_turns) without server restart. Both backend and UE5 configs synchronized
+- **Conversation Dashboard**: Real-time monitoring with auto-refresh, in-memory ring buffer (100 entries), stats display, and tabbed interface
 - **Extensibility**: Command registry pattern allows custom actions to be registered from Blueprint or Python. Configuration system with runtime modification support
 - **Code Quality**: All pyright-extended linting errors resolved with documented type guards for environment-specific modules (unreal, requests)
 - **Performance**: Direct prose generation from /describe_viewport, 50% latency reduction vs v1.0

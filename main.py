@@ -271,7 +271,7 @@ async def execute_command(request: dict):
         # 2️⃣ Update memory
         # --------------------------------------------------------
         session_messages.append({"role": "user", "content": user_input})
-        max_context_turns = 6
+        max_context_turns = app_config.get("max_context_turns", 6)
         user_assistant_msgs = [
             m for m in session_messages if m["role"] != "system"
         ]
@@ -293,6 +293,7 @@ async def execute_command(request: dict):
         response = openai.chat.completions.create(
             model=MODEL_NAME,
             messages=cast(List[Any], messages_payload),
+            temperature=app_config.get("temperature", 0.7),
         )
 
         reply = (response.choices[0].message.content or "").strip()
@@ -360,6 +361,7 @@ async def wrap_natural_language(request: dict):
                     "content": summary_text
                 },
             ],
+            temperature=app_config.get("temperature", 0.7),
         )
         wrapped = (response.choices[0].message.content or "").strip()
         print(f"[Natural Wrapper] {wrapped}")
@@ -481,6 +483,7 @@ async def describe_viewport(request: Request):
                     "content": prompt
                 },
             ],
+            temperature=app_config.get("temperature", 0.7),
         )
         msg_content = response.choices[0].message.content
         summary: str = msg_content.strip() if msg_content else ""
@@ -621,12 +624,11 @@ async def update_config(updates: ConfigUpdate):
     update_dict = updates.model_dump(exclude_none=True)
     
     for key, value in update_dict.items():
-        if key in app_config:
-            app_config[key] = value
+        app_config[key] = value
     
-    # Update MODEL_NAME if model changed
+    # Update MODEL_NAME if model changed (CRITICAL: must update global)
     if "model" in update_dict:
-        MODEL_NAME = update_dict["model"]
+        MODEL_NAME = app_config["model"]
     
     # Update system message if response_style changed
     if "response_style" in update_dict:

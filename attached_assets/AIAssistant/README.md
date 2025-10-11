@@ -74,6 +74,8 @@ Configuration is stored in `Saved/AIConsole/config.json`:
 {
   "api_base_url": "https://ue5-assistant-noahbutcher97.replit.app",
   "model": "gpt-4o-mini",
+  "temperature": 0.7,
+  "response_style": "descriptive",
   "max_retries": 3,
   "retry_delay": 2.5,
   "timeout": 25,
@@ -85,7 +87,41 @@ Configuration is stored in `Saved/AIConsole/config.json`:
 }
 ```
 
-Modify settings programmatically:
+### 🎨 Response Style Options
+
+The `response_style` parameter controls how the AI communicates:
+
+- **`descriptive`** (default) - Clear, factual technical prose
+- **`technical`** - Highly technical with exact specifications
+- **`natural`** - Friendly, conversational tone
+- **`balanced`** - Mix of technical accuracy and readability
+- **`concise`** - Brief and to-the-point
+- **`detailed`** - Comprehensive, verbose analysis
+
+### 🌡️ Temperature Setting
+
+The `temperature` parameter (0.0 - 1.0) controls AI creativity:
+- **Lower (0.0-0.3)** - More focused and deterministic
+- **Medium (0.4-0.7)** - Balanced (default: 0.7)
+- **Higher (0.8-1.0)** - More creative and varied
+
+### 🌐 Web Dashboard Settings Panel
+
+The backend includes an interactive web dashboard at `/dashboard` where you can configure settings in real-time without code changes:
+
+**Visit:** `https://ue5-assistant-noahbutcher97.replit.app/dashboard`
+
+**Settings Tab Features:**
+- 🤖 AI Model selector (gpt-4o-mini, gpt-4o, gpt-4-turbo, gpt-3.5-turbo)
+- 📝 Response style dropdown with 6 preset modes
+- 🌡️ Temperature slider (0.0 - 1.0)
+- 💬 Max context turns slider (2-20)
+- ⏱️ Request timeout slider (10-60s)
+- 💾 Save/Reset buttons with instant feedback
+
+All changes persist to `config.json` and take effect immediately on the backend.
+
+### Modify Settings Programmatically (UE5 Side)
 
 ```python
 from AIAssistant.config import get_config
@@ -93,6 +129,8 @@ from AIAssistant.config import get_config
 config = get_config()
 config.set("verbose_logging", True)
 config.set("timeout", 30)
+config.set("response_style", "technical")
+config.set("temperature", 0.8)
 ```
 
 ## 🧠 Enhanced Context Collection

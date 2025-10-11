@@ -21,6 +21,8 @@ class Config:
         "api_base_url": (
             "https://ue5-assistant-noahbutcher97.replit.app"),
         "model": "gpt-4o-mini",
+        "temperature": 0.7,
+        "response_style": "descriptive",
         "max_retries": 3,
         "retry_delay": 2.5,
         "timeout": 25,
