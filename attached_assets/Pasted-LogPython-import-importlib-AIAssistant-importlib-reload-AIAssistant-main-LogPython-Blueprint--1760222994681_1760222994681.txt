@@ -1,0 +1,29 @@
+LogPython: import importlib, AIAssistant
+importlib.reload(AIAssistant.main)
+LogPython: [Blueprint Helper] Active server: dev
+LogPython: ✅ Switched to dev server: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: [Blueprint Helper] Server switch: success|https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogFileHelpers: InternalPromptForCheckoutAndSave started...
+OBJ SavePackage: Generating thumbnails for [1] asset(s) in package [/Game/EditorTools/AI_CommandConsole/AI_CommandConsole] ([2] browsable assets)...
+OBJ SavePackage: Finished generating thumbnails for package [/Game/EditorTools/AI_CommandConsole/AI_CommandConsole]
+Cmd: OBJ SAVEPACKAGE PACKAGE="/Game/EditorTools/AI_CommandConsole/AI_CommandConsole" FILE="D:/UnrealProjects/5.6/UE5_Assistant/Content/EditorTools/AI_CommandConsole/AI_CommandConsole.uasset" SILENT=true
+LogSavePackage: Moving output files for package: /Game/EditorTools/AI_CommandConsole/AI_CommandConsole
+LogSavePackage: Moving 'D:/UnrealProjects/5.6/UE5_Assistant/Saved/AI_CommandConsoleCDB4F9204F0AB1ABCCEEA3AA6B2A9009.tmp' to 'D:/UnrealProjects/5.6/UE5_Assistant/Content/EditorTools/AI_CommandConsole/AI_CommandConsole.uasset'
+LogFileHelpers: InternalPromptForCheckoutAndSave took 241.505 ms (total: 3.26 sec)
+LogContentValidation: Display: Starting to validate 1 assets
+LogContentValidation: Enabled validators:
+LogContentValidation:     /Script/DataValidation.EditorValidator_Material
+LogContentValidation:     /Script/DataValidation.DirtyFilesChangelistValidator
+LogContentValidation:     /Script/DataValidation.EditorValidator_Localization
+LogContentValidation:     /Script/DataValidation.PackageFileValidator
+LogContentValidation:     /Script/DataValidation.WorldPartitionChangelistValidator
+LogContentValidation:     /Script/InputBlueprintNodes.EnhancedInputUserWidgetValidator
+AssetCheck: /Game/EditorTools/AI_CommandConsole/AI_CommandConsole Validating asset
+LogPython: [AIAssistant] ℹ️ User: give me a detailed breakdown of my project content
+LogPython: [AIAssistant] ℹ️ User: give me a detailed breakdown of my project content
+LogPython: Error: [ActionExecutor] ❌ [UE_ERROR] Unknown action: get_project_info
+LogPython: [ActionExecutor] ❌ [UE_ERROR] Unknown action: get_project_info
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
