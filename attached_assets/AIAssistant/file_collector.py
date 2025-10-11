@@ -4,18 +4,20 @@ Browses project files, reads source code, and collects file context.
 """
 import os
 from pathlib import Path
-from typing import List, Dict, Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 if TYPE_CHECKING:
     import unreal  # type: ignore
+
+try:
+    import unreal  # type: ignore
     UNREAL_AVAILABLE = True
-else:
-    try:
-        import unreal  # type: ignore
-        UNREAL_AVAILABLE = True
-    except ImportError:
-        UNREAL_AVAILABLE = False
-        print("[FileCollector] Unreal module not available - running in standalone mode")
+except ImportError:
+    UNREAL_AVAILABLE = False
+    print(
+        "[FileCollector] Unreal module not available - "
+        "running in standalone mode"
+    )
 
 
 class FileCollector:
@@ -71,7 +73,7 @@ class FileCollector:
         total_size = 0
         
         if recursive:
-            for root, dirs, filenames in os.walk(path):
+            for root, _, filenames in os.walk(path):
                 depth = len(Path(root).relative_to(path).parts)
                 if depth > max_depth:
                     continue

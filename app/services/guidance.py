@@ -1,8 +1,9 @@
 """Guidance service for context-aware implementation advice."""
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, cast
+
 import openai
 
-from app.models import GuidanceRequest, ViewportContext, FileContext, ProjectProfile, BlueprintCapture
+from app.models import GuidanceRequest
 
 
 class GuidanceService:
@@ -20,7 +21,7 @@ class GuidanceService:
         if request.project_profile:
             proj = request.project_profile
             proj_info = [
-                f"## Project Context",
+                "## Project Context",
                 f"- Project: {proj.project_name}",
                 f"- Engine: {proj.engine_version or 'Unknown'}",
                 f"- Modules: {', '.join(proj.modules) if proj.modules else 'None'}",
@@ -52,7 +53,7 @@ class GuidanceService:
         if request.file_context:
             fc = request.file_context
             fc_info = [
-                f"## File Context",
+                "## File Context",
                 f"- Root Path: {fc.root_path}",
                 f"- Files: {fc.total_files} files ({fc.total_size} bytes)",
             ]
@@ -71,7 +72,7 @@ class GuidanceService:
             context_parts.append("\n".join(fc_info))
         
         if request.blueprint_captures:
-            bp_info = [f"## Blueprint Context"]
+            bp_info = ["## Blueprint Context"]
             for bp in request.blueprint_captures:
                 bp_info.append(f"- Blueprint: {bp.blueprint_name}")
                 bp_info.append(f"  Path: {bp.blueprint_path}")

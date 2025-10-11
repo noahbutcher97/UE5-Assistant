@@ -1,20 +1,27 @@
 """API routes for the UE5 AI Assistant backend."""
-import json
 from typing import Any, Dict, List, Optional, cast
-from fastapi import Request, HTTPException
-from fastapi.responses import RedirectResponse, HTMLResponse
 
+from fastapi import HTTPException, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
+
+from app.config import DEFAULT_CONFIG, RESPONSE_STYLES
+from app.dashboard import get_dashboard_html
 from app.models import (
-    ViewportContext, ConversationEntry, ConfigUpdate,
-    FileContext, FileEntry, ProjectProfile, GuidanceRequest, BlueprintCapture
+    BlueprintCapture,
+    ConfigUpdate,
+    ConversationEntry,
+    GuidanceRequest,
+    ProjectProfile,
+    ViewportContext,
 )
-from app.config import RESPONSE_STYLES, DEFAULT_CONFIG
-from app.services.filtering import filter_viewport_data
-from app.services.openai_client import generate_viewport_description, test_openai_connection
 from app.services import conversation
 from app.services.file_system import FileSystemService
+from app.services.filtering import filter_viewport_data
 from app.services.guidance import GuidanceService
-from app.dashboard import get_dashboard_html
+from app.services.openai_client import (
+    generate_viewport_description,
+    test_openai_connection,
+)
 
 # Session messages for execute_command context (global state for single-user UE integration)
 session_messages: List[Dict[str, str]] = []

@@ -1,21 +1,24 @@
 """File system service for secure file operations."""
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
-from datetime import datetime
 
-from app.models import FileEntry, FileContext
+from app.models import FileContext, FileEntry
 
 
 class FileSystemService:
     """Handles secure file system operations with path validation."""
     
-    def __init__(self, allowed_roots: Optional[List[str]] = None, max_depth: int = 10):
+    def __init__(
+        self, allowed_roots: Optional[List[str]] = None, max_depth: int = 10
+    ):
         """
         Initialize file system service.
         
         Args:
-            allowed_roots: List of allowed root paths. If None, uses current working directory.
+            allowed_roots: List of allowed root paths. If None, uses
+                current working directory.
             max_depth: Maximum directory traversal depth for security.
         """
         self.max_depth = max_depth
@@ -54,7 +57,9 @@ class FileSystemService:
         
         return entry
     
-    def list_directory(self, directory_path: str, recursive: bool = False) -> FileContext:
+    def list_directory(
+        self, directory_path: str, recursive: bool = False
+    ) -> FileContext:
         """List files in a directory."""
         if not self._is_path_allowed(directory_path):
             raise PermissionError(f"Access denied to path: {directory_path}")
@@ -70,7 +75,7 @@ class FileSystemService:
         total_size = 0
         
         if recursive:
-            for root, dirs, filenames in os.walk(path):
+            for root, _, filenames in os.walk(path):
                 depth = len(Path(root).relative_to(path).parts)
                 if depth > self.max_depth:
                     continue
@@ -146,7 +151,11 @@ class FileSystemService:
                 files.append(entry)
                 total_size += entry.size or 0
         
-        search_query = f"pattern={pattern}, ext={extension}" if pattern or extension else None
+        search_query = (
+            f"pattern={pattern}, ext={extension}"
+            if pattern or extension
+            else None
+        )
         
         return FileContext(
             root_path=str(path),

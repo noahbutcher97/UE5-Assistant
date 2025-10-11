@@ -12,10 +12,10 @@ except ImportError:
     unreal = None  # type: ignore  # Only available in UE environment
 
 from .api_client import get_client
+from .blueprint_capture import BlueprintCapture
 from .config import get_config
 from .context_collector import get_collector
 from .file_collector import FileCollector
-from .blueprint_capture import BlueprintCapture
 from .project_metadata_collector import get_collector as get_metadata_collector
 from .utils import Logger
 

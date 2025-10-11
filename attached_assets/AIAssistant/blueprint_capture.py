@@ -1,33 +1,33 @@
 """
 Blueprint screenshot capture for UE5.6.
 
-IMPORTANT: UE5.6 Python API does not provide direct blueprint graph capture.
-This module uses viewport screenshot functionality which requires:
+IMPORTANT: UE5.6 Python API does not provide direct blueprint graph
+capture. This module uses viewport screenshot functionality which requires:
 - Blueprint must be open in the Blueprint Editor
 - Viewport must be focused on the graph area you want to capture
 
-For automated blueprint graph capture, consider using the "Blueprint Screenshot Tool" plugin.
+For automated blueprint graph capture, consider using the
+"Blueprint Screenshot Tool" plugin.
 """
-import os
 import base64
+import os
 from datetime import datetime
-from typing import Dict, Any, Optional, TYPE_CHECKING
-from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 if TYPE_CHECKING:
     import unreal  # type: ignore
+
+try:
+    import unreal  # type: ignore
     UNREAL_AVAILABLE = True
-else:
-    try:
-        import unreal  # type: ignore
-        UNREAL_AVAILABLE = True
-    except ImportError:
-        UNREAL_AVAILABLE = False
-        print("[BlueprintCapture] Unreal module not available")
+except ImportError:
+    UNREAL_AVAILABLE = False
+    print("[BlueprintCapture] Unreal module not available")
 
 
 class BlueprintCapture:
-    """Handles blueprint screenshot capture using UE5.6 viewport screenshot functionality."""
+    """Handles blueprint screenshot capture using UE5.6 viewport
+    screenshot functionality."""
     
     def __init__(self):
         """Initialize blueprint capture."""
@@ -38,7 +38,9 @@ class BlueprintCapture:
                 "AIAssistant"
             )
         else:
-            self.screenshot_dir = os.path.join(os.getcwd(), "Saved", "Screenshots", "AIAssistant")
+            self.screenshot_dir = os.path.join(
+                os.getcwd(), "Saved", "Screenshots", "AIAssistant"
+            )
         
         os.makedirs(self.screenshot_dir, exist_ok=True)
     
@@ -60,7 +62,9 @@ class BlueprintCapture:
         
         try:
             # Get asset subsystem
-            asset_subsystem = unreal.get_editor_subsystem(unreal.EditorAssetSubsystem)  # type: ignore
+            asset_subsystem = unreal.get_editor_subsystem(  # type: ignore
+                unreal.EditorAssetSubsystem  # type: ignore
+            )
             
             # Check if asset exists
             exists = asset_subsystem.does_asset_exist(blueprint_path)
@@ -167,13 +171,23 @@ class BlueprintCapture:
                 available = self.list_available_blueprints()
                 
                 error_msg = f"Blueprint not found: {blueprint_path}\n\n"
-                error_msg += "📋 **Instructions for Blueprint Screenshot:**\n"
-                error_msg += "1. Open the desired Blueprint in the Blueprint Editor\n"
-                error_msg += "2. Focus on the graph you want to capture\n"
+                error_msg += (
+                    "📋 **Instructions for Blueprint Screenshot:**\n"
+                )
+                error_msg += (
+                    "1. Open the desired Blueprint in the "
+                    "Blueprint Editor\n"
+                )
+                error_msg += (
+                    "2. Focus on the graph you want to capture\n"
+                )
                 error_msg += "3. Run the capture command again\n\n"
                 
                 if available.get("count", 0) > 0:
-                    error_msg += f"✅ Found {available['count']} blueprints in your project:\n"
+                    error_msg += (
+                        f"✅ Found {available['count']} blueprints "
+                        "in your project:\n"
+                    )
                     for bp in available["blueprints"][:5]:
                         error_msg += f"  • {bp['name']} ({bp['path']})\n"
                     if available["count"] > 5:
@@ -213,7 +227,9 @@ class BlueprintCapture:
                 # Record files before capture
                 import glob
                 import time
-                existing_files = set(glob.glob(os.path.join(screenshots_base, "*.png")))
+                existing_files = set(
+                    glob.glob(os.path.join(screenshots_base, "*.png"))
+                )
                 
                 # Use UE5.6 high-resolution screenshot command
                 cmd = f"HighResShot {resolution_multiplier}"
@@ -223,7 +239,11 @@ class BlueprintCapture:
                 source_path = None
                 for _ in range(10):
                     time.sleep(0.2)
-                    current_files = set(glob.glob(os.path.join(screenshots_base, "*.png")))
+                    current_files = set(
+                        glob.glob(
+                            os.path.join(screenshots_base, "*.png")
+                        )
+                    )
                     new_files = current_files - existing_files
                     if new_files:
                         source_path = max(new_files, key=os.path.getmtime)
@@ -243,7 +263,10 @@ class BlueprintCapture:
                         "original_path": source_path,
                         "resolution_multiplier": resolution_multiplier,
                         "success": True,
-                        "message": f"Screenshot captured and saved to {destination_path}"
+                        "message": (
+                            f"Screenshot captured and saved to "
+                            f"{destination_path}"
+                        )
                     }
                     
                     unreal.log(f"[BlueprintCapture] Screenshot captured: {filename}")  # type: ignore
@@ -256,7 +279,10 @@ class BlueprintCapture:
                         "timestamp": datetime.now().isoformat(),
                         "success": False,
                         "error": "Screenshot file not found after capture",
-                        "message": f"HighResShot executed but file not detected in {screenshots_base}"
+                        "message": (
+                            f"HighResShot executed but file not "
+                            f"detected in {screenshots_base}"
+                        )
                     }
                 
             except Exception as e:

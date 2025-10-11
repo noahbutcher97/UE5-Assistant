@@ -13,8 +13,8 @@ Uses UE5.6 Python API (Asset Registry, Plugin Manager, etc.)
 """
 
 import os
-from typing import Dict, List, Any, Optional
 from datetime import datetime
+from typing import Any, Dict, Optional
 
 # Type checking guard for Unreal module
 try:
@@ -115,7 +115,10 @@ class ProjectMetadataCollector:
                     modules = project_data.get("Modules", [])
                     return {
                         "total_modules": len(modules),
-                        "modules": [{"name": m.get("Name"), "type": m.get("Type")} for m in modules]
+                        "modules": [
+                            {"name": m.get("Name"), "type": m.get("Type")}
+                            for m in modules
+                        ]
                     }
             return {
                 "total_modules": 0,
@@ -229,7 +232,13 @@ class ProjectMetadataCollector:
             
             return {
                 "total_blueprints": len(blueprints),
-                "by_folder": dict(sorted(by_folder.items(), key=lambda x: x[1], reverse=True)[:10]),
+                "by_folder": dict(
+                    sorted(
+                        by_folder.items(),
+                        key=lambda x: x[1],
+                        reverse=True
+                    )[:10]
+                ),
                 "blueprints": blueprint_list[:50]  # First 50 blueprints
             }
         except Exception as e:
@@ -348,8 +357,11 @@ class ProjectMetadataCollector:
         if "source_code" in metadata and not metadata["source_code"].get("error"):
             src = metadata["source_code"]
             if src.get("has_source_code"):
-                summary += f"**Source Files:** {src.get('total_files', 0)} "
-                summary += f"({src.get('cpp_files', 0)} .cpp, {src.get('header_files', 0)} .h)\n\n"
+                summary += (
+                    f"**Source Files:** {src.get('total_files', 0)} "
+                    f"({src.get('cpp_files', 0)} .cpp, "
+                    f"{src.get('header_files', 0)} .h)\n\n"
+                )
         
         return summary
 
