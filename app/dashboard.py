@@ -583,7 +583,10 @@ def get_dashboard_html() -> str:
     
     async function loadConversations() {
         try {
-            const response = await fetch('/api/conversations?limit=50');
+            const response = await fetch(`${window.location.origin}/api/conversations?limit=50`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = await response.json();
             
             // Update stats
@@ -650,7 +653,10 @@ def get_dashboard_html() -> str:
     
     async function loadSettings() {
         try {
-            const response = await fetch('/api/config');
+            const response = await fetch(`${window.location.origin}/api/config`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = await response.json();
             const config = data.config;
             
@@ -683,13 +689,16 @@ def get_dashboard_html() -> str:
                 timeout: parseInt(document.getElementById('timeout').value)
             };
             
-            const response = await fetch('/api/config', {
+            const response = await fetch(`${window.location.origin}/api/config`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(settings)
             });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             
             const result = await response.json();
             
@@ -708,7 +717,10 @@ def get_dashboard_html() -> str:
         if (!confirm('Reset all settings to defaults?')) return;
         
         try {
-            const response = await fetch('/api/config');
+            const response = await fetch(`${window.location.origin}/api/config`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             const data = await response.json();
             const defaults = data.defaults;
             
@@ -721,7 +733,7 @@ def get_dashboard_html() -> str:
                 timeout: defaults.timeout
             };
             
-            const saveResponse = await fetch('/api/config', {
+            const saveResponse = await fetch(`${window.location.origin}/api/config`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -747,9 +759,13 @@ def get_dashboard_html() -> str:
         }
         
         try {
-            const response = await fetch('/api/conversations', {
+            const response = await fetch(`${window.location.origin}/api/conversations`, {
                 method: 'DELETE'
             });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             
             const result = await response.json();
             
