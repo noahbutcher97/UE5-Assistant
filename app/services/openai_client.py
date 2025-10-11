@@ -39,16 +39,40 @@ def generate_viewport_description(
     
     # Focus instructions for different styles
     focus_instructions = {
-        "essentials_only": "Focus ONLY on: camera position, selected objects (if any), and total actor count. One short paragraph.",
-        "notable_elements": "Describe what's interesting or notable in the scene. Skip mundane details. Conversational tone.",
-        "key_elements_summary": "Summarize key elements: selected objects, main actor types, overall layout. Skip repetitive details.",
-        "balanced_overview": "Provide a balanced overview covering camera, selection, major actors, and scene organization.",
-        "precision_and_specs": "Provide precise technical specifications with exact coordinates, transforms, counts, and classifications.",
-        "comprehensive_analysis": "Analyze all viewport elements comprehensively. Include spatial relationships, technical details, and complete inventories.",
-        "visual_narrative": "Paint a vivid picture using creative language and imagery. Use metaphors, sensory details, and flowing narrative."
+        "essentials_only": (
+            "Focus ONLY on: camera position, selected objects (if any), "
+            "and total actor count. One short paragraph."
+        ),
+        "notable_elements": (
+            "Describe what's interesting or notable in the scene. Skip "
+            "mundane details. Conversational tone."
+        ),
+        "key_elements_summary": (
+            "Summarize key elements: selected objects, main actor types, "
+            "overall layout. Skip repetitive details."
+        ),
+        "balanced_overview": (
+            "Provide a balanced overview covering camera, selection, "
+            "major actors, and scene organization."
+        ),
+        "precision_and_specs": (
+            "Provide precise technical specifications with exact "
+            "coordinates, transforms, counts, and classifications."
+        ),
+        "comprehensive_analysis": (
+            "Analyze all viewport elements comprehensively. Include "
+            "spatial relationships, technical details, and complete "
+            "inventories."
+        ),
+        "visual_narrative": (
+            "Paint a vivid picture using creative language and imagery. "
+            "Use metaphors, sensory details, and flowing narrative."
+        )
     }
     
-    focus_instruction = focus_instructions.get(focus, focus_instructions["balanced_overview"])
+    focus_instruction = focus_instructions.get(
+        focus, focus_instructions["balanced_overview"]
+    )
     
     # Build prompt
     prompt = (
@@ -64,7 +88,10 @@ def generate_viewport_description(
         f"{style_modifier}"
     )
     
-    print(f"[OpenAI] Generating description with style={style_name}, temp={effective_temp}, max_tokens={max_tokens}")
+    print(
+        f"[OpenAI] Generating description with style={style_name}, "
+        f"temp={effective_temp}, max_tokens={max_tokens}"
+    )
     
     # Call OpenAI API
     try:

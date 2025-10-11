@@ -66,7 +66,11 @@ class GuidanceService:
                 for file in fc.files[:10]:
                     fc_info.append(f"  * {file.name} ({file.type})")
                     if file.content and len(fc.files) <= 3:
-                        preview = file.content[:200] + "..." if len(file.content) > 200 else file.content
+                        preview = (
+                            file.content[:200] + "..."
+                            if len(file.content) > 200
+                            else file.content
+                        )
                         fc_info.append(f"    Content preview: {preview}")
             
             context_parts.append("\n".join(fc_info))
@@ -89,12 +93,17 @@ class GuidanceService:
         
         focus_modifier = ""
         if request.focus_area:
-            focus_modifier = f"\nFocus your advice specifically on {request.focus_area} aspects."
+            focus_modifier = (
+                f"\nFocus your advice specifically on "
+                f"{request.focus_area} aspects."
+            )
         
         system_prompt = (
-            "You are an expert Unreal Engine 5 developer providing context-aware implementation guidance. "
-            "Analyze the provided project context, viewport state, file information, and blueprints to give "
-            "precise, actionable advice. Include specific UE5 API calls, Blueprint node suggestions, and "
+            "You are an expert Unreal Engine 5 developer providing "
+            "context-aware implementation guidance. Analyze the provided "
+            "project context, viewport state, file information, and "
+            "blueprints to give precise, actionable advice. Include "
+            "specific UE5 API calls, Blueprint node suggestions, and "
             "best practices relevant to the user's exact situation."
             f"{focus_modifier}"
         )
@@ -118,14 +127,19 @@ Based on this context, provide detailed implementation guidance. Include:
         )
         
         if has_images and request.blueprint_captures:
-            user_content: List[Dict[str, Any]] = [{"type": "text", "text": user_text}]
+            user_content: List[Dict[str, Any]] = [
+                {"type": "text", "text": user_text}
+            ]
             
             for bp in request.blueprint_captures:
                 if bp.image_base64:
+                    image_data_url = (
+                        f"data:image/png;base64,{bp.image_base64}"
+                    )
                     user_content.append({
                         "type": "image_url",
                         "image_url": {
-                            "url": f"data:image/png;base64,{bp.image_base64}",
+                            "url": image_data_url,
                             "detail": "high"
                         }
                     })
@@ -135,7 +149,11 @@ Based on this context, provide detailed implementation guidance. Include:
                 {"role": "user", "content": user_content}
             ]
             
-            vision_model = "gpt-4o" if self.model in ["gpt-4o-mini", "gpt-3.5-turbo"] else self.model
+            vision_model = (
+                "gpt-4o"
+                if self.model in ["gpt-4o-mini", "gpt-3.5-turbo"]
+                else self.model
+            )
         else:
             messages = [
                 {"role": "system", "content": system_prompt},

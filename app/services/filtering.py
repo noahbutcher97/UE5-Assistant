@@ -5,7 +5,9 @@ if TYPE_CHECKING:
     from app.models import ViewportContext
 
 
-def filter_viewport_data(context: 'ViewportContext', filter_mode: str) -> Dict[str, Any]:
+def filter_viewport_data(
+    context: 'ViewportContext', filter_mode: str
+) -> Dict[str, Any]:
     """
     Intelligently filter viewport data based on response style.
     Returns a filtered dict optimized for the requested level of detail.
@@ -14,8 +16,16 @@ def filter_viewport_data(context: 'ViewportContext', filter_mode: str) -> Dict[s
     
     # Camera is always included (spatial context is essential)
     filtered["camera"] = {
-        "location": context.camera.get("location", [0, 0, 0]) if context.camera else [0, 0, 0],
-        "rotation": context.camera.get("rotation", [0, 0, 0]) if context.camera else [0, 0, 0]
+        "location": (
+            context.camera.get("location", [0, 0, 0])
+            if context.camera
+            else [0, 0, 0]
+        ),
+        "rotation": (
+            context.camera.get("rotation", [0, 0, 0])
+            if context.camera
+            else [0, 0, 0]
+        )
     }
     
     actors_data = context.actors or {}
@@ -27,7 +37,11 @@ def filter_viewport_data(context: 'ViewportContext', filter_mode: str) -> Dict[s
         selected_actors = selection_data.get("actors", [])
         filtered["selection"] = {
             "count": len(selected_actors),
-            "actors": selected_actors[:3] if len(selected_actors) > 3 else selected_actors
+            "actors": (
+                selected_actors[:3]
+                if len(selected_actors) > 3
+                else selected_actors
+            )
         }
         filtered["actors_summary"] = {
             "total": actors_data.get("total", 0),
@@ -40,7 +54,11 @@ def filter_viewport_data(context: 'ViewportContext', filter_mode: str) -> Dict[s
         all_names = actors_data.get("names", [])
         filtered["actors"] = {
             "total": actors_data.get("total", 0),
-            "notable": selected_actors + all_names[:5] if all_names else selected_actors,
+            "notable": (
+                selected_actors + all_names[:5]
+                if all_names
+                else selected_actors
+            ),
             "types_summary": actors_data.get("types", {})
         }
         if lighting_data.get("directional_lights") or lighting_data.get("point_lights"):
@@ -64,7 +82,8 @@ def filter_viewport_data(context: 'ViewportContext', filter_mode: str) -> Dict[s
                 "has_landscape": bool(environment_data.get("landscape"))
             }
     
-    elif filter_mode == "standard":  # Descriptive/Creative: Good detail without overwhelming
+    elif filter_mode == "standard":
+        # Descriptive/Creative: Good detail without overwhelming
         filtered["selection"] = selection_data
         filtered["actors"] = {
             "total": actors_data.get("total", 0),
