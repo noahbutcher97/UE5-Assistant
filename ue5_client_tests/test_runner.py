@@ -12,17 +12,16 @@ sys.path.insert(0, str(tests_dir))
 
 # Import mock unreal module BEFORE importing UE5 client code
 import mock_unreal
+
 sys.modules['unreal'] = mock_unreal
 
 # Now import UE5 client modules (they'll use the mock)
 client_dir = tests_dir.parent / "attached_assets" / "AIAssistant"
 sys.path.insert(0, str(client_dir))
 
-from file_collector import FileCollector  # type: ignore
-from project_metadata_collector import (  # type: ignore
-    ProjectMetadataCollector
-)
 from blueprint_capture import BlueprintCapture  # type: ignore
+from file_collector import FileCollector  # type: ignore
+from project_metadata_collector import ProjectMetadataCollector  # type: ignore
 
 
 def test_file_collector():
