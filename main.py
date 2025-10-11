@@ -16,6 +16,34 @@ from pydantic import BaseModel
 # Config file path
 CONFIG_FILE = Path("config.json")
 
+# Response style presets
+RESPONSE_STYLES = {
+    "descriptive": {
+        "name": "Descriptive (Default)",
+        "prompt_modifier": "Provide clear, descriptive technical prose that explains what you see in the viewport. Be factual and specific."
+    },
+    "technical": {
+        "name": "Technical/Precise",
+        "prompt_modifier": "Use precise technical terminology and structured documentation format. Include exact values, object types, and technical specifications."
+    },
+    "natural": {
+        "name": "Natural/Conversational",
+        "prompt_modifier": "Respond in a natural, conversational tone as if explaining to a colleague. Be friendly but informative."
+    },
+    "balanced": {
+        "name": "Balanced",
+        "prompt_modifier": "Balance technical accuracy with readability. Use clear language while maintaining precision."
+    },
+    "concise": {
+        "name": "Concise/Brief",
+        "prompt_modifier": "Be brief and to-the-point. Summarize key information without unnecessary detail."
+    },
+    "detailed": {
+        "name": "Detailed/Verbose",
+        "prompt_modifier": "Provide comprehensive, detailed analysis of all aspects. Include context, implications, and suggestions."
+    }
+}
+
 # Default configuration
 DEFAULT_CONFIG = {
     "model": "gpt-4o-mini",
@@ -24,7 +52,8 @@ DEFAULT_CONFIG = {
     "timeout": 25,
     "max_retries": 3,
     "retry_delay": 2.5,
-    "verbose": False
+    "verbose": False,
+    "response_style": "descriptive"
 }
 
 # Global config (loaded from file or defaults)
@@ -113,6 +142,7 @@ class ConfigUpdate(BaseModel):
     max_retries: Optional[int] = None
     retry_delay: Optional[float] = None
     verbose: Optional[bool] = None
+    response_style: Optional[str] = None
 
 
 # ============================================================
@@ -193,16 +223,22 @@ async def ping_openai():
 
 # NOTE: session_messages is shared global state for single-user UE integration
 # For multi-user deployments, consider session management per user/connection
-session_messages: List[Dict[str, str]] = [{
-    "role":
-    "system",
-    "content": (
-        "You are a technical documentation system for Unreal Engine 5.6. "
-        "Generate structured technical prose describing editor state and scene contents. "
-        "Use precise terminology, include specific names and values, connect information logically. "
-        "Write in third-person declarative style. Avoid conversational phrasing, questions, or subjective language. "
-        "Format output as coherent technical paragraphs, not chat responses."
+
+def get_system_message() -> str:
+    """Generate system message with current response style."""
+    current_style = app_config.get("response_style", "descriptive")
+    style_modifier = RESPONSE_STYLES.get(current_style, RESPONSE_STYLES["descriptive"])["prompt_modifier"]
+    
+    base_msg = (
+        "You are an AI assistant for Unreal Engine 5.6. "
+        "Generate structured prose describing editor state and scene contents. "
+        "Use terminology appropriate for UE5, include specific names and values. "
     )
+    return base_msg + style_modifier
+
+session_messages: List[Dict[str, str]] = [{
+    "role": "system",
+    "content": get_system_message()
 }]
 
 
@@ -412,29 +448,22 @@ async def describe_viewport(request: Request):
               f"{context.model_dump_json(indent=2)}")
 
     # ------------------------------------------------------------
-    # 4️⃣ System message (matches style)
+    # 4️⃣ System message with configurable response style
     # ------------------------------------------------------------
-    if style == "technical":
-        system_msg = (
-            "You are a technical documentation system for Unreal Engine 5.6. "
-            "Generate comprehensive descriptions using flowing prose paragraphs, not lists or bullet points. "
-            "Systematically analyze and describe all scene elements: camera configuration, actor inventory, "
-            "spatial relationships, environmental systems, and selection state. Include every specific name, "
-            "coordinate value, class type, and quantitative measurement. Connect related information into "
-            "coherent explanatory sentences. Write as detailed technical documentation that thoroughly "
-            "explains scene composition. Use precise terminology and factual statements. Never use "
-            "conversational tone, subjective qualifiers, casual language, or interpretive descriptions. "
-            "If data is missing, state it explicitly as a technical observation."
-        )
-    else:
-        system_msg = (
-            "You are a technical documentation system for Unreal Engine 5.6. "
-            "Generate detailed descriptions using complete sentences and flowing prose, not fragmented lists. "
-            "Describe all scene elements comprehensively: camera state, visible actors, spatial organization, "
-            "environmental components. Include specific names, values, and technical classifications. "
-            "Connect information into coherent paragraphs. Maintain objective, informative tone with precise "
-            "terminology. Avoid conversational phrasing, subjective descriptors, and casual language."
-        )
+    # Get response style from config
+    current_style = app_config.get("response_style", "descriptive")
+    style_modifier = RESPONSE_STYLES.get(current_style, RESPONSE_STYLES["descriptive"])["prompt_modifier"]
+    
+    # Base system message
+    base_system_msg = (
+        "You are an AI assistant for Unreal Engine 5.6. "
+        "Generate descriptions using complete sentences and flowing prose, not fragmented lists. "
+        "Describe scene elements: camera state, visible actors, spatial organization, "
+        "environmental components. Include specific names, values, and technical classifications. "
+    )
+    
+    # Combine with style modifier
+    system_msg = base_system_msg + style_modifier
 
     # ------------------------------------------------------------
     # 5️⃣ Send to OpenAI
@@ -577,14 +606,16 @@ async def get_config():
     """Get current configuration."""
     return {
         "config": app_config,
-        "defaults": DEFAULT_CONFIG
+        "defaults": DEFAULT_CONFIG,
+        "response_styles": RESPONSE_STYLES,
+        "available_models": ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"]
     }
 
 
 @app.post("/api/config")
 async def update_config(updates: ConfigUpdate):
     """Update configuration settings."""
-    global app_config, MODEL_NAME
+    global app_config, MODEL_NAME, session_messages
     
     # Update config with provided values
     update_dict = updates.model_dump(exclude_none=True)
@@ -596,6 +627,10 @@ async def update_config(updates: ConfigUpdate):
     # Update MODEL_NAME if model changed
     if "model" in update_dict:
         MODEL_NAME = update_dict["model"]
+    
+    # Update system message if response_style changed
+    if "response_style" in update_dict:
+        session_messages[0]["content"] = get_system_message()
     
     # Save to file
     save_config(app_config)
