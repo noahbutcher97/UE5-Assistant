@@ -42,6 +42,10 @@ class Config:
         "detailed": {
             "name": "Detailed/Verbose",
             "description": "Comprehensive exhaustive analysis of all elements"
+        },
+        "creative": {
+            "name": "Creative/Imaginative",
+            "description": "Vivid imagery and narrative storytelling to visualize the scene"
         }
     }
 

@@ -59,6 +59,14 @@ RESPONSE_STYLES = {
         "max_tokens": 800,
         "data_filter": "complete",  # Everything available
         "focus": "comprehensive_analysis"
+    },
+    "creative": {
+        "name": "Creative/Imaginative",
+        "prompt_modifier": "Paint a vivid picture using creative language and imagery. Help visualize the scene with descriptive metaphors, sensory details, and spatial storytelling. Structure as flowing narrative paragraphs that bring the viewport to life.",
+        "max_tokens": 450,
+        "temperature_override": 0.9,  # Higher creativity
+        "data_filter": "standard",  # Selected + representative actors
+        "focus": "visual_narrative"
     }
 }
 
@@ -1284,6 +1292,7 @@ async def dashboard():
                         <option value="balanced">Balanced - Mix of technical and readable</option>
                         <option value="concise">Concise/Brief - Short and to the point</option>
                         <option value="detailed">Detailed/Verbose - Comprehensive analysis</option>
+                        <option value="creative">Creative/Imaginative - Vivid imagery and storytelling</option>
                     </select>
                 </div>
                 

@@ -15,6 +15,7 @@ Data is pre-processed based on response style BEFORE sending to OpenAI:
 - **Descriptive**: Selected + 15 actors + full lighting/environment  
 - **Technical**: All data + metadata (actor counts, lighting counts)
 - **Detailed**: Complete exhaustive data including all actors
+- **Creative**: Selected + 10 actors + environment (standard data with creative framing)
 
 ###  2. **Style-Specific Token Limits**
 Each style has optimized max_tokens to enforce appropriate response length:
@@ -25,6 +26,7 @@ Each style has optimized max_tokens to enforce appropriate response length:
 | Natural | 300 | ~200-800 chars |
 | Balanced | 350 | ~250-900 chars |
 | Descriptive | 400 | ~300-1000 chars |
+| Creative | 450 | ~350-1200 chars |
 | Technical | 500 | ~400-1200 chars |
 | Detailed | 800 | ~600-2000 chars |
 
@@ -34,6 +36,7 @@ AI receives explicit instructions on what to prioritize:
 - **Concise**: "Focus ONLY on camera position, selected objects, total actor count. One short paragraph."
 - **Natural**: "Describe what's interesting or notable. Skip mundane details. Conversational tone."
 - **Balanced**: "Summarize key elements. Skip repetitive details."
+- **Creative**: "Paint a vivid picture using creative language and imagery. Use metaphors and sensory details."
 - **Technical**: "Provide precise technical specifications with exact coordinates and classifications."
 - **Detailed**: "Analyze all elements comprehensively. Include spatial relationships and complete inventories."
 
@@ -148,6 +151,12 @@ Optional rich project context for more intelligent AI responses:
 - **Use case**: Comprehensive analysis, training, documentation
 - **Data filter**: Complete exhaustive data
 - **Tone**: Thorough analysis with spatial relationships
+
+### Creative/Imaginative
+- **Use case**: Visualization, presentations, creative exploration, scene storytelling
+- **Data filter**: Standard (selected + 10 actors + environment)
+- **Tone**: Vivid imagery, metaphors, sensory details, flowing narrative paragraphs
+- **Temperature**: 0.9 (higher creativity)
 
 ## Enabling Project Metadata
 
