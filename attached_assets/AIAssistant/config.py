@@ -93,7 +93,16 @@ class Config:
         "verbose_logging": False,
         "enable_confirmations": True,
         "max_context_turns": 6,
-        "collect_project_metadata": True,  # NEW: Enable project context collection
+        "collect_project_metadata": True,  # Enable project context collection
+        
+        # New feature flags (v3.1)
+        "enable_file_operations": True,  # Enable file browsing and reading
+        "enable_guidance_requests": True,  # Enable context-aware implementation guidance
+        "enable_blueprint_capture": True,  # Enable Blueprint screenshot capture
+        "file_operation_security": "read_only",  # Security level: read_only, restricted, full
+        "blueprint_capture_resolution": 2,  # Screenshot resolution multiplier (1-4)
+        "max_file_read_size": 1048576,  # Max file size to read (1MB default)
+        "project_metadata_cache_ttl": 300,  # Project metadata cache TTL in seconds
     }
 
     def __init__(self, config_path: Optional[Path] = None):
