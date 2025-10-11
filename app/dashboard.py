@@ -386,6 +386,7 @@ def get_dashboard_html() -> str:
         
         .container {
             max-width: 100%;
+            padding: 0;
         }
         
         .header {
@@ -394,6 +395,10 @@ def get_dashboard_html() -> str:
         
         .header h1 {
             font-size: 1.5em;
+        }
+        
+        .header p {
+            font-size: 0.9em;
         }
         
         .stats {
@@ -408,6 +413,7 @@ def get_dashboard_html() -> str:
         .tabs {
             flex-wrap: wrap;
             gap: 8px;
+            padding: 10px;
         }
         
         .tab {
@@ -417,8 +423,31 @@ def get_dashboard_html() -> str:
             min-width: fit-content;
         }
         
-        .card {
-            padding: 20px 15px;
+        .card, .tab-content {
+            padding: 15px;
+            margin: 10px;
+        }
+        
+        .controls {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .controls > div {
+            width: 100%;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        
+        .refresh-btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        
+        .auto-refresh {
+            flex: 1;
+            min-width: fit-content;
         }
         
         .settings-grid {
@@ -436,11 +465,12 @@ def get_dashboard_html() -> str:
         }
         
         h2 {
-            font-size: 1.5em;
+            font-size: 1.3em;
+            margin: 0 0 10px 0;
         }
         
         h3 {
-            font-size: 1.2em;
+            font-size: 1.1em;
         }
         
         ul {
@@ -451,25 +481,112 @@ def get_dashboard_html() -> str:
         .setting-select {
             font-size: 16px; /* Prevents zoom on iOS */
         }
+        
+        .setting-group {
+            margin-bottom: 20px;
+        }
     }
     
     @media (max-width: 480px) {
+        body {
+            padding: 5px;
+        }
+        
+        .container {
+            padding: 0;
+        }
+        
+        .header {
+            padding: 15px 10px;
+        }
+        
         .header h1 {
-            font-size: 1.3em;
+            font-size: 1.2em;
+        }
+        
+        .header p {
+            font-size: 0.85em;
+        }
+        
+        .stat-card {
+            padding: 10px;
         }
         
         .stat-card .number {
             font-size: 1.5em;
         }
         
-        .tab {
-            padding: 8px 12px;
-            font-size: 13px;
+        .stat-card .label {
+            font-size: 0.85em;
         }
         
-        .card {
-            padding: 15px 10px;
+        .tabs {
+            padding: 5px;
+            gap: 5px;
         }
+        
+        .tab {
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+        
+        .card, .tab-content {
+            padding: 12px 8px;
+            margin: 5px;
+        }
+        
+        .controls h2 {
+            font-size: 1.2em;
+        }
+        
+        .controls > div {
+            flex-direction: column;
+            gap: 10px;
+            align-items: stretch;
+        }
+        
+        .refresh-btn,
+        .auto-refresh {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+        }
+        
+        .setting-group {
+            margin-bottom: 15px;
+        }
+        
+        .conversation-item {
+            padding: 12px;
+        }
+    }
+    
+    /* Edge Case Handling - Ensure all content is bounded */
+    * {
+        box-sizing: border-box;
+    }
+    
+    .tab-content {
+        overflow-x: hidden;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .controls > div {
+        max-width: 100%;
+    }
+    
+    h1, h2, h3, p, li {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    button {
+        max-width: 100%;
+    }
+    
+    .refresh-btn {
+        white-space: nowrap;
     }
 </style>
 </head>
