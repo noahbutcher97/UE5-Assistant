@@ -51,7 +51,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     @app.get("/health")
     async def health_check():
         """Health check endpoint for API monitoring."""
-        return {"status": "online", "message": "UE5 AI Assistant running!", "version": "2.0"}
+        return {"status": "online", "message": "UE5 AI Assistant running!", "version": "3.0"}
 
     @app.get("/test")
     async def test_endpoint():
