@@ -726,10 +726,15 @@ async def dashboard():
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0e27;
+            background-image: 
+                linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
             min-height: 100vh;
             padding: 20px;
+            color: #e0e6ed;
         }
         
         .container {
@@ -738,20 +743,26 @@ async def dashboard():
         }
         
         .header {
-            background: white;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 245, 255, 0.2);
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 0 30px rgba(0, 245, 255, 0.1), 0 10px 30px rgba(0,0,0,0.5);
             margin-bottom: 20px;
         }
         
         .header h1 {
-            color: #667eea;
+            color: #00f5ff;
             margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+            letter-spacing: -0.5px;
         }
         
         .header p {
-            color: #666;
+            color: #94a3b8;
+            font-size: 0.95em;
         }
         
         .stats {
@@ -762,21 +773,31 @@ async def dashboard():
         
         .stat-card {
             flex: 1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: rgba(0, 245, 255, 0.05);
+            border: 1px solid rgba(0, 245, 255, 0.2);
+            color: #e0e6ed;
             padding: 15px;
             border-radius: 8px;
             text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            background: rgba(0, 245, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
         }
         
         .stat-card .number {
             font-size: 2em;
             font-weight: bold;
+            color: #00f5ff;
+            text-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
         }
         
         .stat-card .label {
-            opacity: 0.9;
+            opacity: 0.7;
             font-size: 0.9em;
+            color: #94a3b8;
         }
         
         .tabs {
@@ -786,33 +807,43 @@ async def dashboard():
         }
         
         .tab {
-            background: white;
-            border: none;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(0, 245, 255, 0.2);
+            color: #94a3b8;
             padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
+            font-weight: 500;
             transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            background: rgba(0, 245, 255, 0.1);
+            border-color: #00f5ff;
+            color: #00f5ff;
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
         }
         
         .tab:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            border-color: #00f5ff;
+            color: #00f5ff;
         }
         
         .tab-content {
             display: none;
-            background: white;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 245, 255, 0.2);
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 0 30px rgba(0, 245, 255, 0.1);
+        }
+        
+        .tab-content h2 {
+            color: #00f5ff;
+            margin-bottom: 15px;
         }
         
         .tab-content.active {
@@ -826,15 +857,17 @@ async def dashboard():
         }
         
         .conversation-item {
-            border: 1px solid #e0e0e0;
+            border: 1px solid rgba(0, 245, 255, 0.15);
+            background: rgba(0, 20, 40, 0.5);
             border-radius: 8px;
             padding: 20px;
             transition: all 0.3s;
         }
         
         .conversation-item:hover {
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+            border-color: #00f5ff;
+            background: rgba(0, 20, 40, 0.8);
         }
         
         .conversation-header {
@@ -845,79 +878,89 @@ async def dashboard():
         }
         
         .timestamp {
-            color: #999;
+            color: #64748b;
             font-size: 0.85em;
+            font-family: 'Courier New', monospace;
         }
         
         .command-type {
-            background: #667eea;
-            color: white;
+            background: rgba(0, 245, 255, 0.2);
+            color: #00f5ff;
             padding: 4px 12px;
             border-radius: 12px;
             font-size: 0.85em;
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            font-family: 'Courier New', monospace;
         }
         
         .user-input {
-            background: #f5f5f5;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 245, 255, 0.1);
             padding: 12px;
             border-radius: 6px;
             margin-bottom: 12px;
+            color: #cbd5e1;
             border-left: 3px solid #667eea;
         }
         
         .user-input strong {
-            color: #667eea;
+            color: #00f5ff;
         }
         
         .assistant-response {
-            background: #f9f9f9;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 245, 255, 0.1);
             padding: 12px;
             border-radius: 6px;
-            border-left: 3px solid #764ba2;
+            border-left: 3px solid #00f5ff;
             max-height: 200px;
             overflow-y: auto;
+            color: #cbd5e1;
         }
         
         .assistant-response strong {
-            color: #764ba2;
+            color: #00f5ff;
         }
         
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #999;
+            color: #64748b;
         }
         
         .empty-state svg {
             width: 80px;
             height: 80px;
             margin-bottom: 20px;
-            opacity: 0.5;
+            opacity: 0.3;
+            stroke: #00f5ff;
         }
         
         .refresh-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid #00f5ff;
+            color: #00f5ff;
             padding: 10px 20px;
             border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: transform 0.2s;
+            transition: all 0.3s;
         }
         
         .refresh-btn:hover {
-            transform: scale(1.05);
+            background: rgba(0, 245, 255, 0.2);
+            box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
         }
         
         .auto-refresh {
             display: flex;
             align-items: center;
             gap: 8px;
-            color: #666;
+            color: #94a3b8;
             font-size: 14px;
         }
         
@@ -929,10 +972,16 @@ async def dashboard():
         }
         
         .setting-group {
-            background: #f9f9f9;
+            background: rgba(0, 20, 40, 0.4);
+            border: 1px solid rgba(0, 245, 255, 0.15);
             padding: 20px;
             border-radius: 8px;
-            border: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .setting-group:hover {
+            border-color: rgba(0, 245, 255, 0.3);
+            background: rgba(0, 20, 40, 0.6);
         }
         
         .setting-label {
@@ -942,35 +991,42 @@ async def dashboard():
             margin-bottom: 12px;
         }
         
+        .setting-label strong {
+            color: #00f5ff;
+        }
+        
         .setting-description {
             font-size: 13px;
-            color: #666;
+            color: #94a3b8;
             font-weight: normal;
         }
         
         .setting-input, .setting-slider {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ddd;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 245, 255, 0.2);
             border-radius: 6px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            color: #e0e6ed;
+            transition: all 0.3s;
         }
         
         .setting-input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #00f5ff;
+            box-shadow: 0 0 10px rgba(0, 245, 255, 0.2);
         }
         
         .setting-slider {
             padding: 0;
             height: 8px;
             cursor: pointer;
+            accent-color: #00f5ff;
         }
         
         .save-btn, .reset-btn {
             padding: 12px 24px;
-            border: none;
             border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
@@ -979,24 +1035,35 @@ async def dashboard():
         }
         
         .save-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid #00f5ff;
+            color: #00f5ff;
             flex: 1;
         }
         
         .save-btn:hover {
+            background: rgba(0, 245, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
         
         .reset-btn {
-            background: #f0f0f0;
-            color: #666;
+            background: rgba(100, 116, 139, 0.1);
+            border: 1px solid #64748b;
+            color: #94a3b8;
             flex: 1;
         }
         
         .reset-btn:hover {
-            background: #e0e0e0;
+            background: rgba(100, 116, 139, 0.2);
+            border-color: #94a3b8;
+            color: #cbd5e1;
+        }
+        
+        .clear-history-btn:hover {
+            background: #c0392b !important;
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.4) !important;
+            transform: translateY(-2px);
         }
         
         .save-status {
@@ -1008,15 +1075,15 @@ async def dashboard():
         }
         
         .save-status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
         }
         
         .save-status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
         }
     </style>
 </head>
@@ -1151,14 +1218,14 @@ async def dashboard():
                 <div id="save-status" class="save-status"></div>
                 
                 <!-- Conversation History Management -->
-                <div class="setting-group" style="margin-top: 30px; border: 2px solid #e74c3c;">
+                <div class="setting-group" style="margin-top: 30px; border: 2px solid rgba(231, 76, 60, 0.5); background: rgba(231, 76, 60, 0.05);">
                     <label class="setting-label">
                         <strong>🗑️ Conversation History</strong>
-                        <span class="setting-description" style="color: #e74c3c;">
+                        <span class="setting-description" style="color: #ef4444;">
                             Clear all stored conversations (both memory and persistent file)
                         </span>
                     </label>
-                    <button onclick="clearHistory()" class="clear-history-btn" style="background: #e74c3c; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s;">
+                    <button onclick="clearHistory()" class="clear-history-btn" style="background: rgba(231, 76, 60, 0.2); color: #ef4444; padding: 12px 24px; border: 1px solid #ef4444; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s;">
                         🗑️ Clear All Conversations
                     </button>
                 </div>
@@ -1167,29 +1234,30 @@ async def dashboard():
         
         <div id="api" class="tab-content">
             <h2>API Endpoints</h2>
-            <p style="margin: 15px 0;">Available API endpoints for the UE5 AI Assistant:</p>
+            <p style="margin: 15px 0; color: #94a3b8;">Available API endpoints for the UE5 AI Assistant:</p>
             <ul style="list-style: none; line-height: 2;">
-                <li><strong>GET /</strong> - Health check</li>
-                <li><strong>POST /execute_command</strong> - Execute AI commands</li>
-                <li><strong>POST /describe_viewport</strong> - Generate viewport descriptions</li>
-                <li><strong>GET /api/conversations</strong> - Retrieve conversation history</li>
-                <li><strong>POST /api/log_conversation</strong> - Manually log a conversation</li>
-                <li><strong>GET /dashboard</strong> - This dashboard</li>
+                <li><strong style="color: #00f5ff;">GET /</strong> <span style="color: #94a3b8;">- Health check</span></li>
+                <li><strong style="color: #00f5ff;">POST /execute_command</strong> <span style="color: #94a3b8;">- Execute AI commands</span></li>
+                <li><strong style="color: #00f5ff;">POST /describe_viewport</strong> <span style="color: #94a3b8;">- Generate viewport descriptions</span></li>
+                <li><strong style="color: #00f5ff;">GET /api/conversations</strong> <span style="color: #94a3b8;">- Retrieve conversation history</span></li>
+                <li><strong style="color: #00f5ff;">POST /api/log_conversation</strong> <span style="color: #94a3b8;">- Manually log a conversation</span></li>
+                <li><strong style="color: #00f5ff;">DELETE /api/conversations</strong> <span style="color: #94a3b8;">- Clear all conversation history</span></li>
+                <li><strong style="color: #00f5ff;">GET /dashboard</strong> <span style="color: #94a3b8;">- This dashboard</span></li>
             </ul>
         </div>
         
         <div id="about" class="tab-content">
             <h2>About UE5 AI Assistant</h2>
-            <p style="margin: 15px 0; line-height: 1.6;">
+            <p style="margin: 15px 0; line-height: 1.6; color: #94a3b8;">
                 This is a FastAPI backend service that provides AI-powered technical documentation 
                 of Unreal Engine 5 editor viewport contexts. The system receives structured viewport 
                 data from the Unreal Engine Python environment and uses OpenAI's GPT models to generate 
                 technical prose descriptions.
             </p>
-            <p style="margin: 15px 0; line-height: 1.6;">
-                <strong>Version:</strong> 2.0 (Modular Architecture)<br>
-                <strong>Model:</strong> GPT-4o-mini<br>
-                <strong>Project by:</strong> Noah Butcher
+            <p style="margin: 15px 0; line-height: 1.6; color: #cbd5e1;">
+                <strong style="color: #00f5ff;">Version:</strong> 2.0 (Modular Architecture)<br>
+                <strong style="color: #00f5ff;">Model:</strong> GPT-4o-mini<br>
+                <strong style="color: #00f5ff;">Project by:</strong> Noah Butcher
             </p>
         </div>
     </div>
