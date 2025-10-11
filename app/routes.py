@@ -13,6 +13,7 @@ from app.services.filtering import filter_viewport_data
 from app.services.openai_client import generate_viewport_description, test_openai_connection
 from app.services import conversation
 from app.services.file_system import FileSystemService
+from app.services.guidance import GuidanceService
 from app.dashboard import get_dashboard_html
 
 # Session messages for execute_command context (global state for single-user UE integration)
@@ -380,6 +381,43 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                     for name, profile in project_metadata_cache.items()
                 },
                 "count": len(project_metadata_cache)
+            }
+
+    # Guidance Routes
+    guidance_service = GuidanceService(
+        model=app_config.get("model", "gpt-4o-mini"),
+        temperature=app_config.get("temperature", 0.7)
+    )
+    
+    @app.post("/api/guidance")
+    async def get_guidance(request: GuidanceRequest):
+        """Provide context-aware implementation guidance."""
+        try:
+            guidance = guidance_service.generate_guidance(request)
+            
+            conversation.add_to_history(
+                request.query,
+                guidance,
+                "guidance",
+                {
+                    "has_viewport": request.viewport_context is not None,
+                    "has_files": request.file_context is not None,
+                    "has_project": request.project_profile is not None,
+                    "has_blueprints": bool(request.blueprint_captures),
+                    "focus_area": request.focus_area
+                }
+            )
+            
+            return {
+                "success": True,
+                "guidance": guidance,
+                "query": request.query
+            }
+        except Exception as e:
+            print(f"[Error in guidance] {e}")
+            return {
+                "success": False,
+                "error": str(e)
             }
 
     @app.get("/dashboard", response_class=HTMLResponse)
