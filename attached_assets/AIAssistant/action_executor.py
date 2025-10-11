@@ -51,6 +51,7 @@ class ActionExecutor:
         
         # Project metadata actions
         self.register("show_project_info", self._show_project_info)
+        self.register("get_project_info", self._show_project_info)  # Alias
         
         # Blueprint capture actions
         self.register("capture_blueprint", self._capture_blueprint)

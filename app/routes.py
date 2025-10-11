@@ -30,12 +30,32 @@ session_messages: List[Dict[str, str]] = []
 def get_system_message(app_config: Dict[str, Any]) -> str:
     """Generate system message with current response style."""
     current_style = app_config.get("response_style", "descriptive")
-    style_modifier = RESPONSE_STYLES.get(current_style, RESPONSE_STYLES["descriptive"])["prompt_modifier"]
+    style_config = RESPONSE_STYLES.get(
+        current_style, RESPONSE_STYLES["descriptive"]
+    )
+    style_modifier = style_config["prompt_modifier"]
     
     base_msg = (
         "You are an AI assistant for Unreal Engine 5.6. "
         "Generate structured prose describing editor state and scene contents. "
         "Use terminology appropriate for UE5, include specific names and values. "
+        "\n\n"
+        "IMPORTANT CAPABILITIES:\n"
+        "When users ask about THEIR specific project/editor state, "
+        "you can trigger real-time data collection by responding with "
+        "[UE_REQUEST] tokens:\n"
+        "- [UE_REQUEST] get_project_info - Get actual project name, "
+        "modules, blueprints\n"
+        "- [UE_REQUEST] capture_blueprint - Capture screenshot of open "
+        "Blueprint\n"
+        "- [UE_REQUEST] describe_viewport - Get viewport/scene data\n"
+        "- [UE_REQUEST] browse_files - Browse project file structure\n"
+        "- [UE_REQUEST] list_blueprints - List all Blueprints in project\n"
+        "\n"
+        "Use these when users ask 'what is my project', 'capture my "
+        "blueprint', etc.\n"
+        "For GENERAL advice (e.g., 'how do I create a C++ file'), provide "
+        "helpful guidance without tokens. "
     )
     return base_msg + style_modifier
 
@@ -91,12 +111,48 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             lower = user_input.lower()
 
             # Tokenized command routing
-            if any(k in lower for k in ["what do i see", "viewport", "describe viewport", "scene"]):
+            
+            # Viewport/Scene queries
+            if any(k in lower for k in [
+                "what do i see", "viewport", "describe viewport", "scene"
+            ]):
                 return {"response": "[UE_REQUEST] describe_viewport"}
+            
+            # Actor list queries
             if "list actors" in lower or "list of actors" in lower:
                 return {"response": "[UE_REQUEST] list_actors"}
+            
+            # Selection queries
             if "selected" in lower and ("info" in lower or "details" in lower):
                 return {"response": "[UE_REQUEST] get_selected_info"}
+            
+            # Project-specific queries
+            if any(k in lower for k in [
+                "my project", "project name", "project called",
+                "what am i working on", "current project",
+                "this project", "project info"
+            ]):
+                return {"response": "[UE_REQUEST] get_project_info"}
+            
+            # Blueprint capture requests
+            if any(k in lower for k in [
+                "capture", "screenshot", "screen shot",
+                "show blueprint", "picture of", "image of"
+            ]) and any(b in lower for b in [
+                "blueprint", "bp_", "graph", "node"
+            ]):
+                return {"response": "[UE_REQUEST] capture_blueprint"}
+            
+            # File/Asset browsing
+            if any(k in lower for k in [
+                "show files", "list files", "browse files",
+                "what files", "project files"
+            ]):
+                return {"response": "[UE_REQUEST] browse_files"}
+            
+            # Blueprint listing
+            if "list" in lower and "blueprint" in lower:
+                return {"response": "[UE_REQUEST] list_blueprints"}
 
             # Update memory
             session_messages.append({"role": "user", "content": user_input})

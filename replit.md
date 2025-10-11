@@ -68,7 +68,8 @@ Preferred communication style: Simple, everyday language.
 - **Backend Framework**: FastAPI for its async capabilities, automatic API documentation, and Pydantic-based type validation.
 - **AI Integration**: Uses OpenAI GPT models (default: gpt-4o-mini) for technical prose generation, with configurable model selection and output style focused on factual documentation.
 - **Data Flow**: Unreal Engine Python scripts collect viewport data and POST it to FastAPI endpoints. Pydantic models validate requests. AI processes data, and descriptions are returned to UE5.
-- **UE5 Python Integration**: Automatic installation of dependencies, bi-directional HTTP communication, file-based state management (`Saved/AIConsole`), persistent conversation logging, and tokenized command routing.
+- **UE5 Python Integration**: Automatic installation of dependencies, bi-directional HTTP communication, file-based state management (`Saved/AIConsole`), persistent conversation logging, and intelligent context-aware command routing with expanded keyword detection.
+- **Context-Aware Command Routing**: Backend intelligently detects user intent and routes context-specific queries (project info, blueprint capture, file browsing) to appropriate UE5 data collection actions while maintaining AI-powered responses for general guidance questions.
 - **Configuration System**: JSON-based config with GET/POST `/api/config` endpoints. Settings dynamically affect runtime behavior without server restarts.
 - **Modular Architecture**: Backend refactored into `app/` package with dedicated modules for models, config, routes, services (OpenAI, filtering, conversation), and dashboard. UE5 client also uses a modular design for API client, context collection, action execution, and UI management.
 - **File System Operations**: Secure read-only file browsing using `Path.relative_to()` for path validation. UE5 client uses `unreal.Paths` for project directory navigation and file searching.
