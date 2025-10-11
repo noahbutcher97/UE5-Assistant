@@ -873,6 +873,97 @@ async def dashboard():
             align-items: center;
             margin-bottom: 20px;
         }
+        
+        .setting-group {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .setting-label {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+        
+        .setting-description {
+            font-size: 13px;
+            color: #666;
+            font-weight: normal;
+        }
+        
+        .setting-input, .setting-slider {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .setting-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .setting-slider {
+            padding: 0;
+            height: 8px;
+            cursor: pointer;
+        }
+        
+        .save-btn, .reset-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .save-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+        
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .reset-btn {
+            background: #f0f0f0;
+            color: #666;
+            flex: 1;
+        }
+        
+        .reset-btn:hover {
+            background: #e0e0e0;
+        }
+        
+        .save-status {
+            padding: 12px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .save-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .save-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body>
@@ -898,6 +989,7 @@ async def dashboard():
         
         <div class="tabs">
             <button class="tab active" onclick="showTab('dashboard')">📊 Dashboard</button>
+            <button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
             <button class="tab" onclick="showTab('api')">🔧 API Info</button>
             <button class="tab" onclick="showTab('about')">ℹ️ About</button>
         </div>
@@ -922,6 +1014,87 @@ async def dashboard():
                     </svg>
                     <p>No conversations yet. Start using the AI Assistant in Unreal Engine!</p>
                 </div>
+            </div>
+        </div>
+        
+        <div id="settings" class="tab-content">
+            <h2>⚙️ Configuration Settings</h2>
+            <p style="margin: 15px 0; color: #666;">
+                Configure AI behavior and response style in real-time without code changes
+            </p>
+            
+            <div style="display: grid; gap: 25px; margin-top: 30px;">
+                <!-- AI Model Selection -->
+                <div class="setting-group">
+                    <label class="setting-label">
+                        <strong>🤖 AI Model</strong>
+                        <span class="setting-description">Choose the GPT model for responses</span>
+                    </label>
+                    <select id="model" class="setting-input">
+                        <option value="gpt-4o-mini">GPT-4o Mini (Fast & Efficient)</option>
+                        <option value="gpt-4o">GPT-4o (Balanced)</option>
+                        <option value="gpt-4-turbo">GPT-4 Turbo (Powerful)</option>
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo (Legacy)</option>
+                    </select>
+                </div>
+                
+                <!-- Response Style -->
+                <div class="setting-group">
+                    <label class="setting-label">
+                        <strong>📝 Response Style</strong>
+                        <span class="setting-description">Adjust how the AI communicates</span>
+                    </label>
+                    <select id="response_style" class="setting-input">
+                        <option value="descriptive">Descriptive (Default) - Clear and factual</option>
+                        <option value="technical">Technical/Precise - Highly technical with exact specs</option>
+                        <option value="natural">Natural/Conversational - Friendly and approachable</option>
+                        <option value="balanced">Balanced - Mix of technical and readable</option>
+                        <option value="concise">Concise/Brief - Short and to the point</option>
+                        <option value="detailed">Detailed/Verbose - Comprehensive analysis</option>
+                    </select>
+                </div>
+                
+                <!-- Temperature -->
+                <div class="setting-group">
+                    <label class="setting-label">
+                        <strong>🌡️ Temperature: <span id="temp-value">0.7</span></strong>
+                        <span class="setting-description">Higher = more creative, Lower = more focused</span>
+                    </label>
+                    <input type="range" id="temperature" class="setting-slider" min="0" max="1" step="0.1" value="0.7" 
+                           oninput="document.getElementById('temp-value').textContent = this.value">
+                </div>
+                
+                <!-- Max Context Turns -->
+                <div class="setting-group">
+                    <label class="setting-label">
+                        <strong>💬 Max Context Turns: <span id="turns-value">6</span></strong>
+                        <span class="setting-description">Number of previous conversation turns to remember</span>
+                    </label>
+                    <input type="range" id="max_context_turns" class="setting-slider" min="2" max="20" step="1" value="6"
+                           oninput="document.getElementById('turns-value').textContent = this.value">
+                </div>
+                
+                <!-- Timeout -->
+                <div class="setting-group">
+                    <label class="setting-label">
+                        <strong>⏱️ Request Timeout: <span id="timeout-value">25</span>s</strong>
+                        <span class="setting-description">Maximum time to wait for API response</span>
+                    </label>
+                    <input type="range" id="timeout" class="setting-slider" min="10" max="60" step="5" value="25"
+                           oninput="document.getElementById('timeout-value').textContent = this.value">
+                </div>
+                
+                <!-- Save Button -->
+                <div style="display: flex; gap: 15px; margin-top: 10px;">
+                    <button onclick="saveSettings()" class="save-btn">
+                        💾 Save Settings
+                    </button>
+                    <button onclick="resetSettings()" class="reset-btn">
+                        🔄 Reset to Defaults
+                    </button>
+                </div>
+                
+                <div id="save-status" class="save-status"></div>
             </div>
         </div>
         
@@ -1043,6 +1216,124 @@ async def dashboard():
         
         // Start auto-refresh
         autoRefreshInterval = setInterval(loadConversations, 5000);
+        
+        // ============================================================
+        // SETTINGS FUNCTIONS
+        // ============================================================
+        
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/config');
+                const data = await response.json();
+                const config = data.config;
+                
+                // Populate form fields
+                document.getElementById('model').value = config.model || 'gpt-4o-mini';
+                document.getElementById('response_style').value = config.response_style || 'descriptive';
+                document.getElementById('temperature').value = config.temperature || 0.7;
+                document.getElementById('temp-value').textContent = config.temperature || 0.7;
+                document.getElementById('max_context_turns').value = config.max_context_turns || 6;
+                document.getElementById('turns-value').textContent = config.max_context_turns || 6;
+                document.getElementById('timeout').value = config.timeout || 25;
+                document.getElementById('timeout-value').textContent = config.timeout || 25;
+                
+                console.log('Settings loaded:', config);
+            } catch (error) {
+                console.error('Failed to load settings:', error);
+                showStatus('Failed to load settings', 'error');
+            }
+        }
+        
+        async function saveSettings() {
+            const statusEl = document.getElementById('save-status');
+            
+            try {
+                const settings = {
+                    model: document.getElementById('model').value,
+                    response_style: document.getElementById('response_style').value,
+                    temperature: parseFloat(document.getElementById('temperature').value),
+                    max_context_turns: parseInt(document.getElementById('max_context_turns').value),
+                    timeout: parseInt(document.getElementById('timeout').value)
+                };
+                
+                const response = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showStatus('✅ Settings saved successfully!', 'success');
+                } else {
+                    showStatus('❌ Failed to save settings', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to save settings:', error);
+                showStatus('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function resetSettings() {
+            if (!confirm('Reset all settings to defaults?')) return;
+            
+            try {
+                const response = await fetch('/api/config');
+                const data = await response.json();
+                const defaults = data.defaults;
+                
+                // Reset to defaults
+                const settings = {
+                    model: defaults.model,
+                    response_style: defaults.response_style,
+                    temperature: defaults.temperature,
+                    max_context_turns: defaults.max_context_turns,
+                    timeout: defaults.timeout
+                };
+                
+                const saveResponse = await fetch('/api/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(settings)
+                });
+                
+                if (saveResponse.ok) {
+                    loadSettings(); // Reload to update UI
+                    showStatus('✅ Settings reset to defaults', 'success');
+                } else {
+                    showStatus('❌ Failed to reset settings', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to reset settings:', error);
+                showStatus('❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('save-status');
+            statusEl.textContent = message;
+            statusEl.className = 'save-status ' + type;
+            
+            // Clear after 3 seconds
+            setTimeout(() => {
+                statusEl.textContent = '';
+                statusEl.className = 'save-status';
+            }, 3000);
+        }
+        
+        // Load settings when opening settings tab
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                if (this.textContent.includes('Settings')) {
+                    loadSettings();
+                }
+            });
+        });
     </script>
 </body>
 </html>
