@@ -17,35 +17,57 @@ except ImportError:
 class Config:
     """Manages configuration settings with file persistence."""
 
-    # Response style presets (synced with backend)
+    # Response style presets (synced with backend v3.0)
     RESPONSE_STYLES = {
         "descriptive": {
             "name": "Descriptive (Default)",
-            "description": "Clear, factual technical prose with balanced detail"
+            "description": "Clear, factual technical prose with balanced detail",
+            "max_tokens": 400,
+            "data_filter": "standard",
+            "focus": "balanced_overview"
         },
         "technical": {
             "name": "Technical/Precise",
-            "description": "Precise specs with exact coordinates and technical documentation format"
+            "description": "Precise specs with exact coordinates and technical documentation format",
+            "max_tokens": 500,
+            "data_filter": "technical",
+            "focus": "precision_and_specs"
         },
         "natural": {
             "name": "Natural/Conversational",
-            "description": "Conversational tone, focuses on notable elements only"
+            "description": "Conversational tone, focuses on notable elements only",
+            "max_tokens": 300,
+            "data_filter": "highlights",
+            "focus": "notable_elements"
         },
         "balanced": {
             "name": "Balanced",
-            "description": "Technical accuracy with readability, skips repetitive details"
+            "description": "Technical accuracy with readability, skips repetitive details",
+            "max_tokens": 350,
+            "data_filter": "balanced",
+            "focus": "key_elements_summary"
         },
         "concise": {
             "name": "Concise/Brief",
-            "description": "Extremely brief, one short paragraph with essentials only"
+            "description": "Extremely brief, one short paragraph with essentials only",
+            "max_tokens": 150,
+            "data_filter": "minimal",
+            "focus": "essentials_only"
         },
         "detailed": {
             "name": "Detailed/Verbose",
-            "description": "Comprehensive exhaustive analysis of all elements"
+            "description": "Comprehensive exhaustive analysis of all elements",
+            "max_tokens": 800,
+            "data_filter": "complete",
+            "focus": "comprehensive_analysis"
         },
         "creative": {
             "name": "Creative/Imaginative",
-            "description": "Vivid imagery and narrative storytelling to visualize the scene"
+            "description": "Vivid imagery and narrative storytelling to visualize the scene",
+            "max_tokens": 450,
+            "temperature_override": 0.9,
+            "data_filter": "standard",
+            "focus": "visual_narrative"
         }
     }
 
