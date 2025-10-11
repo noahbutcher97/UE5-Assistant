@@ -1,2 +1,0 @@
-{"timestamp": "2025-10-11T04:47:37.831610+00:00", "user_input": "First test message", "assistant_response": "First test response", "command_type": "describe_viewport", "metadata": {}}
-{"timestamp": "2025-10-11T04:47:37.900556+00:00", "user_input": "Second test message", "assistant_response": "Second test response", "command_type": "execute_command", "metadata": {}}

@@ -8,6 +8,19 @@ The project is part of the UE5 AI Assistant Integration by Noah Butcher and is d
 
 ## Recent Changes
 
+### October 11, 2025: File-Based Persistence & Dark Theme UI
+- **File-Based Conversation Persistence**: Conversations now persist to `conversations.jsonl` using JSON Lines format. System automatically loads last 100 entries on startup (verified in logs: "[Startup] Loaded N conversations from file"). Each conversation appends to file in real-time, surviving server restarts
+- **Clear History Feature**: New DELETE /api/conversations endpoint clears both in-memory history and persistent file. Settings tab includes "Clear All Conversations" button with confirmation dialog to prevent accidental data loss
+- **Dark Theme Dashboard**: Complete UI transformation to sleek, technical cyberpunk aesthetic:
+  - Dark navy background (#0a0e27) with subtle cyan grid pattern overlay for technical feel
+  - Cyan accent color (#00f5ff) for all headers, highlights, borders with glowing shadows
+  - Glass morphism design: translucent cards with backdrop-filter blur effects
+  - All text colors optimized for dark theme readability (grays #94a3b8, #cbd5e1)
+  - Monospace fonts for technical elements (timestamps, command types)
+  - Interactive hover states with glowing effects on buttons and cards
+  - Error/success states using dark-compatible colors (green #10b981, red #ef4444)
+- **Enhanced API Documentation**: Updated API Info tab to include DELETE endpoint and improved formatting with color-coded syntax
+
 ### October 2025: Modular Architecture v2.0 & Interactive Settings Dashboard
 - **Modular Rewrite**: Complete architectural overhaul with separation of concerns - config, API client, async client, context collector, action executor, UI manager, and main orchestrator as independent modules
 - **Blueprint Integration**: Seamless integration with Editor Utility Widget via file-based communication. Simple one-line Python command update to migrate from v1.0
