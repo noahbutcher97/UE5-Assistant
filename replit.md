@@ -8,18 +8,23 @@ The project is part of the UE5 AI Assistant Integration by Noah Butcher and is d
 
 ## Recent Changes
 
-### October 11, 2025: File-Based Persistence & Dark Theme UI
-- **File-Based Conversation Persistence**: Conversations now persist to `conversations.jsonl` using JSON Lines format. System automatically loads last 100 entries on startup (verified in logs: "[Startup] Loaded N conversations from file"). Each conversation appends to file in real-time, surviving server restarts
-- **Clear History Feature**: New DELETE /api/conversations endpoint clears both in-memory history and persistent file. Settings tab includes "Clear All Conversations" button with confirmation dialog to prevent accidental data loss
-- **Dark Theme Dashboard**: Complete UI transformation to sleek, technical cyberpunk aesthetic:
-  - Dark navy background (#0a0e27) with subtle cyan grid pattern overlay for technical feel
-  - Cyan accent color (#00f5ff) for all headers, highlights, borders with glowing shadows
-  - Glass morphism design: translucent cards with backdrop-filter blur effects
-  - All text colors optimized for dark theme readability (grays #94a3b8, #cbd5e1)
-  - Monospace fonts for technical elements (timestamps, command types)
-  - Interactive hover states with glowing effects on buttons and cards
-  - Error/success states using dark-compatible colors (green #10b981, red #ef4444)
-- **Enhanced API Documentation**: Updated API Info tab to include DELETE endpoint and improved formatting with color-coded syntax
+### October 11, 2025: v3.0 Modular Architecture & Full-Stack Alignment
+- **Backend Modular Refactoring**: Restructured monolithic main.py (~1600 lines) into clean app/ package:
+  - app/models.py - Pydantic data models with v2.0 structure support
+  - app/config.py - Configuration management with 7 response style presets
+  - app/routes.py - API endpoint definitions and request handling
+  - app/services/openai_client.py - OpenAI integration and prompt generation
+  - app/services/filtering.py - Intelligent viewport data filtering per response style
+  - app/services/conversation.py - Conversation history with file persistence
+  - app/dashboard.py - Interactive web dashboard HTML generation
+  - main.py - Simple app factory (47 lines) wiring components together
+- **Response Style Synchronization**: UE5 config.py now mirrors backend RESPONSE_STYLES structure with max_tokens, data_filter, temperature_override, and focus fields for each of 7 styles (descriptive, technical, natural, balanced, concise, detailed, creative)
+- **Intelligent Data Filtering**: Backend applies style-aware filtering (minimal/highlights/balanced/standard/technical/complete) before AI processing, optimizing token usage and response quality
+- **Project Metadata Integration**: UE5 action_executor properly checks collect_project_metadata config flag and includes comprehensive project context (asset counts, source code stats, content folder analysis) in viewport descriptions when enabled
+- **File-Based Conversation Persistence**: Conversations persist to conversations.jsonl using JSON Lines format. System automatically loads last 100 entries on startup. Each conversation appends in real-time, surviving server restarts
+- **Clear History Feature**: New DELETE /api/conversations endpoint clears both in-memory history and persistent file. Settings tab includes "Clear All Conversations" button with confirmation dialog
+- **Dark Theme Dashboard**: Complete UI transformation with sleek cyberpunk aesthetic - dark navy background (#0a0e27), cyan accents (#00f5ff), glass morphism cards with backdrop-filter blur, optimized text colors, interactive glowing hover states
+- **Communication Protocol**: Full v2.0 data structure alignment - UE5 sends nested {camera, actors, lighting, environment, selection, project_metadata}, backend filters and processes with style-aware logic
 
 ### October 2025: Modular Architecture v2.0 & Interactive Settings Dashboard
 - **Modular Rewrite**: Complete architectural overhaul with separation of concerns - config, API client, async client, context collector, action executor, UI manager, and main orchestrator as independent modules
