@@ -232,6 +232,30 @@
 
     <!-- Project Hub Tab -->
     <div id="project-hub" class="tab-content active">
+        <!-- Manual Project Registration -->
+        <div id="manual-registration" class="card" style="border: 1px solid rgba(0,217,255,0.3); display: none;">
+            <h2>➕ Register Project Manually</h2>
+            <p style="color: #8b95a5; margin-bottom: 20px;">No projects available. Register your UE5 project manually or deploy the UE5 Python client for automatic registration.</p>
+            
+            <div class="input-group">
+                <label>Project Name</label>
+                <input type="text" id="manual-name" placeholder="UE5_Assistant">
+            </div>
+            
+            <div class="input-group">
+                <label>Project Path</label>
+                <input type="text" id="manual-path" placeholder="D:/UnrealProjects/5.6/UE5_Assistant/">
+            </div>
+            
+            <button onclick="registerManualProject()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                ✅ Register Project
+            </button>
+            
+            <div style="margin-top: 15px; padding: 12px; background: rgba(0,217,255,0.1); border-radius: 8px; font-size: 14px; color: #8b95a5;">
+                💡 <strong>Tip:</strong> For automatic registration, deploy <code>attached_assets/AIAssistant/</code> to your UE5 project and run the Python client.
+            </div>
+        </div>
+        
         <div class="grid">
             <div class="card">
                 <h2>📊 Project Intelligence</h2>
@@ -429,6 +453,8 @@
                 const select = document.getElementById('projectSelect');
                 select.innerHTML = '<option value="">No project selected</option>';
                 
+                const manualReg = document.getElementById('manual-registration');
+                
                 if (data.success && data.projects.length > 0) {
                     data.projects.forEach(project => {
                         const option = document.createElement('option');
@@ -440,9 +466,52 @@
                         }
                         select.appendChild(option);
                     });
+                    if (manualReg) manualReg.style.display = 'none';
+                } else {
+                    // Show manual registration if no projects
+                    if (manualReg) manualReg.style.display = 'block';
                 }
             } catch (error) {
                 console.error('Failed to load projects:', error);
+            }
+        }
+        
+        async function registerManualProject() {
+            const name = document.getElementById('manual-name').value;
+            const path = document.getElementById('manual-path').value;
+            
+            if (!name || !path) {
+                alert('Please enter both project name and path');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/register_project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        path: path,
+                        version: "5.6",
+                        metadata: {
+                            manually_registered: true,
+                            registration_time: new Date().toISOString()
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert(`✅ Project "${name}" registered successfully!`);
+                    document.getElementById('manual-name').value = '';
+                    document.getElementById('manual-path').value = '';
+                    await loadProjects();
+                } else {
+                    alert(`❌ Registration failed: ${data.error || 'Unknown error'}`);
+                }
+            } catch (error) {
+                alert(`❌ Error: ${error.message}`);
             }
         }
 
