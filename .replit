@@ -5,12 +5,7 @@ hidden = [".pythonlibs"]
 
 [nix]
 channel = "stable-24_05"
-packages = [
-  "libxcrypt",
-  "python311Packages.poetry",
-  "python311Packages.uvicorn",
-  "poetry",
-]
+packages = ["libxcrypt", "python311Packages.poetry", "python311Packages.uvicorn", "poetry", "jq", "httpie", "postgresql_16", "redis", "ffmpeg"]
 
 
 [deployment]
