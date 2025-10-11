@@ -8,14 +8,20 @@ This project provides a FastAPI backend service that generates AI-powered techni
 ### Replit Project Structure
 ```
 Root/
-├── app/                                    # FastAPI backend (cloud-hosted)
-│   ├── models.py
+├── main.py                                 # ⚙️ BACKEND: FastAPI entry point
+├── app/                                    # ⚙️ BACKEND: FastAPI server modules
+│   ├── models.py                           #    (Hosted on Replit cloud)
 │   ├── routes.py
 │   ├── config.py
+│   ├── dashboard.py
 │   └── services/
+│       ├── openai_service.py
+│       ├── conversation_service.py
+│       └── filtering_service.py
+│
 ├── attached_assets/
-│   └── AIAssistant/                        # ✅ UE5 CLIENT - Deploy this to Unreal
-│       ├── main.py
+│   └── AIAssistant/                        # 🎮 UE5 CLIENT: Deploy to Unreal
+│       ├── main.py                         #    (NOT imported by backend)
 │       ├── config.py
 │       ├── api_client.py
 │       ├── context_collector.py
@@ -23,11 +29,21 @@ Root/
 │       ├── project_metadata_collector.py
 │       ├── blueprint_capture.py
 │       └── Documentation/
-└── ue5_client_tests/                       # ❌ Replit-only testing (DO NOT deploy)
+│
+└── ue5_client_tests/                       # 🧪 TESTING: Replit-only (DO NOT deploy)
     ├── mock_unreal.py
     ├── test_runner.py
     └── mock_project/
 ```
+
+### Architecture Boundary Rules
+**CRITICAL**: The backend and UE5 client are completely decoupled:
+- ✅ **Backend** (`main.py` + `app/`): Never imports from `attached_assets/`
+- ✅ **UE5 Client** (`attached_assets/AIAssistant/`): Only imported by UE5 Python environment
+- ✅ **Communication**: HTTP API only (client POSTs to backend, receives JSON responses)
+- ❌ **No direct module imports** between backend and client code
+
+**Boundary Check**: Run `python3 check_imports.py` to verify backend isolation from UE5 client code
 
 ### Deployment Workflow
 **To deploy UE5 client to your Unreal Engine project:**

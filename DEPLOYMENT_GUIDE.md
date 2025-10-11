@@ -54,9 +54,15 @@ ai_main.initialize()
 
 ```
 Replit Project/
-├── app/                          # Backend (FastAPI server on Replit)
+├── main.py                      # Backend entry point (FastAPI)
+├── app/                          # Backend modules (FastAPI server on Replit)
+│   ├── routes.py                # API endpoints
+│   ├── models.py                # Data models
+│   ├── config.py                # Backend configuration
+│   ├── services/                # AI & business logic
+│   └── dashboard.py             # Web dashboard
 ├── attached_assets/
-│   └── AIAssistant/             # ✅ DEPLOY THIS to UE5
+│   └── AIAssistant/             # ✅ DEPLOY THIS to UE5 (NOT used by backend)
 └── ue5_client_tests/            # ❌ REPLIT ONLY - Testing infrastructure
 
 Your UE5 Project/
@@ -64,6 +70,14 @@ Your UE5 Project/
     └── Python/
         └── AIAssistant/         # Deployed client files go here
 ```
+
+### ⚠️ Critical Architecture Note
+
+The **Replit backend** (`main.py` + `app/` folder) is completely separate from the **UE5 client** (`attached_assets/AIAssistant/`):
+
+- **Backend** (Replit): Hosts FastAPI server, processes AI requests, serves web dashboard
+- **Client** (UE5): Collects viewport data, sends to backend, displays responses
+- **No Direct Coupling**: Backend never imports UE5 client modules; they communicate via HTTP API only
 
 ---
 

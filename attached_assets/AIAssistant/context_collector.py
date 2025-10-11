@@ -2,7 +2,7 @@
 Enhanced context collection for UE5 scenes.
 Gathers viewport, lighting, materials, and environmental data.
 """
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 if TYPE_CHECKING:
     import unreal  # type: ignore
@@ -360,7 +360,7 @@ class ContextCollector:
             # Get project paths
             project_dir = Path(unreal.Paths.project_dir())
             content_dir = Path(unreal.Paths.project_content_dir())
-            saved_dir = Path(unreal.Paths.project_saved_dir())
+            Path(unreal.Paths.project_saved_dir())
 
             metadata["project_name"] = project_dir.name
             metadata["project_path"] = str(project_dir)
