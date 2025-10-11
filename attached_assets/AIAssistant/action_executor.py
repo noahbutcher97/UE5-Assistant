@@ -217,7 +217,10 @@ class ActionExecutor:
             
             lines = [f"📂 Source Directory: {result.get('root_path', 'Unknown')}"]
             types = result.get("file_types", {})
-            lines.append(f"C++ files: {types.get('cpp', 0)}, Headers: {types.get('headers', 0)}\n")
+            lines.append(
+                f"C++ files: {types.get('cpp', 0)}, "
+                f"Headers: {types.get('headers', 0)}\n"
+            )
             
             for file in result.get("files", [])[:10]:
                 ext = file.get("extension", "")

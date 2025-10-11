@@ -245,7 +245,9 @@ class FileCollector:
             }
         }
     
-    def _get_file_entry(self, path: Path, include_content: bool = False) -> Dict[str, Any]:
+    def _get_file_entry(
+        self, path: Path, include_content: bool = False
+    ) -> Dict[str, Any]:
         """Convert a path to a file entry dictionary."""
         try:
             stat = path.stat()

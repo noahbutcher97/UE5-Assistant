@@ -28,7 +28,10 @@ class Config:
         },
         "technical": {
             "name": "Technical/Precise",
-            "description": "Precise specs with exact coordinates and technical documentation format",
+            "description": (
+                "Precise specs with exact coordinates and technical "
+                "documentation format"
+            ),
             "max_tokens": 500,
             "data_filter": "technical",
             "focus": "precision_and_specs"
@@ -42,7 +45,10 @@ class Config:
         },
         "balanced": {
             "name": "Balanced",
-            "description": "Technical accuracy with readability, skips repetitive details",
+            "description": (
+                "Technical accuracy with readability, skips "
+                "repetitive details"
+            ),
             "max_tokens": 350,
             "data_filter": "balanced",
             "focus": "key_elements_summary"
@@ -63,7 +69,10 @@ class Config:
         },
         "creative": {
             "name": "Creative/Imaginative",
-            "description": "Vivid imagery and narrative storytelling to visualize the scene",
+            "description": (
+                "Vivid imagery and narrative storytelling to "
+                "visualize the scene"
+            ),
             "max_tokens": 450,
             "temperature_override": 0.9,
             "data_filter": "standard",
@@ -96,10 +105,10 @@ class Config:
         "collect_project_metadata": True,  # Enable project context collection
         
         # New feature flags (v3.1)
-        "enable_file_operations": True,  # Enable file browsing and reading
-        "enable_guidance_requests": True,  # Enable context-aware implementation guidance
-        "enable_blueprint_capture": True,  # Enable Blueprint screenshot capture
-        "file_operation_security": "read_only",  # Security level: read_only, restricted, full
+        "enable_file_operations": True,  # File browsing/reading
+        "enable_guidance_requests": True,  # Context-aware guidance
+        "enable_blueprint_capture": True,  # Blueprint screenshots
+        "file_operation_security": "read_only",  # read_only/restricted/full
         "blueprint_capture_resolution": 2,  # Screenshot resolution multiplier (1-4)
         "max_file_read_size": 1048576,  # Max file size to read (1MB default)
         "project_metadata_cache_ttl": 300,  # Project metadata cache TTL in seconds
@@ -191,7 +200,10 @@ class Config:
         """
         if server_name in self.SERVER_PRESETS:
             self.set("active_server", server_name)
-            print(f"✅ Switched to {server_name} server: {self.SERVER_PRESETS[server_name]}")
+            print(
+                f"✅ Switched to {server_name} server: "
+                f"{self.SERVER_PRESETS[server_name]}"
+            )
             return True
         else:
             print(f"❌ Invalid server name: {server_name}")

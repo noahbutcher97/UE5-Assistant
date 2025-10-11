@@ -148,7 +148,8 @@ class BlueprintCapture:
         check_blueprint: bool = True
     ) -> Dict[str, Any]:
         """
-        Capture screenshot of current viewport (Blueprint Editor must be open and focused).
+        Capture screenshot of current viewport (Blueprint Editor must be
+        open and focused).
         
         Args:
             blueprint_name: Name of the blueprint (for filename/metadata).
