@@ -684,6 +684,30 @@ async def log_conversation(entry: ConversationEntry):
     return {"status": "logged", "total_entries": len(conversation_history)}
 
 
+@app.delete("/api/conversations")
+async def clear_conversations():
+    """Clear all conversation history (memory and file)."""
+    global conversation_history
+    
+    try:
+        # Clear in-memory history
+        conversation_history.clear()
+        
+        # Delete the file
+        if CONVERSATIONS_FILE.exists():
+            CONVERSATIONS_FILE.unlink()
+        
+        return {
+            "success": True,
+            "message": "Conversation history cleared successfully"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "message": f"Failed to clear history: {str(e)}"
+        }
+
+
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard():
     """Serve the conversation dashboard HTML."""
@@ -1125,6 +1149,19 @@ async def dashboard():
                 </div>
                 
                 <div id="save-status" class="save-status"></div>
+                
+                <!-- Conversation History Management -->
+                <div class="setting-group" style="margin-top: 30px; border: 2px solid #e74c3c;">
+                    <label class="setting-label">
+                        <strong>🗑️ Conversation History</strong>
+                        <span class="setting-description" style="color: #e74c3c;">
+                            Clear all stored conversations (both memory and persistent file)
+                        </span>
+                    </label>
+                    <button onclick="clearHistory()" class="clear-history-btn" style="background: #e74c3c; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.3s;">
+                        🗑️ Clear All Conversations
+                    </button>
+                </div>
             </div>
         </div>
         
