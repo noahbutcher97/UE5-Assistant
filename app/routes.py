@@ -2,13 +2,14 @@
 import json
 from typing import Any, Dict, List, cast
 from fastapi import Request
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, HTMLResponse
 
 from app.models import ViewportContext, ConversationEntry, ConfigUpdate
 from app.config import RESPONSE_STYLES, DEFAULT_CONFIG
 from app.services.filtering import filter_viewport_data
 from app.services.openai_client import generate_viewport_description, test_openai_connection
 from app.services import conversation
+from app.dashboard import get_dashboard_html
 
 # Session messages for execute_command context (global state for single-user UE integration)
 session_messages: List[Dict[str, str]] = []
@@ -290,3 +291,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 "success": False,
                 "message": f"Failed to clear history: {str(e)}"
             }
+
+    @app.get("/dashboard", response_class=HTMLResponse)
+    async def dashboard():
+        """Serve the conversation dashboard HTML."""
+        return HTMLResponse(content=get_dashboard_html())
