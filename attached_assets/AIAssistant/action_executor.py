@@ -215,7 +215,8 @@ class ActionExecutor:
             if result.get("error"):
                 return f"[UE_ERROR] {result['error']}"
             
-            lines = [f"📂 Source Directory: {result.get('root_path', 'Unknown')}"]
+            root_path = result.get('root_path', 'Unknown')
+            lines = [f"📂 Source Directory: {root_path}"]
             types = result.get("file_types", {})
             lines.append(
                 f"C++ files: {types.get('cpp', 0)}, "

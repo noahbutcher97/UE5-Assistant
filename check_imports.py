@@ -20,12 +20,27 @@ def check_file_imports(filepath: Path) -> list[str]:
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
                 for alias in node.names:
-                    if 'attached_assets' in alias.name or 'AIAssistant' in alias.name:
-                        violations.append(f"{filepath}:{node.lineno} - imports {alias.name}")
+                    forbidden = (
+                        'attached_assets' in alias.name or
+                        'AIAssistant' in alias.name
+                    )
+                    if forbidden:
+                        violations.append(
+                            f"{filepath}:{node.lineno} - "
+                            f"imports {alias.name}"
+                        )
             
             elif isinstance(node, ast.ImportFrom):
-                if node.module and ('attached_assets' in node.module or 'AIAssistant' in node.module):
-                    violations.append(f"{filepath}:{node.lineno} - imports from {node.module}")
+                if node.module:
+                    forbidden = (
+                        'attached_assets' in node.module or
+                        'AIAssistant' in node.module
+                    )
+                    if forbidden:
+                        violations.append(
+                            f"{filepath}:{node.lineno} - "
+                            f"imports from {node.module}"
+                        )
     
     except Exception as e:
         print(f"Warning: Could not parse {filepath}: {e}")

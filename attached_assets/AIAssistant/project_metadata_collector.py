@@ -264,7 +264,7 @@ class ProjectMetadataCollector:
             h_files = 0
             cs_files = 0
             
-            for root, dirs, files in os.walk(source_dir):
+            for _, _, files in os.walk(source_dir):
                 for file in files:
                     if file.endswith('.cpp'):
                         cpp_files += 1

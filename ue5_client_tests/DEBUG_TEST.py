@@ -3,8 +3,7 @@ Debug script to test context collection directly.
 Run this in Unreal Engine's Python console to see what's being collected.
 """
 
-import AIAssistant
-from AIAssistant.context_collector import get_collector
+from AIAssistant.context_collector import get_collector  # type: ignore
 
 # Enable verbose logging
 collector = get_collector()

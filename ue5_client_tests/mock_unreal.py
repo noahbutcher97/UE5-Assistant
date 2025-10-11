@@ -3,9 +3,8 @@ Mock Unreal Engine module for testing UE5 client code in non-UE environments.
 Simulates the `unreal` module API to enable unit testing and development in Replit.
 """
 
-import os
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any, List
 
 
 class MockPaths:
@@ -74,11 +73,25 @@ class MockAssetRegistry:
         else:
             # Return mixed assets
             return [
-                MockAssetData("T_Ground", "Texture2D", "/Game/Textures/T_Ground"),
-                MockAssetData("M_Character", "Material", "/Game/Materials/M_Character"),
-                MockAssetData("SK_Character", "SkeletalMesh", "/Game/Meshes/SK_Character"),
-                MockAssetData("BP_Player", "Blueprint", "/Game/Blueprints/BP_Player"),
-                MockAssetData("SFX_Explosion", "SoundWave", "/Game/Audio/SFX_Explosion"),
+                MockAssetData(
+                    "T_Ground", "Texture2D", "/Game/Textures/T_Ground"
+                ),
+                MockAssetData(
+                    "M_Character", "Material", "/Game/Materials/M_Character"
+                ),
+                MockAssetData(
+                    "SK_Character",
+                    "SkeletalMesh",
+                    "/Game/Meshes/SK_Character"
+                ),
+                MockAssetData(
+                    "BP_Player", "Blueprint", "/Game/Blueprints/BP_Player"
+                ),
+                MockAssetData(
+                    "SFX_Explosion",
+                    "SoundWave",
+                    "/Game/Audio/SFX_Explosion"
+                ),
             ]
 
 

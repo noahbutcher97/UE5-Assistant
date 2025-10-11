@@ -6,13 +6,13 @@ Allows testing UE5-specific code in Replit without requiring UE5 editor.
 import sys
 from pathlib import Path
 
+import mock_unreal  # noqa: E402
+
 # Add tests directory to path for mock imports
 tests_dir = Path(__file__).parent
 sys.path.insert(0, str(tests_dir))
 
 # Import mock unreal module BEFORE importing UE5 client code
-import mock_unreal
-
 sys.modules['unreal'] = mock_unreal
 
 # Now import UE5 client modules (they'll use the mock)
@@ -59,7 +59,8 @@ def test_project_metadata():
     print(f"Modules: {metadata.get('modules', {})}")
     print(f"Plugins: {metadata.get('plugins', {})}")
     print(f"Assets: {metadata.get('assets', {}).get('total_assets', 0)} total")
-    print(f"Blueprints: {metadata.get('blueprints', {}).get('total_blueprints', 0)} total")
+    bp_count = metadata.get('blueprints', {}).get('total_blueprints', 0)
+    print(f"Blueprints: {bp_count} total")
     
     # Test summary
     summary = collector.get_summary()
