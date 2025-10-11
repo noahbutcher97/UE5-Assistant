@@ -133,6 +133,7 @@ class ViewportContext(BaseModel):
     lighting: Optional[Dict[str, Any]] = None
     environment: Optional[Dict[str, Any]] = None
     selection: Optional[Dict[str, Any]] = None
+    project_metadata: Optional[Dict[str, Any]] = None  # NEW: Project-level context
     
     # Legacy v1.0 fields (backward compatibility)
     camera_location: Optional[List[float]] = None
@@ -536,10 +537,8 @@ def filter_viewport_data(context: 'ViewportContext', filter_mode: str) -> Dict[s
 @app.post("/describe_viewport")
 async def describe_viewport(request: Request):
     """
-    Receives viewport info from Unreal and generates a grounded,
-    scene-specific description of what the user is actually seeing.
-    Supports style = "technical" or "natural".
-    Includes offline fallbacks that remain informative and readable.
+    Intelligently describes viewport using style-aware data filtering and prompting.
+    Filters data before sending to AI based on configured response style.
     """
     # ------------------------------------------------------------
     # 1️⃣ Parse incoming JSON
@@ -553,8 +552,6 @@ async def describe_viewport(request: Request):
             "raw_context": {},
         }
 
-    style = str(raw_data.get("style", "technical")).lower()
-
     # ------------------------------------------------------------
     # 2️⃣ Coerce into ViewportContext
     # ------------------------------------------------------------
@@ -567,83 +564,69 @@ async def describe_viewport(request: Request):
             context = ViewportContext()
 
     # ------------------------------------------------------------
-    # 3️⃣ Build summarization prompt
+    # 3️⃣ Get configured response style and apply intelligent filtering
     # ------------------------------------------------------------
-    if style == "technical":
-        prompt_intro = (
-            "Analyze the viewport JSON data and generate a comprehensive technical description. "
-            "The data structure includes:\n"
-            "- camera: {location: [x,y,z], rotation: [pitch,yaw,roll]} for viewport position\n"
-            "- actors: {total, names[], types{}} for scene contents\n"
-            "- lighting: {directional_lights[], point_lights[], spot_lights[]} for illumination\n"
-            "- environment: {fog[], post_process_volumes[], landscape} for atmospheric elements\n"
-            "- selection: {count, actors[]} for currently selected objects\n\n"
-            "Structure the response as flowing prose paragraphs that systematically cover:\n"
-            "1. Camera spatial configuration (position coordinates from location, rotation angles, viewing direction)\n"
-            "2. Complete scene inventory (actor counts, types, and specific names from actors data)\n"
-            "3. Lighting configuration (directional, point, and spot lights with their properties)\n"
-            "4. Environmental systems (fog, post-process volumes, landscape elements)\n"
-            "5. Selection state (selected actors with their details)\n\n"
-            "Use complete sentences that connect related information. Include all specific names, "
-            "coordinate values, class types, and quantitative data. Describe relationships between "
-            "elements. Write as detailed technical documentation that thoroughly explains the scene "
-            "composition. Avoid bullet points or fragmented lists - synthesize information into "
-            "coherent explanatory paragraphs. Maintain factual, objective tone without subjective "
-            "qualifiers or casual language."
-        )
-    else:
-        prompt_intro = (
-            "Analyze the viewport JSON data and generate a detailed technical description. "
-            "The data includes camera (location/rotation), actors (counts/types/names), "
-            "lighting (directional/point/spot lights), environment (fog/post-process/landscape), "
-            "and selection state. Write complete sentences that systematically describe all elements. "
-            "Include specific names, values, and technical classifications. Connect related information "
-            "into flowing prose paragraphs. Provide comprehensive coverage of all scene elements. "
-            "Maintain objective, informative tone using precise terminology. "
-            "Avoid conversational phrasing, subjective descriptors, and fragmented lists."
-        )
-
-    prompt = (f"{prompt_intro}\n\nViewport JSON:\n"
-              f"{context.model_dump_json(indent=2)}")
-
-    # ------------------------------------------------------------
-    # 4️⃣ System message with configurable response style
-    # ------------------------------------------------------------
-    # Get response style from config
     current_style = app_config.get("response_style", "descriptive")
-    style_modifier = RESPONSE_STYLES.get(current_style, RESPONSE_STYLES["descriptive"])["prompt_modifier"]
+    style_config = RESPONSE_STYLES.get(current_style, RESPONSE_STYLES["descriptive"])
     
-    # Base system message
-    base_system_msg = (
-        "You are an AI assistant for Unreal Engine 5.6. "
-        "Generate descriptions using complete sentences and flowing prose, not fragmented lists. "
-        "Describe scene elements: camera state, visible actors, spatial organization, "
-        "environmental components. Include specific names, values, and technical classifications. "
-    )
+    # Apply data filtering BEFORE sending to AI
+    filter_mode = style_config["data_filter"]
+    filtered_data = filter_viewport_data(context, filter_mode)
     
-    # Combine with style modifier
-    system_msg = base_system_msg + style_modifier
+    print(f"[Describe Viewport] Style: {current_style}, Filter: {filter_mode}")
+    print(f"[Filtered Data] Keys: {list(filtered_data.keys())}")
 
     # ------------------------------------------------------------
-    # 5️⃣ Send to OpenAI
+    # 4️⃣ Build style-specific prompt
+    # ------------------------------------------------------------
+    focus = style_config["focus"]
+    
+    # Create prompt that instructs AI on what to focus on
+    focus_instructions = {
+        "essentials_only": "Focus ONLY on: camera position, selected objects (if any), and total actor count. One short paragraph.",
+        "notable_elements": "Describe what's interesting or notable in the scene. Skip mundane details. Conversational tone.",
+        "key_elements_summary": "Summarize key elements: selected objects, main actor types, overall layout. Skip repetitive details.",
+        "balanced_overview": "Provide a balanced overview covering camera, selection, major actors, and scene organization.",
+        "precision_and_specs": "Provide precise technical specifications with exact coordinates, transforms, counts, and classifications.",
+        "comprehensive_analysis": "Analyze all viewport elements comprehensively. Include spatial relationships, technical details, and complete inventories."
+    }
+    
+    focus_instruction = focus_instructions.get(focus, focus_instructions["balanced_overview"])
+    
+    prompt = (
+        f"Viewport data (filtered for {current_style} style):\n"
+        f"{json.dumps(filtered_data, indent=2)}\n\n"
+        f"Instructions: {focus_instruction}"
+    )
+
+    # ------------------------------------------------------------
+    # 5️⃣ Build system message with style modifier
+    # ------------------------------------------------------------
+    style_modifier = style_config["prompt_modifier"]
+    max_tokens = style_config["max_tokens"]
+    
+    system_msg = (
+        "You are an AI assistant for Unreal Engine 5.6 viewport analysis. "
+        "Respond based on the provided filtered data and style instructions. "
+        f"{style_modifier}"
+    )
+
+    # ------------------------------------------------------------
+    # 6️⃣ Send to OpenAI with style-specific parameters
     # ------------------------------------------------------------
     try:
         response = openai.chat.completions.create(
             model=MODEL_NAME,
             messages=[
-                {
-                    "role": "system",
-                    "content": system_msg
-                },
-                {
-                    "role": "user",
-                    "content": prompt
-                },
+                {"role": "system", "content": system_msg},
+                {"role": "user", "content": prompt}
             ],
             temperature=app_config.get("temperature", 0.7),
+            max_tokens=max_tokens  # Style-specific token limit
         )
         msg_content = response.choices[0].message.content
         summary: str = msg_content.strip() if msg_content else ""
+        print(f"[AI Response] ({len(summary)} chars): {summary[:100]}...")
     except Exception as e:
         print(f"[Error] OpenAI call failed: {e}")
         summary = ""

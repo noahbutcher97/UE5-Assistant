@@ -19,10 +19,14 @@ class ContextCollector:
     def __init__(self):
         self.logger = Logger("ContextCollector", verbose=False)
 
-    def collect_viewport_data(self) -> Dict[str, Any]:
+    def collect_viewport_data(self, include_project_metadata: bool = False) -> Dict[str, Any]:
         """
         Collect comprehensive viewport and scene data.
         Includes camera, actors, lighting, materials, and environment.
+        Optionally includes project-level metadata for enhanced AI context.
+        
+        Args:
+            include_project_metadata: If True, adds project metadata to the response
         """
         if not HAS_UNREAL:
             self.logger.error("Unreal module not available")
@@ -36,6 +40,10 @@ class ContextCollector:
                 "environment": self._collect_environment_data(),
                 "selection": self._collect_selection_data(),
             }
+
+            # Optionally add project metadata for enhanced context
+            if include_project_metadata:
+                data["project_metadata"] = self.collect_project_metadata()
 
             self.logger.success("Context collection complete")
             return data
@@ -306,6 +314,95 @@ class ContextCollector:
         except Exception as e:
             self.logger.warn(f"Selection data unavailable: {e}")
             return {"count": 0, "actors": []}
+
+    def collect_project_metadata(self) -> Dict[str, Any]:
+        """
+        Collect project-level metadata for enhanced AI context.
+        Includes project name, size, content folder stats, and asset summaries.
+        """
+        if not HAS_UNREAL:
+            return {}
+
+        try:
+            import os
+            from pathlib import Path
+
+            metadata = {
+                "project_name": "",
+                "project_path": "",
+                "content_folder_stats": {},
+                "source_code_stats": {},
+                "asset_summary": {},
+            }
+
+            # Get project paths
+            project_dir = Path(unreal.Paths.project_dir())
+            content_dir = Path(unreal.Paths.project_content_dir())
+            saved_dir = Path(unreal.Paths.project_saved_dir())
+
+            metadata["project_name"] = project_dir.name
+            metadata["project_path"] = str(project_dir)
+
+            # Analyze content folder
+            if content_dir.exists():
+                asset_registry = unreal.AssetRegistryHelpers.get_asset_registry()
+                
+                # Get all assets
+                all_assets = asset_registry.get_assets_by_path(
+                    "/Game", recursive=True
+                )
+                
+                # Categorize assets by type
+                asset_counts: Dict[str, int] = {}
+                for asset_data in all_assets[:500]:  # Limit for performance
+                    asset_class = str(asset_data.asset_class_path.asset_name)
+                    asset_counts[asset_class] = asset_counts.get(asset_class, 0) + 1
+
+                metadata["asset_summary"] = {
+                    "total_assets": len(all_assets),
+                    "asset_types": asset_counts,
+                    "top_asset_types": sorted(
+                        asset_counts.items(), 
+                        key=lambda x: x[1], 
+                        reverse=True
+                    )[:10]
+                }
+
+            # Analyze source code if exists
+            source_dir = project_dir / "Source"
+            if source_dir.exists():
+                cpp_files = list(source_dir.rglob("*.cpp"))
+                h_files = list(source_dir.rglob("*.h"))
+                
+                metadata["source_code_stats"] = {
+                    "has_source": True,
+                    "cpp_file_count": len(cpp_files),
+                    "header_file_count": len(h_files),
+                    "total_code_files": len(cpp_files) + len(h_files)
+                }
+            else:
+                metadata["source_code_stats"] = {"has_source": False}
+
+            # Content folder file stats
+            if content_dir.exists():
+                uasset_files = list(content_dir.rglob("*.uasset"))
+                umap_files = list(content_dir.rglob("*.umap"))
+                
+                metadata["content_folder_stats"] = {
+                    "uasset_count": len(uasset_files),
+                    "level_count": len(umap_files),
+                    "total_mb": sum(
+                        f.stat().st_size 
+                        for f in uasset_files[:1000]
+                    ) / (1024 * 1024) if uasset_files else 0
+                }
+
+            self.logger.success("Project metadata collection complete")
+            return metadata
+
+        except Exception as e:
+            self.logger.error(f"Project metadata collection failed: {e}")
+            return {}
 
 
 # Global collector instance

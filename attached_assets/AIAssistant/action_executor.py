@@ -12,6 +12,7 @@ except ImportError:
     unreal = None  # type: ignore  # Only available in UE environment
 
 from .api_client import get_client
+from .config import get_config
 from .context_collector import get_collector
 from .utils import Logger
 
@@ -21,6 +22,7 @@ class ActionExecutor:
 
     def __init__(self):
         self.logger = Logger("ActionExecutor", verbose=False)
+        self.config = get_config()
         self.actions: Dict[str, Callable[[], str]] = {}
         self._register_default_actions()
 
@@ -67,7 +69,12 @@ class ActionExecutor:
 
         try:
             collector = get_collector()
-            context = collector.collect_viewport_data()
+            
+            # Check if project metadata collection is enabled
+            include_metadata = self.config.get("collect_project_metadata", True)
+            context = collector.collect_viewport_data(
+                include_project_metadata=include_metadata
+            )
 
             if not context:
                 return "[UE_ERROR] Failed to collect viewport data"

@@ -17,6 +17,34 @@ except ImportError:
 class Config:
     """Manages configuration settings with file persistence."""
 
+    # Response style presets (synced with backend)
+    RESPONSE_STYLES = {
+        "descriptive": {
+            "name": "Descriptive (Default)",
+            "description": "Clear, factual technical prose with balanced detail"
+        },
+        "technical": {
+            "name": "Technical/Precise",
+            "description": "Precise specs with exact coordinates and technical documentation format"
+        },
+        "natural": {
+            "name": "Natural/Conversational",
+            "description": "Conversational tone, focuses on notable elements only"
+        },
+        "balanced": {
+            "name": "Balanced",
+            "description": "Technical accuracy with readability, skips repetitive details"
+        },
+        "concise": {
+            "name": "Concise/Brief",
+            "description": "Extremely brief, one short paragraph with essentials only"
+        },
+        "detailed": {
+            "name": "Detailed/Verbose",
+            "description": "Comprehensive exhaustive analysis of all elements"
+        }
+    }
+
     DEFAULT_CONFIG = {
         "api_base_url": (
             "https://ue5-assistant-noahbutcher97.replit.app"),
@@ -31,6 +59,7 @@ class Config:
         "verbose_logging": False,
         "enable_confirmations": True,
         "max_context_turns": 6,
+        "collect_project_metadata": True,  # NEW: Enable project context collection
     }
 
     def __init__(self, config_path: Optional[Path] = None):
