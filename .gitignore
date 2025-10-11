@@ -1,0 +1,62 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pythonlibs/
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data Files (conversations and config)
+app/data/conversations.jsonl
+app/data/config.json
+
+# Logs
+*.log
+/tmp/logs/
+
+# Test Files
+attached_assets/AIAssistant/tests/*.json
+attached_assets/AIAssistant/tests/*.txt
+attached_assets/AIAssistant/tests/output/
+
+# Temporary Files
+*.tmp
+*.temp
+.cache/
+
+# Replit (keep replit config)
+!.replit
+
+# Environment
+.env
+.env.local
