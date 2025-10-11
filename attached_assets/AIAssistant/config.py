@@ -71,7 +71,15 @@ class Config:
         }
     }
 
+    # Server presets for easy switching
+    SERVER_PRESETS = {
+        "production": "https://ue5-assistant-noahbutcher97.replit.app",
+        "dev": "https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev",
+        "localhost": "http://localhost:5000"
+    }
+
     DEFAULT_CONFIG = {
+        "active_server": "production",  # Default to production
         "api_base_url": (
             "https://ue5-assistant-noahbutcher97.replit.app"),
         "model": "gpt-4o-mini",
@@ -141,7 +149,10 @@ class Config:
 
     @property
     def api_url(self) -> str:
-        """Get the API base URL."""
+        """Get the API base URL based on active server."""
+        active_server = self.get("active_server", "production")
+        if active_server in self.SERVER_PRESETS:
+            return self.SERVER_PRESETS[active_server]
         return self.get("api_base_url", "")
 
     @property
@@ -158,6 +169,40 @@ class Config:
     def verbose(self) -> bool:
         """Check if verbose logging is enabled."""
         return self.get("verbose_logging", False)
+
+    def switch_server(self, server_name: str) -> bool:
+        """
+        Switch to a different server preset.
+        
+        Args:
+            server_name: One of 'production', 'dev', or 'localhost'
+            
+        Returns:
+            True if successful, False if server name is invalid
+        """
+        if server_name in self.SERVER_PRESETS:
+            self.set("active_server", server_name)
+            print(f"✅ Switched to {server_name} server: {self.SERVER_PRESETS[server_name]}")
+            return True
+        else:
+            print(f"❌ Invalid server name: {server_name}")
+            print(f"   Available servers: {', '.join(self.SERVER_PRESETS.keys())}")
+            return False
+    
+    def list_servers(self) -> None:
+        """Print available server presets."""
+        active = self.get("active_server", "production")
+        print("\n🌐 Available Servers:")
+        print("=" * 60)
+        for name, url in self.SERVER_PRESETS.items():
+            marker = "✅ ACTIVE" if name == active else "  "
+            print(f"{marker} {name:12} → {url}")
+        print("=" * 60)
+        print(f"\nCurrent: {active} → {self.api_url}\n")
+    
+    def get_active_server(self) -> str:
+        """Get the currently active server name."""
+        return self.get("active_server", "production")
 
 
 # Global config instance
