@@ -5,7 +5,7 @@ hidden = [".pythonlibs"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["ffmpeg", "jq", "postgresql_16", "redis", "git", "httpie"]
+packages = ["ffmpeg", "jq", "postgresql_16", "redis", "git", "httpie", "tree", "curl"]
 
 [deployment]
 run = ["uvicorn", "main:app", "--host", "0.0.0.0"]
