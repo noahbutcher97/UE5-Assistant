@@ -1005,9 +1005,9 @@
                 if (data.success) {
                     const responseText = data.response || data.result || 'No response';
                     
-                    // Check if response is a UE_REQUEST token
-                    if (responseText.startsWith('[UE_REQUEST]')) {
-                        const action = responseText.replace('[UE_REQUEST]', '').trim();
+                    // Check if response is a UE_REQUEST or UE_CONTEXT_REQUEST token
+                    if (responseText.startsWith('[UE_REQUEST]') || responseText.startsWith('[UE_CONTEXT_REQUEST]')) {
+                        const action = responseText.replace('[UE_REQUEST]', '').replace('[UE_CONTEXT_REQUEST]', '').trim().split('|')[0];
                         
                         // Send command to UE5 and wait for response
                         resultDiv.textContent = '🔄 Collecting data from UE5...';
