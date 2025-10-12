@@ -46,8 +46,13 @@ class ConnectionManager:
         self.dashboard_clients.add(websocket)
         print(f"✅ Dashboard connected (total: {len(self.dashboard_clients)})")
 
-        # Send current UE5 connection status
+        # Send current UE5 connection status (WebSocket + HTTP Polling clients)
         connected_projects = list(self.ue5_clients.keys())
+        
+        # Add HTTP polling clients too
+        if hasattr(self, 'http_clients'):
+            connected_projects.extend(list(self.http_clients.keys()))
+        
         await websocket.send_json({
             "type": "initial_status",
             "connected_projects": connected_projects,
