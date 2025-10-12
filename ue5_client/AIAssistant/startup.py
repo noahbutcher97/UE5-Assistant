@@ -3,17 +3,30 @@ UE5 AI Assistant - Auto-Startup Script
 Automatically configures and initializes the assistant after installation.
 """
 
-def configure_and_start(backend_url=None):
-    """Configure backend URL and start the assistant."""
+def configure_and_start(backend_url=None, force_production=True):
+    """Configure backend URL and start the assistant.
+    
+    Args:
+        backend_url: Optional backend URL (defaults to production)
+        force_production: If True, always use production server (default: True)
+    """
     import sys
     import importlib
     
     try:
-        # Step 1: Configure backend URL if provided
-        if backend_url:
+        from AIAssistant.config import get_config
+        config = get_config()
+        
+        # Step 1: Determine which server to use
+        if force_production:
+            # ALWAYS use production server by default
+            print("🔧 Configuring backend URL: https://ue5-assistant-noahbutcher97.replit.app")
+            config.set("active_server", "production")
+            print("✅ Configured for PRODUCTION server (auto-selected)")
+            print(f"✅ Backend URL: {config.api_url}")
+        elif backend_url:
+            # Only use provided URL if force_production=False
             print(f"🔧 Configuring backend URL: {backend_url}")
-            from AIAssistant.config import get_config
-            config = get_config()
             
             # Check if URL matches a known preset
             matched_preset = None
@@ -33,6 +46,9 @@ def configure_and_start(backend_url=None):
                 print(f"✅ Configured for custom server")
             
             print(f"✅ Backend URL: {config.api_url}")
+        else:
+            # No URL provided and force_production=False - use config default
+            print(f"✅ Using default backend URL: {config.api_url}")
         
         # Step 2: Reload all AIAssistant modules to pick up new config
         print("🔄 Reloading AIAssistant modules...")
