@@ -15,10 +15,6 @@ deploymentTarget = "autoscale"
 localPort = 5000
 externalPort = 80
 
-[[ports]]
-localPort = 35559
-externalPort = 3000
-
 [agent]
 expertMode = true
 
@@ -43,5 +39,5 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "uvicorn main:app --host 0.0.0.0 --port 5000 --reload"
+args = "uvicorn main:app --host 0.0.0.0 --port 5000 --reload --reload-dir . --reload-exclude=attached_assets"
 waitForPort = 5000
