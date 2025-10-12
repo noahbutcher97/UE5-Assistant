@@ -1,0 +1,40 @@
+LogPython: import sys
+# Force reload to clear cache
+if 'AIAssistant.main' in sys.modules:
+    del sys.modules['AIAssistant.main']
+if 'AIAssistant' in sys.modules:
+    del sys.modules['AIAssistant']
+# Now import with full error tracing
+import traceback
+try:
+    import AIAssistant.main as aimain
+    print("Import successful!")
+    print(f"Module location: {aimain.__file__}")
+except Exception as e:
+    print(f"Import failed: {e}")
+    traceback.print_exc()
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: Error: ============================================================
+LogPython: Error: ❌ AI Assistant initialization failed: 'ActionExecutor' object has no attribute '_spawn_actor'
+LogPython: Error: ============================================================
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 448, in _auto_init
+    get_assistant()
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 435, in get_assistant
+    _assistant = AIAssistant()
+                 ^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 23, in __init__
+    self.executor = get_executor()
+                    ^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 369, in get_executor
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 50, in __init__
+    # Add orchestration action implementations
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 81, in _register_default_actions
+    self.logger.debug(f"Registered action: {action_name}")
+                                     ^^^^^^^^^^^^^^^^^
+LogPython: Error: AttributeError: 'ActionExecutor' object has no attribute '_spawn_actor'
+LogPython: Import successful!
+LogPython: Module location: D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py
