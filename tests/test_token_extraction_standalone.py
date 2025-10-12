@@ -17,7 +17,8 @@ def extract_token_from_response(response: str) -> tuple:
         explanatory_text: AI explanation text (if any)
     """
     # Check for UE_REQUEST token
-    ue_request_match = re.search(r'\[UE_REQUEST\]\s*(\S+(?:\s+\S+)*?)(?=\s*\[|$)', response)
+    # Pattern stops at: period, exclamation, question mark, newline, or another bracket
+    ue_request_match = re.search(r'\[UE_REQUEST\]\s*([^\.\!\?\n\[]+?)(?=[\.\!\?\n\[]|$)', response)
     if ue_request_match:
         token_content = ue_request_match.group(1).strip()
         # Extract any explanatory text before the token
@@ -25,9 +26,13 @@ def extract_token_from_response(response: str) -> tuple:
         return ("UE_REQUEST", token_content, explanatory_text)
     
     # Check for UE_CONTEXT_REQUEST token
-    context_match = re.search(r'\[UE_CONTEXT_REQUEST\]\s*([^[]+?)(?=\s*\[|$)', response)
+    # Questions end with ?, so capture including ? but exclude other boundary punctuation
+    context_match = re.search(r'\[UE_CONTEXT_REQUEST\]\s*([^\n\[]+?)(?=[\.\!]\s+|[\?]\s+[A-Z]|[\?]\s+[a-z]{2,}|\n|\[|$)', response)
     if context_match:
         token_content = context_match.group(1).strip()
+        # If there's a ? right after (at boundary), include it
+        if response[context_match.end():context_match.end()+1] == '?':
+            token_content += '?'
         explanatory_text = response[:context_match.start()].strip()
         return ("UE_CONTEXT_REQUEST", token_content, explanatory_text)
     
@@ -111,6 +116,72 @@ def test_real_openai_style_response():
     assert "project_info|" in token_content
     assert "To determine" in explanatory_text
 
+def test_token_with_trailing_period():
+    """Test token followed by period (should stop at period)."""
+    response = "[UE_REQUEST] describe_viewport. Thanks for your help!"
+    token_type, token_content, explanatory_text = extract_token_from_response(response)
+    
+    assert token_type == "UE_REQUEST"
+    assert token_content == "describe_viewport", f"Expected 'describe_viewport', got '{token_content}'"
+    assert explanatory_text == ""
+
+def test_token_with_trailing_exclamation():
+    """Test token followed by exclamation (should stop at exclamation)."""
+    response = "Let me help! [UE_REQUEST] list_actors! Done!"
+    token_type, token_content, explanatory_text = extract_token_from_response(response)
+    
+    assert token_type == "UE_REQUEST"
+    assert token_content == "list_actors", f"Expected 'list_actors', got '{token_content}'"
+    assert explanatory_text == "Let me help!"
+
+def test_token_with_trailing_question():
+    """Test token followed by question mark (should stop at question)."""
+    response = "[UE_REQUEST] get_project_info? Is that okay?"
+    token_type, token_content, explanatory_text = extract_token_from_response(response)
+    
+    assert token_type == "UE_REQUEST"
+    assert token_content == "get_project_info", f"Expected 'get_project_info', got '{token_content}'"
+    assert explanatory_text == ""
+
+def test_token_with_trailing_newline():
+    """Test token followed by newline and more text."""
+    response = "[UE_REQUEST] describe_viewport\nHope this helps!"
+    token_type, token_content, explanatory_text = extract_token_from_response(response)
+    
+    assert token_type == "UE_REQUEST"
+    assert token_content == "describe_viewport", f"Expected 'describe_viewport', got '{token_content}'"
+    assert explanatory_text == ""
+
+def test_context_token_with_trailing_text_period():
+    """Test context request with trailing explanation after period."""
+    response = "[UE_CONTEXT_REQUEST] project_info|What project. Let me check for you!"
+    token_type, token_content, explanatory_text = extract_token_from_response(response)
+    
+    assert token_type == "UE_CONTEXT_REQUEST"
+    # Should stop at period before "Let me check..."
+    assert token_content == "project_info|What project", f"Expected 'project_info|What project', got '{token_content}'"
+    assert explanatory_text == ""
+
+def test_context_token_with_trailing_text_question():
+    """Test context request with question mark followed by trailing text (critical bug fix test)."""
+    response = "[UE_CONTEXT_REQUEST] project_info|What project? Let me help you!"
+    token_type, token_content, explanatory_text = extract_token_from_response(response)
+    
+    assert token_type == "UE_CONTEXT_REQUEST"
+    # Should stop at "?" before "Let me help..."
+    assert token_content == "project_info|What project?", f"Expected 'project_info|What project?', got '{token_content}'"
+    assert explanatory_text == ""
+
+def test_context_token_with_lowercase_continuation():
+    """Test context request with question mark followed by lowercase continuation."""
+    response = "[UE_CONTEXT_REQUEST] viewport|Describe the scene? please wait"
+    token_type, token_content, explanatory_text = extract_token_from_response(response)
+    
+    assert token_type == "UE_CONTEXT_REQUEST"
+    # Should stop at "?" before "please wait"
+    assert token_content == "viewport|Describe the scene?", f"Expected 'viewport|Describe the scene?', got '{token_content}'"
+    assert explanatory_text == ""
+
 if __name__ == "__main__":
     print("Testing token extraction logic...")
     
@@ -138,4 +209,25 @@ if __name__ == "__main__":
     test_real_openai_style_response()
     print("✅ Real OpenAI-style response: PASSED")
     
-    print("\n🎉 All token extraction tests PASSED!")
+    test_token_with_trailing_period()
+    print("✅ Token with trailing period: PASSED")
+    
+    test_token_with_trailing_exclamation()
+    print("✅ Token with trailing exclamation: PASSED")
+    
+    test_token_with_trailing_question()
+    print("✅ Token with trailing question: PASSED")
+    
+    test_token_with_trailing_newline()
+    print("✅ Token with trailing newline: PASSED")
+    
+    test_context_token_with_trailing_text_period()
+    print("✅ Context token with trailing text (period): PASSED")
+    
+    test_context_token_with_trailing_text_question()
+    print("✅ Context token with trailing text (question): PASSED")
+    
+    test_context_token_with_lowercase_continuation()
+    print("✅ Context token with lowercase continuation: PASSED")
+    
+    print("\n🎉 All 15 token extraction tests PASSED!")

@@ -138,17 +138,24 @@ class AIAssistant:
         import re
         
         # Check for UE_REQUEST token
-        ue_request_match = re.search(r'\[UE_REQUEST\]\s*(\S+(?:\s+\S+)*?)(?=\s*\[|$)', response)
+        # Pattern stops at: period, exclamation, question mark, newline, or another bracket
+        ue_request_match = re.search(r'\[UE_REQUEST\]\s*([^\.\!\?\n\[]+?)(?=[\.\!\?\n\[]|$)', response)
         if ue_request_match:
             token_content = ue_request_match.group(1).strip()
             # Extract any explanatory text before the token
             explanatory_text = response[:ue_request_match.start()].strip()
+            # Extract any trailing text after the token (for future use)
+            token_end = ue_request_match.end()
             return ("UE_REQUEST", token_content, explanatory_text)
         
         # Check for UE_CONTEXT_REQUEST token
-        context_match = re.search(r'\[UE_CONTEXT_REQUEST\]\s*([^[]+?)(?=\s*\[|$)', response)
+        # Questions end with ?, so capture including ? but exclude other boundary punctuation
+        context_match = re.search(r'\[UE_CONTEXT_REQUEST\]\s*([^\n\[]+?)(?=[\.\!]\s+|[\?]\s+[A-Z]|[\?]\s+[a-z]{2,}|\n|\[|$)', response)
         if context_match:
             token_content = context_match.group(1).strip()
+            # If there's a ? right after (at boundary), include it
+            if response[context_match.end():context_match.end()+1] == '?':
+                token_content += '?'
             explanatory_text = response[:context_match.start()].strip()
             return ("UE_CONTEXT_REQUEST", token_content, explanatory_text)
         
