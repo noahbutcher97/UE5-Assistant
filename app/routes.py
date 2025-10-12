@@ -1356,6 +1356,16 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                         "action": action,
                         "result": response
                     })
+                
+                elif command_type == "auto_update":
+                    # Broadcast auto-update to all UE5 clients
+                    result = await manager.broadcast_update_to_ue5_clients()
+                    
+                    # Send response back to dashboard
+                    await websocket.send_json({
+                        "type": "auto_update_result",
+                        "result": result
+                    })
                     
         except WebSocketDisconnect:
             manager.disconnect_dashboard(websocket)
