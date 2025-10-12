@@ -70,8 +70,16 @@ The project follows a clean, organized structure:
 
 ### UI/UX Decisions
 - **Unified Control Center**: A single `/dashboard` interface with Project Hub as the primary tab, alongside Conversations, Settings, API Info, and About.
-- **Project Selector**: Browser-based dropdown for active UE5 project selection with real-time connection status.
-- **Dark Theme Dashboard**: A cyberpunk aesthetic featuring a dark navy background, cyan accents, and glass morphism cards.
+- **Modern Design System**: Built with Inter font, cyberpunk aesthetic with animated gradients, glassmorphism effects, and smooth CSS transitions.
+- **Project Selector**: Browser-based dropdown for active UE5 project selection with real-time pulsing connection status indicators.
+- **Enhanced Visuals**: Glowing text effects, animated backgrounds, hover micro-interactions, smooth fade-in transitions, and professional color schemes.
+- **Quality of Life Features**: 
+  - Keyboard shortcuts (Ctrl+K to focus search, Enter to submit)
+  - Tooltips on interactive elements
+  - One-click copy buttons for API responses
+  - Quick action buttons for common commands
+  - Visual feedback on all user interactions
+- **Responsive Architecture**: Mobile-friendly grid layouts, flexible components, and touch-optimized controls.
 - **Console Feedback**: Emoji-based status indicators in the Unreal Engine console for clarity.
 
 ### Technical Implementations
