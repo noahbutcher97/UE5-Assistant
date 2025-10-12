@@ -1,39 +1,54 @@
 @echo off
 setlocal enabledelayedexpansion
-color 0A
+
+:: Simple batch script to download and run the UE5 Assistant PowerShell installer.
+
+title UE5 AI Assistant - Quick Installer
 
 echo ================================================
 echo    UE5 AI Assistant - Quick Installer
 echo ================================================
 echo.
 
-REM Show folder picker GUI
-echo Please select your UE5 project folder in the dialog...
-echo.
-
-for /f "delims=" %%i in ('powershell -command "Add-Type -AssemblyName System.Windows.Forms; $folder = New-Object System.Windows.Forms.FolderBrowserDialog; $folder.Description = 'Select your UE5 Project folder'; $folder.ShowNewFolderButton = $false; if($folder.ShowDialog() -eq 'OK'){$folder.SelectedPath}"') do set "PROJECT_PATH=%%i"
-
-if "%PROJECT_PATH%"=="" (
-    color 0C
-    echo ERROR: No folder selected
-    echo.
+:: PowerShell is required
+where /q powershell
+if %errorlevel% neq 0 (
+    echo ❌ ERROR: PowerShell is not installed or not in your PATH.
+    echo    Please install PowerShell 5.1 or later and try again.
     pause
     exit /b 1
 )
 
-echo Selected: %PROJECT_PATH%
+:: Prompt for project path
+echo Please select your UE5 project folder in the dialog...
+set "psCommand=Add-Type -AssemblyName System.windows.forms; $f=New-Object System.Windows.Forms.FolderBrowserDialog; $f.Description='Select your Unreal Engine 5 project folder'; $f.ShowNewFolderButton=$false; $f.ShowDialog(); $f.SelectedPath"
+for /f "delims=" %%I in ('powershell -NoProfile -Command "%psCommand%"') do set "ProjectPath=%%I"
+
+if not defined ProjectPath (
+    echo ❌ Canceled. No folder selected.
+    pause
+    exit /b 1
+)
+
+echo Selected: %ProjectPath%
+echo.
+echo Downloading enhanced installer...
 echo.
 
-REM Download enhanced PowerShell installer
-set "PS_INSTALLER=%TEMP%\install_ue5_assistant.ps1"
-set "BACKEND_URL=https://ue5-assistant-noahbutcher97.replit.app"
+set "BackendURL=https://ue5-assistant-noahbutcher97.replit.app"
+set "InstallerURL=%BackendURL%/api/installer_script"
+set "TempInstaller=%TEMP%\install_ue5_assistant.ps1"
 
-echo Downloading enhanced installer...
-powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $response = Invoke-WebRequest -Uri '%BACKEND_URL%/api/installer_script' -Method POST -UseBasicParsing; [System.IO.File]::WriteAllText('%PS_INSTALLER%', $response.Content, [System.Text.Encoding]::UTF8)}"
+:: Cache-busting: Append a unique timestamp to the URL to bypass CDN caching
+set "CacheBuster=%RANDOM%%RANDOM%"
+set "FullURL=%InstallerURL%?v=%CacheBuster%"
 
-if not exist "%PS_INSTALLER%" (
-    color 0C
-    echo ERROR: Failed to download installer
+:: Download the latest installer script using PowerShell
+powershell -NoProfile -ExecutionPolicy Bypass -Command "try { Invoke-WebRequest -Uri '%FullURL%' -Method POST -OutFile '%TempInstaller%' } catch { Write-Host '❌ Download failed.'; exit 1 }"
+
+if not exist "%TempInstaller%" (
+    echo ❌ Failed to download the installer script.
+    echo    Please check your internet connection and the backend URL.
     pause
     exit /b 1
 )
@@ -44,11 +59,10 @@ echo   Running Enhanced Installer...
 echo ================================================
 echo.
 
-REM Execute enhanced PowerShell installer with selected project path
-powershell -ExecutionPolicy Bypass -File "%PS_INSTALLER%" -ProjectPath "%PROJECT_PATH%" -BackendURL "%BACKEND_URL%"
+:: Run the downloaded PowerShell script
+powershell -NoProfile -ExecutionPolicy Bypass -File "%TempInstaller%" -ProjectPath "%ProjectPath%"
 
-REM Cleanup
-del "%PS_INSTALLER%" >nul 2>&1
+del "%TempInstaller%" >nul 2>&1
 
-echo.
+endlocal
 pause
