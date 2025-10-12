@@ -116,7 +116,8 @@ The project follows a clean, organized structure:
 - **Separation of Concerns**: UE viewport collection logic is isolated from the AI processing backend.
 - **Environment-based Configuration**: Sensitive data and configurable parameters are managed via environment variables.
 - **Error Handling**: Includes structured logging, retry logic, graceful degradation, and console feedback.
-- **Thread Safety**: UE5 integration operates in synchronous mode to prevent threading issues.
+- **Thread-Safe Action Queue**: Implements a singleton queue system with Unreal Slate ticker integration for safe main thread execution of all UE5 API calls from background threads.
+- **Automatic Cache Management**: Module version tracking with UUID markers and automatic cache invalidation on updates - no manual intervention required.
 - **Security Hardening**: Path traversal protection and enforcement of read-only file operations.
 - **UE5.6 API Compliance**: All UE5 client code adheres to Epic Games' official documentation.
 
