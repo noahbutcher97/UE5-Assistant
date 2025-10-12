@@ -223,7 +223,8 @@ class TestContextAwareResponses:
         """Test answering questions with project context."""
         context_data = {
             "question": "What is the name of this project?",
-            "project_profile": get_mock_project_profile()
+            "context": get_mock_project_profile(),
+            "context_type": "project_info"
         }
         
         response = client.post("/answer_with_context", json=context_data)
@@ -242,7 +243,8 @@ class TestContextAwareResponses:
         """Test answering questions about viewport."""
         context_data = {
             "question": "What lighting is in the scene?",
-            "viewport_context": get_mock_viewport_context()
+            "context": get_mock_viewport_context(),
+            "context_type": "viewport"
         }
         
         response = client.post("/answer_with_context", json=context_data)
@@ -262,9 +264,10 @@ class TestContextAwareResponses:
         
         context_data = {
             "question": "What blueprints are in this project?",
-            "blueprint_context": {
+            "context": {
                 "blueprints": get_mock_blueprint_list()
-            }
+            },
+            "context_type": "blueprints"
         }
         
         response = client.post("/answer_with_context", json=context_data)
