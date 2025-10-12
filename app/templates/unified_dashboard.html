@@ -857,8 +857,8 @@
         }
         
         async function frictionlessDeploy() {
-        const projectName = document.getElementById('project-name').value;
-        const projectPath = document.getElementById('project-path').value;
+        const projectName = document.getElementById('manual-name').value;
+        const projectPath = document.getElementById('manual-path').value;
         
         // Show immediate feedback
         const statusDiv = document.getElementById('deploy-status');
@@ -867,7 +867,8 @@
         statusDiv.innerHTML = '<span class="loading-spinner">⚙️</span> Starting deployment process...';
         
         if (!projectPath) {
-            updateDeployStatus('❌ Please enter the project path first', 'error');
+            statusDiv.className = 'status-error';
+            statusDiv.innerHTML = '❌ Please enter the project path first';
             return;
         }
         
