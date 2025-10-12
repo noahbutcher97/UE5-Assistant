@@ -10,10 +10,10 @@ import json
 class ProjectRegistry:
     """Manages multiple UE5 project connections."""
     
-    def __init__(self):
+    def __init__(self, registry_file: Optional[Path] = None):
         self.projects: Dict[str, Dict[str, Any]] = {}
         self.active_project_id: Optional[str] = None
-        self.registry_file = Path("data/project_registry.json")
+        self.registry_file = registry_file or Path("data/project_registry.json")
         self._load_registry()
     
     def register_project(
