@@ -1,0 +1,113 @@
+LogDerivedDataCache: C:/Users/posne/AppData/Local/UnrealEngine/Common/DerivedDataCache: Maintenance finished in +00:00:00.125 and deleted 0 files with total size 0 MiB and 0 empty folders. Scanned 970 files in 1602 folders with total size 30 MiB.
+LogPython: import sys
+import gc
+print("=" * 60)
+print("🧹 FORCE CLEARING ALL AIASSISTANT MODULES...")
+print("=" * 60)
+# List all AIAssistant modules
+ai_modules = [key for key in list(sys.modules.keys()) if 'AIAssistant' in key]
+print(f"Found {len(ai_modules)} AIAssistant modules to clear:")
+for mod in ai_modules:
+    print(f"  - {mod}")
+# Clear ALL AIAssistant modules
+for module in ai_modules:
+    try:
+        del sys.modules[module]
+        print(f"✅ Cleared: {module}")
+    except Exception as e:
+        print(f"⚠️ Failed to clear {module}: {e}")
+# Also clear any cached imports
+import importlib
+importlib.invalidate_caches()
+# Force garbage collection
+gc.collect()
+print("\n" + "=" * 60)
+print("🔄 RELOADING AIASSISTANT WITH FRESH CODE...")
+print("=" * 60)
+# Now reload everything fresh
+try:
+    import AIAssistant.startup as startup
+    startup.configure_and_start(force_production=True)
+    print("\n✅ AIAssistant reloaded successfully with latest code!")
+except Exception as e:
+    print(f"\n❌ Failed to reload: {e}")
+    import traceback
+    traceback.print_exc()
+LogPython: ============================================================
+LogPython: 🧹 FORCE CLEARING ALL AIASSISTANT MODULES...
+LogPython: ============================================================
+LogPython: Found 21 AIAssistant modules to clear:
+LogPython:   - AIAssistant.config
+LogPython:   - AIAssistant.utils
+LogPython:   - AIAssistant.api_client
+LogPython:   - AIAssistant.blueprint_capture
+LogPython:   - AIAssistant.context_collector
+LogPython:   - AIAssistant.file_collector
+LogPython:   - AIAssistant.project_metadata_collector
+LogPython:   - AIAssistant.action_queue
+LogPython:   - AIAssistant.actor_manipulator
+LogPython:   - AIAssistant.editor_utility_generator
+LogPython:   - AIAssistant.scene_orchestrator
+LogPython:   - AIAssistant.viewport_controller
+LogPython:   - AIAssistant.action_executor
+LogPython:   - AIAssistant.async_client
+LogPython:   - AIAssistant.ui_manager
+LogPython:   - AIAssistant.websocket_client
+LogPython:   - AIAssistant.action_executor_extensions
+LogPython:   - AIAssistant.project_registration
+LogPython:   - AIAssistant.http_polling_client
+LogPython:   - AIAssistant.main
+LogPython:   - AIAssistant
+LogPython: ✅ Cleared: AIAssistant.config
+LogPython: ✅ Cleared: AIAssistant.utils
+LogPython: ✅ Cleared: AIAssistant.api_client
+LogPython: ✅ Cleared: AIAssistant.blueprint_capture
+LogPython: ✅ Cleared: AIAssistant.context_collector
+LogPython: ✅ Cleared: AIAssistant.file_collector
+LogPython: ✅ Cleared: AIAssistant.project_metadata_collector
+LogPython: ✅ Cleared: AIAssistant.action_queue
+LogPython: ✅ Cleared: AIAssistant.actor_manipulator
+LogPython: ✅ Cleared: AIAssistant.editor_utility_generator
+LogPython: ✅ Cleared: AIAssistant.scene_orchestrator
+LogPython: ✅ Cleared: AIAssistant.viewport_controller
+LogPython: ✅ Cleared: AIAssistant.action_executor
+LogPython: ✅ Cleared: AIAssistant.async_client
+LogPython: ✅ Cleared: AIAssistant.ui_manager
+LogPython: ✅ Cleared: AIAssistant.websocket_client
+LogPython: ✅ Cleared: AIAssistant.action_executor_extensions
+LogPython: ✅ Cleared: AIAssistant.project_registration
+LogPython: ✅ Cleared: AIAssistant.http_polling_client
+LogPython: ✅ Cleared: AIAssistant.main
+LogPython: ✅ Cleared: AIAssistant
+LogPython: ============================================================
+LogPython: 🔄 RELOADING AIASSISTANT WITH FRESH CODE...
+LogPython: ============================================================
+LogPython: [ActionQueue] ✅ Main thread ticker started (vbfb7ecf8)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
+LogPython: ❌ Failed to reload: configure_and_start() got an unexpected keyword argument 'force_production'
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 36, in <module>
+LogPython: Error: TypeError: configure_and_start() got an unexpected keyword argument 'force_production'
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
