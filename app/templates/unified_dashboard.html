@@ -293,20 +293,12 @@
                     </div>
                 </div>
                 
-                <!-- WebSocket Mode (Under Construction) -->
-                <div id="websocket-mode-btn" style="position: relative; cursor: not-allowed; padding: 16px 24px; background: rgba(139,92,246,0.1); border-radius: 10px; border: 2px dashed rgba(139,92,246,0.3); opacity: 0.5; transition: all 0.3;">
+                <!-- WebSocket Mode -->
+                <div id="websocket-mode-btn" onclick="setConnectionMode('websocket')" style="position: relative; cursor: pointer; padding: 16px 24px; background: rgba(139,92,246,0.1); border-radius: 10px; border: 2px solid rgba(139,92,246,0.3); transition: all 0.3s;">
                     <div style="text-align: center;">
-                        <div style="font-size: 24px; margin-bottom: 4px;">🔌</div>
-                        <div style="font-weight: 600; font-size: 14px; color: #8b95a5;">WebSocket</div>
-                        <div style="font-size: 11px; color: #8b95a5; margin-top: 2px;">⏸️ Coming Soon</div>
-                    </div>
-                    
-                    <!-- Construction Overlay -->
-                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); border-radius: 8px;">
-                        <div style="text-align: center;">
-                            <div style="font-size: 32px; margin-bottom: 4px;">🚧</div>
-                            <div style="font-size: 10px; color: #fbbf24; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Under Construction</div>
-                        </div>
+                        <div style="font-size: 24px; margin-bottom: 4px;">⚡</div>
+                        <div style="font-weight: 600; font-size: 14px;">WebSocket</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px;">Real-time</div>
                     </div>
                 </div>
             </div>
@@ -872,7 +864,7 @@
 
     <script>
         let currentTab = 'project-hub';
-        let connectionMode = 'http'; // Default to HTTP polling (WebSocket under construction)
+        let connectionMode = 'http'; // Default to HTTP polling
 
         // Load projects on page load
         loadProjects();
