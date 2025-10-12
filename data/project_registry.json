@@ -35,7 +35,8 @@
         "plugins_enabled": true
       },
       "registered_at": "2025-10-12T07:47:23.392330",
-      "last_updated": "2025-10-12T07:47:23.392341"
+      "last_updated": "2025-10-12T07:49:20.674060",
+      "connection_mode": "http"
     }
   }
 }

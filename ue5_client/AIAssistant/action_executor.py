@@ -2,7 +2,7 @@
 Action execution system with command registry pattern.
 Handles [UE_REQUEST] tokens and executes Unreal Engine operations.
 """
-from typing import Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 try:
     import unreal  # type: ignore
@@ -80,8 +80,13 @@ class ActionExecutor:
         self.actions[action_name] = handler
         self.logger.debug(f"Registered action: {action_name}")
 
-    def execute(self, action_token: str) -> str:
-        """Execute an action by token name."""
+    def execute(self, action_token: str, params: Optional[Dict] = None) -> str:
+        """Execute an action by token name.
+        
+        Args:
+            action_token: The action to execute
+            params: Optional parameters (currently unused, for future expansion)
+        """
         action_name = action_token.lower().strip()
 
         if action_name not in self.actions:
