@@ -24,8 +24,10 @@ The project follows a clean, organized structure:
 │   ├── websocket_manager.py # WebSocket handling
 │   ├── services/          # Business logic services
 │   └── templates/         # HTML templates
-├── attached_assets/       # Static assets & UE5 client
-│   └── AIAssistant/       # UE5 Python client (authoritative source)
+├── ue5_client/            # UE5 Python client (authoritative source)
+│   ├── AIAssistant/       # Client module code
+│   └── deploy_agent.py    # Local deployment service
+├── attached_assets/       # User-uploaded assets (images, files, etc.)
 ├── scripts/               # Deployment & utility scripts
 │   ├── deploy_agent_installer.bat
 │   ├── install_ue5_assistant.ps1
@@ -44,7 +46,8 @@ The project follows a clean, organized structure:
 
 ### Key Directories
 - **app/**: Backend application with clean separation of concerns
-- **attached_assets/AIAssistant/**: Single authoritative source for UE5 client code
+- **ue5_client/**: Single authoritative source for UE5 client code (isolated from attachments)
+- **attached_assets/**: Reserved for user-uploaded assets (images, files, etc.)
 - **scripts/**: All deployment scripts and utilities
 - **docs/**: Active documentation for users and developers
 - **data/**: Runtime data files (project registry, etc.)
