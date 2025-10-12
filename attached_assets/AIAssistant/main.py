@@ -361,12 +361,27 @@ class AIAssistant:
             import unreal
             import hashlib
             
+            # Check if websocket-client is installed
+            try:
+                import websocket
+                unreal.log("✅ websocket-client library detected")
+            except ImportError:
+                unreal.log_error("❌ websocket-client not installed!")
+                unreal.log_error("   Install with: pip install websocket-client")
+                unreal.log_error("   Real-time features will be disabled")
+                return
+            
             # Get project info
             project_path = unreal.Paths.project_dir()
             project_id = hashlib.md5(project_path.encode()).hexdigest()
             
+            unreal.log(f"📋 Project Path: {project_path}")
+            unreal.log(f"📋 Project ID: {project_id}")
+            
             # Create WebSocket client
-            base_url = self.config.base_url
+            base_url = self.config.api_url
+            unreal.log(f"📋 Backend URL: {base_url}")
+            
             self.ws_client = WebSocketClient(base_url, project_id)
             
             # Set action handler
@@ -377,10 +392,11 @@ class AIAssistant:
                 unreal.log("🌐 Real-time dashboard connection enabled")
             else:
                 unreal.log_warning("⚠️ WebSocket connection failed (dashboard features limited)")
+                unreal.log_warning("   Check UE5 Output Log for connection details")
                 
         except Exception as e:
             import unreal
-            unreal.log_warning(f"⚠️ WebSocket init failed: {e}")
+            unreal.log_error(f"⚠️ WebSocket init failed: {e}")
     
     def _handle_websocket_action(self, action: str, params: dict) -> dict:
         """

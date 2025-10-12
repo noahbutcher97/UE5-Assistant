@@ -103,6 +103,87 @@ class APIClient:
         )
         return {"error": last_error or "Unknown error"}
 
+    def get_json(
+        self,
+        url: str,
+        params: Optional[Dict[str, Any]] = None,
+        timeout: Optional[float] = None,
+    ) -> Dict[str, Any]:
+        """
+        Send GET request and return JSON response.
+        Includes retry logic and error handling.
+        """
+        if requests is None:
+            self.logger.error("requests library not available")
+            return {"error": "requests library not installed"}
+
+        if timeout is None:
+            timeout = self.config.get("timeout", 25)
+
+        max_retries = self.config.get("max_retries", 3)
+        retry_delay = self.config.get("retry_delay", 2.5)
+
+        last_error = None
+
+        for attempt in range(1, max_retries + 1):
+            try:
+                self.logger.debug(
+                    f"GET {url} (attempt {attempt}/{max_retries})"
+                )
+
+                response = requests.get(
+                    url, params=params, timeout=timeout
+                )
+                response.raise_for_status()
+
+                result = response.json()
+                self.logger.debug(f"Success: {len(str(result))} bytes")
+                return result
+
+            except requests.Timeout:
+                last_error = f"Request timed out after {timeout}s"
+                self.logger.warn(
+                    f"{last_error} (attempt {attempt}/{max_retries})"
+                )
+
+            except requests.HTTPError as e:
+                status = e.response.status_code
+                last_error = f"HTTP {status}: {e.response.text[:200]}"
+                self.logger.warn(
+                    f"{last_error} (attempt {attempt}/{max_retries})"
+                )
+
+            except requests.RequestException as e:
+                last_error = str(e)
+                self.logger.warn(
+                    f"Request failed: {last_error} "
+                    f"(attempt {attempt}/{max_retries})"
+                )
+
+            except json.JSONDecodeError:
+                last_error = "Invalid JSON response from server"
+                self.logger.warn(
+                    f"{last_error} (attempt {attempt}/{max_retries})"
+                )
+
+            except Exception as e:
+                last_error = f"Unexpected error: {e}"
+                self.logger.error(
+                    f"{last_error} (attempt {attempt}/{max_retries})"
+                )
+
+            if attempt < max_retries:
+                self.logger.info(
+                    f"Retrying in {retry_delay}s..."
+                )
+                time.sleep(retry_delay)
+
+        self.logger.error(
+            f"All {max_retries} attempts failed. Last error: "
+            f"{last_error}"
+        )
+        return {"error": last_error or "Unknown error"}
+
     def execute_command(
         self, prompt: str
     ) -> Dict[str, Any]:

@@ -952,11 +952,12 @@
         
         // First, check if Deploy Agent is running
         try {
-            await new Promise(resolve => setTimeout(resolve, 500)); // Brief delay to show loading state
             statusDiv.innerHTML = '<span class="loading-spinner">🔍</span> Checking for Deploy Agent on your PC...';
             statusDiv.className = 'status-loading';
             
-            const agentResponse = await fetch('http://localhost:7865/status');
+            const agentResponse = await fetch('http://localhost:7865/status', {
+                signal: AbortSignal.timeout(3000)  // 3 second timeout
+            });
             
             if (agentResponse.ok) {
                 // Agent is running! Do frictionless deploy
