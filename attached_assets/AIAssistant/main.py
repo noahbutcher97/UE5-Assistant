@@ -10,7 +10,23 @@ from .async_client import get_async_client
 from .config import get_config
 from .ui_manager import get_ui_manager
 from .utils import Logger
-from .websocket_client import WebSocketClient
+
+# Check for websocket-client dependency
+try:
+    from .websocket_client import WebSocketClient
+except ImportError as e:
+    # Missing websocket-client library
+    try:
+        import unreal
+        unreal.log_error("=" * 60)
+        unreal.log_error("❌ Missing dependency: websocket-client")
+        unreal.log_error("=" * 60)
+        unreal.log_warning("📦 Install it with:")
+        unreal.log_warning("   import AIAssistant.install_dependencies")
+        unreal.log_error("=" * 60)
+    except ImportError:
+        pass
+    raise
 
 
 class AIAssistant:

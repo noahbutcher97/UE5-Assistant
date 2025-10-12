@@ -4,7 +4,7 @@ WebSocket client for UE5 to enable real-time communication with backend.
 import json
 import threading
 import time
-from typing import Optional, Callable, Dict, Any
+from typing import Any, Callable, Dict, Optional
 
 
 class WebSocketClient:
@@ -77,7 +77,7 @@ class WebSocketClient:
                     return True
                 time.sleep(0.1)
             
-            print(f"⚠️ WebSocket connection timeout after 5 seconds")
+            print("⚠️ WebSocket connection timeout after 5 seconds")
             print(f"   URL attempted: {self.ws_url}")
             print(f"   Project ID: {self.project_id}")
             return False
@@ -147,8 +147,8 @@ class WebSocketClient:
         """Handle auto-update triggered by backend."""
         try:
             # Import here to avoid circular dependency
-            import sys
             import importlib
+            import sys
             
             # Check if we're in UE5 environment
             try:
@@ -198,7 +198,7 @@ class WebSocketClient:
             time.sleep(delay)
             self._reconnect()
         elif self.reconnect_attempts >= self.max_reconnect_attempts:
-            print(f"❌ Max reconnection attempts reached. WebSocket permanently disconnected.")
+            print("❌ Max reconnection attempts reached. WebSocket permanently disconnected.")
             self.running = False
     
     def _reconnect(self):
