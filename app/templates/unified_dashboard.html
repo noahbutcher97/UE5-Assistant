@@ -282,22 +282,14 @@
     <!-- Project Hub Tab -->
     <div id="project-hub" class="tab-content active">
         <!-- Quick Action Bar -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
-            <button onclick="toggleProjectForm()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 15px; font-size: 16px; display: flex; align-items: center; gap: 10px; justify-content: center;">
-                <span style="font-size: 24px;">➕</span>
-                <span>Add Project</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+            <button onclick="toggleProjectForm()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 18px; font-size: 18px; display: flex; align-items: center; gap: 12px; justify-content: center;">
+                <span style="font-size: 28px;">➕</span>
+                <span>Add Project / Deploy</span>
             </button>
-            <button onclick="frictionlessDeploy()" style="background: linear-gradient(135deg, #ff6b35 0%, #f54023 100%); padding: 15px; font-size: 16px; display: flex; align-items: center; gap: 10px; justify-content: center;">
-                <span style="font-size: 24px;">⚡</span>
-                <span>Quick Deploy</span>
-            </button>
-            <a href="/api/download_client" style="background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); padding: 15px; font-size: 16px; display: flex; align-items: center; gap: 10px; justify-content: center; text-decoration: none; color: white; border-radius: 8px;">
-                <span style="font-size: 24px;">📦</span>
-                <span>Download Client</span>
-            </a>
-            <button onclick="showTab('settings'); triggerAutoUpdate()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 15px; font-size: 16px; display: flex; align-items: center; gap: 10px; justify-content: center;">
-                <span style="font-size: 24px;">🔄</span>
-                <span>Update All</span>
+            <button onclick="showTab('settings'); triggerAutoUpdate()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 18px; font-size: 18px; display: flex; align-items: center; gap: 12px; justify-content: center;">
+                <span style="font-size: 28px;">🔄</span>
+                <span>Update All Projects</span>
             </button>
         </div>
 
@@ -326,16 +318,39 @@
                 </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
-                <button onclick="registerManualProject()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 14px; font-size: 15px;">
-                    ✅ Register Project
-                </button>
-                <button onclick="frictionlessDeploy()" style="background: linear-gradient(135deg, #ff6b35 0%, #f54023 100%); padding: 14px; font-size: 15px;">
-                    ⚡ Instant Deploy & Run
-                </button>
-            </div>
+            <button onclick="registerManualProject()" style="width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 14px; font-size: 16px; margin-top: 20px;">
+                ✅ Register Project Only
+            </button>
             
-            <div id="deploy-status" style="margin-top: 15px; display: none; padding: 15px; border-radius: 8px;"></div>
+            <div style="margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(0,217,255,0.2);">
+                <h3 style="color: #00d9ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">🚀 Deployment Options</h3>
+                
+                <!-- Deploy Agent Status Indicator -->
+                <div id="deploy-agent-indicator" style="margin-bottom: 15px; padding: 10px; border-radius: 8px; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); display: none;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 20px;">⚡</span>
+                        <span style="color: #fbbf24; font-size: 14px;">Deploy Agent: <span id="agent-status-text">Checking...</span></span>
+                    </div>
+                </div>
+                
+                <!-- Instant Deploy Button -->
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                    <button onclick="frictionlessDeploy()" style="flex: 1; background: linear-gradient(135deg, #ff6b35 0%, #f54023 100%); padding: 14px; font-size: 15px;">
+                        ⚡ Instant Deploy & Run
+                    </button>
+                    <span id="deploy-badge" style="color: #10b981; font-size: 14px;">✨ Recommended</span>
+                </div>
+                <div id="deploy-status" style="margin-bottom: 15px; display: none; padding: 12px; border-radius: 8px;"></div>
+                
+                <!-- Alternative: Manual Download -->
+                <div style="border-top: 1px solid rgba(139,149,165,0.2); padding-top: 15px; margin-top: 15px;">
+                    <p style="color: #8b95a5; font-size: 14px; margin-bottom: 10px;">Or download and install manually:</p>
+                    <a href="/api/download_client" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); padding: 12px; text-decoration: none; color: white; border-radius: 8px; font-size: 15px;">
+                        <span style="font-size: 20px;">📦</span>
+                        <span>Download Client ZIP</span>
+                    </a>
+                </div>
+            </div>
         </div>
 
         <!-- Connection Guide (shown when projects registered but not connected) -->
@@ -361,27 +376,66 @@
             </div>
         </div>
 
-        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
-            <!-- AI Project Intelligence -->
-            <div class="card" style="background: linear-gradient(135deg, rgba(0,217,255,0.05) 0%, rgba(0,0,0,0.2) 100%);">
-                <h2>🧠 AI Project Intelligence</h2>
-                <p style="color: #8b95a5; margin-bottom: 15px;">Real-time AI queries with live UE5 data collection</p>
-                
-                <div class="input-group">
-                    <input type="text" id="projectQuery" 
-                        placeholder="Ask anything: file count, blueprints, project info..."
-                        style="font-size: 16px; padding: 14px;">
+        <!-- AI Features Section (Full Width, Prominent) -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(0,217,255,0.08) 0%, rgba(139,92,246,0.08) 100%); border: 2px solid rgba(0,217,255,0.3); margin-bottom: 20px;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h2 style="font-size: 28px; margin-bottom: 10px;">🤖 AI-Powered UE5 Intelligence</h2>
+                <p style="color: #8b95a5; font-size: 16px;">Ask questions, generate code, analyze your project with AI</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;">
+                <!-- Left: Query Interface -->
+                <div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="projectQuery" 
+                            placeholder="Ask anything: 'how many files?', 'describe viewport', 'what blueprints exist?'..."
+                            style="flex: 1; font-size: 16px; padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,217,255,0.3); color: white;">
+                        <button onclick="queryProject()" style="padding: 16px 30px; font-size: 16px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); border-radius: 10px; white-space: nowrap;">
+                            🔍 Ask AI
+                        </button>
+                    </div>
+                    
+                    <div class="output-box" id="queryOutput" style="min-height: 200px; max-height: 400px; font-size: 15px; line-height: 1.6; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,217,255,0.2);">
+                        <div style="text-align: center; padding: 60px 20px; color: #8b95a5;">
+                            <div style="font-size: 48px; margin-bottom: 15px;">💭</div>
+                            <p>Ask a question to see AI-powered responses</p>
+                        </div>
+                    </div>
                 </div>
-
-                <button onclick="queryProject()" style="width: 100%; padding: 14px; font-size: 16px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%);">
-                    🔍 Query Project
-                </button>
-
-                <div class="output-box" id="queryOutput" style="margin-top: 15px; min-height: 150px; max-height: 300px; font-size: 14px;">
-                    Response will appear here...
+                
+                <!-- Right: Quick Examples -->
+                <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(139,92,246,0.3);">
+                    <h3 style="color: #a78bfa; margin-top: 0; font-size: 16px;">💡 Try These:</h3>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <button onclick="document.getElementById('projectQuery').value='how many files are in my project?'; queryProject();" 
+                            style="text-align: left; padding: 10px 14px; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; color: #a78bfa; font-size: 14px; cursor: pointer;">
+                            📊 Count project files
+                        </button>
+                        <button onclick="document.getElementById('projectQuery').value='list all blueprints'; queryProject();" 
+                            style="text-align: left; padding: 10px 14px; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; color: #a78bfa; font-size: 14px; cursor: pointer;">
+                            📋 List blueprints
+                        </button>
+                        <button onclick="document.getElementById('projectQuery').value='describe viewport'; queryProject();" 
+                            style="text-align: left; padding: 10px 14px; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; color: #a78bfa; font-size: 14px; cursor: pointer;">
+                            🎥 Describe viewport
+                        </button>
+                        <button onclick="document.getElementById('projectQuery').value='show project info'; queryProject();" 
+                            style="text-align: left; padding: 10px 14px; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; color: #a78bfa; font-size: 14px; cursor: pointer;">
+                            ℹ️ Project metadata
+                        </button>
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(139,92,246,0.2);">
+                        <p style="color: #8b95a5; font-size: 13px; margin: 0;">
+                            💬 Natural language queries powered by GPT-4o with live UE5 data
+                        </p>
+                    </div>
                 </div>
             </div>
+        </div>
 
+        <!-- Secondary Features Grid -->
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
             <!-- AI Agent Utility Generator -->
             <div class="card" style="background: linear-gradient(135deg, rgba(139,92,246,0.05) 0%, rgba(0,0,0,0.2) 100%);">
                 <h2>🛠️ AI Utility Generator</h2>
@@ -1675,8 +1729,33 @@
             }
         }
 
+        // Check Deploy Agent status on page load
+        async function checkDeployAgentStatus() {
+            const indicator = document.getElementById('deploy-agent-indicator');
+            const statusText = document.getElementById('agent-status-text');
+            const deployBadge = document.getElementById('deploy-badge');
+            
+            try {
+                const response = await fetch('http://localhost:7865/status', { signal: AbortSignal.timeout(2000) });
+                if (response.ok) {
+                    indicator.style.display = 'block';
+                    indicator.style.background = 'rgba(16,185,129,0.1)';
+                    indicator.style.borderColor = 'rgba(16,185,129,0.3)';
+                    statusText.style.color = '#10b981';
+                    statusText.textContent = '✅ Running (instant deploy enabled)';
+                    if (deployBadge) deployBadge.textContent = '⚡ Ready!';
+                }
+            } catch (error) {
+                // Agent not running - don't show indicator to avoid clutter
+                indicator.style.display = 'none';
+            }
+        }
+        
         // Initialize WebSocket on page load
         initWebSocket();
+        
+        // Check deploy agent
+        checkDeployAgentStatus();
 
         // Enter key support
         document.getElementById('projectQuery').addEventListener('keypress', (e) => {
