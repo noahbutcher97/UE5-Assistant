@@ -62,6 +62,29 @@ def get_backend_url():
 
 def check_and_update():
     """Check for updates and install if available."""
+    import threading
+    
+    # If not on main thread, schedule execution on main thread
+    if HAS_UNREAL and threading.current_thread() != threading.main_thread():
+        _safe_log("⚙️ Scheduling auto-update on main thread...")
+        # Use Python command execution to run on main thread
+        try:
+            import unreal
+            unreal.PythonScriptLibrary.execute_python_command(
+                "import AIAssistant.auto_update; AIAssistant.auto_update._do_update()"
+            )
+            return True
+        except Exception as e:
+            _safe_log(f"❌ Failed to schedule update: {e}", is_error=True)
+            _safe_log("💡 To update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()")
+            return False
+    
+    # If on main thread, run directly
+    return _do_update()
+
+
+def _do_update():
+    """Internal update function that must run on main thread."""
     backend_url = get_backend_url()
     download_url = f"{backend_url}/api/download_client"
     
@@ -151,6 +174,13 @@ except Exception as e:
 def show_version():
     """Display current client version info."""
     try:
+        import threading
+        
+        # Only run on main thread (UE5 API restriction)
+        if threading.current_thread() != threading.main_thread():
+            _safe_log("💡 Auto-update module loaded")
+            return
+        
         project_dir = unreal.Paths.project_dir()
         client_path = os.path.join(project_dir, "Content", "Python", "AIAssistant")
         

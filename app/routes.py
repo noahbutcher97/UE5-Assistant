@@ -1223,8 +1223,7 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                                 "type": "execute_action",
                                 "action": action,
                                 "params": {}
-                            },
-                            timeout=10.0  # 10 second timeout
+                            }
                         )
                         
                         if ue5_response and ue5_response.get("success"):
