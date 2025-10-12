@@ -69,6 +69,16 @@ Root/
 
 **Backend:** FastAPI server runs on Replit at `https://ue5-assistant-noahbutcher97.replit.app`
 
+## Recent Changes
+**October 12, 2025:**
+- **Fixed critical WebSocket connection bug**: Changed `config.base_url` to `config.api_url` in main.py (property didn't exist)
+- **Fixed auto-update handler compatibility**: Now properly handles boolean return from `check_and_update()` instead of expecting dict
+- **Enhanced WebSocket logging**: Added detailed connection diagnostics (URL, project ID, timeout info) for easier debugging
+- **Added websocket-client dependency check**: Client now validates library installation on startup with clear error messaging
+- **Improved deploy agent detection**: Added 3-second timeout and status indicator showing "✅ Running" when agent detected
+- **Consolidated deployment UI**: Removed redundant Quick Deploy button, moved all deployment options under collapsible section
+- **Environment guards**: Auto-update now checks for UE5 environment before executing to prevent backend-side failures
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
