@@ -8,6 +8,11 @@ import time
 from typing import Any, Callable, Dict, Optional
 import requests
 
+# Global storage for pending actions (thread-safe with lock)
+_pending_action = None
+_action_lock = threading.Lock()
+_action_result = None
+
 
 class HTTPPollingClient:
     """
@@ -206,21 +211,68 @@ class HTTPPollingClient:
                 params = cmd.get("params", {})
                 request_id = cmd.get("request_id")
                 
+                # Fix action name mapping
+                if action == "project_info":
+                    action = "get_project_info"
+                
                 if self.action_handler:
-                    # Execute action
-                    result = self.action_handler(action, params)
+                    # Store action globally for main thread execution
+                    global _pending_action, _action_result
+                    with _action_lock:
+                        _pending_action = {
+                            "handler": self.action_handler,
+                            "action": action,
+                            "params": params,
+                            "request_id": request_id,
+                            "client": self
+                        }
+                        _action_result = None
                     
-                    # Send response back via HTTP
-                    response = {
-                        "request_id": request_id,
-                        "action": action,
-                        "success": result.get("success", True),
-                        "data": result.get("data"),
-                        "error": result.get("error")
-                    }
-                    
-                    self.send_message(response)
-                    print(f"✅ Executed action: {action} (result: {result.get('success')})")
+                    # Schedule execution on main thread
+                    try:
+                        import unreal
+                        unreal.PythonScriptLibrary.execute_python_command(
+                            "import AIAssistant.http_polling_client; "
+                            "AIAssistant.http_polling_client._execute_pending_action_on_main_thread()"
+                        )
+                        
+                        # Wait for result (with timeout)
+                        max_wait = 10  # seconds
+                        wait_interval = 0.1
+                        total_waited = 0
+                        
+                        while total_waited < max_wait:
+                            with _action_lock:
+                                if _action_result is not None:
+                                    result = _action_result
+                                    _action_result = None
+                                    break
+                            time.sleep(wait_interval)
+                            total_waited += wait_interval
+                        else:
+                            # Timeout
+                            result = {"success": False, "error": "Action execution timeout"}
+                        
+                        # Send response
+                        response = {
+                            "request_id": request_id,
+                            "action": action,
+                            "success": result.get("success", True),
+                            "data": result.get("data"),
+                            "error": result.get("error")
+                        }
+                        
+                        self.send_message(response)
+                        print(f"✅ Executed action: {action} (result: {result.get('success')})")
+                        
+                    except Exception as e:
+                        print(f"❌ Failed to schedule action on main thread: {e}")
+                        # Send error response
+                        self.send_message({
+                            "request_id": request_id,
+                            "success": False,
+                            "error": f"Main thread scheduling failed: {e}"
+                        })
                 else:
                     # No handler - send error response
                     self.send_message({
@@ -323,3 +375,32 @@ class HTTPPollingClient:
     def is_connected(self) -> bool:
         """Check if connected."""
         return self.connected
+
+
+def _execute_pending_action_on_main_thread():
+    """Execute pending action on main thread (called via execute_python_command)."""
+    global _pending_action, _action_result
+    
+    with _action_lock:
+        if _pending_action is None:
+            return
+        
+        action_info = _pending_action
+        _pending_action = None
+    
+    # Execute on main thread
+    try:
+        handler = action_info["handler"]
+        action = action_info["action"]
+        params = action_info["params"]
+        
+        result = handler(action, params)
+        
+        # Store result
+        with _action_lock:
+            _action_result = result
+            
+    except Exception as e:
+        print(f"❌ Action execution error on main thread: {e}")
+        with _action_lock:
+            _action_result = {"success": False, "error": str(e)}
