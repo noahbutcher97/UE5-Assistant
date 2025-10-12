@@ -30,22 +30,38 @@ if token_type == "UE_REQUEST":
 
 ### UE_REQUEST Pattern
 ```regex
-\[UE_REQUEST\]\s*(\S+(?:\s+\S+)*?)(?=\s*\[|$)
+\[UE_REQUEST\]\s*([^\.\!\?\n\[]+?)(?=[\.\!\?\n\[]|$)
 ```
+
+**Stops at:** Period, exclamation, question mark, newline, or bracket
 
 **Matches:**
 - `[UE_REQUEST] describe_viewport` → `describe_viewport`
 - `Let me help. [UE_REQUEST] describe_viewport` → `describe_viewport`
 - `[UE_REQUEST] list_actors Blueprint` → `list_actors Blueprint`
+- `[UE_REQUEST] describe_viewport. Thanks!` → `describe_viewport` ✅ (excludes trailing text)
 
 ### UE_CONTEXT_REQUEST Pattern
 ```regex
-\[UE_CONTEXT_REQUEST\]\s*([^[]+?)(?=\s*\[|$)
+\[UE_CONTEXT_REQUEST\]\s*([^\n\[]+?)(?=[\.\!]\s+|[\?]\s+[A-Z]|[\?]\s+[a-z]{2,}|\n|\[|$)
 ```
+Then appends `?` if present at boundary (questions end with `?`)
+
+**Stops at:** 
+- Period or exclamation followed by space (sentence boundary)
+- Question mark followed by new sentence (space + capital/lowercase word)
+- Newline or bracket
+- End of string
+
+**Key Behavior:**
+- **Includes `?`** at end of questions (natural ending)
+- **Excludes `.` or `!`** at sentence boundaries (not part of question)
 
 **Matches:**
-- `[UE_CONTEXT_REQUEST] project_info|What project?` → `project_info|What project?`
-- `To answer that... [UE_CONTEXT_REQUEST] viewport|Describe scene` → `viewport|Describe scene`
+- `[UE_CONTEXT_REQUEST] project_info|What project?` → `project_info|What project?` ✅ (includes ?)
+- `[UE_CONTEXT_REQUEST] project_info|What project. Let me check` → `project_info|What project` ✅ (excludes . before new sentence)
+- `[UE_CONTEXT_REQUEST] project_info|What project? Let me help` → `project_info|What project?` ✅ (includes ?, excludes trailing text)
+- `To answer that... [UE_CONTEXT_REQUEST] viewport|Describe scene?` → `viewport|Describe scene?` ✅
 
 ## Response Flow Examples
 
@@ -98,7 +114,7 @@ if token_type == "UE_REQUEST":
 ### Standalone Token Extraction Tests
 **File:** `tests/test_token_extraction_standalone.py`
 
-**Coverage:**
+**Coverage (15 tests):**
 - Token at start of response ✅
 - Token with explanation before it ✅
 - Context tokens with/without explanation ✅
@@ -106,6 +122,14 @@ if token_type == "UE_REQUEST":
 - Multiple-word action tokens ✅
 - No token found (plain AI response) ✅
 - Real OpenAI-style responses ✅
+- **Trailing text handling:**
+  - Token with trailing period ✅
+  - Token with trailing exclamation ✅
+  - Token with trailing question ✅
+  - Token with trailing newline ✅
+  - Context token with trailing text (period) ✅
+  - Context token with trailing text (question) ✅
+  - Context token with lowercase continuation ✅
 
 **Run:** `python tests/test_token_extraction_standalone.py`
 
