@@ -1,0 +1,120 @@
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Auto-initializing...
+LogPython: ============================================================
+LogPython: 🔧 Configuring backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: ✅ Configured for production server
+LogPython: ✅ Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 🔄 Reloading AIAssistant modules...
+LogPython: 🚀 Initializing AI Assistant...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v1162f00f)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: ✅ AI Assistant is ready!
+LogPython: ============================================================
+LogPython: 💡 Usage: AIAssistant.main.send_command('your question')
+LogPython: 🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard
+LogPython: Display: Running start-up script D:/UnrealProjects/5.6/UE5_Assistant/Content/Python/init_unreal.py... took 1.44 sec
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... started...
+LogPython: registering <class 'ControlRigWorkflows.workflow_deformation_rig_preset.provider'>
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... took 29.149 ms (total: 1.47 sec)
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Importers/USDImporter/Content/Python/init_unreal.py... started...
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Importers/USDImporter/Content/Python/init_unreal.py... took 272 us (total: 1.47 sec)
+LogAssetRegistry: AssetRegistryGather time 0.1170s: AssetDataDiscovery 0.0095s, AssetDataGather 0.0344s, StoreResults 0.0731s. Wall time 9.7440s.
+    NumCachedDirectories 1782. NumUncachedDirectories 23. NumCachedFiles 7666. NumUncachedFiles 0.
+    BackgroundTickInterruptions 7.
+LogPlacementMode: Display: The Asset Registry is done with its initial scan, the list of placeable classes has been updated.
+LogCollectionManager: Fixed up redirectors for 0 collections in 0.000000 seconds (updated 0 objects)
+LogSourceControl: Uncontrolled asset discovery started...
+LogSlate: Took 0.000138 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/Roboto-Bold.ttf' (160K)
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogAutomationController: Ignoring very large delta of 2.12 seconds in calls to FAutomationControllerManager::Tick() and not penalizing unresponsive tests
+LogPython: Display: Generating Python API stub file...
+LogPython: Display:   ...generating Python API: glue code (types)
+LogSourceControl: Uncontrolled asset discovery finished in 0.503724 seconds (Found 7642 uncontrolled assets)
+LogPython: Display:   ...generating Python API: glue code (methods)
+LogPython: Display:   ...generating Python API: additional code
+LogPython: Display:   ...generated: D:/UnrealProjects/5.6/UE5_Assistant/Intermediate/PythonStub/unreal.py
+LogEOSSDK: LogEOS: SDK Config Platform Update Request Successful, Time: 7.616817
+LogEOSSDK: LogEOSAnalytics: EOS SDK Analytics disabled for route [1].
+LogEOSSDK: LogEOS: Updating Product SDK Config, Time: 8.326267
+LogEOSSDK: LogEOSAnalytics: Start Session (User: ...)
+LogEOSSDK: LogEOS: SDK Config Product Update Request Successful, Time: 8.563714
+LogEOSSDK: LogEOS: SDK Config Data - Watermark: -227189215
+LogEOSSDK: LogEOS: ScheduleNextSDKConfigDataUpdate - Time: 8.563714, Update Interval: 342.646576
+LogPython: [HTTPPolling] 📥 Received action: list_blueprints (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: list_blueprints
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: list_blueprints
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: list_blueprints
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: list_blueprints
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: list_blueprints
+LogPython: [HTTPPolling] ✅ Action executed on main thread: list_blueprints
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: [HTTPPolling] 📥 Received action: describe_viewport (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogAutomationController: Ignoring very large delta of 3.13 seconds in calls to FAutomationControllerManager::Tick() and not penalizing unresponsive tests
+LogPython: [HTTPPolling] ✅ Action executed on main thread: describe_viewport
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: 📢 Backend update detected! Running auto-update...
+LogPython: [HTTPPolling] 🔄 Starting auto-update process...
+LogPython: 💡 Auto-update module loaded (v6e2cf689)
+LogPython: 📢 Auto-update triggered from background thread
+LogPython: ⬇️  Downloading and installing files...
+LogPython: ============================================================
+LogPython: 🔄 UE5 AI Assistant Auto-Update (Background Thread Safe)
+LogPython: ============================================================
+LogPython: 📡 Backend: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📦 Version: 472c7e28
+LogPython: ⬇️  Downloading: https://ue5-assistant-noahbutcher97.replit.app/api/download_client
+LogPython: ✅ Downloaded 180094 bytes
+LogPython: ✅ Updated 54 files
+LogPython: ✅ Cleared Python bytecode cache
+LogPython: ============================================================
+LogPython: ✅ Auto-update complete! Files downloaded and installed.
+LogPython: 📦 New version marker: b78889ca
+LogPython: 🔄 Module cache will be cleared automatically...
+LogPython: ============================================================
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 22 cached modules
+LogPython: [AutoUpdate] 🔄 Module cache cleared (22 modules)
+LogPython: [ActionQueue] Tick error: name 'time' is not defined
+LogPython: [HTTPPolling] ❌ Auto-update failed: name 'force_restart_assistant' is not defined
+LogPython: [ActionQueue] Tick error: name 'time' is not defined
+LogPython: [ActionQueue] Tick error: name 'time' is not defined
+LogPython: [ActionQueue] Tick error: name 'time' is not defined
+LogPython: [ActionQueue] Tick error: name 'time' is not defined
+LogPython: [ActionQueue] Tick error: name 'time' is not defined
