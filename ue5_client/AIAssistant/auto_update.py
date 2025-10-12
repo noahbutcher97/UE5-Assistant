@@ -9,9 +9,45 @@ Usage in UE5 Python Console:
 import io
 import os
 import urllib.request
+import urllib.error
 import zipfile
 
-import unreal
+# Optional unreal import for testing outside UE5
+try:
+    import unreal
+    HAS_UNREAL = True
+except ImportError:
+    HAS_UNREAL = False
+    # Create mock unreal module for testing
+    class MockPaths:
+        @staticmethod
+        def project_dir():
+            return "/mock/project"
+    
+    class MockUnreal:
+        Paths = MockPaths
+        
+        @staticmethod
+        def log(msg, *args):
+            print(f"[UE5] {msg}")
+        
+        @staticmethod
+        def log_error(msg, *args):
+            print(f"[UE5 ERROR] {msg}")
+    
+    unreal = MockUnreal()
+
+
+def _safe_log(message, is_error=False):
+    """Safe logging that works both in UE5 and standalone environments."""
+    if HAS_UNREAL:
+        if is_error:
+            unreal.log_error(message)
+        else:
+            unreal.log(message)
+    else:
+        prefix = "[ERROR]" if is_error else "[INFO]"
+        print(f"{prefix} {message}")
 
 
 def get_backend_url():
