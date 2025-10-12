@@ -991,7 +991,7 @@
             resultDiv.textContent = '⚙️ Processing your request...';
 
             try {
-                const response = await fetch('/api/execute_command', {
+                const response = await fetch('/execute_command', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 

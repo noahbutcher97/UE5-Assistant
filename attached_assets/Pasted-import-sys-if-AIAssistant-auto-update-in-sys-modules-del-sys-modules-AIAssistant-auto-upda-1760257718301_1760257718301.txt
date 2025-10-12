@@ -1,0 +1,85 @@
+import sys
+if 'AIAssistant.auto_update' in sys.modules:
+    del sys.modules['AIAssistant.auto_update']
+# Import fresh version and run update
+import AIAssistant.auto_update
+AIAssistant.auto_update.check_and_update()
+LogPython: 📦 Client installed with 29 Python files
+LogPython: ✅ Latest version (includes diagnostic tools)
+LogPython: 💡 To update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: ============================================================
+LogPython: 🔄 UE5 AI Assistant Auto-Update
+LogPython: ============================================================
+LogPython: 📡 Backend: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: ⬇️  Downloading latest client from: https://ue5-assistant-noahbutcher97.replit.app/api/download_client
+LogPython: ✅ Downloaded 168632 bytes
+LogPython: ✅ Updated 52 files
+LogPython: ✅ Created auto_start.py for automatic initialization
+LogPython: ============================================================
+LogPython: 📋 Updated Files:
+LogPython:    - AIAssistant/README.md
+LogPython:    - AIAssistant/__init__.py
+LogPython:    - AIAssistant/action_executor.py
+LogPython:    - AIAssistant/action_executor_extensions.py
+LogPython:    - AIAssistant/actor_manipulator.py
+LogPython:    - AIAssistant/ai_agent_utility_generator.py
+LogPython:    - AIAssistant/api_client.py
+LogPython:    - AIAssistant/async_client.py
+LogPython:    - AIAssistant/auto_update.py
+LogPython:    - AIAssistant/blueprint_capture.py
+LogPython:    - AIAssistant/blueprint_helpers.py
+LogPython:    - AIAssistant/config.py
+LogPython:    - AIAssistant/context_collector.py
+LogPython:    - AIAssistant/diagnose.py
+LogPython:    - AIAssistant/editor_utility_generator.py
+LogPython:    - AIAssistant/file_collector.py
+LogPython:    - AIAssistant/http_polling_client.py
+LogPython:    - AIAssistant/install_dependencies.py
+LogPython:    - AIAssistant/local_server.py
+LogPython:    - AIAssistant/main.py
+LogPython:    - AIAssistant/project_metadata_collector.py
+LogPython:    - AIAssistant/project_registration.py
+LogPython:    - AIAssistant/scene_orchestrator.py
+LogPython:    - AIAssistant/startup.py
+LogPython:    - AIAssistant/test_registration.py
+LogPython:    - AIAssistant/ui_manager.py
+LogPython:    - AIAssistant/utils.py
+LogPython:    - AIAssistant/viewport_controller.py
+LogPython:    - AIAssistant/websocket_client.py
+LogPython:    - AIAssistant/Documentation/BLUEPRINT_INTEGRATION.md
+LogPython:    - AIAssistant/Documentation/BUGFIX_DATA_STRUCTURE.md
+LogPython:    - AIAssistant/Documentation/HOTFIX_THREAD_SAFETY.md
+LogPython:    - AIAssistant/Documentation/INSTALLATION.md
+LogPython:    - AIAssistant/Documentation/INTELLIGENT_RESPONSE_SYSTEM.md
+LogPython:    - AIAssistant/Documentation/LINTING_FIXES.md
+LogPython:    - AIAssistant/Documentation/README.md
+LogPython:    - AIAssistant/Documentation/THREAD_SAFETY.md
+LogPython:    - AIAssistant/__pycache__/__init__.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/action_executor.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/actor_manipulator.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/api_client.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/async_client.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/auto_update.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/blueprint_capture.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/config.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/context_collector.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/file_collector.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/main.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/project_metadata_collector.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/ui_manager.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/utils.cpython-311.pyc
+LogPython:    - AIAssistant/__pycache__/websocket_client.cpython-311.pyc
+LogPython: 🔧 Configuring backend connection...
+LogPython: ✅ Backend configured: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: ============================================================
+LogPython: ✅ Update complete!
+LogPython: ⚠️  IMPORTANT: Restart Unreal Editor for changes to take effect
+LogPython: ============================================================
+LogPython: 📢 Backend update detected! Running auto-update...
+LogPython: 💡 Auto-update module loaded
+LogPython: 💡 To update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: ⚙️ Scheduling auto-update on main thread...
+LogPython: Error: ❌ Failed to schedule update: PythonScriptLibrary: Attempted to access Unreal API from outside the main game thread.
+LogPython: 💡 To update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: ℹ️ Auto-update failed or no updates available
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
