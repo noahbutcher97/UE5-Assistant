@@ -94,6 +94,13 @@ The UE5 client connection issue was resolved by fixing the startup sequence:
 - **Entry Points**: init_unreal.py (auto-runs on UE5 startup) → startup.py → AIAssistant.main.get_assistant()
 - **Verification**: test_connection.py diagnostic script confirms connection status
 
+### CDN Caching Fix
+The installer download issue was resolved by switching to POST requests to bypass CDN caching:
+- **Root Cause**: GET requests to `/api/download_client` were cached by Google Frontend CDN, serving stale GZIP files instead of fresh ZIP files
+- **Solution**: Updated PowerShell installer to use POST method to `/api/download_client_bundle` which bypasses CDN caching
+- **Verification**: POST endpoint returns valid ZIP files with PK signature (0x50 0x4B), includes init_unreal.py and test_connection.py
+- **Result**: Installer now downloads fresh, valid ZIP files on every run without cache interference
+
 ### Emergency Fix Update System
 The system includes a **GUI-based Emergency Fix Update** mechanism designed for non-technical users experiencing thread safety crashes:
 - **Dashboard Button**: Prominent red "Fix Crash Issues" button in the control center

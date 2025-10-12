@@ -32,21 +32,21 @@ if (-not (Test-Path $ProjectPath)) {
 }
 
 $TargetPath = Join-Path $ProjectPath "Content\Python\AIAssistant"
-$DownloadURL = "$BackendURL/api/download_client"
+$DownloadURL = "$BackendURL/api/download_client_bundle"
 $TempZip = Join-Path $env:TEMP "ue5_assistant_client.zip"
 
 Write-Host "📁 Project: $ProjectPath" -ForegroundColor White
-Write-Host "📥 Download URL: $DownloadURL" -ForegroundColor White
+Write-Host "📥 Download URL: $DownloadURL (POST - bypasses cache)" -ForegroundColor White
 Write-Host "📂 Install to: $TargetPath" -ForegroundColor White
 Write-Host ""
 
 try {
-    # Download client
+    # Download client using POST to bypass CDN cache
     Write-Host "⬇️  Downloading latest client..." -ForegroundColor Yellow
-    Write-Host "   Source: $DownloadURL" -ForegroundColor Gray
+    Write-Host "   Source: $DownloadURL (POST method)" -ForegroundColor Gray
     
     $DownloadStartTime = Get-Date
-    Invoke-WebRequest -Uri $DownloadURL -OutFile $TempZip -UseBasicParsing
+    Invoke-WebRequest -Uri $DownloadURL -Method Post -OutFile $TempZip -UseBasicParsing
     $DownloadDuration = (Get-Date) - $DownloadStartTime
     $FileSize = (Get-Item $TempZip).Length
     $FileSizeMB = [math]::Round($FileSize / 1MB, 2)

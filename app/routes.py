@@ -483,6 +483,12 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                     if file_path.is_file():
                         arcname = str(file_path.relative_to("ue5_client"))
                         zip_file.write(file_path, arcname)
+            
+            # Also include init_unreal.py and test_connection.py at root level
+            for extra_file in ["init_unreal.py", "test_connection.py"]:
+                extra_path = Path(f"ue5_client/{extra_file}")
+                if extra_path.exists():
+                    zip_file.write(extra_path, extra_file)
         
         zip_buffer.seek(0)
         
