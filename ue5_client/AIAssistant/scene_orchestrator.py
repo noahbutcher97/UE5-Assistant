@@ -5,7 +5,7 @@ UE 5.6 Compliant - Uses EditorActorSubsystem and modern APIs
 
 from typing import Any, Dict, List, Optional, Tuple
 
-import unreal
+import unreal  # type: ignore
 
 
 class SceneOrchestrator:
@@ -339,49 +339,69 @@ class SceneOrchestrator:
             action = step.get("action")
             
             if action == "spawn_static_mesh":
-                result = self.spawn_static_mesh(
-                    asset_path=step.get("asset_path"),
-                    location=step.get("location", (0, 0, 0)),
-                    rotation=step.get("rotation", (0, 0, 0)),
-                    scale=step.get("scale", (1, 1, 1)),
-                    label=step.get("label")
-                )
+                asset_path = step.get("asset_path")
+                if not asset_path:
+                    result = {"success": False, "message": "Missing asset_path"}
+                else:
+                    result = self.spawn_static_mesh(
+                        asset_path=asset_path,
+                        location=step.get("location", (0, 0, 0)),
+                        rotation=step.get("rotation", (0, 0, 0)),
+                        scale=step.get("scale", (1, 1, 1)),
+                        label=step.get("label")
+                    )
             
             elif action == "spawn_primitive":
-                result = self.spawn_primitive(
-                    primitive_type=step.get("primitive_type"),
-                    location=step.get("location", (0, 0, 0)),
-                    rotation=step.get("rotation", (0, 0, 0)),
-                    scale=step.get("scale", (1, 1, 1)),
-                    label=step.get("label")
-                )
+                primitive_type = step.get("primitive_type")
+                if not primitive_type:
+                    result = {"success": False, "message": "Missing primitive_type"}
+                else:
+                    result = self.spawn_primitive(
+                        primitive_type=primitive_type,
+                        location=step.get("location", (0, 0, 0)),
+                        rotation=step.get("rotation", (0, 0, 0)),
+                        scale=step.get("scale", (1, 1, 1)),
+                        label=step.get("label")
+                    )
             
             elif action == "spawn_skeletal_mesh":
-                result = self.spawn_skeletal_mesh(
-                    asset_path=step.get("asset_path"),
-                    location=step.get("location", (0, 0, 0)),
-                    rotation=step.get("rotation", (0, 0, 0)),
-                    scale=step.get("scale", (1, 1, 1)),
-                    label=step.get("label")
-                )
+                asset_path = step.get("asset_path")
+                if not asset_path:
+                    result = {"success": False, "message": "Missing asset_path"}
+                else:
+                    result = self.spawn_skeletal_mesh(
+                        asset_path=asset_path,
+                        location=step.get("location", (0, 0, 0)),
+                        rotation=step.get("rotation", (0, 0, 0)),
+                        scale=step.get("scale", (1, 1, 1)),
+                        label=step.get("label")
+                    )
             
             elif action == "spawn_blueprint":
-                result = self.spawn_blueprint(
-                    blueprint_path=step.get("blueprint_path"),
-                    location=step.get("location", (0, 0, 0)),
-                    rotation=step.get("rotation", (0, 0, 0)),
-                    label=step.get("label")
-                )
+                blueprint_path = step.get("blueprint_path")
+                if not blueprint_path:
+                    result = {"success": False, "message": "Missing blueprint_path"}
+                else:
+                    result = self.spawn_blueprint(
+                        blueprint_path=blueprint_path,
+                        location=step.get("location", (0, 0, 0)),
+                        rotation=step.get("rotation", (0, 0, 0)),
+                        label=step.get("label")
+                    )
             
             elif action == "spawn_light":
-                result = self.spawn_light(
-                    light_type=step.get("light_type"),
-                    location=step.get("location", (0, 0, 0)),
-                    rotation=step.get("rotation", (0, 0, 0)),
-                    intensity=step.get("intensity", 1000.0),
-                    color=step.get("color", (1.0, 1.0, 1.0)),
-                    label=step.get("label")
-                )
+                light_type = step.get("light_type")
+                if not light_type:
+                    result = {"success": False, "message": "Missing light_type"}
+                else:
+                    result = self.spawn_light(
+                        light_type=light_type,
+                        location=step.get("location", (0, 0, 0)),
+                        rotation=step.get("rotation", (0, 0, 0)),
+                        intensity=step.get("intensity", 1000.0),
+                        color=step.get("color", (1.0, 1.0, 1.0)),
+                        label=step.get("label")
+                    )
             
             else:
                 result = {
@@ -411,7 +431,7 @@ class SceneOrchestrator:
             try:
                 self.editor_actor_subsystem.destroy_actor(actor)
                 count += 1
-            except:
+            except Exception:
                 pass
         
         self.spawned_actors.clear()

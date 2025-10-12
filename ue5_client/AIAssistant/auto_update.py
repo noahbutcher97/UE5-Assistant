@@ -22,7 +22,7 @@ _version_marker = str(uuid.uuid4())[:8]
 
 # Optional unreal import for testing outside UE5
 try:
-    import unreal
+    import unreal  # type: ignore
     HAS_UNREAL = True
 except ImportError:
     HAS_UNREAL = False
@@ -42,6 +42,10 @@ except ImportError:
         @staticmethod
         def log_error(msg, *args):
             print(f"[UE5 ERROR] {msg}")
+        
+        @staticmethod
+        def log_warning(msg, *args):
+            print(f"[UE5 WARNING] {msg}")
     
     unreal = MockUnreal()
 
@@ -64,7 +68,7 @@ def get_backend_url():
         from .config import get_config
         config = get_config()
         return config.api_url
-    except:
+    except (ImportError, AttributeError):
         return "https://ue5-assistant-noahbutcher97.replit.app"
 
 
@@ -85,7 +89,7 @@ def clear_all_modules(preserve_queue=False):
             from .action_queue import get_action_queue
             action_queue_ref = get_action_queue()
             print("[AutoUpdate] 📦 Preserving action queue reference...")
-        except:
+        except (ImportError, AttributeError):
             pass
     
     # Get list of ALL AIAssistant modules (including action_queue for complete reload)
@@ -113,7 +117,7 @@ def clear_all_modules(preserve_queue=False):
             
             # Remove from sys.modules
             del sys.modules[module_name]
-        except:
+        except Exception:
             pass  # Module may already be deleted
     
     print(f"[AutoUpdate] ✅ Cleared {len(modules_to_remove)} cached modules")
@@ -122,7 +126,7 @@ def clear_all_modules(preserve_queue=False):
     try:
         importlib.invalidate_caches()
         print("[AutoUpdate] ✅ Invalidated import caches")
-    except:
+    except (ImportError, AttributeError):
         pass
     
     # Trigger garbage collection
@@ -220,8 +224,8 @@ def _do_background_update():
             if os.path.exists(cache_dir):
                 shutil.rmtree(cache_dir)
                 print("✅ Cleared Python bytecode cache")
-        except:
-            pass
+        except (OSError, IOError) as e:
+            print(f"⚠️ Could not clear bytecode cache: {e}")
         
         print("=" * 60)
         print("✅ Auto-update complete! Files downloaded and installed.")
@@ -295,8 +299,8 @@ def _do_update():
             if os.path.exists(cache_dir):
                 shutil.rmtree(cache_dir)
                 unreal.log("✅ Cleared Python bytecode cache")
-        except:
-            pass
+        except (OSError, IOError) as e:
+            unreal.log_warning(f"⚠️ Could not clear bytecode cache: {e}")
         
         # Create auto_start.py for auto-initialization
         auto_start_path = os.path.join(target_base, "auto_start.py")
@@ -388,8 +392,8 @@ def force_restart_assistant():
                     if hasattr(assistant, 'ws_client') and assistant.ws_client:
                         assistant.ws_client.disconnect()
                         print("   - Stopped WebSocket client")
-        except:
-            pass
+        except Exception as e:
+            print(f"   - Could not stop existing connections: {e}")
         
         # Step 2: Clear ALL modules completely
         print("📦 Step 2: Clearing all module cache...")

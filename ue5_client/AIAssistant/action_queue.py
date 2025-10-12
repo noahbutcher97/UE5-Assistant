@@ -10,11 +10,11 @@ import uuid
 from typing import Any, Callable, Dict, Optional, Tuple
 
 try:
-    import unreal
+    import unreal  # type: ignore
     HAS_UNREAL = True
 except ImportError:
     HAS_UNREAL = False
-    unreal = None
+    unreal = None  # type: ignore
 
 
 class ActionQueue:
@@ -274,7 +274,7 @@ class ActionQueue:
                             try:
                                 assistant.http_client.disconnect()
                                 print("[ActionQueue] 🔌 Disconnected HTTP client")
-                            except:
+                            except Exception:
                                 pass
                         
                         # Stop local server if running
@@ -284,7 +284,7 @@ class ActionQueue:
                                 if hasattr(local_server, 'stop_server'):
                                     local_server.stop_server()
                                     print("[ActionQueue] 🛑 Stopped local server")
-                        except:
+                        except Exception:
                             pass
                         
                         # Reset global instance
@@ -301,7 +301,7 @@ class ActionQueue:
             for module in modules_to_remove:
                 try:
                     del sys.modules[module]
-                except:
+                except Exception:
                     pass
             
             print(f"[ActionQueue] 🗑️ Cleared {len(modules_to_remove)} cached modules")

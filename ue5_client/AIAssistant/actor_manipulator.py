@@ -6,7 +6,7 @@ UE 5.6 Compliant - Uses EditorActorSubsystem for actor operations
 import math
 from typing import Any, Dict, List, Optional, Tuple
 
-import unreal
+import unreal  # type: ignore
 
 
 class ActorManipulator:
@@ -91,7 +91,7 @@ class ActorManipulator:
         else:
             try:
                 target = float(align_to)
-            except:
+            except (ValueError, TypeError):
                 return {"success": False, "message": "Invalid align_to"}
         
         # Apply alignment

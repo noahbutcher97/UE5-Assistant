@@ -62,7 +62,7 @@ class HTTPPollingClient:
         
         # Initialize action queue if available
         if HAS_ACTION_QUEUE:
-            self.action_queue = get_action_queue()
+            self.action_queue = get_action_queue()  # type: ignore
             print("✅ Using thread-safe action queue for execution")
         else:
             self.action_queue = None
@@ -451,7 +451,7 @@ class HTTPPollingClient:
             
             # Check if we're in UE5 environment
             try:
-                import unreal
+                import unreal  # type: ignore
             except ImportError:
                 print("⚠️ Auto-update skipped (not in UE5 environment)")
                 return

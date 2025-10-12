@@ -1,0 +1,29 @@
+LogPython: 📢 Backend update detected! Running auto-update...
+LogPython: [HTTPPolling] 🔄 Starting auto-update process...
+LogPython: 💡 Auto-update module loaded (v0ab9af2a)
+LogPython: 📢 Auto-update triggered from background thread
+LogPython: ⬇️  Downloading and installing files...
+LogPython: ============================================================
+LogPython: 🔄 UE5 AI Assistant Auto-Update (Background Thread Safe)
+LogPython: ============================================================
+LogPython: 📡 Backend: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📦 Version: e1601981
+LogPython: ⬇️  Downloading: https://ue5-assistant-noahbutcher97.replit.app/api/download_client
+LogPython: ✅ Downloaded 184834 bytes
+LogPython: ❌ Update failed: File is not a zip file
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\auto_update.py", line 201, in _do_background_update
+    with zipfile.ZipFile(io.BytesIO(zip_data)) as zip_file:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\zipfile.py", line 1304, in __init__
+    self._RealGetContents()
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\zipfile.py", line 1371, in _RealGetContents
+    raise BadZipFile("File is not a zip file")
+LogPython: Error: zipfile.BadZipFile: File is not a zip file
+LogPython: [HTTPPolling] ℹ️ No updates available or update failed
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: [ActionQueue] 🔄 Version change detected: a63d78b2 → e1601981
+LogPython: [ActionQueue] 🔄 Clearing module cache for updates...
+LogPython: [ActionQueue] 🗑️ Cleared 22 cached modules
+LogPython: [ActionQueue] ✅ Modules will reload with fresh code on next use
+LogDerivedDataCache: C:/Users/posne/AppData/Local/UnrealEngine/Common/DerivedDataCache: Maintenance finished in +00:00:00.150 and deleted 0 files with total size 0 MiB and 0 empty folders. Scanned 970 files in 1602 folders with total size 30 MiB.

@@ -60,13 +60,13 @@ class ActionExecutor:
         
         # Initialize action queue if available
         if HAS_ACTION_QUEUE:
-            self.action_queue = get_action_queue()
+            self.action_queue = get_action_queue()  # type: ignore
             # Don't set handler here - let main.py coordinate the handlers
             # The main.py will set up proper handler that calls our execute_with_queue
             self.logger.info("✅ Thread-safe action queue initialized")
         else:
             self.action_queue = None
-            self.logger.warning("⚠️ Action queue not available - thread safety disabled")
+            self.logger.info("⚠️ Action queue not available - thread safety disabled")
 
         self._register_default_actions()
 
@@ -171,7 +171,7 @@ class ActionExecutor:
                     return error_msg
             else:
                 # No action queue available - fallback to direct execution with warning
-                self.logger.warning(f"⚠️ [Background Thread] No action queue - executing directly (may cause threading issues)")
+                self.logger.info(f"⚠️ [Background Thread] No action queue - executing directly (may cause threading issues)")
                 try:
                     result = self.actions[action_name]()
                     return result
