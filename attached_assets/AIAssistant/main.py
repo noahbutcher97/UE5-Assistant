@@ -333,13 +333,19 @@ class AIAssistant:
                     f"⚠️ Project auto-registration failed: {result.get('error', 'Unknown')}"
                 )
                 unreal.log_warning(
-                    "💡 Run 'import AIAssistant.test_registration' to diagnose"
+                    "💡 Diagnostic: import AIAssistant.test_registration"
+                )
+                unreal.log_warning(
+                    "💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()"
                 )
         except Exception as e:
             import unreal
             unreal.log_error(f"❌ Project auto-registration error: {e}")
             unreal.log_warning(
-                "💡 Run 'import AIAssistant.test_registration' to diagnose"
+                "💡 Diagnostic: import AIAssistant.test_registration"
+            )
+            unreal.log_warning(
+                "💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()"
             )
 
 
