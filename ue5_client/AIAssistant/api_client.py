@@ -43,15 +43,21 @@ class APIClient:
         retry_delay = self.config.get("retry_delay", 2.5)
 
         last_error = None
+        
+        # Build full URL if relative path provided
+        full_url = url
+        if url.startswith('/'):
+            base_url = self.config.api_url
+            full_url = f"{base_url}{url}"
 
         for attempt in range(1, max_retries + 1):
             try:
                 self.logger.debug(
-                    f"POST {url} (attempt {attempt}/{max_retries})"
+                    f"POST {full_url} (attempt {attempt}/{max_retries})"
                 )
 
                 response = requests.post(
-                    url, json=payload, timeout=timeout
+                    full_url, json=payload, timeout=timeout
                 )
                 response.raise_for_status()
 

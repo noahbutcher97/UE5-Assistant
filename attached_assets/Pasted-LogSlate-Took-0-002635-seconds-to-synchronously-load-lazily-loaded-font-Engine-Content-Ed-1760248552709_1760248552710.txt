@@ -1,0 +1,51 @@
+LogSlate: Took 0.002635 seconds to synchronously load lazily loaded font '../../../Engine/Content/Editor/Slate/Fonts/NotoColorEmoji.ttf' (7610K)
+LogPython: import os
+config_path = r"D:\UnrealProjects\5.6\UE5_Assistant\Saved\AIConsole\config.json"
+if os.path.exists(config_path):
+    os.remove(config_path)
+    print(f"✅ Deleted corrupted config at: {config_path}")
+else:
+    print(f"❌ Config not found at: {config_path}")
+LogPython: ✅ Deleted corrupted config at: D:\UnrealProjects\5.6\UE5_Assistant\Saved\AIConsole\config.json
+LogPython: # Now reload with fresh config
+import importlib
+import sys
+for mod in ['AIAssistant.main', 'AIAssistant.config', 'AIAssistant.api_client']:
+    if mod in sys.modules:
+        del sys.modules[mod]
+import AIAssistant.main
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: Warning: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 1/3)
+LogPython: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 2/3)
+LogPython: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 3/3)
+LogPython: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project?
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project?
+LogPython: Warning: ❌ Registration failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project?
+LogPython: Warning: ⚠️ Project auto-registration failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project?
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: ✅ websocket-client library detected
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 🔌 Attempting WebSocket connection to: wss://ue5-assistant-noahbutcher97.replit.app/ws/ue5/189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 🔗 WebSocket opened for project: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: ✅ WebSocket connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 🌐 Real-time dashboard connection enabled
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
+LogSlate: Took 0.001130 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' (3848K)
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Last resort fallback font was requested. Font: '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf', Character: 'ℹ (U+2139)'
+LogSlate: Took 0.001485 seconds to synchronously load lazily loaded font '../../../Engine/Content/SlateDebug/Fonts/LastResort.t
