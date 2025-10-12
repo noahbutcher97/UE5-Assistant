@@ -750,13 +750,11 @@
                         option.textContent = `${project.name} (${project.version})`;
                         if (project.is_active) {
                             option.selected = true;
-                            // Update status
-                            const statusEl = document.getElementById('projectStatus');
-                            statusEl.textContent = 'Connected';
-                            statusEl.style.color = '#10b981';
                         }
                         select.appendChild(option);
                     });
+                    // Update connection status based on actual WebSocket connections
+                    updateConnectionIndicator();
                 } else {
                     // Auto-show project form if no projects
                     const form = document.getElementById('project-form');
