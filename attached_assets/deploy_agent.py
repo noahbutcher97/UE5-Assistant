@@ -11,18 +11,14 @@ Features:
 Usage:
     python deploy_agent.py [--port 7865] [--ue5-project "D:/UnrealProjects/5.6/UE5_Assistant"]
 """
-import os
-import sys
-import json
-import zipfile
-import io
-import subprocess
-import time
-from pathlib import Path
-from http.server import HTTPServer, BaseHTTPRequestHandler
-import urllib.request
-import threading
 import argparse
+import io
+import json
+import time
+import urllib.request
+import zipfile
+from http.server import BaseHTTPRequestHandler, HTTPServer
+from pathlib import Path
 
 
 class DeployAgent(BaseHTTPRequestHandler):

@@ -10,7 +10,7 @@ def add_orchestration_actions(executor):
         """Spawn an actor (primitive, mesh, blueprint)."""
         from .scene_orchestrator import get_orchestrator
         
-        orchestrator = get_orchestrator()
+        get_orchestrator()
         # This would be called with parameters from AI plan
         # For now, return instruction
         return (
