@@ -7,8 +7,21 @@ echo    UE5 AI Assistant - Quick Installer
 echo ================================================
 echo.
 
-REM Prompt for project path
-set /p "PROJECT_PATH=Enter your UE5 project path (e.g., D:\UnrealProjects\MyProject): "
+REM Show folder picker GUI
+echo Please select your UE5 project folder in the dialog...
+echo.
+
+for /f "delims=" %%i in ('powershell -command "Add-Type -AssemblyName System.Windows.Forms; $folder = New-Object System.Windows.Forms.FolderBrowserDialog; $folder.Description = 'Select your UE5 Project folder'; $folder.ShowNewFolderButton = $false; if($folder.ShowDialog() -eq 'OK'){$folder.SelectedPath}"') do set "PROJECT_PATH=%%i"
+
+if "%PROJECT_PATH%"=="" (
+    color 0C
+    echo ERROR: No folder selected
+    echo.
+    pause
+    exit /b 1
+)
+
+echo Selected: %PROJECT_PATH%
 echo.
 
 REM Validate path exists
