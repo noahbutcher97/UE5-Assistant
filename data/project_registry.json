@@ -20,7 +20,8 @@
         "registration_time": "2025-10-12T06:26:39.209Z"
       },
       "registered_at": "2025-10-12T06:26:39.354393",
-      "last_updated": "2025-10-12T06:26:39.354402"
+      "last_updated": "2025-10-12T07:41:41.930170",
+      "connection_mode": "http"
     },
     "189fb60ac15dee00c81189bbf2abcc6c": {
       "project_id": "189fb60ac15dee00c81189bbf2abcc6c",
