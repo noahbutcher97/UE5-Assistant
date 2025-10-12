@@ -218,7 +218,7 @@
                 // If POST fails due to browser security, fall back to ZIP method
                 updateStatus('📦 Using ZIP fallback method...', '');
                 
-                const zipResponse = await fetch('/api/download_client');
+                const zipResponse = await fetch('/api/download_client_bundle', { method: 'POST' });
                 const blob = await zipResponse.blob();
                 
                 updateStatus('📦 Extracting and deploying files...', '');

@@ -6,10 +6,11 @@ Usage in UE5:
     import AIAssistant.local_server
     AIAssistant.local_server.start_server()
 """
-import unreal
-from http.server import HTTPServer, BaseHTTPRequestHandler
 import json
 import threading
+from http.server import BaseHTTPRequestHandler, HTTPServer
+
+import unreal
 
 
 class UE5CommandHandler(BaseHTTPRequestHandler):
@@ -62,8 +63,8 @@ class UE5CommandHandler(BaseHTTPRequestHandler):
                 
             elif command == 'register':
                 # Register project
-                from .project_registration import auto_register_project
                 from .api_client import get_client
+                from .project_registration import auto_register_project
                 
                 result = auto_register_project(get_client())
                 

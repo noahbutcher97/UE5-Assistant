@@ -8,25 +8,10 @@ Usage in UE5 Python Console:
 """
 import io
 import os
-import urllib.error
 import urllib.request
 import zipfile
 
-try:
-    import unreal  # type: ignore
-except ImportError:
-    unreal = None  # Running in test environment
-
-
-def _safe_log(message: str, is_error: bool = False):
-    """Safe logging that works in both UE5 and test environments."""
-    if unreal:
-        if is_error:
-            unreal.log_error(message)
-        else:
-            unreal.log(message)
-    else:
-        print(message)
+import unreal
 
 
 def get_backend_url():
@@ -41,27 +26,22 @@ def get_backend_url():
 
 def check_and_update():
     """Check for updates and install if available."""
-    if not unreal:
-        _safe_log("❌ Auto-update only works in UE5 environment", is_error=True)
-        return False
-        
     backend_url = get_backend_url()
-    download_url = f"{backend_url}/api/download_client_bundle"
+    download_url = f"{backend_url}/api/download_client"
     
-    _safe_log("=" * 60)
-    _safe_log("🔄 UE5 AI Assistant Auto-Update")
-    _safe_log("=" * 60)
-    _safe_log(f"📡 Backend: {backend_url}")
+    unreal.log("=" * 60)
+    unreal.log("🔄 UE5 AI Assistant Auto-Update")
+    unreal.log("=" * 60)
+    unreal.log(f"📡 Backend: {backend_url}")
     
     try:
-        # Download ZIP from backend using POST to bypass CDN cache
-        _safe_log(f"⬇️  Downloading latest client from: {download_url}")
+        # Download ZIP from backend
+        unreal.log(f"⬇️  Downloading latest client from: {download_url}")
         
-        req = urllib.request.Request(download_url, method='POST')
-        with urllib.request.urlopen(req, timeout=30) as response:
+        with urllib.request.urlopen(download_url, timeout=30) as response:
             zip_data = response.read()
         
-        _safe_log(f"✅ Downloaded {len(zip_data)} bytes")
+        unreal.log(f"✅ Downloaded {len(zip_data)} bytes")
         
         # Extract ZIP
         project_dir = unreal.Paths.project_dir()
@@ -86,7 +66,7 @@ def check_and_update():
                 
                 updated_files.append(file_info.filename)
         
-        _safe_log(f"✅ Updated {len(updated_files)} files")
+        unreal.log(f"✅ Updated {len(updated_files)} files")
         
         # Create auto_start.py for auto-initialization
         auto_start_path = os.path.join(target_base, "auto_start.py")
@@ -106,27 +86,27 @@ except Exception as e:
         try:
             with open(auto_start_path, 'w') as f:
                 f.write(auto_start_content)
-            _safe_log("✅ Created auto_start.py for automatic initialization")
+            unreal.log("✅ Created auto_start.py for automatic initialization")
         except Exception as e:
-            _safe_log(f"⚠️ Could not create auto_start.py: {e}", is_error=True)
+            unreal.log_error(f"⚠️ Could not create auto_start.py: {e}")
         
-        _safe_log("=" * 60)
-        _safe_log("📋 Updated Files:")
+        unreal.log("=" * 60)
+        unreal.log("📋 Updated Files:")
         for f in updated_files:
-            _safe_log(f"   - {f}")
-        _safe_log("=" * 60)
-        _safe_log("✅ Update complete!")
-        _safe_log("⚠️  IMPORTANT: Restart Unreal Editor for changes to take effect")
-        _safe_log("=" * 60)
+            unreal.log(f"   - {f}")
+        unreal.log("=" * 60)
+        unreal.log("✅ Update complete!")
+        unreal.log("⚠️  IMPORTANT: Restart Unreal Editor for changes to take effect")
+        unreal.log("=" * 60)
         
         return True
         
     except urllib.error.URLError as e:
-        _safe_log(f"❌ Network error: {e}", is_error=True)
-        _safe_log("   Check your internet connection and backend URL", is_error=True)
+        unreal.log_error(f"❌ Network error: {e}")
+        unreal.log_error("   Check your internet connection and backend URL")
         return False
     except Exception as e:
-        _safe_log(f"❌ Update failed: {e}", is_error=True)
+        unreal.log_error(f"❌ Update failed: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -135,31 +115,27 @@ except Exception as e:
 def show_version():
     """Display current client version info."""
     try:
-        if not unreal:
-            _safe_log("⚠️ Not running in UE5 environment")
-            return
-            
         project_dir = unreal.Paths.project_dir()
         client_path = os.path.join(project_dir, "Content", "Python", "AIAssistant")
         
         if os.path.exists(client_path):
             files = [f for f in os.listdir(client_path) if f.endswith('.py')]
-            _safe_log(f"📦 Client installed with {len(files)} Python files")
+            unreal.log(f"📦 Client installed with {len(files)} Python files")
             
             # Check for test_registration.py as version indicator
             test_file = os.path.join(client_path, "test_registration.py")
             if os.path.exists(test_file):
-                _safe_log("✅ Latest version (includes diagnostic tools)")
+                unreal.log("✅ Latest version (includes diagnostic tools)")
             else:
-                _safe_log("⚠️  Older version (missing test_registration.py)")
-                _safe_log("💡 Run check_and_update() to upgrade")
+                unreal.log("⚠️  Older version (missing test_registration.py)")
+                unreal.log("💡 Run check_and_update() to upgrade")
         else:
-            _safe_log("❌ Client not installed")
+            unreal.log("❌ Client not installed")
             
     except Exception as e:
-        _safe_log(f"Error checking version: {e}", is_error=True)
+        unreal.log_error(f"Error checking version: {e}")
 
 
 # Auto-run on import
 show_version()
-_safe_log("\n💡 To update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()\n")
+unreal.log("\n💡 To update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()\n")

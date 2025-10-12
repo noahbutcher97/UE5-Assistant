@@ -5,9 +5,10 @@ Run in UE5 Python Console: import AIAssistant.install_dependencies
 
 def install_websocket_client():
     """Install websocket-client library in UE5 Python environment."""
-    import unreal
     import subprocess
     import sys
+
+    import unreal
     
     unreal.log("=" * 60)
     unreal.log("📦 Installing AI Assistant Dependencies")

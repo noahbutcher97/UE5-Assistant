@@ -4,9 +4,10 @@ Generates editor utilities from natural language prompts
 UE 5.6 Compliant
 """
 
-import unreal
-from typing import Dict, List, Optional, Any
 import json
+from typing import Any, Dict, List, Optional
+
+import unreal
 
 
 class EditorUtilityGenerator:

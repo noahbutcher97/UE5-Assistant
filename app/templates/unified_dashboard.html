@@ -361,10 +361,10 @@
                 <!-- Alternative: Manual Download -->
                 <div style="border-top: 1px solid rgba(139,149,165,0.2); padding-top: 15px; margin-top: 15px;">
                     <p style="color: #8b95a5; font-size: 14px; margin-bottom: 10px;">Or download and install manually:</p>
-                    <a href="/api/download_client" style="display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); padding: 12px; text-decoration: none; color: white; border-radius: 8px; font-size: 15px;">
+                    <button onclick="downloadClientZip()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); padding: 12px; border: none; color: white; border-radius: 8px; font-size: 15px; cursor: pointer;">
                         <span style="font-size: 20px;">📦</span>
                         <span>Download Client ZIP</span>
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>
@@ -728,9 +728,9 @@
                 <a href="/deploy/modern" target="_blank" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
                     ✨ Modern Deploy Page
                 </a>
-                <a href="/api/download_client" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
+                <button onclick="downloadClientZip()" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; cursor: pointer; border: none; width: 100%;">
                     📦 Download Client ZIP
-                </a>
+                </button>
                 <a href="/api/installer_script" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
                     ⚡ PowerShell Installer
                 </a>
@@ -950,6 +950,31 @@
             statusDiv.className = `status-${type}`;
         }
         
+        // Download client ZIP using POST to bypass CDN cache
+        async function downloadClientZip() {
+            try {
+                const response = await fetch('/api/download_client_bundle', {
+                    method: 'POST'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Download failed');
+                }
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'UE5_AIAssistant_Client.zip';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('❌ Download failed: ' + error.message);
+            }
+        }
+        
         async function frictionlessDeploy() {
         const projectName = document.getElementById('manual-name').value;
         const projectPath = document.getElementById('manual-path').value;
@@ -1164,7 +1189,7 @@
                     statusDiv.innerHTML = `
                         ❌ ${data.error}<br>
                         <small>⚠️ Browser cannot access local file system. Use manual download instead.</small><br>
-                        <a href="/api/download_client" style="color: #00d9ff; text-decoration: underline;">📦 Download ZIP File</a>
+                        <a href="#" onclick="downloadClientZip(); return false;" style="color: #00d9ff; text-decoration: underline;">📦 Download ZIP File</a>
                     `;
                 }
             } catch (error) {
