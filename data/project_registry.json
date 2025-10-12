@@ -1,5 +1,5 @@
 {
-  "active_project_id": "189fb60ac15d",
+  "active_project_id": "189fb60ac15dee00c81189bbf2abcc6c",
   "projects": {
     "6d953fbbf247": {
       "project_id": "6d953fbbf247",
@@ -34,8 +34,8 @@
         "content_path": "D:/UnrealProjects/5.6/UE5_Assistant/Content/",
         "plugins_enabled": true
       },
-      "registered_at": "2025-10-12T07:36:44.732047",
-      "last_updated": "2025-10-12T07:36:44.732056"
+      "registered_at": "2025-10-12T07:47:23.392330",
+      "last_updated": "2025-10-12T07:47:23.392341"
     }
   }
 }
