@@ -1535,20 +1535,35 @@ Return ONLY the JSON array, no explanation."""
         if not hasattr(manager, 'http_clients'):
             manager.http_clients = {}
         
-        # Update last poll time
-        if project_id in manager.http_clients:
-            manager.http_clients[project_id]["last_poll"] = datetime.now()
+        # Auto-register if not registered (handles server restarts gracefully)
+        if project_id not in manager.http_clients:
+            project_name = request.get("project_name", "Unknown")
+            manager.http_clients[project_id] = {
+                "name": project_name,
+                "last_poll": datetime.now(),
+                "pending_commands": []
+            }
+            print(f"🔄 Auto-registered HTTP client on poll: {project_id}")
             
-            # Get pending commands
-            commands = manager.http_clients[project_id].get("pending_commands", [])
-            
-            # Clear pending commands after sending
-            manager.http_clients[project_id]["pending_commands"] = []
-            
-            return {"commands": commands, "registered": True}
+            # Notify dashboards
+            await manager.broadcast_to_dashboards({
+                "type": "ue5_status",
+                "project_id": project_id,
+                "status": "connected",
+                "connection_type": "http_polling",
+                "timestamp": datetime.now().isoformat()
+            })
         
-        # Client not registered - signal to re-register
-        return {"commands": [], "registered": False}
+        # Update last poll time
+        manager.http_clients[project_id]["last_poll"] = datetime.now()
+        
+        # Get pending commands
+        commands = manager.http_clients[project_id].get("pending_commands", [])
+        
+        # Clear pending commands after sending
+        manager.http_clients[project_id]["pending_commands"] = []
+        
+        return {"commands": commands, "registered": True}
     
     @app.post("/api/ue5/heartbeat")
     async def ue5_heartbeat(request: dict):

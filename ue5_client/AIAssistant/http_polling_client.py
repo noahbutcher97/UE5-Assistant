@@ -102,10 +102,13 @@ class HTTPPollingClient:
                     self._send_heartbeat()
                     self.last_heartbeat = current_time
                 
-                # Poll for commands
+                # Poll for commands (include project_name for auto-registration)
                 response = requests.post(
                     f"{self.base_url}/api/ue5/poll",
-                    json={"project_id": self.project_id},
+                    json={
+                        "project_id": self.project_id,
+                        "project_name": self.project_name
+                    },
                     timeout=5
                 )
                 
