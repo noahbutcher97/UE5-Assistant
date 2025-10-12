@@ -268,6 +268,10 @@
                 <option value="">No project selected</option>
             </select>
             <span class="project-status" id="projectStatus">Not connected</span>
+            <button onclick="updateAllClients()" id="updateClientsBtn" style="padding: 8px 16px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px; transition: all 0.3s;" title="Update client files on all connected UE5 projects">
+                <span style="font-size: 18px;">🔄</span>
+                <span>Update All Clients</span>
+            </button>
         </div>
     </div>
 
@@ -1353,6 +1357,64 @@
             }
         }
 
+        async function updateAllClients() {
+            const btn = document.getElementById('updateClientsBtn');
+            const originalHTML = btn.innerHTML;
+            
+            if (!wsConnected || ue5ProjectsConnected.length === 0) {
+                alert('❌ No UE5 clients connected!\n\nMake sure UE5 is running and you\'ve executed:\nimport AIAssistant.main');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<span style="font-size: 18px;">⏳</span><span>Updating...</span>';
+            
+            try {
+                let successCount = 0;
+                let failCount = 0;
+                
+                // Send auto-update command to all connected projects via WebSocket
+                for (const projectId of ue5ProjectsConnected) {
+                    try {
+                        // Send direct auto_update message (bypasses action executor)
+                        dashboardWs.send(JSON.stringify({
+                            type: 'auto_update',
+                            project_id: projectId
+                        }));
+                        successCount++;
+                        console.log(`✅ Sent auto-update to project: ${projectId}`);
+                    } catch (error) {
+                        failCount++;
+                        console.error(`Failed to update project ${projectId}:`, error);
+                    }
+                }
+                
+                // Wait a bit for updates to process
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                if (successCount > 0) {
+                    btn.innerHTML = '<span style="font-size: 18px;">✅</span><span>Updated!</span>';
+                    alert(`✅ Successfully updated ${successCount} client(s)!\n\n` +
+                          `Files deployed with latest diagnostic tools:\n` +
+                          `- diagnose.py\n` +
+                          `- install_dependencies.py\n\n` +
+                          `The clients will automatically reload.`);
+                } else {
+                    btn.innerHTML = '<span style="font-size: 18px;">❌</span><span>Failed</span>';
+                    alert(`❌ Failed to update clients.\n\nMake sure UE5 clients support auto-update.`);
+                }
+                
+            } catch (error) {
+                btn.innerHTML = '<span style="font-size: 18px;">❌</span><span>Error</span>';
+                alert(`❌ Update error: ${error.message}`);
+            } finally {
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
+                }, 3000);
+            }
+        }
+        
         function executeUE5Action(projectId, action, params) {
             return new Promise((resolve, reject) => {
                 if (!dashboardWs || !wsConnected) {

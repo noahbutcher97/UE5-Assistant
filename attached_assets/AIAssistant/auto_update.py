@@ -6,13 +6,12 @@ Usage in UE5 Python Console:
     import AIAssistant.auto_update
     # Shows current version and checks for updates
 """
-import unreal
-import urllib.request
-import zipfile
 import io
 import os
-import shutil
-from pathlib import Path
+import urllib.request
+import zipfile
+
+import unreal
 
 
 def get_backend_url():

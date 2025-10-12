@@ -1,100 +1,7 @@
 # Unreal Engine AI Viewport Assistant
 
 ## Overview
-This project provides a FastAPI backend service that generates AI-powered technical documentation for Unreal Engine 5 editor viewport contexts. It receives structured viewport data from Unreal Engine's Python environment and uses OpenAI's GPT models to produce precise, factual prose descriptions of 3D scenes and level designs. The system aims to bridge Unreal Engine's scripting capabilities with cloud-based AI services, offering UE5 developers advanced insights and implementation guidance within their workflows. Key capabilities include **multi-project management** with browser-based project selection, **context-aware AI responses** using active project metadata, **UE 5.6 compliant utility generation**, **comprehensive editor orchestration** (scene building, camera control, actor manipulation), and **unified control dashboard** that serves as the main interface for all operations.
-
-## File Structure & Deployment
-
-### Replit Project Structure
-```
-Root/
-├── main.py                                 # ⚙️ BACKEND: FastAPI entry point
-├── app/                                    # ⚙️ BACKEND: FastAPI server modules
-│   ├── models.py                           #    (Hosted on Replit cloud)
-│   ├── routes.py
-│   ├── config.py
-│   ├── dashboard.py
-│   └── services/
-│       ├── openai_service.py
-│       ├── conversation_service.py
-│       └── filtering_service.py
-│
-├── attached_assets/
-│   └── AIAssistant/                        # 🎮 UE5 CLIENT: Deploy to Unreal
-│       ├── main.py                         #    (NOT imported by backend)
-│       ├── config.py
-│       ├── api_client.py
-│       ├── context_collector.py
-│       ├── action_executor.py
-│       ├── project_metadata_collector.py
-│       ├── blueprint_capture.py
-│       └── Documentation/
-│
-└── ue5_client_tests/                       # 🧪 TESTING: Replit-only (DO NOT deploy)
-    ├── mock_unreal.py
-    ├── test_runner.py
-    └── mock_project/
-```
-
-### Architecture Boundary Rules
-**CRITICAL**: The backend and UE5 client are completely decoupled:
-- ✅ **Backend** (`main.py` + `app/`): Never imports from `attached_assets/`
-- ✅ **UE5 Client** (`attached_assets/AIAssistant/`): Only imported by UE5 Python environment
-- ✅ **Communication**: HTTP API only (client POSTs to backend, receives JSON responses)
-- ❌ **No direct module imports** between backend and client code
-
-**Boundary Check**: Run `python3 check_imports.py` to verify backend isolation from UE5 client code
-
-### Deployment Options
-
-#### **🚀 Frictionless Deployment (Recommended)**
-**One-time setup:**
-1. Run Deploy Agent on your PC:
-   - Download: [deploy_agent_installer.bat](https://ue5-assistant-noahbutcher97.replit.app/api/deploy_agent_installer)
-   - Double-click to run (enters your UE5 project path)
-   - Keep window open while using dashboard
-
-2. Use Dashboard:
-   - Go to [Control Center](https://ue5-assistant-noahbutcher97.replit.app/dashboard)
-   - Enter project path
-   - Click **"⚡ Instant Deploy & Run"**
-   - Files deployed + auto-imported in UE5 instantly!
-
-**Features:** Zero manual steps, auto-import in UE5, project registration, instant readiness
-
-#### **Classic Deployment Options**
-- **PowerShell Installer:** Download and run [install_ue5_assistant.ps1](https://ue5-assistant-noahbutcher97.replit.app/api/installer_script)
-- **Manual ZIP:** Download from [dashboard](https://ue5-assistant-noahbutcher97.replit.app/dashboard), extract to `Content/Python/`
-- **UE5 Auto-Update:** Run `import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()` in UE5 console
-
-**Backend:** FastAPI server runs on Replit at `https://ue5-assistant-noahbutcher97.replit.app`
-
-## Recent Changes
-**October 12, 2025:**
-- **Created UE5 diagnostic tools**: Added `diagnose.py` and `install_dependencies.py` to troubleshoot import failures and automatically install missing dependencies (websocket-client)
-- **Identified and documented Replit CDN caching issue**: Discovered that `*.replit.app` domain has immutable CDN that permanently caches ALL GET endpoints, preventing code updates from reaching users
-- **Implemented CDN-bypass deployment solution**: `/api/deploy_client` POST endpoint bypasses CDN via direct file copy, ensuring users always get latest files
-- **Created quick_deploy.ps1**: Simplified PowerShell deployment script that uses working POST endpoint for reliable deployment
-- **Fixed critical WebSocket connection bug**: Changed `config.base_url` to `config.api_url` in main.py (property didn't exist)
-- **Fixed auto-update handler compatibility**: Now properly handles boolean return from `check_and_update()` instead of expecting dict
-- **Enhanced WebSocket logging**: Added detailed connection diagnostics (URL, project ID, timeout info) for easier debugging
-- **Added websocket-client dependency check**: Client now validates library installation on startup with clear error messaging
-- **Improved deploy agent detection**: Added 3-second timeout and status indicator showing "✅ Running" when agent detected
-- **Consolidated deployment UI**: Removed redundant Quick Deploy button, moved all deployment options under collapsible section
-- **Environment guards**: Auto-update now checks for UE5 environment before executing to prevent backend-side failures
-
-### Replit CDN Caching Discovery (Critical Learning)
-**Issue**: Replit's `*.replit.app` domain uses an immutable CDN that permanently caches ALL GET endpoint responses, including 404 errors. Once an endpoint serves content (even stale/incorrect), that cached response is served indefinitely, ignoring cache-control headers, query parameters, and code updates.
-
-**Impact**: Code updates to downloaded files (deploy_agent.py, installer scripts) never reach users because the CDN continues serving the originally cached version.
-
-**Working Solution**: POST endpoints bypass the CDN entirely and always hit the origin server with current code.
-- ✅ `/api/deploy_client` (POST) - Direct file copy, bypasses CDN
-- ✅ `/api/client_manifest` (POST) - File version checking, bypasses CDN
-- ❌ `/api/deploy_agent` (GET) - Permanently cached, serves stale code
-- ❌ `/api/installer_script` (GET) - Permanently cached, serves stale code
-
-**Architectural Decision**: All deployment endpoints now use POST to ensure users receive latest code. GET endpoints retained only for backwards compatibility with cached clients.
+This project delivers a FastAPI backend service for generating AI-powered technical documentation of Unreal Engine 5 editor viewport contexts. It processes structured viewport data from Unreal Engine's Python environment to produce precise, factual descriptions of 3D scenes and level designs using OpenAI's GPT models. The system aims to enhance UE5 developers' workflows by offering advanced insights and implementation guidance. Key features include multi-project management, context-aware AI responses, UE 5.6 compliant utility generation, comprehensive editor orchestration (scene building, camera control, actor manipulation), and a unified control dashboard. The project seeks to bridge Unreal Engine's scripting capabilities with cloud-based AI services.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -102,62 +9,60 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### UI/UX Decisions
-- **Unified Control Center**: The main `/dashboard` now features a unified interface with Project Hub as the primary tab, alongside Conversations, Settings, API Info, and About tabs.
-- **Project Selector**: Browser-based dropdown for selecting active UE5 project, with real-time connection status indicator.
-- **Dark Theme Dashboard**: Sleek cyberpunk aesthetic with dark navy background, cyan accents, and glass morphism cards.
+- **Unified Control Center**: A single `/dashboard` interface with Project Hub as the primary tab, alongside Conversations, Settings, API Info, and About.
+- **Project Selector**: Browser-based dropdown for active UE5 project selection with real-time connection status.
+- **Dark Theme Dashboard**: A cyberpunk aesthetic featuring a dark navy background, cyan accents, and glass morphism cards.
 - **Console Feedback**: Emoji-based status indicators in the Unreal Engine console for clarity.
 
 ### Technical Implementations
-- **Backend Framework**: FastAPI for its async capabilities, automatic API documentation, and Pydantic-based type validation.
-- **AI Integration**: Uses OpenAI GPT models (default: gpt-4o-mini) for technical prose generation, with configurable model selection and output style.
-- **Multi-Project Registry**: Backend tracks multiple UE5 projects with metadata, allowing browser-based project selection and context-aware queries.
-- **Auto-Registration**: UE5 client automatically registers projects on startup, uploading metadata (blueprints count, modules, file structure) to backend.
-- **Context-Aware Queries**: Project queries enriched with active project context for accurate, project-specific AI responses.
-- **Editor Orchestration Systems**: Complete scene building via SceneOrchestrator (spawn actors/primitives/blueprints), ViewportController (camera control), and ActorManipulator (align/distribute/arrange).
-- **UE 5.6 Compliant Utility Generator**: Generates Editor Utility Widgets with proper @unreal.uclass() decorators, EditorUtilityWidget base class, @unreal.ufunction methods, and full backend API integration.
-- **Unified Dashboard**: Main interface at `/dashboard` with Project Hub as primary tab, replacing separate dashboard pages.
-- **Real-Time WebSocket Communication**: Bidirectional WebSocket system enables dashboard to directly trigger UE5 actions (browse_files, get_project_info, etc.) with live data collection. Features automatic reconnection with exponential backoff (max 10 attempts), real-time connection status updates, and robust error handling.
-- **Deploy Agent**: Local Python service (localhost:7865) bridges browser to UE5, enabling frictionless deployment and auto-import without browser security limitations.
-- **Data Flow**: Unreal Engine Python scripts collect viewport data and POST it to FastAPI endpoints. Pydantic models validate requests. AI processes data, and descriptions are returned to UE5.
-- **UE5 Python Integration**: Automatic installation of dependencies, bi-directional HTTP communication, file-based state management (`Saved/AIConsole`), persistent conversation logging, and intelligent context-aware command routing with expanded keyword detection.
-- **Context-Aware Command Routing**: Backend intelligently detects user intent and routes context-specific queries (project info, blueprint capture, file browsing) to appropriate UE5 data collection actions while maintaining AI-powered responses for general guidance questions.
-- **Configuration System**: JSON-based config with GET/POST `/api/config` endpoints. Settings dynamically affect runtime behavior without server restarts.
-- **Modular Architecture**: Backend refactored into `app/` package with dedicated modules for models, config, routes, services (OpenAI, filtering, conversation), and dashboard. UE5 client also uses a modular design for API client, context collection, action execution, and UI management.
-- **File System Operations**: Secure read-only file browsing using `Path.relative_to()` for path validation. UE5 client uses `unreal.Paths` for project directory navigation and file searching.
-- **Project Intelligence Gathering**: `project_metadata_collector.py` extracts comprehensive project data (modules/plugins, asset counts, Blueprint statistics, source code analysis, content folder structure) with caching.
-- **Blueprint Screenshot Capture**: Multi-modal vision support; captures Blueprint editor screenshots, uploads base64 images to OpenAI Vision API (gpt-4o), and stores them with metadata.
-- **Enhanced Action Executor**: Includes actions for file browsing, reading, searching, project info display, blueprint capture, and listing blueprints, all feature-flag protected.
-- **Feature Flag System**: Granular control over features like file operations, guidance requests, and blueprint capture via configuration flags.
-- **UE5 Mock Testing Environment**: `mock_unreal.py` simulates UE5 editor for Replit-based testing, ensuring client code validation without an active UE5 instance.
-- **Server Selection System**: UE5 config supports switching between production, development, and localhost servers, with selection persisting across sessions.
-- **File Communication Protocol**: Standardized file I/O for Blueprint integration, where Python writes to `[Project]/Saved/AIConsole/*.txt` for Blueprint to read.
+- **Backend Framework**: FastAPI is used for its async capabilities, automatic API documentation, and Pydantic-based type validation.
+- **AI Integration**: Utilizes OpenAI GPT models (default: gpt-4o-mini) for technical prose generation and multi-modal vision analysis, with configurable model selection.
+- **Multi-Project Registry**: The backend manages multiple UE5 projects and their metadata, enabling browser-based project selection and context-aware queries.
+- **Auto-Registration**: The UE5 client automatically registers projects upon startup, uploading metadata such as blueprint counts, modules, and file structure.
+- **Context-Aware Queries**: Project-specific queries are enriched with active project context for accurate AI responses.
+- **Editor Orchestration Systems**: Includes SceneOrchestrator for scene building (actors, primitives, blueprints), ViewportController for camera control, and ActorManipulator for object alignment and arrangement.
+- **UE 5.6 Compliant Utility Generator**: Generates Editor Utility Widgets with appropriate decorators and API integration.
+- **Real-Time WebSocket Communication**: A bidirectional WebSocket system allows the dashboard to trigger UE5 actions directly and collect live data, featuring automatic reconnection and robust error handling.
+- **Deploy Agent**: A local Python service (localhost:7865) facilitates frictionless deployment and auto-import into UE5.
+- **Data Flow**: UE Python scripts collect viewport data and POST it to FastAPI endpoints for AI processing, with results returned to UE5.
+- **Context-Aware Command Routing**: The backend intelligently routes user intent for context-specific queries (e.g., project info, blueprint capture) to appropriate UE5 data collection actions, complementing AI-powered general guidance.
+- **Configuration System**: JSON-based configuration with dynamic runtime effects via GET/POST `/api/config` endpoints.
+- **Modular Architecture**: Backend is organized into an `app/` package, and the UE5 client also follows a modular design.
+- **File System Operations**: Secure, read-only file browsing using `Path.relative_to()` for validation, and `unreal.Paths` for UE project navigation.
+- **Project Intelligence Gathering**: `project_metadata_collector.py` collects comprehensive project data, including modules, plugins, asset counts, Blueprint statistics, and source code analysis, with caching.
+- **Blueprint Screenshot Capture**: Supports capturing Blueprint editor screenshots, uploading base64 images to OpenAI Vision API (gpt-4o), and storing them with metadata.
+- **Enhanced Action Executor**: Provides actions for file browsing, reading, searching, project info display, blueprint capture, and listing blueprints, all protected by feature flags.
+- **Feature Flag System**: Granular control over features like file operations, guidance requests, and blueprint capture.
+- **UE5 Mock Testing Environment**: `mock_unreal.py` allows Replit-based testing of client code without an active UE5 instance.
+- **Server Selection System**: UE5 configuration supports switching between production, development, and localhost servers.
+- **File Communication Protocol**: Standardized file I/O for Blueprint integration via `[Project]/Saved/AIConsole/*.txt`.
 
 ### System Design Choices
 - **RESTful API**: Standard HTTP methods with JSON payloads for client-server communication.
 - **Separation of Concerns**: UE viewport collection logic is isolated from the AI processing backend.
-- **Environment-based Configuration**: Sensitive data and configurable parameters are externalized via environment variables.
-- **Error Handling**: Structured error logging, retry logic, graceful degradation, and console feedback.
-- **Thread Safety**: Synchronous mode by default in UE5 integration to avoid "Attempted to access Unreal API from outside the main game thread" errors.
+- **Environment-based Configuration**: Sensitive data and configurable parameters are managed via environment variables.
+- **Error Handling**: Includes structured logging, retry logic, graceful degradation, and console feedback.
+- **Thread Safety**: UE5 integration operates in synchronous mode to prevent threading issues.
 - **Security Hardening**: Path traversal protection and enforcement of read-only file operations.
-- **UE5.6 API Compliance**: All UE5 client code verified against Epic Games official documentation.
+- **UE5.6 API Compliance**: All UE5 client code adheres to Epic Games' official documentation.
 
 ## External Dependencies
 
 ### AI Services
-- **OpenAI API** (v1.57.0): Used for GPT model access (e.g., gpt-4o-mini, gpt-4o) for technical prose generation and multi-modal vision analysis. Requires `OPENAI_API_KEY` environment variable.
+- **OpenAI API** (v1.57.0): Used for GPT model access (e.g., gpt-4o-mini, gpt-4o) for technical prose generation and multi-modal vision analysis. Requires `OPENAI_API_KEY`.
 
 ### Python Packages (Backend)
 - **fastapi** (0.112.x): Core web framework.
 - **uvicorn** (0.23.2): ASGI server.
-- **websockets** (15.0.1): WebSocket protocol support for real-time communication.
+- **websockets** (15.0.1): WebSocket protocol support.
 - **pydantic** (2.10.3+): Data validation and settings management.
 - **openai** (1.57.0): Official OpenAI Python client.
 - **requests** (2.32.3): HTTP library.
 - **jinja2** (3.1.4): Template engine.
 
 ### Unreal Engine Integration
-- **UE5.6+ Python API** (3.11.8): Native Python environment for editor interactions, viewport querying, and file system operations (`unreal.Paths`).
-- **websocket-client**: Python WebSocket client library for UE5 to establish real-time connection with backend.
+- **UE5.6+ Python API** (3.11.8): Native Python environment for editor interactions.
+- **websocket-client**: Python WebSocket client library for UE5.
 - **pip**: Package manager for installing Python dependencies within UE's environment.
 
 ### Deployment Platform
@@ -165,6 +70,6 @@ Preferred communication style: Simple, everyday language.
   - Base URL: `https://ue5-assistant-noahbutcher97.replit.app`
 
 ### Communication Protocol
-- **HTTP/HTTPS**: For REST API communication between UE5 client and FastAPI backend.
+- **HTTP/HTTPS**: For REST API communication.
 - **JSON**: Data serialization format.
 - **File I/O**: Local file storage within UE project directories for conversation logs and responses.
