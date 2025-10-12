@@ -10,6 +10,7 @@ from .async_client import get_async_client
 from .config import get_config
 from .ui_manager import get_ui_manager
 from .utils import Logger
+from .websocket_client import WebSocketClient
 
 
 class AIAssistant:
@@ -44,8 +45,14 @@ class AIAssistant:
         self._async_response: Optional[str] = None
         self._async_in_progress = False
         
+        # WebSocket connection for real-time communication
+        self.ws_client: Optional[WebSocketClient] = None
+        
         # Auto-register project with backend
         self._auto_register_project()
+        
+        # Initialize WebSocket connection
+        self._init_websocket()
 
     def process_command(
         self, user_input: str, use_async: bool = False
@@ -347,6 +354,58 @@ class AIAssistant:
             unreal.log_warning(
                 "💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()"
             )
+    
+    def _init_websocket(self):
+        """Initialize WebSocket connection for real-time communication."""
+        try:
+            import unreal
+            import hashlib
+            
+            # Get project info
+            project_path = unreal.Paths.project_dir()
+            project_id = hashlib.md5(project_path.encode()).hexdigest()
+            
+            # Create WebSocket client
+            base_url = self.config.base_url
+            self.ws_client = WebSocketClient(base_url, project_id)
+            
+            # Set action handler
+            self.ws_client.set_action_handler(self._handle_websocket_action)
+            
+            # Connect (async, non-blocking)
+            if self.ws_client.connect():
+                unreal.log("🌐 Real-time dashboard connection enabled")
+            else:
+                unreal.log_warning("⚠️ WebSocket connection failed (dashboard features limited)")
+                
+        except Exception as e:
+            import unreal
+            unreal.log_warning(f"⚠️ WebSocket init failed: {e}")
+    
+    def _handle_websocket_action(self, action: str, params: dict) -> dict:
+        """
+        Handle actions requested from dashboard via WebSocket.
+        
+        Args:
+            action: Action name (e.g., 'browse_files', 'get_project_info')
+            params: Action parameters
+        
+        Returns:
+            Action result dict
+        """
+        try:
+            # Execute action using action executor
+            result = self.executor.execute(action, params)
+            
+            return {
+                "success": True,
+                "data": result
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
 
 
 # Global assistant instance
