@@ -326,9 +326,21 @@ class AIAssistant:
         """Auto-register project on initialization."""
         try:
             from .project_registration import auto_register_project
-            auto_register_project(self.sync_client)
+            result = auto_register_project(self.sync_client)
+            if not result.get("success"):
+                import unreal
+                unreal.log_warning(
+                    f"⚠️ Project auto-registration failed: {result.get('error', 'Unknown')}"
+                )
+                unreal.log_warning(
+                    "💡 Run 'import AIAssistant.test_registration' to diagnose"
+                )
         except Exception as e:
-            self.logger.warning(f"Project auto-registration failed: {e}")
+            import unreal
+            unreal.log_error(f"❌ Project auto-registration error: {e}")
+            unreal.log_warning(
+                "💡 Run 'import AIAssistant.test_registration' to diagnose"
+            )
 
 
 # Global assistant instance
