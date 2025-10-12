@@ -109,31 +109,43 @@ class DeployAgent(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({'error': str(e)}).encode())
     
     def deploy_and_initialize(self, data):
-        """Deploy client and auto-initialize in UE5."""
+        """Deploy client files using direct API copy (bypasses CDN and ZIP caching)."""
         try:
-            # Step 1: Download client from backend
-            print(f"📥 Downloading from {self.backend_url}...")
-            download_url = f"{self.backend_url}/api/download_client"
+            # Use the working /api/deploy_client endpoint that directly copies files
+            print(f"📥 Deploying from {self.backend_url}...")
+            deploy_url = f"{self.backend_url}/api/deploy_client"
             
-            with urllib.request.urlopen(download_url, timeout=30) as response:
-                zip_data = response.read()
+            deploy_data = json.dumps({
+                "project_path": self.ue5_project,
+                "overwrite": True
+            }).encode()
             
-            # Step 2: Extract to UE5 project
-            target_path = Path(self.ue5_project) / "Content" / "Python"
-            target_path.mkdir(parents=True, exist_ok=True)
+            deploy_req = urllib.request.Request(
+                deploy_url,
+                data=deploy_data,
+                headers={'Content-Type': 'application/json'},
+                method='POST'
+            )
             
-            files_deployed = []
-            with zipfile.ZipFile(io.BytesIO(zip_data)) as zip_file:
-                for file_info in zip_file.filelist:
-                    if not file_info.filename.endswith('/'):
-                        full_path = target_path / file_info.filename
-                        full_path.parent.mkdir(parents=True, exist_ok=True)
-                        full_path.write_bytes(zip_file.read(file_info.filename))
-                        files_deployed.append(file_info.filename)
+            with urllib.request.urlopen(deploy_req, timeout=30) as response:
+                result = json.loads(response.read().decode())
             
+            if not result.get('success'):
+                return {
+                    'success': False,
+                    'error': result.get('error', 'Deployment failed')
+                }
+            
+            files_deployed = result.get('files_copied', [])
             print(f"✅ Deployed {len(files_deployed)} files")
             
-            # Step 3: Create auto_start.py for auto-initialization
+            # List new files for user visibility
+            new_files = [f for f in files_deployed if 'diagnose' in f or 'install_dependencies' in f]
+            if new_files:
+                print(f"   ✨ New files: {', '.join(new_files)}")
+            
+            # Step 2: Create auto_start.py for auto-initialization
+            target_path = Path(self.ue5_project) / "Content" / "Python"
             auto_start_path = target_path / "auto_start.py"
             auto_start_content = """# Auto-generated initialization script for UE5 AI Assistant
 # This file automatically initializes the AI Assistant when UE5 loads
