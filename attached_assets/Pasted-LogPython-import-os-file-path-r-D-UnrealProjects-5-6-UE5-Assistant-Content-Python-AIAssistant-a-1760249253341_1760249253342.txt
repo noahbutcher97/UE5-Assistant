@@ -1,0 +1,61 @@
+LogPython: import os
+file_path = r"D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\api_client.py"
+# Read the file
+with open(file_path, 'r') as f:
+    lines = f.readlines()
+# Insert the fix at line 48 (after retry_delay line)
+# Find the line with "last_error = None"
+insert_index = -1
+for i, line in enumerate(lines):
+    if 'last_error = None' in line:
+        insert_index = i + 1
+        break
+if insert_index > 0:
+    # Insert the fix
+    fix = [
+        "        \n",
+        "        # Build full URL if relative path provided\n",
+        "        full_url = url\n",
+        "        if url.startswith('/'):\n",
+        "            base_url = self.config.api_url\n",
+        "            full_url = f\"{base_url}{url}\"\n",
+        "\n"
+    ]
+    lines = lines[:insert_index] + fix + lines[insert_index:]
+    
+    # Also update line 53 to use full_url instead of url
+    for i, line in enumerate(lines):
+        if 'f"POST {url} (attempt' in line:
+            lines[i] = line.replace('{url}', '{full_url}')
+        if 'response = requests.post(\n' in line and i+1 < len(lines) and 'url, json=payload' in lines[i+1]:
+            lines[i+1] = lines[i+1].replace('url,', 'full_url,')
+    
+    # Write back
+    with open(file_path, 'w') as f:
+        f.writelines(lines)
+    
+    print("✅ File patched successfully!")
+else:
+    print("❌ Could not find insertion point")
+LogPython: ✅ File patched successfully!
+LogPython: import importlib, sys
+for mod in list(sys.modules.keys()):
+    if mod.startswith('AIAssistant'):
+        del sys.modules[mod]
+import AIAssistant.main
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: ✅ websocket-client library detected
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 🔌 Attempting WebSocket connection to: wss://ue5-assistant-noahbutcher97.replit.app/ws/ue5/189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 🔗 WebSocket opened for project: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: ✅ WebSocket connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 🌐 Real-time dashboard connection enabled
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
