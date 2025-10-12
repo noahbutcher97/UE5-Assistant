@@ -29,7 +29,7 @@ set "PS_INSTALLER=%TEMP%\install_ue5_assistant.ps1"
 set "BACKEND_URL=https://ue5-assistant-noahbutcher97.replit.app"
 
 echo Downloading enhanced installer...
-powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest -Uri '%BACKEND_URL%/api/installer_script' -Method POST -OutFile '%PS_INSTALLER%' -UseBasicParsing}"
+powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $response = Invoke-WebRequest -Uri '%BACKEND_URL%/api/installer_script' -Method POST -UseBasicParsing; [System.IO.File]::WriteAllText('%PS_INSTALLER%', $response.Content, [System.Text.Encoding]::UTF8)}"
 
 if not exist "%PS_INSTALLER%" (
     color 0C

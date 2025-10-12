@@ -1,0 +1,45 @@
+================================================
+   UE5 AI Assistant - Quick Installer
+================================================                                                                                                                                                                                                Please select your UE5 project folder in the dialog...                                                                                                                                                                                          Selected: D:\UnrealProjects\5.6\UE5_Assistant
+
+Downloading enhanced installer...
+
+================================================
+  Running Enhanced Installer...
+================================================
+
+At C:\Users\posne\AppData\Local\Temp\install_ue5_assistant.ps1:179 char:27
++         Write-Host "      âœ… _manual_start.py created successfully ( ...
++                           ~~~
+Unexpected token 'âœ…' in expression or statement.
+At C:\Users\posne\AppData\Local\Temp\install_ue5_assistant.ps1:179 char:86
++ ...  _manual_start.py created successfully ($ManualFileSize bytes)" -Fore ...
++                                                             ~~~~~
+Unexpected token 'bytes' in expression or statement.
+At C:\Users\posne\AppData\Local\Temp\install_ue5_assistant.ps1:179 char:85
++ ...    âœ… _manual_start.py created successfully ($ManualFileSize bytes)" ...
++                                                                  ~
+Missing closing ')' in expression.
+At C:\Users\posne\AppData\Local\Temp\install_ue5_assistant.ps1:17 char:49
++ if ([string]::IsNullOrWhiteSpace($ProjectPath)) {
++                                                 ~
+Missing closing '}' in statement block or type definition.
+At C:\Users\posne\AppData\Local\Temp\install_ue5_assistant.ps1:179 char:91
++ ... _manual_start.py created successfully ($ManualFileSize bytes)" -Foreg ...
++                                                                 ~
+Unexpected token ')' in expression or statement.
+At C:\Users\posne\AppData\Local\Temp\install_ue5_assistant.ps1:181 char:27
++         Write-Host "      âš ï¸  Warning: Failed to create backup sc ...
++                           ~~
+Unexpected token 'âš' in expression or statement.
+At C:\Users\posne\AppData\Local\Temp\install_ue5_assistant.ps1:284 char:58
++     $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
++                                                          ~~
+The string is missing the terminator: ".
+At C:\Users\posne\AppData\Local\Temp\install_ue5_assistant.ps1:241 char:32
++     if (Test-Path $BackupPath) {
++                                ~
+Missing closing '}' in statement block or type definition.
+    + CategoryInfo          : ParserError: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : UnexpectedToken
+

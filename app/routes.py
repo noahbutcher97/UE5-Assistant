@@ -409,10 +409,10 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         
         script_path = Path("scripts/install_ue5_assistant.ps1")
         if script_path.exists():
-            content = script_path.read_text()
+            content = script_path.read_text(encoding='utf-8')
             return Response(
                 content=content,
-                media_type="text/plain",
+                media_type="text/plain; charset=utf-8",
                 headers={
                     "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1",
                     "Cache-Control": "no-cache, no-store, must-revalidate"
