@@ -16,17 +16,15 @@ from .blueprint_capture import BlueprintCapture
 from .config import get_config
 from .context_collector import get_collector
 from .file_collector import FileCollector
-from .project_metadata_collector import (
-    get_collector as get_metadata_collector
-)
+from .project_metadata_collector import get_collector as get_metadata_collector
 from .utils import Logger
 
 # Import new orchestration systems
 try:
-    from .scene_orchestrator import get_orchestrator
-    from .viewport_controller import get_viewport_controller
     from .actor_manipulator import get_manipulator
     from .editor_utility_generator import get_utility_generator
+    from .scene_orchestrator import get_orchestrator
+    from .viewport_controller import get_viewport_controller
     HAS_ORCHESTRATION = True
 except ImportError:
     HAS_ORCHESTRATION = False
@@ -41,19 +39,17 @@ class ActionExecutor:
         self.actions: Dict[str, Callable[[], str]] = {}
         self.file_collector = FileCollector()
         self.blueprint_capture = BlueprintCapture()
-        
+
         # Initialize metadata collector with config cache TTL
         cache_ttl = self.config.get("project_metadata_cache_ttl", 300)
         self.metadata_collector = get_metadata_collector()
         self.metadata_collector.cache_ttl_seconds = cache_ttl
-        
+
         self._register_default_actions()
-        
+
         # Add orchestration action implementations
         if HAS_ORCHESTRATION:
-            from .action_executor_extensions import (
-                add_orchestration_actions
-            )
+            from .action_executor_extensions import add_orchestration_actions
             add_orchestration_actions(self)
 
     def _register_default_actions(self) -> None:
@@ -62,45 +58,24 @@ class ActionExecutor:
         self.register("describe_viewport", self._describe_viewport)
         self.register("list_actors", self._list_actors)
         self.register("get_selected_info", self._get_selected_info)
-        
+
         # File operation actions
         self.register("browse_files", self._browse_files)
         self.register("read_source_files", self._read_source_files)
         self.register("search_files", self._search_files)
-        
+
         # Project metadata actions
         self.register("show_project_info", self._show_project_info)
         self.register("get_project_info", self._show_project_info)  # Alias
-        
+
         # Blueprint capture actions
         self.register("capture_blueprint", self._capture_blueprint)
         self.register("list_blueprints", self._list_blueprints)
-        
-        # NEW: Orchestration actions (scene building)
-        if HAS_ORCHESTRATION:
-            self.register("spawn_actor", self._spawn_actor)
-            self.register("spawn_primitive", self._spawn_primitive)
-            self.register("build_scene", self._build_scene)
-            
-            # Viewport control actions
-            self.register("focus_camera", self._focus_camera)
-            self.register("move_camera", self._move_camera)
-            self.register("orbit_camera", self._orbit_camera)
-            self.register("top_down_view", self._top_down_view)
-            
-            # Actor manipulation actions
-            self.register("align_actors", self._align_actors)
-            self.register("distribute_actors", self._distribute_actors)
-            self.register("arrange_grid", self._arrange_grid)
-            self.register("arrange_circle", self._arrange_circle)
-            self.register("snap_to_grid", self._snap_to_grid)
-            
-            # Editor utility generation
-            self.register("generate_tool", self._generate_editor_tool)
 
-    def register(
-        self, action_name: str, handler: Callable[[], str]
-    ) -> None:
+        # Note: Orchestration actions are registered by action_executor_extensions.py
+        # when HAS_ORCHESTRATION is True (see __init__ method above)
+
+    def register(self, action_name: str, handler: Callable[[], str]) -> None:
         """Register a new action handler."""
         self.actions[action_name] = handler
         self.logger.debug(f"Registered action: {action_name}")
@@ -110,9 +85,7 @@ class ActionExecutor:
         action_name = action_token.lower().strip()
 
         if action_name not in self.actions:
-            error_msg = (
-                f"[UE_ERROR] Unknown action: {action_name}"
-            )
+            error_msg = (f"[UE_ERROR] Unknown action: {action_name}")
             self.logger.error(error_msg)
             return error_msg
 
@@ -122,9 +95,7 @@ class ActionExecutor:
             self.logger.success(f"Action completed: {action_name}")
             return result
         except Exception as e:
-            error_msg = (
-                f"[UE_ERROR] Action '{action_name}' failed: {e}"
-            )
+            error_msg = (f"[UE_ERROR] Action '{action_name}' failed: {e}")
             self.logger.error(error_msg)
             return error_msg
 
@@ -135,12 +106,12 @@ class ActionExecutor:
 
         try:
             collector = get_collector()
-            
+
             # Check if project metadata collection is enabled
-            include_metadata = self.config.get("collect_project_metadata", True)
+            include_metadata = self.config.get("collect_project_metadata",
+                                               True)
             context = collector.collect_viewport_data(
-                include_project_metadata=include_metadata
-            )
+                include_project_metadata=include_metadata)
 
             if not context:
                 return "[UE_ERROR] Failed to collect viewport data"
@@ -149,9 +120,7 @@ class ActionExecutor:
             response = client.describe_viewport(context)
 
             return response.get(
-                "response",
-                response.get("description", "(no description)")
-            )
+                "response", response.get("description", "(no description)"))
         except Exception as e:
             return f"[UE_ERROR] Viewport description failed: {e}"
 
@@ -195,11 +164,8 @@ class ActionExecutor:
 
             for actor in selected:
                 name = actor.get_fname()
-                cls = (
-                    actor.get_class().get_name()
-                    if actor.get_class()
-                    else "UnknownClass"
-                )
+                cls = (actor.get_class().get_name()
+                       if actor.get_class() else "UnknownClass")
 
                 loc_str = ""
                 try:
@@ -216,88 +182,88 @@ class ActionExecutor:
             return "\n".join(lines)
         except Exception as e:
             return f"[UE_ERROR] get_selected_info failed: {e}"
-    
+
     def _browse_files(self) -> str:
         """Browse files in the Content directory."""
         if not self.config.get("enable_file_operations", True):
             return "[UE_ERROR] File operations are disabled in configuration"
-        
+
         try:
             result = self.file_collector.list_directory(
                 directory_path=self.file_collector.content_dir,
                 recursive=True,
-                max_depth=2
-            )
-            
+                max_depth=2)
+
             if result.get("error"):
                 return f"[UE_ERROR] {result['error']}"
-            
-            lines = [f"📁 Content Directory: {result.get('root_path', 'Unknown')}"]
+
+            lines = [
+                f"📁 Content Directory: {result.get('root_path', 'Unknown')}"
+            ]
             lines.append(f"Total files: {result.get('total_files', 0)}\n")
-            
+
             for file in result.get("files", [])[:20]:
                 icon = "📁" if file.get("type") == "directory" else "📄"
                 lines.append(f"{icon} {file.get('path', 'Unknown')}")
-            
+
             if result.get("total_files", 0) > 20:
-                lines.append(f"\n... and {result['total_files'] - 20} more files")
-            
+                lines.append(
+                    f"\n... and {result['total_files'] - 20} more files")
+
             return "\n".join(lines)
         except Exception as e:
             return f"[UE_ERROR] browse_files failed: {e}"
-    
+
     def _read_source_files(self) -> str:
         """Read C++ source files."""
         if not self.config.get("enable_file_operations", True):
             return "[UE_ERROR] File operations are disabled in configuration"
-        
+
         try:
             result = self.file_collector.get_source_files(max_files=10)
-            
+
             if result.get("error"):
                 return f"[UE_ERROR] {result['error']}"
-            
+
             root_path = result.get('root_path', 'Unknown')
             lines = [f"📂 Source Directory: {root_path}"]
             types = result.get("file_types", {})
-            lines.append(
-                f"C++ files: {types.get('cpp', 0)}, "
-                f"Headers: {types.get('headers', 0)}\n"
-            )
-            
+            lines.append(f"C++ files: {types.get('cpp', 0)}, "
+                         f"Headers: {types.get('headers', 0)}\n")
+
             for file in result.get("files", [])[:10]:
                 ext = file.get("extension", "")
                 lines.append(f"  {ext} {file.get('name', 'Unknown')}")
-            
+
             return "\n".join(lines)
         except Exception as e:
             return f"[UE_ERROR] read_source_files failed: {e}"
-    
+
     def _search_files(self) -> str:
         """Search for files by pattern."""
         if not self.config.get("enable_file_operations", True):
             return "[UE_ERROR] File operations are disabled in configuration"
-        
+
         try:
             # Default search for Blueprint files
-            result = self.file_collector.search_files(
-                pattern="BP_",
-                max_results=20
-            )
-            
+            result = self.file_collector.search_files(pattern="BP_",
+                                                      max_results=20)
+
             if result.get("error"):
                 return f"[UE_ERROR] {result['error']}"
-            
-            lines = [f"🔍 Search Results: {result.get('search_query', 'All files')}"]
+
+            lines = [
+                f"🔍 Search Results: {result.get('search_query', 'All files')}"
+            ]
             lines.append(f"Found {result.get('total_files', 0)} files\n")
-            
+
             for file in result.get("files", []):
                 lines.append(f"  • {file.get('name', 'Unknown')}")
-            
+
             return "\n".join(lines)
         except Exception as e:
             return f"[UE_ERROR] search_files failed: {e}"
-    
+
     def _show_project_info(self) -> str:
         """Show project metadata summary."""
         try:
@@ -305,12 +271,12 @@ class ActionExecutor:
             return summary
         except Exception as e:
             return f"[UE_ERROR] show_project_info failed: {e}"
-    
+
     def _capture_blueprint(self) -> str:
         """Capture screenshot of current Blueprint editor."""
         if not self.config.get("enable_blueprint_capture", True):
             return "[UE_ERROR] Blueprint capture is disabled in configuration"
-        
+
         try:
             resolution = self.config.get("blueprint_capture_resolution", 2)
             result = self.blueprint_capture.capture_viewport_screenshot(
@@ -318,41 +284,43 @@ class ActionExecutor:
                 resolution_multiplier=resolution,
                 check_blueprint=False  # Don't validate, just capture
             )
-            
+
             if not result.get("success"):
-                error_msg = result.get("message", result.get("error", "Unknown error"))
+                error_msg = result.get("message",
+                                       result.get("error", "Unknown error"))
                 return f"[UE_ERROR] Blueprint capture failed:\n{error_msg}"
-            
+
             lines = [
                 "✅ Blueprint screenshot captured successfully!",
                 f"📸 File: {result.get('filename', 'Unknown')}",
                 f"💾 Path: {result.get('path', 'Unknown')}"
             ]
-            
+
             return "\n".join(lines)
         except Exception as e:
             return f"[UE_ERROR] capture_blueprint failed: {e}"
-    
+
     def _list_blueprints(self) -> str:
         """List available blueprints in the project."""
         if not self.config.get("enable_blueprint_capture", True):
             return "[UE_ERROR] Blueprint operations are disabled in configuration"
-        
+
         try:
             result = self.blueprint_capture.list_available_blueprints()
-            
+
             if result.get("error"):
                 return f"[UE_ERROR] {result['error']}"
-            
+
             count = result.get("count", 0)
             lines = [f"📋 Found {count} Blueprints in project:\n"]
-            
+
             for bp in result.get("blueprints", [])[:15]:
-                lines.append(f"  • {bp.get('name', 'Unknown')} - {bp.get('path', '')}")
-            
+                lines.append(
+                    f"  • {bp.get('name', 'Unknown')} - {bp.get('path', '')}")
+
             if count > 15:
                 lines.append(f"\n... and {count - 15} more")
-            
+
             return "\n".join(lines)
         except Exception as e:
             return f"[UE_ERROR] list_blueprints failed: {e}"
