@@ -1213,7 +1213,7 @@
         // Download installer
         function downloadInstaller() {
             const timestamp = new Date().getTime();
-            window.location.href = `/api/get_installer_script?t=${timestamp}`;
+            window.location.href = `/static/install_ue5_assistant.bat?v=${timestamp}`;
         }
 
         // Update all clients

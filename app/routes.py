@@ -402,24 +402,58 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     
     @app.post("/api/installer_script")
     async def get_installer_script_post():
-        """POST version to bypass CDN cache completely - with forced fix."""
+        """POST version to bypass CDN cache - returns batch installer with embedded PowerShell."""
+        import hashlib
         from pathlib import Path
 
         from fastapi.responses import Response
         
-        # Force read the actual file from disk, bypassing any caching
-        script_path = Path("scripts/install_ue5_assistant.ps1")
+        # Return the batch installer with embedded PowerShell script
+        script_path = Path("scripts/install_client.bat")
         if script_path.exists():
-            # Direct file read with fresh handle
             content = script_path.read_text(encoding='utf-8')
+            content_hash = hashlib.md5(content.encode()).hexdigest()[:8]
             
             return Response(
                 content=content,
                 media_type="text/plain; charset=utf-8",
                 headers={
-                    "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Content-Disposition": "attachment; filename=install_ue5_assistant.bat",
+                    "Cache-Control": "private, max-age=0, no-store, no-cache, must-revalidate",
+                    "CDN-Cache-Control": "no-store",
+                    "Surrogate-Control": "no-store",
                     "Pragma": "no-cache",
+                    "Expires": "0",
+                    "X-Content-Hash": content_hash,
+                    "X-Timestamp": str(__import__('time').time())
+                }
+            )
+        return {"error": "Installer script not found"}
+    
+    @app.post("/api/get_installer_v3")
+    async def get_installer_script_v3():
+        """POST endpoint to bypass CDN cache - returns embedded PowerShell batch installer."""
+        import hashlib
+        from pathlib import Path
+
+        from fastapi.responses import Response
+        
+        script_path = Path("scripts/install_client.bat")
+        if script_path.exists():
+            content = script_path.read_text(encoding='utf-8')
+            content_hash = hashlib.md5(content.encode()).hexdigest()[:8]
+            
+            return Response(
+                content=content,
+                media_type="text/plain; charset=utf-8",
+                headers={
+                    "Content-Disposition": "attachment; filename=install_ue5_assistant.bat",
+                    "Cache-Control": "private, max-age=0, no-store, no-cache, must-revalidate",
+                    "CDN-Cache-Control": "no-store",
+                    "Surrogate-Control": "no-store",
+                    "Pragma": "no-cache",
+                    "Expires": "0",
+                    "X-Content-Hash": content_hash,
                     "X-Timestamp": str(__import__('time').time())
                 }
             )
