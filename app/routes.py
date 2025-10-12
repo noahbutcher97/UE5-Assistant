@@ -1285,7 +1285,7 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                 max_tokens=1500
             )
             
-            ai_response = response.choices[0].message.content.strip()
+            ai_response = (response.choices[0].message.content or "").strip()
             
             # Check if AI wants to collect data from UE5
             if ai_response.startswith("[UE_REQUEST]"):
