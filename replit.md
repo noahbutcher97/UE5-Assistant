@@ -82,7 +82,13 @@ The project follows a clean, organized structure:
 - **Context-Aware Queries**: Project-specific queries are enriched with active project context for accurate AI responses.
 - **Editor Orchestration Systems**: Includes SceneOrchestrator for scene building (actors, primitives, blueprints), ViewportController for camera control, and ActorManipulator for object alignment and arrangement.
 - **UE 5.6 Compliant Utility Generator**: Generates Editor Utility Widgets with appropriate decorators and API integration.
-- **Real-Time WebSocket Communication**: A bidirectional WebSocket system allows the dashboard to trigger UE5 actions directly and collect live data, featuring automatic reconnection and robust error handling.
+- **Real-Time Communication**: Dual-mode system with WebSocket (preferred) and HTTP Polling fallback:
+  - **WebSocket Mode**: Bidirectional real-time communication for instant dashboard-to-UE5 actions
+  - **HTTP Polling Fallback**: Automatic fallback when WebSocket is blocked (e.g., Replit proxy limitations)
+    - Commands received via `/api/ue5/poll` (2-second intervals)
+    - Responses sent via `/api/ue5/response` with 3-retry logic
+    - Seamless substitution - both clients provide identical interface
+    - Non-destructive implementation - WebSocket code preserved unchanged
 - **Deploy Agent**: A local Python service (localhost:7865) facilitates frictionless deployment and auto-import into UE5.
 - **Data Flow**: UE Python scripts collect viewport data and POST it to FastAPI endpoints for AI processing, with results returned to UE5.
 - **Context-Aware Command Routing**: The backend intelligently routes user intent for context-specific queries (e.g., project info, blueprint capture) to appropriate UE5 data collection actions, complementing AI-powered general guidance.

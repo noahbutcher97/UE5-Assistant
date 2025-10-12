@@ -1484,3 +1484,24 @@ Return ONLY the JSON array, no explanation."""
             return {"success": True, "status": "alive"}
         
         return {"success": False, "error": "Not registered"}
+    
+    @app.post("/api/ue5/response")
+    async def ue5_response(request: dict):
+        """Receive action response from UE5 HTTP client."""
+        from app.websocket_manager import get_manager
+        
+        project_id = request.get("project_id")
+        response_data = request.get("response", {})
+        
+        if not project_id:
+            return {"success": False, "error": "project_id required"}
+        
+        # Forward response to dashboards (same as WebSocket would do)
+        manager = get_manager()
+        await manager.broadcast_to_dashboards({
+            "type": "action_result",
+            "project_id": project_id,
+            **response_data
+        })
+        
+        return {"success": True}

@@ -145,11 +145,24 @@ class HTTPPollingClient:
                     # Execute action
                     result = self.action_handler(action, params)
                     
-                    # Send response back (would need response endpoint)
-                    # For now, just log
+                    # Send response back via HTTP
+                    response = {
+                        "request_id": request_id,
+                        "action": action,
+                        "success": result.get("success", True),
+                        "data": result.get("data"),
+                        "error": result.get("error")
+                    }
+                    
+                    self.send_message(response)
                     print(f"✅ Executed action: {action} (result: {result.get('success')})")
                 else:
-                    print(f"⚠️ No action handler for: {action}")
+                    # No handler - send error response
+                    self.send_message({
+                        "request_id": request_id,
+                        "success": False,
+                        "error": "No action handler configured"
+                    })
             
             elif message_type == "auto_update":
                 # Backend triggered auto-update
@@ -198,14 +211,39 @@ class HTTPPollingClient:
     
     def send_message(self, data: dict):
         """
-        Send message to backend (not implemented for HTTP polling).
+        Send message to backend via HTTP POST with retry logic.
         
         Args:
             data: Message data to send
         """
-        # HTTP polling is primarily receive-only
-        # Could add a send endpoint if needed
-        print(f"⚠️ HTTP polling doesn't support send_message yet")
+        max_retries = 3
+        retry_delay = 1  # seconds
+        
+        for attempt in range(max_retries):
+            try:
+                response = requests.post(
+                    f"{self.base_url}/api/ue5/response",
+                    json={
+                        "project_id": self.project_id,
+                        "response": data
+                    },
+                    timeout=5
+                )
+                
+                if response.status_code == 200:
+                    return  # Success
+                else:
+                    print(f"⚠️ Response send failed ({response.status_code}), attempt {attempt + 1}/{max_retries}")
+                    
+            except Exception as e:
+                print(f"⚠️ Failed to send message (attempt {attempt + 1}/{max_retries}): {e}")
+            
+            # Retry with delay (except on last attempt)
+            if attempt < max_retries - 1:
+                time.sleep(retry_delay)
+        
+        # All retries failed
+        print(f"❌ Failed to send message after {max_retries} attempts")
     
     def disconnect(self):
         """Disconnect from backend."""
