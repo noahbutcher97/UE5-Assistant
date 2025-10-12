@@ -87,6 +87,13 @@ The system features a **Universal Bootstrap Script** that handles both ZIP and T
 
 This one-time bootstrap enables seamless auto-updates thereafter, with HTTP polling registration that actually works and proper connection tracking in the dashboard.
 
+### Connection Initialization Fix
+The UE5 client connection issue was resolved by fixing the startup sequence:
+- **Root Cause**: startup.py configured the backend URL but never imported AIAssistant.main to establish connection
+- **Solution**: Added proper initialization that imports and instantiates the assistant, triggering auto-registration and HTTP polling
+- **Entry Points**: init_unreal.py (auto-runs on UE5 startup) → startup.py → AIAssistant.main.get_assistant()
+- **Verification**: test_connection.py diagnostic script confirms connection status
+
 ### Emergency Fix Update System
 The system includes a **GUI-based Emergency Fix Update** mechanism designed for non-technical users experiencing thread safety crashes:
 - **Dashboard Button**: Prominent red "Fix Crash Issues" button in the control center

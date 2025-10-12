@@ -58,6 +58,10 @@ def configure_and_start(backend_url=None, force_production=True):
         # Step 3: Import and initialize main module
         print("🚀 Initializing AI Assistant...")
         
+        # ACTUALLY IMPORT AND INITIALIZE THE ASSISTANT!
+        import AIAssistant.main
+        assistant = AIAssistant.main.get_assistant()
+        
         print("")
         print("=" * 60)
         print("✅ AI Assistant is ready!")
