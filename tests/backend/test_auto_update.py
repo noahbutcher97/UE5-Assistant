@@ -6,8 +6,9 @@ import sys
 import os
 from pathlib import Path
 
-# Add AIAssistant to path
-sys.path.insert(0, str(Path(__file__).parent / "attached_assets"))
+# Add AIAssistant to path (project root is 2 levels up from this file)
+project_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(project_root / "ue5_client"))
 
 def test_import():
     """Test that auto_update can be imported without UE5."""
