@@ -472,8 +472,8 @@ class AIAssistant:
             Action result dict
         """
         try:
-            # Execute action using action executor
-            result = self.executor.execute(action, params)
+            # Execute action using action executor (params not currently used by actions)
+            result = self.executor.execute(action)
             
             return {
                 "success": True,
