@@ -1133,7 +1133,7 @@
             text.textContent = 'Updating...';
             
             try {
-                const response = await fetch('/api/broadcast_update', {
+                const response = await fetch('/api/trigger_auto_update', {
                     method: 'POST'
                 });
                 const data = await response.json();
