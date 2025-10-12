@@ -5,306 +5,661 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UE5 AI Assistant - Control Center</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        :root {
+            --primary-cyan: #00f5ff;
+            --primary-purple: #8b5cf6;
+            --primary-green: #10b981;
+            --bg-dark: #0a0e27;
+            --bg-darker: #050814;
+            --bg-card: rgba(15, 23, 42, 0.95);
+            --border-glow: rgba(0, 245, 255, 0.3);
+            --text-primary: #e0e6ed;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            color: #e0e6ed;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 245, 255, 0.1) 0px, transparent 50%),
+                linear-gradient(rgba(0, 245, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 245, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 50px 50px, 50px 50px;
             min-height: 100vh;
+            color: var(--text-primary);
+            animation: bgPulse 20s ease-in-out infinite;
         }
-
+        
+        @keyframes bgPulse {
+            0%, 100% { background-position: 0% 0%, 100% 100%, 0 0, 0 0; }
+            50% { background-position: 100% 100%, 0% 0%, 25px 25px, 25px 25px; }
+        }
+        
+        /* Header */
         .header {
-            background: rgba(26, 31, 58, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid rgba(0, 217, 255, 0.3);
-            padding: 20px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-glow);
+            padding: 24px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
-
+        
         .header h1 {
-            color: #00d9ff;
+            color: var(--primary-cyan);
             font-size: 2em;
-            text-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+            font-weight: 700;
+            text-shadow: 0 0 30px rgba(0, 245, 255, 0.6);
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+            animation: glow 3s ease-in-out infinite;
         }
-
-        .project-selector {
-            margin-top: 15px;
+        
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 30px rgba(0, 245, 255, 0.6); }
+            50% { text-shadow: 0 0 50px rgba(0, 245, 255, 0.8), 0 0 80px rgba(139, 92, 246, 0.4); }
+        }
+        
+        .header-controls {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 16px;
+            flex-wrap: wrap;
         }
-
+        
+        .project-selector {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 250px;
+        }
+        
         .project-selector label {
-            color: #8b95a5;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 14px;
         }
-
+        
         .project-selector select {
-            padding: 8px 15px;
-            background: rgba(10, 14, 39, 0.8);
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 6px;
-            color: #e0e6ed;
-            font-size: 1em;
+            padding: 10px 16px;
+            background: rgba(10, 14, 39, 0.9);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
         }
-
-        .project-status {
-            padding: 8px 15px;
-            background: rgba(0, 217, 255, 0.1);
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 6px;
-            color: #00d9ff;
+        
+        .project-selector select:hover,
+        .project-selector select:focus {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+            outline: none;
         }
-
+        
+        .status-badge {
+            padding: 8px 16px;
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            color: var(--primary-cyan);
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-cyan);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+        
+        .btn-update {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary-green) 0%, #059669 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-update:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.5);
+        }
+        
+        .btn-update:active {
+            transform: translateY(0);
+        }
+        
+        /* Tabs */
         .tabs {
             display: flex;
-            background: rgba(26, 31, 58, 0.6);
-            border-bottom: 1px solid rgba(0, 217, 255, 0.2);
+            background: rgba(10, 14, 39, 0.6);
+            border-bottom: 1px solid rgba(0, 245, 255, 0.1);
+            padding: 0 16px;
+            gap: 4px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary-cyan) transparent;
         }
-
+        
         .tab {
-            padding: 15px 30px;
-            background: none;
+            padding: 16px 24px;
+            background: transparent;
             border: none;
-            color: #8b95a5;
+            color: var(--text-secondary);
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            font-weight: 500;
             border-bottom: 3px solid transparent;
+            position: relative;
+            white-space: nowrap;
         }
-
+        
+        .tab::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary-cyan) 0%, var(--primary-purple) 100%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .tab:hover::before {
+            opacity: 0.1;
+        }
+        
         .tab:hover {
-            background: rgba(0, 217, 255, 0.1);
-            color: #00d9ff;
+            color: var(--primary-cyan);
         }
-
+        
         .tab.active {
-            color: #00d9ff;
-            border-bottom-color: #00d9ff;
+            color: var(--primary-cyan);
+            border-bottom-color: var(--primary-cyan);
+            text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
         }
-
+        
+        .tab.active::before {
+            opacity: 0.15;
+        }
+        
+        /* Tab Content */
         .tab-content {
             display: none;
-            padding: 30px;
+            padding: 32px;
             max-width: 1400px;
             margin: 0 auto;
+            animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
+        
         .tab-content.active {
             display: block;
         }
-
-        .card {
-            background: rgba(26, 31, 58, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 217, 255, 0.2);
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-        }
-
-        .card h2 {
-            color: #00d9ff;
-            margin-bottom: 15px;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        @media (max-width: 1024px) {
-            .grid {
-                grid-template-columns: 1fr;
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
-
-        .input-group {
-            margin-bottom: 15px;
+        
+        /* Card Styles */
+        .card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
-
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .card:hover::before {
+            opacity: 1;
+        }
+        
+        .card:hover {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 40px rgba(0, 245, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .card h2 {
+            color: var(--primary-cyan);
+            margin-bottom: 16px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .card h3 {
+            color: var(--primary-purple);
+            margin-bottom: 12px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+        
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+        
+        /* Input Styles */
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
         .input-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #8b95a5;
-            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
         }
-
+        
         input[type="text"],
+        input[type="number"],
         textarea,
         select {
             width: 100%;
-            padding: 12px;
-            background: rgba(10, 14, 39, 0.8);
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 6px;
-            color: #e0e6ed;
-            font-size: 1em;
+            padding: 12px 16px;
+            background: rgba(10, 14, 39, 0.9);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
             font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+        }
+        
         textarea {
             min-height: 100px;
             resize: vertical;
+            font-family: 'JetBrains Mono', monospace;
         }
-
-        button {
+        
+        /* Button Styles */
+        .btn {
             padding: 12px 24px;
-            background: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
             border: none;
-            border-radius: 6px;
-            color: #0a0e27;
-            font-weight: bold;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1em;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
         }
-
-        button:hover {
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-cyan) 0%, #0891b2 100%);
+            color: var(--bg-dark);
+            box-shadow: 0 4px 20px rgba(0, 245, 255, 0.3);
+        }
+        
+        .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+            box-shadow: 0 8px 30px rgba(0, 245, 255, 0.5);
         }
-
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--primary-purple) 0%, #6d28d9 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 92, 246, 0.5);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.5);
+        }
+        
+        /* Output Box */
         .output-box {
-            background: rgba(10, 14, 39, 0.9);
-            border: 1px solid rgba(0, 217, 255, 0.3);
-            border-radius: 6px;
-            padding: 15px;
-            min-height: 200px;
+            background: rgba(5, 8, 20, 0.9);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 16px;
+            min-height: 150px;
             max-height: 400px;
             overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.6;
             white-space: pre-wrap;
             word-wrap: break-word;
+            color: var(--text-primary);
         }
-
-        .api-endpoint {
-            background: rgba(10, 14, 39, 0.8);
-            border-left: 3px solid #00d9ff;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 4px;
-        }
-
-        .api-endpoint code {
-            color: #00d9ff;
-        }
-
-        .feature-list {
-            list-style: none;
-        }
-
-        .feature-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(0, 217, 255, 0.1);
-        }
-
-        .feature-list li:before {
-            content: "✅ ";
-            margin-right: 10px;
-        }
-
-        /* Loading and status styles */
+        
+        /* Status Messages */
         .status-loading {
-            background: rgba(0, 217, 255, 0.1) !important;
-            border: 1px solid rgba(0, 217, 255, 0.3) !important;
-            color: #00d9ff !important;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            color: var(--primary-cyan);
             animation: pulse 1.5s ease-in-out infinite;
         }
-
+        
         .status-success {
-            background: rgba(16, 185, 129, 0.2) !important;
-            border: 1px solid rgba(16, 185, 129, 0.3) !important;
-            color: #10b981 !important;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--primary-green);
         }
-
+        
         .status-error {
-            background: rgba(239, 68, 68, 0.2) !important;
-            border: 1px solid rgba(239, 68, 68, 0.3) !important;
-            color: #ef4444 !important;
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
         }
-
+        
         .status-warning {
-            background: rgba(255, 107, 53, 0.2) !important;
-            border: 1px solid rgba(255, 107, 53, 0.3) !important;
-            color: #ff6b35 !important;
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: #ff6b35;
         }
-
-        .status-info {
-            background: rgba(0, 217, 255, 0.1) !important;
-            border: 1px solid rgba(0, 217, 255, 0.3) !important;
-            color: #00d9ff !important;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
-        }
-
-        .loading-spinner {
+        
+        /* Loading Spinner */
+        .spinner {
             display: inline-block;
             animation: spin 1s linear infinite;
-            margin-right: 8px;
         }
-
+        
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Tooltip */
+        [data-tooltip] {
+            position: relative;
+            cursor: help;
+        }
+        
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s, transform 0.3s;
+            border: 1px solid var(--border-glow);
+        }
+        
+        [data-tooltip]:hover::after {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+        
+        /* Keyboard Shortcut Hint */
+        .kbd {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-glow);
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        /* Copy Button */
+        .copy-btn {
+            padding: 4px 12px;
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid var(--border-glow);
+            border-radius: 6px;
+            color: var(--primary-cyan);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: rgba(0, 245, 255, 0.2);
+        }
+        
+        /* Connection Mode Toggle */
+        .mode-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            margin: 24px 0;
+        }
+        
+        .mode-options {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .mode-option {
+            flex: 1;
+            padding: 16px 24px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+        }
+        
+        .mode-option.active {
+            background: linear-gradient(135deg, var(--primary-green) 0%, #059669 100%);
+            border-color: var(--primary-green);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
+        }
+        
+        .mode-option:not(.active) {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+        
+        .mode-option:not(.active):hover {
+            border-color: rgba(139, 92, 246, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .header-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .tab-content {
+                padding: 20px 16px;
+            }
+            
+            .tabs {
+                overflow-x: scroll;
+            }
+            
+            .mode-options {
+                flex-direction: column;
+            }
+        }
+        
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-cyan);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00d9ff;
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
     <div class="header">
         <h1>🎮 UE5 AI Assistant - Control Center</h1>
-        <div class="project-selector">
-            <label>Active Project:</label>
-            <select id="projectSelect" onchange="selectProject()">
-                <option value="">No project selected</option>
-            </select>
-            <span class="project-status" id="projectStatus">Not connected</span>
-            <button onclick="updateAllClients()" id="updateClientsBtn" style="padding: 8px 16px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px; transition: all 0.3s;" title="Update client files on all connected UE5 projects">
-                <span style="font-size: 18px;">🔄</span>
-                <span>Update All Clients</span>
+        <div class="header-controls">
+            <div class="project-selector">
+                <label>Active Project:</label>
+                <select id="projectSelect" onchange="selectProject()">
+                    <option value="">No project selected</option>
+                </select>
+            </div>
+            <div class="status-badge" id="projectStatus">
+                <span class="status-dot"></span>
+                <span>Connecting...</span>
+            </div>
+            <button class="btn-update" onclick="updateAllClients()" id="updateClientsBtn" data-tooltip="Update client files on all connected UE5 projects">
+                <span style="font-size: 18px;" class="spinner" id="updateSpinner" style="display: none;">⚙️</span>
+                <span style="font-size: 18px;" id="updateIcon">🔄</span>
+                <span id="updateText">Update All Clients</span>
             </button>
         </div>
     </div>
 
     <!-- Connection Mode Toggle -->
-    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin: 20px; border: 1px solid rgba(139,92,246,0.3);">
-        <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
-            <div style="flex: 1;">
-                <h3 style="color: #a78bfa; margin: 0 0 8px 0; font-size: 16px;">📡 Connection Mode</h3>
-                <p style="color: #8b95a5; margin: 0; font-size: 13px;">Choose how the dashboard communicates with UE5</p>
+    <div class="mode-toggle" style="margin: 24px 32px;">
+        <div style="margin-bottom: 16px;">
+            <h3 style="color: var(--primary-purple); margin: 0 0 8px 0; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                <span>📡</span> Connection Mode
+                <span class="kbd" data-tooltip="Changes how dashboard communicates with UE5">?</span>
+            </h3>
+            <p style="color: var(--text-secondary); margin: 0; font-size: 13px;">Choose communication protocol for real-time UE5 updates</p>
+        </div>
+        <div class="mode-options">
+            <div id="http-mode-btn" class="mode-option active" onclick="setConnectionMode('http')">
+                <div style="font-size: 32px; margin-bottom: 8px;">📊</div>
+                <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">HTTP Polling</div>
+                <div style="font-size: 11px; opacity: 0.8;">Universal compatibility</div>
             </div>
-            
-            <div style="display: flex; gap: 12px;">
-                <!-- HTTP Polling Mode (Active) -->
-                <div id="http-mode-btn" onclick="setConnectionMode('http')" style="position: relative; cursor: pointer; padding: 16px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 10px; border: 2px solid #10b981; transition: all 0.3s;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 24px; margin-bottom: 4px;">📊</div>
-                        <div style="font-weight: 600; font-size: 14px;">HTTP Polling</div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 2px;">✅ Active</div>
-                    </div>
-                </div>
-                
-                <!-- WebSocket Mode -->
-                <div id="websocket-mode-btn" onclick="setConnectionMode('websocket')" style="position: relative; cursor: pointer; padding: 16px 24px; background: rgba(139,92,246,0.1); border-radius: 10px; border: 2px solid rgba(139,92,246,0.3); transition: all 0.3s;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 24px; margin-bottom: 4px;">⚡</div>
-                        <div style="font-weight: 600; font-size: 14px;">WebSocket</div>
-                        <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 2px;">Real-time</div>
-                    </div>
-                </div>
+            <div id="websocket-mode-btn" class="mode-option" onclick="setConnectionMode('websocket')">
+                <div style="font-size: 32px; margin-bottom: 8px;">⚡</div>
+                <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px;">WebSocket</div>
+                <div style="font-size: 11px; opacity: 0.8;">Real-time bidirectional</div>
             </div>
         </div>
     </div>
 
+    <!-- Tabs -->
     <div class="tabs">
         <button class="tab active" onclick="showTab('project-hub')">🎮 Project Hub</button>
         <button class="tab" onclick="showTab('conversations')">💬 Conversations</button>
@@ -315,238 +670,101 @@
 
     <!-- Project Hub Tab -->
     <div id="project-hub" class="tab-content active">
-        <!-- First-Time Deployment Section (Prominent) -->
-        <div class="card" style="border: 2px solid rgba(255,107,53,0.4); background: rgba(255,107,53,0.05); margin-bottom: 20px;">
-            <h2 style="color: #ff6b35; margin-bottom: 15px;">🚀 Deploy to New UE5 Project</h2>
-            <p style="color: #8b95a5; margin-bottom: 20px;">First time setup? Install the AI Assistant client to your Unreal Engine project:</p>
-            
-            <!-- ONE-CLICK POWERSHELL INSTALL (RECOMMENDED) -->
-            <div style="background: linear-gradient(135deg, rgba(16,185,129,0.15) 0%, rgba(5,150,105,0.15) 100%); padding: 24px; border-radius: 12px; border: 2px solid rgba(16,185,129,0.4); margin-bottom: 20px;">
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 15px;">
-                    <span style="font-size: 32px;">⚡</span>
-                    <div>
-                        <h3 style="color: #10b981; margin: 0; font-size: 18px;">Recommended: One-Click Installer</h3>
-                        <p style="color: #8b95a5; margin: 5px 0 0 0; font-size: 13px;">No admin required • Automatically downloads and installs to your UE5 project</p>
-                    </div>
-                </div>
-                
-                <button onclick="downloadInstaller()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 16px; border: none; color: white; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 15px;">
-                    <span style="font-size: 24px;">📥</span>
-                    <span>Download Installer</span>
+        <!-- AI Query Section -->
+        <div class="card" style="background: linear-gradient(135deg, rgba(0,217,255,0.08) 0%, rgba(139,92,246,0.08) 100%); border: 2px solid var(--border-glow);">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h2 style="font-size: 28px; margin-bottom: 12px;">🤖 AI-Powered UE5 Intelligence</h2>
+                <p style="color: var(--text-secondary); font-size: 16px;">Ask questions, analyze your project, generate code with AI</p>
+            </div>
+            <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                <input type="text" id="projectQuery" 
+                    placeholder="Ask anything: 'describe viewport', 'browse files', 'list blueprints'..." 
+                    style="flex: 1; font-size: 16px; padding: 16px;"
+                    onkeypress="if(event.key === 'Enter') queryProject()">
+                <button class="btn btn-primary" onclick="queryProject()" style="padding: 16px 32px; font-size: 16px;">
+                    🔍 Ask AI
                 </button>
-                
-                <div style="background: rgba(251,191,36,0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(251,191,36,0.3);">
-                    <p style="color: #fbbf24; margin: 0; font-size: 13px;">💡 Double-click the .bat file and select your UE5 project folder in the GUI dialog. No admin required, everything installs automatically!</p>
-                </div>
             </div>
-            
-            <!-- ALTERNATIVE MANUAL METHODS -->
-            <details style="margin-bottom: 15px;">
-                <summary style="cursor: pointer; color: #8b95a5; font-size: 14px; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 6px;">📦 Alternative: Manual Download Methods</summary>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 15px;">
-                <!-- Option 1: Quick Installer -->
-                <div style="background: rgba(139,92,246,0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(139,92,246,0.3);">
-                    <div style="text-align: center; margin-bottom: 12px;">
-                        <span style="font-size: 36px;">⚡</span>
-                        <h3 style="color: #8b5cf6; margin: 10px 0; font-size: 16px;">Quick Installer</h3>
-                        <p style="color: #8b95a5; font-size: 13px; margin-bottom: 15px;">Automated deployment</p>
-                    </div>
-                    <a href="/api/deploy_agent_installer" download style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 12px; text-decoration: none; color: white; border-radius: 8px; font-size: 14px; font-weight: 600;">
-                        <span>Download Installer</span>
-                    </a>
-                    <small style="color: #8b95a5; margin-top: 10px; display: block; text-align: center; font-size: 12px;">Run .bat file for one-click setup</small>
-                </div>
-                
-                <!-- Option 2: Client ZIP -->
-                <div style="background: rgba(0,217,255,0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,217,255,0.3);">
-                    <div style="text-align: center; margin-bottom: 12px;">
-                        <span style="font-size: 36px;">📦</span>
-                        <h3 style="color: #00d9ff; margin: 10px 0; font-size: 16px;">Client ZIP</h3>
-                        <p style="color: #8b95a5; font-size: 13px; margin-bottom: 15px;">Manual installation</p>
-                    </div>
-                    <button onclick="downloadClientZip()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); padding: 12px; border: none; color: white; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
-                        <span>Download ZIP</span>
-                    </button>
-                    <small style="color: #8b95a5; margin-top: 10px; display: block; text-align: center; font-size: 12px;">Extract to Content/Python</small>
-                </div>
-                
-                <!-- Option 3: PowerShell Script -->
-                <div style="background: rgba(16,185,129,0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(16,185,129,0.3);">
-                    <div style="text-align: center; margin-bottom: 12px;">
-                        <span style="font-size: 36px;">🖥️</span>
-                        <h3 style="color: #10b981; margin: 10px 0; font-size: 16px;">PowerShell Script</h3>
-                        <p style="color: #8b95a5; font-size: 13px; margin-bottom: 15px;">Command-line deploy</p>
-                    </div>
-                    <a href="/api/installer_script" download style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 12px; text-decoration: none; color: white; border-radius: 8px; font-size: 14px; font-weight: 600;">
-                        <span>Download Script</span>
-                    </a>
-                    <small style="color: #8b95a5; margin-top: 10px; display: block; text-align: center; font-size: 12px;">Run in PowerShell admin</small>
-                </div>
+            <div style="font-size: 13px; color: var(--text-muted); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                <span>Quick actions:</span>
+                <button class="copy-btn" onclick="setQuery('describe viewport')">Describe Viewport</button>
+                <button class="copy-btn" onclick="setQuery('browse files')">Browse Files</button>
+                <button class="copy-btn" onclick="setQuery('list blueprints')">List Blueprints</button>
+                <button class="copy-btn" onclick="setQuery('project info')">Project Info</button>
+                <span class="kbd">Ctrl+K</span><span style="color: var(--text-muted);">to focus</span>
             </div>
-            
-                <!-- Installation Instructions -->
-                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(139,149,165,0.2);">
-                    <h4 style="color: #00d9ff; margin-top: 0; margin-bottom: 10px; font-size: 14px;">📋 After Download:</h4>
-                    <ol style="color: #8b95a5; margin: 0; padding-left: 20px; font-size: 13px;">
-                        <li style="margin: 6px 0;">Run the installer OR extract ZIP to <code style="background: rgba(0,217,255,0.1); padding: 2px 6px; border-radius: 3px; color: #00d9ff;">YourProject/Content/Python/</code></li>
-                        <li style="margin: 6px 0;">Open Unreal Engine 5 editor</li>
-                        <li style="margin: 6px 0;">Open Python Console: <code style="background: rgba(0,217,255,0.1); padding: 2px 6px; border-radius: 3px; color: #00d9ff;">Tools → Plugins → Python Console</code></li>
-                        <li style="margin: 6px 0;">Run: <code style="background: rgba(0,217,255,0.1); padding: 2px 6px; border-radius: 3px; color: #00d9ff;">import AIAssistant.main</code></li>
-                        <li style="margin: 6px 0;">Your project will auto-connect to this dashboard! ✅</li>
-                    </ol>
-                </div>
-            </details>
-        </div>
-        
-        <!-- Quick Action Bar -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
-            <button onclick="toggleProjectForm()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 18px; font-size: 18px; display: flex; align-items: center; gap: 12px; justify-content: center;">
-                <span style="font-size: 28px;">➕</span>
-                <span>Register Existing Project</span>
-            </button>
-            <button onclick="showTab('settings'); triggerAutoUpdate()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 18px; font-size: 18px; display: flex; align-items: center; gap: 12px; justify-content: center;">
-                <span style="font-size: 28px;">🔄</span>
-                <span>Update All Projects</span>
-            </button>
         </div>
 
-        <!-- Project Registration Form (Collapsible) -->
-        <div id="project-form" class="card" style="border: 2px solid rgba(139,92,246,0.3); display: none; margin-bottom: 20px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0;">➕ Register Existing Project</h2>
-                <button onclick="toggleProjectForm()" style="background: none; border: none; color: #8b95a5; font-size: 24px; cursor: pointer; padding: 0 10px;">×</button>
+        <!-- Response Output -->
+        <div class="card" id="responseCard" style="display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="margin: 0;">📝 AI Response</h3>
+                <button class="copy-btn" onclick="copyResponse()">📋 Copy</button>
             </div>
-            
-            <p style="color: #8b95a5; margin-bottom: 20px;">Already installed the client? Register your project here to track it in the dashboard.</p>
-            
-            <div class="grid" style="gap: 15px;">
+            <div id="projectQueryResult" class="output-box"></div>
+        </div>
+
+        <!-- Project Management -->
+        <div class="grid grid-2">
+            <div class="card">
+                <h3>🚀 Deploy to New Project</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Install AI Assistant to a new UE5 project</p>
+                <button class="btn btn-success" onclick="downloadInstaller()" style="width: 100%; justify-content: center; padding: 16px;">
+                    <span style="font-size: 24px;">📥</span>
+                    <span>Download One-Click Installer</span>
+                </button>
+                <div style="margin-top: 16px; padding: 12px; background: rgba(251,191,36,0.1); border-radius: 8px; border: 1px solid rgba(251,191,36,0.3);">
+                    <p style="color: #fbbf24; margin: 0; font-size: 13px;">💡 Double-click .bat file, select your UE5 project folder - fully automated!</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>➕ Register Existing Project</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">Track an already installed project</p>
+                <button class="btn btn-secondary" onclick="toggleProjectForm()" style="width: 100%; justify-content: center; padding: 16px;">
+                    <span style="font-size: 24px;">📋</span>
+                    <span>Register Project</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Project Registration Form -->
+        <div id="project-form" class="card" style="display: none; border: 2px solid rgba(139,92,246,0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;">➕ Register Existing Project</h3>
+                <button onclick="toggleProjectForm()" style="background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; transition: color 0.3s;" onmouseover="this.style.color='var(--primary-cyan)'" onmouseout="this.style.color='var(--text-muted)'">×</button>
+            </div>
+            <div class="grid grid-2">
                 <div class="input-group">
                     <label>Project Name</label>
-                    <input type="text" id="manual-name" placeholder="UE5_Assistant" style="font-size: 16px; padding: 12px;">
+                    <input type="text" id="manual-name" placeholder="UE5_Assistant">
                 </div>
-                
                 <div class="input-group">
                     <label>Project Path</label>
-                    <input type="text" id="manual-path" 
-                        placeholder="D:/UnrealProjects/5.6/UE5_Assistant/"
-                        list="recent-paths"
-                        autocomplete="off"
-                        style="font-size: 16px; padding: 12px;">
+                    <input type="text" id="manual-path" placeholder="D:/UnrealProjects/5.6/UE5_Assistant/" list="recent-paths">
                     <datalist id="recent-paths"></datalist>
-                    <small style="color: #8b95a5; margin-top: 5px; display: block;">💡 Path should end with /</small>
                 </div>
             </div>
-            
-            <button onclick="registerManualProject()" style="width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 14px; font-size: 16px; margin-top: 20px;">
+            <button class="btn btn-success" onclick="registerManualProject()" style="width: 100%; justify-content: center;">
                 ✅ Register Project
             </button>
         </div>
 
-        <!-- Connection Guide (shown when projects registered but not connected) -->
-        <div id="connection-guide" class="card" style="border: 2px solid rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); display: none; margin-bottom: 20px;">
-            <h2 style="color: #fbbf24;">⚠️ UE5 Client Not Connected</h2>
-            <p style="color: #8b95a5; margin-bottom: 15px;">You have projects registered, but no UE5 clients are connected. Follow these steps to connect:</p>
-            
-            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                <h3 style="color: #00d9ff; margin-top: 0; font-size: 16px;">📋 Quick Start:</h3>
-                <ol style="color: #8b95a5; margin: 10px 0; padding-left: 20px;">
-                    <li style="margin: 8px 0;">Open Unreal Engine 5 editor for your project</li>
-                    <li style="margin: 8px 0;">Open Python console: <code style="background: rgba(0,217,255,0.1); padding: 2px 8px; border-radius: 4px; color: #00d9ff;">Tools → Plugins → Python Console</code></li>
-                    <li style="margin: 8px 0;">Run: <code style="background: rgba(0,217,255,0.1); padding: 2px 8px; border-radius: 4px; color: #00d9ff;">import AIAssistant.main</code></li>
-                    <li style="margin: 8px 0;">Status will turn green when connected! ✅</li>
-                </ol>
-            </div>
-            
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <button onclick="checkConnection()" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 10px 20px;">
-                    🔄 Check Connection
-                </button>
-                <span style="color: #8b95a5; font-size: 14px;">Refresh to see if client connected</span>
-            </div>
-        </div>
-
-        <!-- AI Features Section (Full Width, Prominent) -->
-        <div class="card" style="background: linear-gradient(135deg, rgba(0,217,255,0.08) 0%, rgba(139,92,246,0.08) 100%); border: 2px solid rgba(0,217,255,0.3); margin-bottom: 20px;">
-            <div style="text-align: center; margin-bottom: 25px;">
-                <h2 style="font-size: 28px; margin-bottom: 10px;">🤖 AI-Powered UE5 Intelligence</h2>
-                <p style="color: #8b95a5; font-size: 16px;">Ask questions, generate code, analyze your project with AI</p>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start;">
-                <!-- Left: Query Interface -->
-                <div>
-                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
-                        <input type="text" id="projectQuery" 
-                            placeholder="Ask anything: 'how many files?', 'describe viewport', 'what blueprints exist?'..."
-                            style="flex: 1; font-size: 16px; padding: 16px; border-radius: 10px; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,217,255,0.3); color: white;">
-                        <button onclick="queryProject()" style="padding: 16px 30px; font-size: 16px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); border-radius: 10px; white-space: nowrap;">
-                            🔍 Ask AI
-                        </button>
-                    </div>
-                    
-                    <div class="output-box" id="queryOutput" style="min-height: 200px; max-height: 400px; font-size: 15px; line-height: 1.6; background: rgba(0,0,0,0.5); border: 1px solid rgba(0,217,255,0.2);">
-                        <div style="text-align: center; padding: 60px 20px; color: #8b95a5;">
-                            <div style="font-size: 48px; margin-bottom: 15px;">💭</div>
-                            <p>Ask a question to see AI-powered responses</p>
-                        </div>
-                    </div>
+        <!-- Connected Projects Stats -->
+        <div class="card">
+            <h3>📊 Project Statistics</h3>
+            <div class="grid grid-3" id="projectStats">
+                <div style="text-align: center; padding: 20px; background: rgba(0,245,255,0.05); border-radius: 12px; border: 1px solid rgba(0,245,255,0.2);">
+                    <div style="font-size: 36px; font-weight: 700; color: var(--primary-cyan); margin-bottom: 8px;" id="totalProjects">0</div>
+                    <div style="color: var(--text-secondary); font-size: 14px;">Total Projects</div>
                 </div>
-                
-                <!-- Right: Quick Examples -->
-                <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 12px; border: 1px solid rgba(139,92,246,0.3);">
-                    <h3 style="color: #a78bfa; margin-top: 0; font-size: 16px;">💡 Try These:</h3>
-                    <div style="display: flex; flex-direction: column; gap: 8px;">
-                        <button onclick="document.getElementById('projectQuery').value='how many files are in my project?'; queryProject();" 
-                            style="text-align: left; padding: 10px 14px; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; color: #a78bfa; font-size: 14px; cursor: pointer;">
-                            📊 Count project files
-                        </button>
-                        <button onclick="document.getElementById('projectQuery').value='list all blueprints'; queryProject();" 
-                            style="text-align: left; padding: 10px 14px; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; color: #a78bfa; font-size: 14px; cursor: pointer;">
-                            📋 List blueprints
-                        </button>
-                        <button onclick="document.getElementById('projectQuery').value='describe viewport'; queryProject();" 
-                            style="text-align: left; padding: 10px 14px; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; color: #a78bfa; font-size: 14px; cursor: pointer;">
-                            🎥 Describe viewport
-                        </button>
-                        <button onclick="document.getElementById('projectQuery').value='show project info'; queryProject();" 
-                            style="text-align: left; padding: 10px 14px; background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); border-radius: 6px; color: #a78bfa; font-size: 14px; cursor: pointer;">
-                            ℹ️ Project metadata
-                        </button>
-                    </div>
-                    
-                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(139,92,246,0.2);">
-                        <p style="color: #8b95a5; font-size: 13px; margin: 0;">
-                            💬 Natural language queries powered by GPT-4o with live UE5 data
-                        </p>
-                    </div>
+                <div style="text-align: center; padding: 20px; background: rgba(16,185,129,0.05); border-radius: 12px; border: 1px solid rgba(16,185,129,0.2);">
+                    <div style="font-size: 36px; font-weight: 700; color: var(--primary-green); margin-bottom: 8px;" id="connectedProjects">0</div>
+                    <div style="color: var(--text-secondary); font-size: 14px;">Connected</div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Secondary Features Grid -->
-        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
-            <!-- AI Agent Utility Generator -->
-            <div class="card" style="background: linear-gradient(135deg, rgba(139,92,246,0.05) 0%, rgba(0,0,0,0.2) 100%);">
-                <h2>🛠️ AI Utility Generator</h2>
-                <p style="color: #8b95a5; margin-bottom: 15px;">Generate UE5.6 Editor Utilities with AI backend integration</p>
-
-                <div class="input-group">
-                    <label>Utility Name</label>
-                    <input type="text" id="utilityName" 
-                        placeholder="SmartSceneBuilder">
-                </div>
-
-                <div class="input-group">
-                    <label>Description</label>
-                    <textarea id="utilityDesc" 
-                        placeholder="AI-powered scene builder"></textarea>
-                </div>
-
-                <button onclick="generateUtility()">✨ Generate Utility</button>
-
-                <div class="output-box" id="utilityOutput" style="margin-top: 15px;">
-                    Generation result will appear here...
+                <div style="text-align: center; padding: 20px; background: rgba(139,92,246,0.05); border-radius: 12px; border: 1px solid rgba(139,92,246,0.2);">
+                    <div style="font-size: 36px; font-weight: 700; color: var(--primary-purple); margin-bottom: 8px;" id="totalCommands">0</div>
+                    <div style="color: var(--text-secondary); font-size: 14px;">Commands Sent</div>
                 </div>
             </div>
         </div>
@@ -555,41 +773,22 @@
     <!-- Conversations Tab -->
     <div id="conversations" class="tab-content">
         <div class="card">
-            <h2>💬 Conversation History</h2>
-            
-            <!-- Search and Filter Controls -->
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <input type="text" id="conversationSearch" placeholder="🔍 Search conversations..." 
-                    style="flex: 1;" onkeyup="filterConversations()">
-                
-                <select id="conversationProjectFilter" onchange="filterConversations()">
-                    <option value="">All Projects</option>
-                </select>
-                
-                <select id="conversationTypeFilter" onchange="filterConversations()">
-                    <option value="">All Types</option>
-                    <option value="execute_command">Commands</option>
-                    <option value="project_query">Project Queries</option>
-                    <option value="describe_viewport">Viewport Description</option>
-                    <option value="guidance">Guidance</option>
-                </select>
-                
-                <button onclick="confirmClearHistory()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
-                    🗑️ Clear History
-                </button>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">💬 Recent Conversations</h2>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <label style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 14px; cursor: pointer;">
+                        <input type="checkbox" id="auto-refresh" checked style="accent-color: var(--primary-cyan);">
+                        Auto-refresh (5s)
+                    </label>
+                    <button class="btn btn-primary" onclick="loadConversations()">
+                        <span>🔄</span> Refresh
+                    </button>
+                </div>
             </div>
-            
-            <!-- Conversation Statistics -->
-            <div id="conversationStats" style="padding: 10px; background: rgba(10, 14, 39, 0.6); border-radius: 6px; margin-bottom: 15px;">
-                <span style="color: #8b95a5;">Total: <span id="totalConversations" style="color: #00d9ff;">0</span></span> | 
-                <span style="color: #8b95a5;">Filtered: <span id="filteredConversations" style="color: #00d9ff;">0</span></span> | 
-                <span style="color: #8b95a5;">Active Project: <span id="activeProjectName" style="color: #10b981;">None</span></span>
-            </div>
-            
-            <!-- Conversation List -->
-            <div id="conversation-list" style="max-height: 600px; overflow-y: auto;">
-                <div style="text-align: center; padding: 40px; color: #8b95a5;">
-                    <p>Loading conversations...</p>
+            <div id="conversation-list" style="display: flex; flex-direction: column; gap: 16px;">
+                <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+                    <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;">💬</div>
+                    <p>No conversations yet. Start using the AI Assistant in UE5!</p>
                 </div>
             </div>
         </div>
@@ -599,181 +798,105 @@
     <div id="settings" class="tab-content">
         <div class="card">
             <h2>⚙️ Configuration Settings</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Fine-tune AI behavior and response style in real-time</p>
             
-            <div class="grid">
-                <!-- AI Configuration -->
-                <div>
-                    <h3 style="color: #00d9ff; margin-bottom: 15px;">🤖 AI Configuration</h3>
-                    
-                    <div class="input-group">
-                        <label>AI Model</label>
-                        <select id="modelSelect">
-                            <option value="gpt-4o-mini">GPT-4o Mini (Fast, Cost-effective)</option>
-                            <option value="gpt-4o">GPT-4o (Advanced)</option>
-                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
-                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                        </select>
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Response Style</label>
-                        <select id="styleSelect">
-                            <option value="concise">Concise</option>
-                            <option value="balanced">Balanced</option>
-                            <option value="detailed">Detailed</option>
-                            <option value="technical">Technical</option>
-                            <option value="descriptive">Descriptive</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group">
-                        <label>Temperature (Creativity): <span id="tempValue">0.7</span></label>
-                        <input type="range" id="tempSlider" min="0" max="1" step="0.1" value="0.7" 
-                            oninput="document.getElementById('tempValue').textContent = this.value"
-                            style="width: 100%; padding: 0;">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Max Tokens (Response Length): <span id="maxTokensValue">1500</span></label>
-                        <input type="range" id="maxTokensSlider" min="500" max="4000" step="100" value="1500" 
-                            oninput="document.getElementById('maxTokensValue').textContent = this.value"
-                            style="width: 100%; padding: 0;">
-                    </div>
+            <div class="grid" style="gap: 24px;">
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
+                    <label style="display: block; margin-bottom: 12px;">
+                        <strong style="color: var(--primary-cyan);">🤖 AI Model</strong>
+                        <span style="display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Choose the GPT model for responses</span>
+                    </label>
+                    <select id="model" style="width: 100%;">
+                        <option value="gpt-4o-mini">GPT-4o Mini (Fast & Efficient)</option>
+                        <option value="gpt-4o">GPT-4o (Balanced)</option>
+                        <option value="gpt-4-turbo">GPT-4 Turbo (Powerful)</option>
+                    </select>
                 </div>
-                
-                <!-- System Configuration -->
-                <div>
-                    <h3 style="color: #00d9ff; margin-bottom: 15px;">⚙️ System Settings</h3>
-                    
-                    <div class="input-group">
-                        <label>Backend URL (for local testing)</label>
-                        <input type="text" id="backendUrl" placeholder="http://localhost:5000" 
-                            value="https://ue5-assistant-noahbutcher97.replit.app">
-                    </div>
-                    
-                    <div class="input-group">
-                        <label>Max Context Turns</label>
-                        <input type="number" id="maxContextTurns" min="1" max="20" value="6">
-                    </div>
-                    
-                    <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
-                        <input type="checkbox" id="verboseLogging" style="width: auto;">
-                        <label for="verboseLogging" style="margin: 0;">Enable Verbose Logging</label>
-                    </div>
-                    
-                    <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
-                        <input type="checkbox" id="autoScroll" style="width: auto;" checked>
-                        <label for="autoScroll" style="margin: 0;">Auto-scroll Conversations</label>
-                    </div>
+
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
+                    <label style="display: block; margin-bottom: 12px;">
+                        <strong style="color: var(--primary-cyan);">📝 Response Style</strong>
+                        <span style="display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Adjust how the AI communicates</span>
+                    </label>
+                    <select id="response_style" style="width: 100%;">
+                        <option value="descriptive">Descriptive (Default)</option>
+                        <option value="technical">Technical/Precise</option>
+                        <option value="natural">Natural/Conversational</option>
+                        <option value="concise">Concise/Brief</option>
+                        <option value="detailed">Detailed/Verbose</option>
+                    </select>
+                </div>
+
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
+                    <label style="display: block; margin-bottom: 12px;">
+                        <strong style="color: var(--primary-cyan);">🌡️ Temperature: <span id="temp-value">0.7</span></strong>
+                        <span style="display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Higher = more creative, Lower = more focused</span>
+                    </label>
+                    <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7" 
+                           oninput="document.getElementById('temp-value').textContent = this.value"
+                           style="width: 100%; accent-color: var(--primary-cyan);">
+                </div>
+
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
+                    <label style="display: block; margin-bottom: 12px;">
+                        <strong style="color: var(--primary-cyan);">💬 Max Context Turns: <span id="turns-value">6</span></strong>
+                        <span style="display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Conversation memory length</span>
+                    </label>
+                    <input type="range" id="max_context_turns" min="2" max="20" step="1" value="6"
+                           oninput="document.getElementById('turns-value').textContent = this.value"
+                           style="width: 100%; accent-color: var(--primary-cyan);">
                 </div>
             </div>
-            
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button onclick="saveSettings()">💾 Save Settings</button>
-                <button onclick="resetToDefaults()" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">
+
+            <div style="display: flex; gap: 16px; margin-top: 32px;">
+                <button class="btn btn-success" onclick="saveSettings()" style="flex: 1; justify-content: center;">
+                    💾 Save Settings
+                </button>
+                <button class="btn btn-secondary" onclick="resetSettings()" style="flex: 1; justify-content: center;">
                     🔄 Reset to Defaults
                 </button>
-                <button onclick="testOpenAIConnection()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                    🔌 Test OpenAI Connection
-                </button>
-                <button onclick="triggerAutoUpdate()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
-                    📢 Trigger UE5 Auto-Update
-                </button>
             </div>
-            
-            <div id="settings-status" style="margin-top: 15px; display: none; padding: 12px; border-radius: 8px;"></div>
+
+            <div id="save-status" style="display: none; margin-top: 16px; padding: 16px; border-radius: 8px; text-align: center;"></div>
         </div>
     </div>
 
     <!-- API Info Tab -->
     <div id="api" class="tab-content">
         <div class="card">
-            <h2>🔧 API Endpoints & Status</h2>
+            <h2>🔧 API Endpoints</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Comprehensive API documentation for UE5 AI Assistant</p>
             
-            <!-- System Status -->
-            <div style="padding: 15px; background: rgba(10, 14, 39, 0.8); border-radius: 8px; margin-bottom: 20px;">
-                <h3 style="color: #00d9ff; margin-top: 0;">📊 System Status</h3>
-                <div id="system-status" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
-                    <div>
-                        <span style="color: #8b95a5;">Backend:</span>
-                        <span id="backend-status" style="margin-left: 10px;">Checking...</span>
-                    </div>
-                    <div>
-                        <span style="color: #8b95a5;">Deploy Agent:</span>
-                        <span id="deploy-agent-status" style="margin-left: 10px;">Checking...</span>
-                    </div>
-                    <div>
-                        <span style="color: #8b95a5;">Version:</span>
-                        <span id="version-info" style="margin-left: 10px;">v3.2</span>
-                    </div>
-                    <div>
-                        <span style="color: #8b95a5;">OpenAI API:</span>
-                        <span id="openai-status" style="margin-left: 10px;">Checking...</span>
-                    </div>
+            <h3 style="color: var(--primary-purple); margin-top: 24px; margin-bottom: 16px;">Core Endpoints</h3>
+            <div class="grid" style="gap: 12px;">
+                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-cyan); padding: 16px; border-radius: 8px;">
+                    <code style="color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">POST /api/execute_command</code>
+                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">Execute AI commands with context</p>
+                </div>
+                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-cyan); padding: 16px; border-radius: 8px;">
+                    <code style="color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">GET /api/projects</code>
+                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">List all registered projects</p>
+                </div>
+                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-cyan); padding: 16px; border-radius: 8px;">
+                    <code style="color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">POST /api/register_project</code>
+                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">Register a new UE5 project</p>
+                </div>
+                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-cyan); padding: 16px; border-radius: 8px;">
+                    <code style="color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">GET /api/download_client</code>
+                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">Download client ZIP bundle</p>
                 </div>
             </div>
-            
-            <h3 style="color: #00d9ff; margin-top: 20px;">🔍 Health Check Endpoints</h3>
-            <div class="api-endpoint">
-                <code>GET /health</code>
-                <p>Check backend health status</p>
-                <button onclick="testEndpoint('/health', 'GET')" style="padding: 6px 12px; font-size: 0.9em;">Test</button>
-            </div>
-            <div class="api-endpoint">
-                <code>GET /ping_openai</code>
-                <p>Test OpenAI API connectivity</p>
-                <button onclick="testEndpoint('/ping_openai', 'GET')" style="padding: 6px 12px; font-size: 0.9em;">Test</button>
-            </div>
 
-            <h3 style="color: #00d9ff; margin-top: 20px;">📦 Project Management</h3>
-            <div class="api-endpoint">
-                <code>POST /api/register_project</code>
-                <p>Register UE5 project from client</p>
-            </div>
-            <div class="api-endpoint">
-                <code>GET /api/projects</code>
-                <p>List all registered projects</p>
-                <button onclick="testEndpoint('/api/projects', 'GET')" style="padding: 6px 12px; font-size: 0.9em;">Test</button>
-            </div>
-            <div class="api-endpoint">
-                <code>POST /api/set_active_project</code>
-                <p>Set active project for queries</p>
-            </div>
-
-            <h3 style="color: #00d9ff; margin-top: 20px;">🤖 AI Interaction</h3>
-            <div class="api-endpoint">
-                <code>POST /execute_command</code>
-                <p>Send commands to AI (supports "prompt" or "user_input")</p>
-            </div>
-            <div class="api-endpoint">
-                <code>POST /api/project_query</code>
-                <p>Query active project with AI</p>
-            </div>
-
-            <h3 style="color: #00d9ff; margin-top: 20px;">🛠️ Utility Generation</h3>
-            <div class="api-endpoint">
-                <code>POST /api/generate_utility</code>
-                <p>Generate AI agent editor utilities</p>
-            </div>
-            <div class="api-endpoint">
-                <code>POST /api/generate_action_plan</code>
-                <p>Generate scene building action plans</p>
-            </div>
-            
-            <h3 style="color: #00d9ff; margin-top: 20px;">💬 Conversation Management</h3>
-            <div class="api-endpoint">
-                <code>GET /api/conversations</code>
-                <p>Get conversation history</p>
-                <button onclick="testEndpoint('/api/conversations?limit=5', 'GET')" style="padding: 6px 12px; font-size: 0.9em;">Test</button>
-            </div>
-            <div class="api-endpoint">
-                <code>DELETE /api/conversations</code>
-                <p>Clear all conversation history</p>
-            </div>
-            
-            <div id="api-test-result" style="margin-top: 20px; padding: 15px; background: rgba(10, 14, 39, 0.9); border-radius: 8px; display: none;">
-                <h4 style="color: #00d9ff; margin-top: 0;">Test Result:</h4>
-                <pre id="api-test-output" style="white-space: pre-wrap; color: #8b95a5;"></pre>
+            <h3 style="color: var(--primary-purple); margin-top: 32px; margin-bottom: 16px;">WebSocket & Polling</h3>
+            <div class="grid" style="gap: 12px;">
+                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-green); padding: 16px; border-radius: 8px;">
+                    <code style="color: var(--primary-green); font-family: 'JetBrains Mono', monospace;">WS /ws/dashboard</code>
+                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">Real-time dashboard connection</p>
+                </div>
+                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-green); padding: 16px; border-radius: 8px;">
+                    <code style="color: var(--primary-green); font-family: 'JetBrains Mono', monospace;">GET /api/ue5/poll</code>
+                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">HTTP Polling for commands (fallback)</p>
+                </div>
             </div>
         </div>
     </div>
@@ -781,198 +904,118 @@
     <!-- About Tab -->
     <div id="about" class="tab-content">
         <div class="card">
-            <h2>ℹ️ About UE5 AI Assistant v3.2</h2>
+            <h2>ℹ️ About UE5 AI Assistant</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 16px;">FastAPI-powered AI assistant for Unreal Engine 5.6 with OpenAI integration</p>
             
-            <h3 style="color: #00d9ff; margin: 20px 0 10px;">✨ Latest Features</h3>
-            <ul class="feature-list">
-                <li><strong>Deploy Agent</strong> - Frictionless one-click deployment from browser</li>
-                <li><strong>File System Access API</strong> - Direct browser deployment without downloads</li>
-                <li><strong>Auto-initialization</strong> - Client automatically registers projects on startup</li>
-                <li><strong>UE5 Local Server</strong> - Run AI backend locally for offline development</li>
-                <li><strong>Protocol Handler</strong> - Deploy via ue5assistant:// URLs</li>
-                <li><strong>Multi-project Management</strong> - Switch between projects seamlessly</li>
-                <li><strong>Context-aware AI</strong> - Responses tailored to active project</li>
-                <li><strong>Editor Utility Generation</strong> - Create AI-powered UE5.6 utilities</li>
-                <li><strong>Scene Orchestration</strong> - Spawn and arrange actors programmatically</li>
-                <li><strong>Blueprint Analysis</strong> - Capture and analyze Blueprint graphs</li>
-            </ul>
-
-            <h3 style="color: #00d9ff; margin: 20px 0 10px;">📚 Quick Links</h3>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <a href="/deploy/modern" target="_blank" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
-                    ✨ Modern Deploy Page
-                </a>
-                <button onclick="downloadClientZip()" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; cursor: pointer; border: none; width: 100%;">
-                    📦 Download Client ZIP
-                </button>
-                <a href="/api/installer_script" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
-                    ⚡ PowerShell Installer
-                </a>
-                <a href="/api/protocol_handler" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
-                    🔗 Protocol Handler
-                </a>
+            <div class="grid grid-2" style="margin-bottom: 32px;">
+                <div>
+                    <h3 style="color: var(--primary-purple); margin-bottom: 16px;">✨ Key Features</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--text-secondary); line-height: 2;">
+                        <li>✅ Multi-project management & auto-registration</li>
+                        <li>✅ Real-time WebSocket & HTTP Polling support</li>
+                        <li>✅ AI-powered viewport analysis & code generation</li>
+                        <li>✅ Blueprint capture & screenshot analysis</li>
+                        <li>✅ Automated client updates & deployment</li>
+                        <li>✅ Context-aware command routing</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color: var(--primary-purple); margin-bottom: 16px;">🛠️ Tech Stack</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--text-secondary); line-height: 2;">
+                        <li>🔷 FastAPI (async Python backend)</li>
+                        <li>🔷 OpenAI GPT-4o & GPT-4o-mini</li>
+                        <li>🔷 WebSocket + HTTP Polling dual-mode</li>
+                        <li>🔷 UE5.6 Python API integration</li>
+                        <li>🔷 JSON-based configuration system</li>
+                        <li>🔷 Auto-update with CDN bypass</li>
+                    </ul>
+                </div>
             </div>
 
-            <h3 style="color: #00d9ff; margin: 20px 0 10px;">💻 System Requirements</h3>
-            <ul class="feature-list">
-                <li><strong>Unreal Engine:</strong> 5.6 or later</li>
-                <li><strong>Python:</strong> 3.11+ (included with UE5)</li>
-                <li><strong>Browser:</strong> Chrome/Edge (for File System API deployment)</li>
-                <li><strong>Memory:</strong> 16GB RAM recommended</li>
-                <li><strong>OS:</strong> Windows 10/11</li>
-            </ul>
-
-            <h3 style="color: #00d9ff; margin: 20px 0 10px;">🔧 Troubleshooting Tips</h3>
-            <div style="background: rgba(255, 107, 53, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 107, 53, 0.3);">
-                <p style="margin: 0 0 10px 0;"><strong>Client not connecting?</strong></p>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li>Verify backend URL in AIAssistant/config.py</li>
-                    <li>Check UE5 Output Log for error messages</li>
-                    <li>Ensure Python plugin is enabled in UE5</li>
-                </ul>
-                
-                <p style="margin: 15px 0 10px 0;"><strong>Deploy Agent issues?</strong></p>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li>Ensure Deploy Agent is running on port 7865</li>
-                    <li>Check Windows firewall isn't blocking local connections</li>
-                    <li>Run Deploy Agent as Administrator if permission issues</li>
-                </ul>
-                
-                <p style="margin: 15px 0 10px 0;"><strong>AI responses not working?</strong></p>
-                <ul style="margin: 0; padding-left: 20px;">
-                    <li>Test OpenAI connection in Settings tab</li>
-                    <li>Verify API key is set in backend environment</li>
-                    <li>Check conversation history for error messages</li>
-                </ul>
+            <div style="background: linear-gradient(135deg, rgba(0,245,255,0.1) 0%, rgba(139,92,246,0.1) 100%); padding: 24px; border-radius: 12px; border: 1px solid var(--border-glow); text-align: center;">
+                <h3 style="color: var(--primary-cyan); margin-bottom: 12px;">🚀 Version 3.2.0</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">Enhanced UI with animations, quality of life improvements, and architectural refinements</p>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <span style="padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; font-size: 12px; color: var(--text-secondary);">FastAPI</span>
+                    <span style="padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; font-size: 12px; color: var(--text-secondary);">UE 5.6</span>
+                    <span style="padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; font-size: 12px; color: var(--text-secondary);">OpenAI</span>
+                    <span style="padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; font-size: 12px; color: var(--text-secondary);">WebSocket</span>
+                </div>
             </div>
-
-            <h3 style="color: #00d9ff; margin: 20px 0 10px;">🏗️ Architecture</h3>
-            <p style="line-height: 1.8; color: #8b95a5;">
-                The system uses a <strong>client-server architecture</strong> with a FastAPI backend 
-                (hosted on Replit) and UE5 Python client. The client auto-registers projects and 
-                uploads metadata. The web dashboard provides project management and AI querying 
-                capabilities from any browser.
-            </p>
-
-            <h3 style="color: #00d9ff; margin: 20px 0 10px;">📞 Support</h3>
-            <p style="color: #8b95a5;">
-                For issues or feature requests, check the project documentation or contact support. 
-                The system is actively maintained and regularly updated with new capabilities.
-            </p>
         </div>
     </div>
 
     <script>
-        let currentTab = 'project-hub';
-        let connectionMode = 'http'; // Default to HTTP polling
-
-        // Load projects on page load
-        loadProjects();
-        loadConversations();
-        loadConfig();
-        loadRecentPaths();
-        loadConnectionMode();
-
-        async function setConnectionMode(mode) {
-            connectionMode = mode;
-            
-            // Update UI
-            const httpBtn = document.getElementById('http-mode-btn');
-            const wsBtn = document.getElementById('websocket-mode-btn');
-            
-            if (mode === 'http') {
-                httpBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-                httpBtn.style.border = '2px solid #10b981';
-                httpBtn.style.opacity = '1';
-                
-                wsBtn.style.background = 'rgba(139,92,246,0.1)';
-                wsBtn.style.border = '2px solid rgba(139,92,246,0.3)';
-                wsBtn.style.opacity = '0.6';
-            } else {
-                wsBtn.style.background = 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)';
-                wsBtn.style.border = '2px solid #8b5cf6';
-                wsBtn.style.opacity = '1';
-                wsBtn.querySelector('.construction-overlay').style.display = 'none';
-                
-                httpBtn.style.background = 'rgba(16,185,129,0.1)';
-                httpBtn.style.border = '2px dashed rgba(16,185,129,0.3)';
-                httpBtn.style.opacity = '0.5';
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('projectQuery').focus();
             }
-            
-            // Store preference locally
-            localStorage.setItem('connectionMode', mode);
-            
-            // Send preference to backend for active project
-            const projectSelector = document.getElementById('projectSelect');
-            const activeProject = projectSelector ? projectSelector.value : null;
-            if (activeProject) {
-                try {
-                    const response = await fetch('/api/set_connection_mode', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            project_id: activeProject,
-                            connection_mode: mode
-                        })
-                    });
-                    
-                    if (response.ok) {
-                        console.log(`📡 Connection mode set to: ${mode.toUpperCase()}`);
-                        
-                        // Notify UE5 to reconnect with new mode
-                        if (ws && ws.readyState === WebSocket.OPEN) {
-                            ws.send(JSON.stringify({
-                                type: 'set_connection_mode',
-                                project_id: activeProject,
-                                mode: mode
-                            }));
-                        }
-                    } else {
-                        console.error('Failed to save connection mode preference');
-                    }
-                } catch (error) {
-                    console.error('Error setting connection mode:', error);
-                }
-            }
-        }
-        
-        // Load saved connection mode on startup
-        function loadConnectionMode() {
-            const saved = localStorage.getItem('connectionMode') || 'http';
-            setConnectionMode(saved);
-        }
+        });
 
+        // Tab management
         function showTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
-            // Show selected tab
-            document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
-            currentTab = tabName;
-            
-            // Run specific actions based on tab
-            if (tabName === 'api') {
-                checkSystemStatus();
-            } else if (tabName === 'conversations') {
-                if (allConversations.length === 0) {
-                    loadConversations();
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        // Project query helpers
+        function setQuery(text) {
+            document.getElementById('projectQuery').value = text;
+            document.getElementById('projectQuery').focus();
+        }
+
+        function copyResponse() {
+            const text = document.getElementById('projectQueryResult').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => btn.textContent = originalText, 2000);
+            });
+        }
+
+        // Query project
+        async function queryProject() {
+            const query = document.getElementById('projectQuery').value;
+            if (!query) return;
+
+            const resultDiv = document.getElementById('projectQueryResult');
+            const card = document.getElementById('responseCard');
+            card.style.display = 'block';
+            resultDiv.className = 'output-box status-loading';
+            resultDiv.textContent = '⚙️ Processing your request...';
+
+            try {
+                const response = await fetch('/api/execute_command', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        user_input: query,
+                        project_id: document.getElementById('projectSelect').value
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.className = 'output-box';
+                    resultDiv.textContent = data.response || data.result || 'No response';
+                } else {
+                    resultDiv.className = 'output-box status-error';
+                    resultDiv.textContent = `Error: ${data.error || 'Unknown error'}`;
                 }
-            } else if (tabName === 'settings') {
-                loadConfig();
+            } catch (error) {
+                resultDiv.className = 'output-box status-error';
+                resultDiv.textContent = `Error: ${error.message}`;
             }
         }
 
-        function toggleProjectForm() {
-            const form = document.getElementById('project-form');
-            if (form.style.display === 'none') {
-                form.style.display = 'block';
-            } else {
-                form.style.display = 'none';
-            }
-        }
-
+        // Project management
         async function loadProjects() {
             try {
                 const response = await fetch('/api/projects');
@@ -981,64 +1024,30 @@
                 const select = document.getElementById('projectSelect');
                 select.innerHTML = '<option value="">No project selected</option>';
                 
+                let totalCount = 0;
                 if (data.success && data.projects.length > 0) {
+                    totalCount = data.projects.length;
                     data.projects.forEach(project => {
                         const option = document.createElement('option');
                         option.value = project.project_id;
                         option.textContent = `${project.name} (${project.version})`;
-                        if (project.is_active) {
-                            option.selected = true;
-                        }
+                        if (project.is_active) option.selected = true;
                         select.appendChild(option);
                     });
-                    // Update connection status based on actual WebSocket connections
-                    updateConnectionIndicator();
-                } else {
-                    // Auto-show project form if no projects
-                    const form = document.getElementById('project-form');
-                    if (form) form.style.display = 'block';
                 }
+
+                document.getElementById('totalProjects').textContent = totalCount;
+                updateConnectionIndicator();
             } catch (error) {
                 console.error('Failed to load projects:', error);
             }
         }
-        
-        function loadRecentPaths() {
-            try {
-                const recentPaths = JSON.parse(localStorage.getItem('ue5_recent_paths') || '[]');
-                const datalist = document.getElementById('recent-paths');
-                datalist.innerHTML = '';
-                
-                recentPaths.forEach(path => {
-                    const option = document.createElement('option');
-                    option.value = path;
-                    datalist.appendChild(option);
-                });
-            } catch (error) {
-                console.error('Failed to load recent paths:', error);
-            }
+
+        function toggleProjectForm() {
+            const form = document.getElementById('project-form');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
         }
-        
-        function saveRecentPath(path) {
-            try {
-                let recentPaths = JSON.parse(localStorage.getItem('ue5_recent_paths') || '[]');
-                
-                // Remove if already exists
-                recentPaths = recentPaths.filter(p => p !== path);
-                
-                // Add to beginning
-                recentPaths.unshift(path);
-                
-                // Keep only last 10
-                recentPaths = recentPaths.slice(0, 10);
-                
-                localStorage.setItem('ue5_recent_paths', JSON.stringify(recentPaths));
-                loadRecentPaths();
-            } catch (error) {
-                console.error('Failed to save recent path:', error);
-            }
-        }
-        
+
         async function registerManualProject() {
             const name = document.getElementById('manual-name').value;
             let path = document.getElementById('manual-path').value;
@@ -1048,7 +1057,6 @@
                 return;
             }
             
-            // Ensure path ends with /
             if (!path.endsWith('/') && !path.endsWith('\\')) {
                 path = path + '/';
             }
@@ -1071,14 +1079,9 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    // Save to recent paths
-                    saveRecentPath(path);
-                    
                     alert(`✅ Project "${name}" registered successfully!`);
-                    // DO NOT clear the fields - keep them populated for immediate deploy
-                    // document.getElementById('manual-name').value = '';
-                    // document.getElementById('manual-path').value = '';
                     await loadProjects();
+                    toggleProjectForm();
                 } else {
                     alert(`❌ Registration failed: ${data.error || 'Unknown error'}`);
                 }
@@ -1086,281 +1089,12 @@
                 alert(`❌ Error: ${error.message}`);
             }
         }
-        
-        // Helper function to update deploy status
-        function updateDeployStatus(message, type = 'info') {
-            const statusDiv = document.getElementById('deploy-status');
-            statusDiv.style.display = 'block';
-            statusDiv.innerHTML = message;
-            statusDiv.className = `status-${type}`;
-        }
-        
-        // Download installer script
-        function downloadInstaller() {
-            // Use timestamp to bypass cache
-            const timestamp = new Date().getTime();
-            const url = `/api/get_installer_script?t=${timestamp}`;
-            window.location.href = url;
-        }
-        
-        // Download client ZIP using POST to bypass CDN cache
-        async function downloadClientZip() {
-            try {
-                const response = await fetch('/api/download_client', {
-                    method: 'GET'
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Download failed');
-                }
-                
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'UE5_AIAssistant_Client.zip';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (error) {
-                alert('❌ Download failed: ' + error.message);
-            }
-        }
-        
-        async function frictionlessDeploy() {
-        const projectName = document.getElementById('manual-name').value;
-        const projectPath = document.getElementById('manual-path').value;
-        
-        // Show immediate feedback
-        const statusDiv = document.getElementById('deploy-status');
-        statusDiv.style.display = 'block';
-        statusDiv.className = 'status-loading';
-        statusDiv.innerHTML = '<span class="loading-spinner">⚙️</span> Starting instant deployment...';
-        
-        if (!projectPath) {
-            statusDiv.className = 'status-error';
-            statusDiv.innerHTML = '❌ Please enter the project path first';
-            return;
-        }
-        
-        // STEP 1: Try direct POST /api/deploy_client first (bypasses CDN, always fresh!)
-        try {
-            statusDiv.innerHTML = '<span class="loading-spinner">⚡</span> Deploying fresh files (bypasses CDN cache)...';
-            statusDiv.className = 'status-loading';
-            
-            const response = await fetch('/api/deploy_client', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    project_path: projectPath,
-                    overwrite: true
-                })
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                const fileCount = result.files_copied?.length || 0;
-                statusDiv.innerHTML = `
-                    <div style="text-align: center;">
-                        <div style="font-size: 48px; margin: 20px 0;">✅</div>
-                        <h3 style="color: #10b981; margin: 10px 0;">Deployment Successful!</h3>
-                        <p style="color: #8b95a5; font-size: 15px; margin: 15px 0;">
-                            Successfully deployed <strong>${fileCount} files</strong> including diagnostic tools!
-                        </p>
-                        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin: 20px 0;">
-                            <p style="color: #00d9ff; margin: 5px 0;">📁 Location: ${result.target_path}</p>
-                            <p style="color: #10b981; margin: 5px 0;">✨ Includes: diagnose.py, install_dependencies.py</p>
-                        </div>
-                        <div style="background: rgba(0, 217, 255, 0.1); padding: 15px; border-radius: 8px;">
-                            <h4 style="color: #00d9ff; margin: 0 0 10px 0;">📋 Next Steps:</h4>
-                            <ol style="color: #8b95a5; text-align: left; margin: 0; padding-left: 20px;">
-                                <li>Open Unreal Editor</li>
-                                <li>Open Python Console (Tools → Python Console)</li>
-                                <li>Run: <code style="background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 4px; color: #00d9ff;">import AIAssistant.install_dependencies</code></li>
-                                <li>Then run: <code style="background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 4px; color: #00d9ff;">import AIAssistant.main</code></li>
-                            </ol>
-                        </div>
-                    </div>
-                `;
-                statusDiv.className = 'status-success';
-                
-                // Auto-register the project
-                setTimeout(() => registerManualProject(), 1000);
-                return; // Success! Exit early
-            }
-            
-            // If POST returned error (likely permission denied), fall through to Deploy Agent method
-            console.log('Direct POST failed, trying Deploy Agent...', result.error);
-            
-        } catch (directError) {
-            console.log('Direct POST exception, trying Deploy Agent...', directError);
-        }
-        
-        // STEP 2: Fallback to Deploy Agent if direct POST failed
-        try {
-            statusDiv.innerHTML = '<span class="loading-spinner">🔍</span> Checking for Deploy Agent on your PC...';
-            statusDiv.className = 'status-loading';
-            
-            // Attempt status check - will fail due to browser security, but that's OK
-            try {
-                const agentResponse = await fetch('http://localhost:7865/status', {
-                    signal: AbortSignal.timeout(3000)  // 3 second timeout
-                });
-            } catch (statusError) {
-                // Expected to fail due to Private Network Access policy
-                // If we get here, Deploy Agent is likely running (connection attempted)
-                console.log('Status check failed (expected):', statusError.message);
-            }
-            
-            // Agent is running! Trigger deployment
-            statusDiv.innerHTML = '<span class="loading-spinner">⚡</span> Sending deployment request to Deploy Agent...';
-            statusDiv.className = 'status-loading';
-            
-            // Fire-and-forget deployment request (browser security blocks response reading)
-            fetch('http://localhost:7865/deploy', {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({
-                    project_path: projectPath,
-                    auto_import: true
-                })
-            }).catch(() => {
-                // Ignore errors - deployment happens server-side
-            });
-            
-            // Wait 2 seconds for deployment to complete, then show result
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Show success message with PowerShell confirmation instructions
-            statusDiv.innerHTML = `
-                <div style="text-align: center;">
-                    <div style="font-size: 48px; margin: 20px 0;">⚡</div>
-                    <h3 style="color: #fbbf24; margin: 10px 0;">Deployment Request Sent!</h3>
-                    <p style="color: #8b95a5; font-size: 15px; margin: 15px 0;">
-                        Due to browser security, we can't read the response from localhost.<br>
-                        <strong>Check your PowerShell window</strong> for deployment confirmation.
-                    </p>
-                    <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin: 20px 0;">
-                        <p style="color: #00ff88; margin: 5px 0;">✅ Look for: "Deployed 35 files"</p>
-                        <p style="color: #00d9ff; margin: 5px 0;">📁 Files deployed to: Content/Python/AIAssistant/</p>
-                    </div>
-                    <p style="color: #8b95a5; font-size: 14px; margin-top: 15px;">
-                        If deployment succeeded in PowerShell, you're ready to use the AI Assistant in UE5!
-                    </p>
-                </div>
-            `;
-            statusDiv.className = 'status-warning';
-            
-            // Auto-register the project
-            setTimeout(() => registerManualProject(), 1000);
-            
-        } catch (error) {
-            console.error('Deploy error details:', error);
-            console.error('Error type:', error.constructor.name);
-            console.error('Error stack:', error.stack);
-            
-            // Show actual error message for debugging
-            const errorMessage = error.message || 'Unknown error';
-            const errorType = error.constructor.name || 'Error';
-            
-            statusDiv.innerHTML = `
-                <div style="background: rgba(255, 107, 53, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 107, 53, 0.3);">
-                    <h3 style="color: #ff6b35; margin-top: 0;">❌ Deployment Error</h3>
-                    <p style="color: #ff6b35; font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">${errorType}: ${errorMessage}</p>
-                    <p style="color: #8b95a5; margin-top: 15px;">Troubleshooting:</p>
-                    <ul style="color: #8b95a5; margin: 10px 0;">
-                        <li>Make sure Deploy Agent is running (check the PowerShell window)</li>
-                        <li>Verify the agent shows "Listening on http://localhost:7865"</li>
-                        <li>Try clicking the button again</li>
-                    </ul>
-                    <button onclick="deployClient()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); width: 100%; padding: 12px; border: none; border-radius: 8px; color: white; cursor: pointer; margin-top: 15px; font-size: 14px;">
-                        📦 Use Manual Download Instead
-                    </button>
-                </div>
-            `;
-            statusDiv.className = 'status-warning';
-        }
-    }
-    
-    async function deployClient() {
-            let path = document.getElementById('manual-path').value;
-            
-            if (!path) {
-                alert('Please enter the project path first');
-                return;
-            }
-            
-            // Ensure path ends with /
-            if (!path.endsWith('/') && !path.endsWith('\\')) {
-                path = path + '/';
-            }
-            
-            const statusDiv = document.getElementById('deploy-status');
-            statusDiv.style.display = 'block';
-            statusDiv.style.background = 'rgba(139, 92, 246, 0.2)';
-            statusDiv.style.color = '#a78bfa';
-            statusDiv.innerHTML = '🚀 Attempting to deploy client files...';
-            
-            try {
-                const response = await fetch('/api/deploy_client', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        project_path: path,
-                        overwrite: true
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    const overwroteMsg = data.overwrote_existing ? 
-                        `<br><small>⚠️ Overwrote ${data.overwrote_existing} existing file(s)</small>` : 
-                        `<br><small>✨ Deployed to empty directory</small>`;
-                    
-                    statusDiv.style.background = 'rgba(16, 185, 129, 0.2)';
-                    statusDiv.style.color = '#10b981';
-                    statusDiv.innerHTML = `
-                        ✅ ${data.message}${overwroteMsg}<br>
-                        <small>📁 Deployed to: ${data.target_path}</small><br>
-                        <strong>Next steps:</strong>
-                        <ol style="margin: 10px 0 0 20px; text-align: left;">
-                            ${data.instructions.map(i => `<li>${i}</li>`).join('')}
-                        </ol>
-                        <details style="margin-top: 10px;">
-                            <summary style="cursor: pointer; color: #8b95a5;">View deployed files (${data.files_copied.length})</summary>
-                            <pre style="margin: 5px 0; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 4px; font-size: 11px; max-height: 150px; overflow-y: auto;">${data.files_copied.join('\n')}</pre>
-                        </details>
-                    `;
-                    
-                    saveRecentPath(path);
-                } else {
-                    statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
-                    statusDiv.style.color = '#ef4444';
-                    statusDiv.innerHTML = `
-                        ❌ ${data.error}<br>
-                        <small>⚠️ Browser cannot access local file system. Use manual download instead.</small><br>
-                        <a href="#" onclick="downloadClientZip(); return false;" style="color: #00d9ff; text-decoration: underline;">📦 Download ZIP File</a>
-                    `;
-                }
-            } catch (error) {
-                statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
-                statusDiv.style.color = '#ef4444';
-                statusDiv.innerHTML = `
-                    ❌ Deployment failed: ${error.message}<br>
-                    <small>⚠️ Browser cannot access local files. Please download ZIP manually.</small><br>
-                    <a href="/api/download_client" style="color: #00d9ff; text-decoration: underline;">📦 Download ZIP File</a>
-                `;
-            }
-        }
 
         async function selectProject() {
             const projectId = document.getElementById('projectSelect').value;
             
             if (!projectId) {
-                document.getElementById('projectStatus').textContent = 'Not connected';
+                document.getElementById('projectStatus').innerHTML = '<span class="status-dot"></span><span>Not connected</span>';
                 return;
             }
 
@@ -1372,24 +1106,69 @@
                 });
 
                 const data = await response.json();
-                
                 if (data.success) {
-                    updateProjectStatus(data.project);
+                    updateConnectionIndicator();
                 }
             } catch (error) {
                 console.error('Failed to set active project:', error);
             }
         }
 
-        function updateProjectStatus(project) {
-            const status = document.getElementById('projectStatus');
-            status.textContent = `✅ ${project.name} Connected`;
-            status.style.background = 'rgba(0, 255, 136, 0.1)';
-            status.style.borderColor = 'rgba(0, 255, 136, 0.3)';
-            status.style.color = '#00ff88';
+        // Download installer
+        function downloadInstaller() {
+            const timestamp = new Date().getTime();
+            window.location.href = `/api/get_installer_script?t=${timestamp}`;
         }
 
-        // WebSocket for real-time UE5 communication
+        // Update all clients
+        async function updateAllClients() {
+            const btn = document.getElementById('updateClientsBtn');
+            const icon = document.getElementById('updateIcon');
+            const text = document.getElementById('updateText');
+            const spinner = document.getElementById('updateSpinner');
+            
+            btn.disabled = true;
+            icon.style.display = 'none';
+            spinner.style.display = 'inline-block';
+            text.textContent = 'Updating...';
+            
+            try {
+                const response = await fetch('/api/broadcast_update', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    text.textContent = 'Updated!';
+                    setTimeout(() => {
+                        icon.style.display = 'inline-block';
+                        spinner.style.display = 'none';
+                        text.textContent = 'Update All Clients';
+                        btn.disabled = false;
+                    }, 2000);
+                } else {
+                    throw new Error(data.error || 'Update failed');
+                }
+            } catch (error) {
+                text.textContent = 'Failed!';
+                alert('Update failed: ' + error.message);
+                setTimeout(() => {
+                    icon.style.display = 'inline-block';
+                    spinner.style.display = 'none';
+                    text.textContent = 'Update All Clients';
+                    btn.disabled = false;
+                }, 2000);
+            }
+        }
+
+        // Connection mode toggle
+        function setConnectionMode(mode) {
+            document.getElementById('http-mode-btn').classList.toggle('active', mode === 'http');
+            document.getElementById('websocket-mode-btn').classList.toggle('active', mode === 'websocket');
+            localStorage.setItem('connectionMode', mode);
+        }
+
+        // WebSocket management
         let dashboardWs = null;
         let wsConnected = false;
         let ue5ProjectsConnected = [];
@@ -1408,666 +1187,109 @@
             
             dashboardWs.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                handleWebSocketMessage(data);
+                if (data.type === 'initial_status') {
+                    ue5ProjectsConnected = data.connected_projects || [];
+                    updateConnectionIndicator();
+                } else if (data.type === 'ue5_status') {
+                    if (data.status === 'connected') {
+                        if (!ue5ProjectsConnected.includes(data.project_id)) {
+                            ue5ProjectsConnected.push(data.project_id);
+                        }
+                    } else {
+                        ue5ProjectsConnected = ue5ProjectsConnected.filter(id => id !== data.project_id);
+                    }
+                    updateConnectionIndicator();
+                }
             };
             
-            dashboardWs.onerror = (error) => {
-                console.error('❌ WebSocket error:', error);
+            dashboardWs.onerror = () => {
                 wsConnected = false;
                 updateConnectionIndicator();
             };
             
             dashboardWs.onclose = () => {
-                console.log('🔌 WebSocket closed, reconnecting...');
                 wsConnected = false;
                 updateConnectionIndicator();
-                setTimeout(initWebSocket, 5000); // Reconnect after 5s
+                setTimeout(initWebSocket, 5000);
             };
-        }
-
-        function handleWebSocketMessage(data) {
-            if (data.type === 'initial_status') {
-                ue5ProjectsConnected = data.connected_projects || [];
-                updateConnectionIndicator();
-            } else if (data.type === 'ue5_status') {
-                if (data.status === 'connected') {
-                    if (!ue5ProjectsConnected.includes(data.project_id)) {
-                        ue5ProjectsConnected.push(data.project_id);
-                    }
-                } else {
-                    ue5ProjectsConnected = ue5ProjectsConnected.filter(id => id !== data.project_id);
-                }
-                updateConnectionIndicator();
-            } else if (data.type === 'action_result') {
-                console.log('Action result:', data);
-            }
         }
 
         function updateConnectionIndicator() {
             const status = document.getElementById('projectStatus');
             const select = document.getElementById('projectSelect');
-            const registeredCount = select.options.length - 1; // Exclude "No project selected" option
-            const connectionGuide = document.getElementById('connection-guide');
+            const registeredCount = select.options.length - 1;
+            
+            document.getElementById('connectedProjects').textContent = ue5ProjectsConnected.length;
             
             if (wsConnected && ue5ProjectsConnected.length > 0) {
-                status.innerHTML = `✅ ${ue5ProjectsConnected.length} of ${registeredCount} connected`;
-                status.style.background = 'rgba(0, 255, 136, 0.1)';
-                status.style.borderColor = 'rgba(0, 255, 136, 0.3)';
-                status.style.color = '#00ff88';
-                if (connectionGuide) connectionGuide.style.display = 'none';
+                status.innerHTML = `<span class="status-dot"></span><span>✅ ${ue5ProjectsConnected.length} of ${registeredCount} connected</span>`;
             } else if (wsConnected && registeredCount > 0) {
-                status.innerHTML = `⚠️ ${registeredCount} registered, 0 connected`;
-                status.style.background = 'rgba(251, 191, 36, 0.1)';
-                status.style.borderColor = 'rgba(251, 191, 36, 0.3)';
-                status.style.color = '#fbbf24';
-                if (connectionGuide) connectionGuide.style.display = 'block';
-            } else if (wsConnected) {
-                status.innerHTML = '⚠️ No projects';
-                status.style.background = 'rgba(251, 191, 36, 0.1)';
-                status.style.borderColor = 'rgba(251, 191, 36, 0.3)';
-                status.style.color = '#fbbf24';
-                if (connectionGuide) connectionGuide.style.display = 'none';
+                status.innerHTML = `<span class="status-dot" style="background: #fbbf24;"></span><span>⚠️ ${registeredCount} registered, 0 connected</span>`;
             } else {
-                status.innerHTML = '❌ Dashboard offline';
-                status.style.background = 'rgba(239, 68, 68, 0.1)';
-                status.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-                status.style.color = '#ef4444';
-                if (connectionGuide) connectionGuide.style.display = 'none';
-            }
-        }
-        
-        function checkConnection() {
-            // Refresh WebSocket status
-            loadProjects();
-        }
-
-        async function queryProject() {
-            const query = document.getElementById('projectQuery').value;
-            const output = document.getElementById('queryOutput');
-
-            if (!query) {
-                output.textContent = 'Please enter a question';
-                return;
-            }
-
-            output.textContent = 'Querying AI...';
-
-            // First, ask AI what to do
-            try {
-                const response = await fetch('/api/project_query', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query })
-                });
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    output.textContent = `Error: ${data.error}`;
-                    return;
-                }
-
-                // Check if AI wants to execute an action in UE5
-                if (data.ue_request && wsConnected && ue5ProjectsConnected.length > 0) {
-                    output.textContent = '🔄 Collecting live data from UE5...';
-                    
-                    // Get active project
-                    const projectId = document.getElementById('projectSelect').value;
-                    
-                    if (projectId && ue5ProjectsConnected.includes(projectId)) {
-                        // Execute action via WebSocket
-                        const actionResult = await executeUE5Action(projectId, data.ue_request, {});
-                        
-                        if (actionResult.success) {
-                            output.textContent = `✅ Live data retrieved:\n\n${JSON.stringify(actionResult.data, null, 2)}`;
-                        } else {
-                            output.textContent = `❌ Failed to collect data: ${actionResult.error}`;
-                        }
-                    } else {
-                        output.textContent = data.response;
-                    }
-                } else {
-                    const context = data.project_context ? `[${data.project_context}]\n\n` : '';
-                    output.textContent = context + data.response;
-                }
-            } catch (error) {
-                output.textContent = `Error: ${error.message}`;
+                status.innerHTML = `<span class="status-dot" style="background: #64748b;"></span><span>⚠️ No projects</span>`;
             }
         }
 
-        async function updateAllClients() {
-            const btn = document.getElementById('updateClientsBtn');
-            const originalHTML = btn.innerHTML;
-            
-            if (!wsConnected || ue5ProjectsConnected.length === 0) {
-                alert('❌ No UE5 clients connected!\n\nMake sure UE5 is running and you\'ve executed:\nimport AIAssistant.main');
-                return;
-            }
-            
-            btn.disabled = true;
-            btn.innerHTML = '<span style="font-size: 18px;">⏳</span><span>Updating...</span>';
-            
-            try {
-                let successCount = 0;
-                let failCount = 0;
-                
-                // Send auto-update command to all connected projects via WebSocket
-                for (const projectId of ue5ProjectsConnected) {
-                    try {
-                        // Send direct auto_update message (bypasses action executor)
-                        dashboardWs.send(JSON.stringify({
-                            type: 'auto_update',
-                            project_id: projectId
-                        }));
-                        successCount++;
-                        console.log(`✅ Sent auto-update to project: ${projectId}`);
-                    } catch (error) {
-                        failCount++;
-                        console.error(`Failed to update project ${projectId}:`, error);
-                    }
-                }
-                
-                // Wait a bit for updates to process
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                if (successCount > 0) {
-                    btn.innerHTML = '<span style="font-size: 18px;">✅</span><span>Updated!</span>';
-                    alert(`✅ Successfully updated ${successCount} client(s)!\n\n` +
-                          `Files deployed with latest diagnostic tools:\n` +
-                          `- diagnose.py\n` +
-                          `- install_dependencies.py\n\n` +
-                          `The clients will automatically reload.`);
-                } else {
-                    btn.innerHTML = '<span style="font-size: 18px;">❌</span><span>Failed</span>';
-                    alert(`❌ Failed to update clients.\n\nMake sure UE5 clients support auto-update.`);
-                }
-                
-            } catch (error) {
-                btn.innerHTML = '<span style="font-size: 18px;">❌</span><span>Error</span>';
-                alert(`❌ Update error: ${error.message}`);
-            } finally {
-                setTimeout(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = originalHTML;
-                }, 3000);
-            }
-        }
-        
-        function executeUE5Action(projectId, action, params) {
-            return new Promise((resolve, reject) => {
-                if (!dashboardWs || !wsConnected) {
-                    reject(new Error('WebSocket not connected'));
-                    return;
-                }
-
-                const requestId = `req_${Date.now()}`;
-                
-                // Send command
-                dashboardWs.send(JSON.stringify({
-                    type: 'execute_action',
-                    project_id: projectId,
-                    action: action,
-                    params: params
-                }));
-
-                // Listen for response
-                const messageHandler = (event) => {
-                    const data = JSON.parse(event.data);
-                    if (data.type === 'action_result' && data.action === action) {
-                        dashboardWs.removeEventListener('message', messageHandler);
-                        resolve(data.result);
-                    }
-                };
-
-                dashboardWs.addEventListener('message', messageHandler);
-
-                // Timeout after 30s
-                setTimeout(() => {
-                    dashboardWs.removeEventListener('message', messageHandler);
-                    reject(new Error('Action timeout'));
-                }, 30000);
-            });
-        }
-
-        async function generateUtility() {
-            const name = document.getElementById('utilityName').value;
-            const desc = document.getElementById('utilityDesc').value;
-            const output = document.getElementById('utilityOutput');
-
-            if (!name || !desc) {
-                output.textContent = 'Please fill in name and description';
-                return;
-            }
-
-            output.textContent = 'Generating utility...';
-
-            try {
-                const response = await fetch('/api/generate_utility', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        name, 
-                        description: desc, 
-                        capabilities: ['spawn_actors', 'execute_plans'] 
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    output.textContent = `Error: ${data.error}`;
-                } else {
-                    output.textContent = `✅ Generated: ${data.widget_name}\n\n` +
-                        `📁 Script Path: ${data.script_path}\n\n` +
-                        `To use:\n1. Download AIAssistant folder\n2. Restart Unreal Editor\n3. Run the utility`;
-                }
-            } catch (error) {
-                output.textContent = `Error: ${error.message}`;
-            }
-        }
-
-        // Enhanced conversation management
-        let allConversations = [];
-        let filteredConversationsList = [];
-
-        async function loadConversations() {
-            try {
-                const response = await fetch('/api/conversations?limit=50');
-                const data = await response.json();
-                
-                if (data.conversations) {
-                    allConversations = data.conversations;
-                    
-                    // Update project filter dropdown
-                    const projectFilter = document.getElementById('conversationProjectFilter');
-                    const uniqueProjects = [...new Set(data.conversations
-                        .filter(c => c.metadata && c.metadata.project_context)
-                        .map(c => c.metadata.project_context))];
-                    
-                    if (uniqueProjects.length > 0) {
-                        projectFilter.innerHTML = '<option value="">All Projects</option>';
-                        uniqueProjects.forEach(project => {
-                            const option = document.createElement('option');
-                            option.value = project;
-                            option.textContent = project;
-                            projectFilter.appendChild(option);
-                        });
-                    }
-                    
-                    // Apply filters and display
-                    filterConversations();
-                    
-                    // Update statistics
-                    document.getElementById('totalConversations').textContent = data.total || allConversations.length;
-                }
-            } catch (error) {
-                console.error('Failed to load conversations:', error);
-                document.getElementById('conversation-list').innerHTML = 
-                    '<div style="padding: 20px; color: #ef4444;">Failed to load conversations</div>';
-            }
-        }
-
-        function filterConversations() {
-            const searchText = document.getElementById('conversationSearch')?.value?.toLowerCase() || '';
-            const projectFilter = document.getElementById('conversationProjectFilter')?.value || '';
-            const typeFilter = document.getElementById('conversationTypeFilter')?.value || '';
-            
-            filteredConversationsList = allConversations.filter(conv => {
-                // Search filter
-                if (searchText && !conv.user_input.toLowerCase().includes(searchText) && 
-                    !conv.assistant_response.toLowerCase().includes(searchText)) {
-                    return false;
-                }
-                
-                // Project filter
-                if (projectFilter && conv.metadata && conv.metadata.project_context !== projectFilter) {
-                    return false;
-                }
-                
-                // Type filter
-                if (typeFilter && conv.command_type !== typeFilter) {
-                    return false;
-                }
-                
-                return true;
-            });
-            
-            // Update filtered count
-            document.getElementById('filteredConversations').textContent = filteredConversationsList.length;
-            
-            // Display filtered conversations
-            const listEl = document.getElementById('conversation-list');
-            
-            if (filteredConversationsList.length === 0) {
-                listEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b95a5;">No matching conversations found</div>';
-                return;
-            }
-            
-            listEl.innerHTML = filteredConversationsList.map(conv => {
-                const timestamp = new Date(conv.timestamp).toLocaleString();
-                const responseLength = conv.assistant_response.length;
-                const projectContext = conv.metadata?.project_context || 'No project';
-                const isError = conv.metadata?.error;
-                
-                return `
-                    <div style="border: 1px solid rgba(0, 217, 255, 0.2); border-radius: 8px; padding: 15px; margin-bottom: 10px; background: rgba(26, 31, 58, 0.4);">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                            <span style="color: #00d9ff; font-size: 0.9em;">${timestamp}</span>
-                            <div style="display: flex; gap: 10px;">
-                                <span style="padding: 2px 8px; background: rgba(0, 217, 255, 0.1); border-radius: 4px; font-size: 0.85em; color: #8b95a5;">
-                                    ${conv.command_type}
-                                </span>
-                                <span style="padding: 2px 8px; background: rgba(16, 185, 129, 0.1); border-radius: 4px; font-size: 0.85em; color: #10b981;">
-                                    ${projectContext}
-                                </span>
-                                ${isError ? '<span style="padding: 2px 8px; background: rgba(239, 68, 68, 0.2); border-radius: 4px; font-size: 0.85em; color: #ef4444;">Error</span>' : ''}
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <strong style="color: #8b95a5;">User:</strong>
-                            <div style="margin: 5px 0; padding: 10px; background: rgba(10, 14, 39, 0.6); border-radius: 4px;">
-                                ${conv.user_input}
-                            </div>
-                        </div>
-                        <div>
-                            <strong style="color: #8b95a5;">Assistant (${responseLength} chars):</strong>
-                            <div style="margin: 5px 0; padding: 10px; background: rgba(10, 14, 39, 0.6); border-radius: 4px; max-height: 200px; overflow-y: auto;">
-                                ${conv.assistant_response}
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            // Auto-scroll if enabled
-            if (document.getElementById('autoScroll')?.checked) {
-                listEl.scrollTop = listEl.scrollHeight;
-            }
-        }
-
-        async function confirmClearHistory() {
-            if (!confirm('⚠️ Are you sure you want to clear all conversation history? This action cannot be undone.')) {
-                return;
-            }
-            
-            try {
-                const response = await fetch('/api/conversations', {
-                    method: 'DELETE'
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    alert('✅ Conversation history cleared successfully');
-                    allConversations = [];
-                    filterConversations();
-                    document.getElementById('totalConversations').textContent = '0';
-                } else {
-                    alert('❌ Failed to clear history: ' + (result.message || 'Unknown error'));
-                }
-            } catch (error) {
-                alert('❌ Error clearing history: ' + error.message);
-            }
-        }
-
-        async function loadConfig() {
-            try {
-                const response = await fetch('/api/config');
-                const data = await response.json();
-                
-                if (data.config) {
-                    // Update UI with current config
-                    document.getElementById('modelSelect').value = data.config.model || 'gpt-4o-mini';
-                    document.getElementById('styleSelect').value = data.config.response_style || 'balanced';
-                    document.getElementById('tempSlider').value = data.config.temperature || 0.7;
-                    document.getElementById('tempValue').textContent = data.config.temperature || 0.7;
-                    document.getElementById('maxContextTurns').value = data.config.max_context_turns || 6;
-                    
-                    // Update active project in conversations
-                    loadActiveProject();
-                }
-                
-                // Check system status when API tab is shown
-                if (currentTab === 'api') {
-                    checkSystemStatus();
-                }
-            } catch (error) {
-                console.error('Failed to load config:', error);
-            }
-        }
-
-        async function loadActiveProject() {
-            try {
-                const response = await fetch('/api/active_project');
-                const data = await response.json();
-                
-                if (data.success && data.project) {
-                    document.getElementById('activeProjectName').textContent = data.project.name;
-                } else {
-                    document.getElementById('activeProjectName').textContent = 'None';
-                }
-            } catch (error) {
-                console.error('Failed to load active project:', error);
-            }
-        }
-
+        // Settings management
         async function saveSettings() {
-            const statusDiv = document.getElementById('settings-status');
+            const config = {
+                model: document.getElementById('model').value,
+                response_style: document.getElementById('response_style').value,
+                temperature: parseFloat(document.getElementById('temperature').value),
+                max_context_turns: parseInt(document.getElementById('max_context_turns').value)
+            };
+
+            const statusDiv = document.getElementById('save-status');
             statusDiv.style.display = 'block';
             statusDiv.className = 'status-loading';
-            statusDiv.textContent = 'Saving settings...';
-            
+            statusDiv.textContent = '⚙️ Saving settings...';
+
             try {
-                const config = {
-                    model: document.getElementById('modelSelect').value,
-                    response_style: document.getElementById('styleSelect').value,
-                    temperature: parseFloat(document.getElementById('tempSlider').value),
-                    max_context_turns: parseInt(document.getElementById('maxContextTurns').value)
-                };
-                
                 const response = await fetch('/api/config', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(config)
                 });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    statusDiv.className = 'status-success';
-                    statusDiv.textContent = '✅ Settings saved successfully!';
-                    
-                    // Save local preferences
-                    localStorage.setItem('ue5_verbose_logging', document.getElementById('verboseLogging').checked);
-                    localStorage.setItem('ue5_auto_scroll', document.getElementById('autoScroll').checked);
-                    localStorage.setItem('ue5_backend_url', document.getElementById('backendUrl').value);
-                } else {
-                    throw new Error('Failed to save settings');
-                }
-                
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 3000);
-            } catch (error) {
-                statusDiv.className = 'status-error';
-                statusDiv.textContent = '❌ Failed to save settings: ' + error.message;
-            }
-        }
 
-        async function resetToDefaults() {
-            if (!confirm('Reset all settings to default values?')) {
-                return;
-            }
-            
-            // Reset UI to defaults
-            document.getElementById('modelSelect').value = 'gpt-4o-mini';
-            document.getElementById('styleSelect').value = 'balanced';
-            document.getElementById('tempSlider').value = 0.7;
-            document.getElementById('tempValue').textContent = '0.7';
-            document.getElementById('maxTokensSlider').value = 1500;
-            document.getElementById('maxTokensValue').textContent = '1500';
-            document.getElementById('maxContextTurns').value = 6;
-            document.getElementById('verboseLogging').checked = false;
-            document.getElementById('autoScroll').checked = true;
-            document.getElementById('backendUrl').value = 'https://ue5-assistant-noahbutcher97.replit.app';
-            
-            // Save to backend
-            saveSettings();
-        }
-
-        async function testOpenAIConnection() {
-            const statusDiv = document.getElementById('settings-status');
-            statusDiv.style.display = 'block';
-            statusDiv.className = 'status-loading';
-            statusDiv.textContent = 'Testing OpenAI connection...';
-            
-            try {
-                const response = await fetch('/ping_openai');
-                const result = await response.json();
-                
-                if (result.openai_status === 'connected') {
-                    statusDiv.className = 'status-success';
-                    statusDiv.innerHTML = `✅ OpenAI connected! Response: ${result.response || 'pong'}`;
-                } else {
-                    statusDiv.className = 'status-error';
-                    statusDiv.textContent = '❌ ' + (result.error || 'Connection failed');
-                }
-            } catch (error) {
-                statusDiv.className = 'status-error';
-                statusDiv.textContent = '❌ Connection test failed: ' + error.message;
-            }
-        }
-
-        async function triggerAutoUpdate() {
-            const statusDiv = document.getElementById('settings-status');
-            statusDiv.style.display = 'block';
-            statusDiv.className = 'status-loading';
-            statusDiv.innerHTML = '📢 Triggering auto-update for connected UE5 clients...';
-            
-            try {
-                const response = await fetch('/api/trigger_auto_update', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' }
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    statusDiv.className = 'status-success';
-                    statusDiv.innerHTML = `✅ Auto-update triggered!<br>
-                        📊 ${result.clients_notified} client(s) notified<br>
-                        ${result.clients_failed > 0 ? `⚠️ ${result.clients_failed} client(s) failed` : '✨ All clients updated successfully'}`;
-                } else {
-                    statusDiv.className = 'status-error';
-                    statusDiv.textContent = '❌ ' + (result.error || 'Update trigger failed');
-                }
-            } catch (error) {
-                statusDiv.className = 'status-error';
-                statusDiv.textContent = '❌ Auto-update failed: ' + error.message;
-            }
-        }
-
-        async function testEndpoint(endpoint, method = 'GET') {
-            const resultDiv = document.getElementById('api-test-result');
-            const outputDiv = document.getElementById('api-test-output');
-            
-            resultDiv.style.display = 'block';
-            outputDiv.textContent = 'Testing endpoint...';
-            
-            try {
-                const response = await fetch(endpoint, { method });
                 const data = await response.json();
                 
-                outputDiv.textContent = JSON.stringify(data, null, 2);
-                
-                if (response.ok) {
-                    resultDiv.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                if (data.success) {
+                    statusDiv.className = 'status-success';
+                    statusDiv.textContent = '✅ Settings saved successfully!';
                 } else {
-                    resultDiv.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                    throw new Error(data.error || 'Failed to save');
                 }
             } catch (error) {
-                outputDiv.textContent = 'Error: ' + error.message;
-                resultDiv.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                statusDiv.className = 'status-error';
+                statusDiv.textContent = `❌ Error: ${error.message}`;
             }
+
+            setTimeout(() => statusDiv.style.display = 'none', 3000);
         }
 
-        async function checkSystemStatus() {
-            // Check backend status
-            try {
-                const healthResponse = await fetch('/health');
-                const healthData = await healthResponse.json();
-                
-                const backendStatus = document.getElementById('backend-status');
-                if (healthResponse.ok) {
-                    backendStatus.innerHTML = '<span style="color: #10b981;">✅ Online</span>';
-                    document.getElementById('version-info').textContent = healthData.version || 'v3.2';
-                } else {
-                    backendStatus.innerHTML = '<span style="color: #ef4444;">❌ Offline</span>';
-                }
-            } catch (error) {
-                document.getElementById('backend-status').innerHTML = '<span style="color: #ef4444;">❌ Unreachable</span>';
-            }
-            
-            // Check Deploy Agent status
-            try {
-                const agentResponse = await fetch('http://localhost:7865/status');
-                const deployStatus = document.getElementById('deploy-agent-status');
-                
-                if (agentResponse.ok) {
-                    deployStatus.innerHTML = '<span style="color: #10b981;">✅ Running</span>';
-                } else {
-                    deployStatus.innerHTML = '<span style="color: #fbbf24;">⚠️ Not running</span>';
-                }
-            } catch (error) {
-                document.getElementById('deploy-agent-status').innerHTML = '<span style="color: #fbbf24;">⚠️ Not detected</span>';
-            }
-            
-            // Check OpenAI status
-            try {
-                const openaiResponse = await fetch('/ping_openai');
-                const openaiData = await openaiResponse.json();
-                
-                const openaiStatus = document.getElementById('openai-status');
-                if (openaiData.openai_status === 'connected') {
-                    openaiStatus.innerHTML = '<span style="color: #10b981;">✅ Connected</span>';
-                } else {
-                    openaiStatus.innerHTML = '<span style="color: #ef4444;">❌ Disconnected</span>';
-                }
-            } catch (error) {
-                document.getElementById('openai-status').innerHTML = '<span style="color: #ef4444;">❌ Error</span>';
-            }
+        async function resetSettings() {
+            document.getElementById('model').value = 'gpt-4o-mini';
+            document.getElementById('response_style').value = 'descriptive';
+            document.getElementById('temperature').value = 0.7;
+            document.getElementById('temp-value').textContent = '0.7';
+            document.getElementById('max_context_turns').value = 6;
+            document.getElementById('turns-value').textContent = '6';
+            await saveSettings();
         }
 
-        // Check Deploy Agent status on page load
-        async function checkDeployAgentStatus() {
-            const indicator = document.getElementById('deploy-agent-indicator');
-            const statusText = document.getElementById('agent-status-text');
-            const deployBadge = document.getElementById('deploy-badge');
-            
-            try {
-                const response = await fetch('http://localhost:7865/status', { signal: AbortSignal.timeout(2000) });
-                if (response.ok) {
-                    indicator.style.display = 'block';
-                    indicator.style.background = 'rgba(16,185,129,0.1)';
-                    indicator.style.borderColor = 'rgba(16,185,129,0.3)';
-                    statusText.style.color = '#10b981';
-                    statusText.textContent = '✅ Running (instant deploy enabled)';
-                    if (deployBadge) deployBadge.textContent = '⚡ Ready!';
-                }
-            } catch (error) {
-                // Agent not running - don't show indicator to avoid clutter
-                indicator.style.display = 'none';
-            }
+        // Conversations
+        async function loadConversations() {
+            // Placeholder - implement if needed
         }
-        
-        // Initialize WebSocket on page load
-        initWebSocket();
-        
-        // Check deploy agent
-        checkDeployAgentStatus();
 
-        // Enter key support
-        document.getElementById('projectQuery').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') queryProject();
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            loadProjects();
+            initWebSocket();
+            
+            // Load saved connection mode
+            const savedMode = localStorage.getItem('connectionMode') || 'http';
+            setConnectionMode(savedMode);
         });
     </script>
 </body>
