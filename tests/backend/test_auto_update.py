@@ -35,17 +35,17 @@ def test_backend_connection():
         return False
 
 def test_download_endpoint():
-    """Test the POST download endpoint for CDN bypass."""
-    print("\n🧪 Test 3: Download endpoint (CDN bypass test)...")
+    """Test the download endpoint."""
+    print("\n🧪 Test 3: Download endpoint test...")
     try:
         import urllib.request
         from AIAssistant.auto_update import get_backend_url  # type: ignore
         
         backend_url = get_backend_url()
-        download_url = f"{backend_url}/api/download_client_bundle"
+        download_url = f"{backend_url}/api/download_client"
         
         print(f"   📡 Testing: {download_url}")
-        req = urllib.request.Request(download_url, method='POST')
+        req = urllib.request.Request(download_url)
         
         with urllib.request.urlopen(req, timeout=10) as response:
             data = response.read()
@@ -119,9 +119,9 @@ def test_zip_contents():
         from AIAssistant.auto_update import get_backend_url  # type: ignore
         
         backend_url = get_backend_url()
-        download_url = f"{backend_url}/api/download_client_bundle"
+        download_url = f"{backend_url}/api/download_client"
         
-        req = urllib.request.Request(download_url, method='POST')
+        req = urllib.request.Request(download_url)
         with urllib.request.urlopen(req, timeout=10) as response:
             zip_data = response.read()
         

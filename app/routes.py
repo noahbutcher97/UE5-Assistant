@@ -489,6 +489,53 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             headers=headers
         )
     
+    @app.get("/api/download_client")
+    async def download_client():
+        """
+        Download client bundle via GET (reliable Replit-compatible endpoint).
+        This is the primary download endpoint used by UE5 auto-update.
+        """
+        import io
+        import time
+        import zipfile
+        from pathlib import Path
+
+        from fastapi.responses import StreamingResponse
+        
+        # Create in-memory zip
+        zip_buffer = io.BytesIO()
+        
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            # Add all AIAssistant files (fresh read from filesystem)
+            client_dir = Path("ue5_client/AIAssistant")
+            
+            if client_dir.exists():
+                for file_path in client_dir.rglob("*"):
+                    if file_path.is_file():
+                        arcname = str(file_path.relative_to("ue5_client"))
+                        zip_file.write(file_path, arcname)
+        
+        zip_buffer.seek(0)
+        
+        # Add cache-busting headers
+        headers = {
+            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.zip",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "X-Content-Version": str(int(time.time()))
+        }
+        
+        return StreamingResponse(
+            zip_buffer,
+            media_type="application/zip",
+            headers=headers
+        )
+    
+    @app.get("/api/download_client_bundle")
+    async def download_client_bundle_get():
+        """Alias for /api/download_client (backwards compatibility)."""
+        return await download_client()
 
     @app.get("/health")
     async def health_check():

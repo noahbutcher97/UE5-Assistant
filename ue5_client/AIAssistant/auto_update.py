@@ -71,7 +71,7 @@ def check_and_update():
     unreal.log(f"📡 Backend: {backend_url}")
     
     try:
-        # Download ZIP from backend
+        # Download ZIP from backend (GET for Replit proxy compatibility)
         unreal.log(f"⬇️  Downloading latest client from: {download_url}")
         
         with urllib.request.urlopen(download_url, timeout=30) as response:
