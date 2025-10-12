@@ -325,6 +325,18 @@
             <div style="margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(0,217,255,0.2);">
                 <h3 style="color: #00d9ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">🚀 Deployment Options</h3>
                 
+                <!-- Step 1: Download Deploy Agent Installer (Always Visible) -->
+                <div style="margin-bottom: 15px; padding: 12px; background: rgba(139,92,246,0.1); border-radius: 8px; border: 1px solid rgba(139,92,246,0.3);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: #8b5cf6; font-size: 14px; font-weight: 600;">Step 1: Setup Deploy Agent (One-time)</span>
+                    </div>
+                    <a href="/api/deploy_agent_installer" download style="display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 10px; text-decoration: none; color: white; border-radius: 6px; font-size: 14px;">
+                        <span style="font-size: 18px;">⚡</span>
+                        <span>Download Deploy Agent Installer (.bat)</span>
+                    </a>
+                    <small style="color: #8b95a5; margin-top: 8px; display: block; text-align: center;">Run the .bat file, then keep PowerShell window open</small>
+                </div>
+                
                 <!-- Deploy Agent Status Indicator -->
                 <div id="deploy-agent-indicator" style="margin-bottom: 15px; padding: 10px; border-radius: 8px; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); display: none;">
                     <div style="display: flex; align-items: center; gap: 8px;">
