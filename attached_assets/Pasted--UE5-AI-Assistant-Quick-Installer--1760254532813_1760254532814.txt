@@ -1,0 +1,118 @@
+================================================
+   UE5 AI Assistant - Quick Installer
+================================================                                                                                                                                                                                                Please select your UE5 project folder in the dialog...                                                                                                                                                                                          Selected: D:\UnrealProjects\5.6\UE5_Assistant                                                                           
+Downloading enhanced installer...
+
+================================================
+  Running Enhanced Installer...
+================================================
+
+=================================================
+🚀 UE5 AI Assistant - One-Click Installer
+=================================================
+
+📁 Project: D:\UnrealProjects\5.6\UE5_Assistant
+📥 Download URL: https://ue5-assistant-noahbutcher97.replit.app/api/download_client
+📂 Install to: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant
+
+⬇️  Downloading latest client...
+   Source: https://ue5-assistant-noahbutcher97.replit.app/api/download_client
+✅ Downloaded: 0.16 MB in 1.9s
+   Saved to: C:\Users\posne\AppData\Local\Temp\ue5_assistant_client.zip
+
+📦 Extracting files...
+⚠️  Existing installation found!
+   Old installation has 52 files
+   Creating backup...
+💾 Backup created: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant.backup_20251012_033504
+   (You can delete this backup folder after confirming the new installation works)
+
+   Extracting to: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python
+✅ Extracted 52 files successfully
+
+   📄 File breakdown:
+      • Python files (.py): 28
+      • Config files (.json, .txt): 0
+      • Other files: 24
+
+   🔑 Key modules installed:
+      ✅ main.py
+      ✅ startup.py
+      ✅ config.py
+      ✅ auto_update.py
+      ✅ websocket_client.py
+      ✅ http_polling_client.py
+
+🧹 Cleaning up...
+   Deleted temporary file: C:\Users\posne\AppData\Local\Temp\ue5_assistant_client.zip
+
+🔧 Configuring fully automated startup...
+
+   📝 Creating init_unreal.py...
+      Location: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\init_unreal.py
+      Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+      ✅ init_unreal.py created successfully (581 bytes)
+
+   📝 Creating backup manual startup script...
+      Location: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\_manual_start.py
+      ✅ _manual_start.py created successfully (185 bytes)
+
+   🔍 Verifying installation...
+      ✅ AIAssistant module directory
+      ✅ init_unreal.py (auto-startup)
+      ✅ main.py (core module)
+      ✅ startup.py (configuration)
+      ✅ config.py (settings)
+
+   ✅ All verification checks passed!
+
+=================================================
+🎉 INSTALLATION COMPLETE!
+=================================================
+
+📊 Installation Summary:
+   Project: D:\UnrealProjects\5.6\UE5_Assistant
+   Files Installed: 52
+      • Python modules: 28
+      • Config files: 0
+   Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+   Auto-startup: ✅ ENABLED (init_unreal.py)
+
+📁 Key Files Created:
+   ✅ D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\init_unreal.py
+      → Auto-executes on UE5 startup
+   ✅ D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant
+      → AIAssistant module (52 files)
+   ✅ D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\_manual_start.py
+      → Backup manual startup script
+   📦 D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant.backup_20251012_033504
+      → Old installation backup
+
+🚀 Next Steps:
+   1. Close this installer
+   2. Launch/Restart your UE5 Editor
+   3. Watch for auto-startup in Output Log!
+
+✨ What Will Happen Automatically:
+   • UE5 executes: Content/Python/init_unreal.py
+   • Backend configured: https://ue5-assistant-noahbutcher97.replit.app
+   • AI Assistant initializes
+   • Dashboard connection established
+   • Runs every time you open this project
+
+🔧 Troubleshooting (if auto-start fails):
+   1. Check UE5 Output Log for Python errors
+   2. Verify Python Plugin is enabled in UE5
+   3. Manual backup command:
+      exec(open(r'D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\_manual_start.py').read())
+
+🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard
+
+=================================================
+✅ Installation Complete!
+=================================================
+📂 Installed 52 files to: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant
+
+🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard
+
+   Press any key to exit...
