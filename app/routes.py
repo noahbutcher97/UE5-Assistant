@@ -341,7 +341,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     
     @app.get("/api/deploy_agent")
     async def get_deploy_agent_legacy():
-        """Legacy GET endpoint (kept for backwards compatibility)."""
+        """DEPRECATED: GET endpoint cached by CDN. Use POST /api/deploy_agent_bootstrap."""
         from pathlib import Path
 
         from fastapi.responses import Response
@@ -353,7 +353,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 content=content,
                 media_type="text/plain",
                 headers={
-                    "Content-Disposition": "attachment; filename=deploy_agent.py"
+                    "Content-Disposition": "attachment; filename=deploy_agent.py",
+                    "X-Deprecated": "true",
+                    "Warning": "299 - \"Use POST /api/deploy_agent_bootstrap for uncached version\""
                 }
             )
         return {"error": "Deploy agent not found"}
@@ -380,7 +382,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     
     @app.get("/api/deploy_agent_bootstrap")
     async def deploy_agent_bootstrap_get():
-        """Legacy GET endpoint (will be CDN cached, use POST instead)."""
+        """DEPRECATED: GET endpoint cached by CDN. Use POST /api/deploy_agent_bootstrap."""
         from pathlib import Path
 
         from fastapi.responses import Response
@@ -529,7 +531,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     
     @app.get("/api/download_client")
     async def download_client():
-        """Generate downloadable client package with setup instructions."""
+        """DEPRECATED: GET endpoint cached by CDN. Use POST /api/download_client_bundle."""
         import io
         import zipfile
         from pathlib import Path
