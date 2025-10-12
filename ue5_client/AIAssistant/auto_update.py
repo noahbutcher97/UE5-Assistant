@@ -15,7 +15,7 @@ import importlib
 import threading
 import urllib.request
 import urllib.error
-import zipfile
+import tarfile
 
 # Version marker for tracking module updates (changes with each update)
 _version_marker = str(uuid.uuid4())[:8]
@@ -175,15 +175,15 @@ def _do_background_update():
     print(f"📦 Version: {_version_marker}")
     
     try:
-        # Download ZIP from backend
+        # Download tar.gz from backend
         print(f"⬇️  Downloading: {download_url}")
         
         with urllib.request.urlopen(download_url, timeout=30) as response:
-            zip_data = response.read()
+            tar_data = response.read()
         
-        print(f"✅ Downloaded {len(zip_data)} bytes")
+        print(f"✅ Downloaded {len(tar_data)} bytes")
         
-        # Extract ZIP (pure Python, no Unreal API)
+        # Extract tar.gz (pure Python, no Unreal API)
         import pathlib
         
         # Find project dir from current module path
@@ -194,18 +194,19 @@ def _do_background_update():
         
         updated_files = []
         
-        with zipfile.ZipFile(io.BytesIO(zip_data)) as zip_file:
-            for file_info in zip_file.filelist:
-                if file_info.filename.endswith('/'):
-                    continue
-                
-                target_path = os.path.join(target_base, file_info.filename)
-                os.makedirs(os.path.dirname(target_path), exist_ok=True)
-                
-                with open(target_path, 'wb') as target_file:
-                    target_file.write(zip_file.read(file_info.filename))
-                
-                updated_files.append(file_info.filename)
+        with tarfile.open(fileobj=io.BytesIO(tar_data), mode='r:gz') as tar_file:
+            for member in tar_file.getmembers():
+                if member.isfile():
+                    # Extract file content
+                    file_content = tar_file.extractfile(member).read()
+                    
+                    target_path = os.path.join(target_base, member.name)
+                    os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                    
+                    with open(target_path, 'wb') as target_file:
+                        target_file.write(file_content)
+                    
+                    updated_files.append(member.name)
         
         print(f"✅ Updated {len(updated_files)} files")
         
@@ -250,36 +251,37 @@ def _do_update():
     unreal.log(f"📦 Current Version: {_version_marker}")
     
     try:
-        # Download ZIP from backend
+        # Download tar.gz from backend
         unreal.log(f"⬇️  Downloading latest client from: {download_url}")
         
         with urllib.request.urlopen(download_url, timeout=30) as response:
-            zip_data = response.read()
+            tar_data = response.read()
         
-        unreal.log(f"✅ Downloaded {len(zip_data)} bytes")
+        unreal.log(f"✅ Downloaded {len(tar_data)} bytes")
         
-        # Extract ZIP
+        # Extract tar.gz
         project_dir = unreal.Paths.project_dir()
         target_base = os.path.join(project_dir, "Content", "Python")
         
         updated_files = []
         
-        with zipfile.ZipFile(io.BytesIO(zip_data)) as zip_file:
-            for file_info in zip_file.filelist:
-                if file_info.filename.endswith('/'):
-                    continue  # Skip directories
-                
-                # Extract to target
-                target_path = os.path.join(target_base, file_info.filename)
-                
-                # Create parent directories
-                os.makedirs(os.path.dirname(target_path), exist_ok=True)
-                
-                # Write file
-                with open(target_path, 'wb') as target_file:
-                    target_file.write(zip_file.read(file_info.filename))
-                
-                updated_files.append(file_info.filename)
+        with tarfile.open(fileobj=io.BytesIO(tar_data), mode='r:gz') as tar_file:
+            for member in tar_file.getmembers():
+                if member.isfile():
+                    # Extract file content
+                    file_content = tar_file.extractfile(member).read()
+                    
+                    # Extract to target
+                    target_path = os.path.join(target_base, member.name)
+                    
+                    # Create parent directories
+                    os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                    
+                    # Write file
+                    with open(target_path, 'wb') as target_file:
+                        target_file.write(file_content)
+                    
+                    updated_files.append(member.name)
         
         unreal.log(f"✅ Updated {len(updated_files)} files")
         

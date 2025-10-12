@@ -101,7 +101,20 @@ class HTTPPollingClient:
             print(f"[HTTP] Making registration POST request to: {url}")
             print(f"[HTTP] Payload: {payload}")
             
-            response = requests.post(url, json=payload, timeout=5)
+            # Log just before making the request
+            print(f"[HTTP] About to send POST request with requests library...")
+            try:
+                response = requests.post(url, json=payload, timeout=5)
+                print(f"[HTTP] Request completed! Got response object")
+            except requests.exceptions.Timeout:
+                print(f"[HTTP] ❌ Request timed out after 5 seconds!")
+                raise
+            except requests.exceptions.ConnectionError as ce:
+                print(f"[HTTP] ❌ Connection error: {ce}")
+                raise
+            except requests.exceptions.RequestException as re:
+                print(f"[HTTP] ❌ Request exception: {re}")
+                raise
             
             print(f"[HTTP] Registration response status: {response.status_code}")
             print(f"[HTTP] Registration response text: {response.text[:200] if response.text else 'No response body'}")

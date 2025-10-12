@@ -504,18 +504,19 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         """
         Download client bundle via GET (reliable Replit-compatible endpoint).
         This is the primary download endpoint used by UE5 auto-update.
+        Returns a proper tar.gz archive.
         """
         import io
+        import tarfile
         import time
-        import zipfile
         from pathlib import Path
 
         from fastapi.responses import StreamingResponse
         
-        # Create in-memory zip
-        zip_buffer = io.BytesIO()
+        # Create in-memory tar.gz
+        tar_buffer = io.BytesIO()
         
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        with tarfile.open(fileobj=tar_buffer, mode='w:gz') as tar_file:
             # Add all AIAssistant files (fresh read from filesystem)
             client_dir = Path("ue5_client/AIAssistant")
             
@@ -523,13 +524,13 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 for file_path in client_dir.rglob("*"):
                     if file_path.is_file():
                         arcname = str(file_path.relative_to("ue5_client"))
-                        zip_file.write(file_path, arcname)
+                        tar_file.add(str(file_path), arcname=arcname)
         
-        zip_buffer.seek(0)
+        tar_buffer.seek(0)
         
         # Add cache-busting headers
         headers = {
-            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.zip",
+            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.tar.gz",
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Pragma": "no-cache",
             "Expires": "0",
@@ -537,8 +538,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         }
         
         return StreamingResponse(
-            zip_buffer,
-            media_type="application/zip",
+            tar_buffer,
+            media_type="application/gzip",
             headers=headers
         )
     
@@ -1235,53 +1236,54 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                 if active_project:
                     project_id = active_project.get("project_id")
                     
-                    # Try to send command to UE5
-                    try:
-                        ue5_response = await manager.send_command_to_ue5(
-                            project_id,
-                            {
+                    # Try to send command to UE5 (only if we have a valid project_id)
+                    if project_id:
+                        try:
+                            ue5_response = await manager.send_command_to_ue5(
+                                project_id,
+                                {
                                 "type": "execute_action",
                                 "action": action,
                                 "params": {}
                             }
                         )
                         
-                        if ue5_response and ue5_response.get("success"):
-                            # Got data from UE5! Now ask AI to format it nicely
-                            ue5_data = ue5_response.get("data", {})
-                            
-                            # Second AI call to format the raw UE5 data
-                            format_response = openai.chat.completions.create(
-                                model=app_config.get("model", "gpt-4o-mini"),
-                                messages=[
-                                    {"role": "system", "content": f"You are an AI assistant. Format this UE5 data into a helpful response for: {query}"},
-                                    {"role": "user", "content": f"Raw data from UE5:\n{ue5_data}\n\nOriginal question: {query}"}
-                                ],
-                                temperature=0.7,
-                                max_tokens=1500
-                            )
-                            
-                            formatted_response = (format_response.choices[0].message.content or "").strip()
-                            
+                            if ue5_response and ue5_response.get("success"):
+                                # Got data from UE5! Now ask AI to format it nicely
+                                ue5_data = ue5_response.get("data", {})
+                                
+                                # Second AI call to format the raw UE5 data
+                                format_response = openai.chat.completions.create(
+                                    model=app_config.get("model", "gpt-4o-mini"),
+                                    messages=[
+                                        {"role": "system", "content": f"You are an AI assistant. Format this UE5 data into a helpful response for: {query}"},
+                                        {"role": "user", "content": f"Raw data from UE5:\n{ue5_data}\n\nOriginal question: {query}"}
+                                    ],
+                                    temperature=0.7,
+                                    max_tokens=1500
+                                )
+                                
+                                formatted_response = (format_response.choices[0].message.content or "").strip()
+                                
+                                return {
+                                    "response": formatted_response,
+                                    "project_context": active_project["name"] if active_project else None,
+                                    "ue5_data": ue5_data
+                                }
+                            else:
+                                # UE5 didn't respond properly
+                                error_msg = ue5_response.get("error", "No response") if ue5_response else "Connection timeout"
+                                return {
+                                    "response": f"⚠️ UE5 client didn't respond to: {action}\n\nError: {error_msg}\n\nMake sure your UE5 project has the AI Assistant running (import AIAssistant.main in UE5 Python Console).",
+                                    "project_context": active_project["name"] if active_project else None
+                                }
+                        except Exception as e:
+                            # Connection failed - inform user
                             return {
-                                "response": formatted_response,
+                                "response": f"🔄 This query requires live data from your UE5 editor.\n\nAction needed: {action}\n\nError connecting to UE5: {str(e)}\n\nTo enable automatic data collection, make sure your UE5 project has the AI Assistant client running.",
                                 "project_context": active_project["name"] if active_project else None,
-                                "ue5_data": ue5_data
+                                "ue_request": action
                             }
-                        else:
-                            # UE5 didn't respond properly
-                            error_msg = ue5_response.get("error", "No response") if ue5_response else "Connection timeout"
-                            return {
-                                "response": f"⚠️ UE5 client didn't respond to: {action}\n\nError: {error_msg}\n\nMake sure your UE5 project has the AI Assistant running (import AIAssistant.main in UE5 Python Console).",
-                                "project_context": active_project["name"] if active_project else None
-                            }
-                    except Exception as e:
-                        # Connection failed - inform user
-                        return {
-                            "response": f"🔄 This query requires live data from your UE5 editor.\n\nAction needed: {action}\n\nError connecting to UE5: {str(e)}\n\nTo enable automatic data collection, make sure your UE5 project has the AI Assistant client running.",
-                            "project_context": active_project["name"] if active_project else None,
-                            "ue_request": action
-                        }
                 else:
                     # No active project
                     return {
