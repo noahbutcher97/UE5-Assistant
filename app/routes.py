@@ -996,6 +996,7 @@ except Exception as e:
         Uses active project context for accurate responses.
         """
         from app.project_registry import get_registry
+        import openai
         
         query = request.get("query", "")
         
@@ -1007,18 +1008,37 @@ except Exception as e:
             registry = get_registry()
             active_project = registry.get_active_project()
             
-            # Enrich query with project context if available
+            # Build context-aware system message
             if active_project:
-                context_prefix = f"[Project: {active_project['name']}] "
-                enriched_query = context_prefix + query
+                project_name = active_project.get('name', 'Unknown')
+                project_path = active_project.get('path', '')
+                project_metadata = active_project.get('metadata', {})
+                
+                context = f"""You are an AI assistant for Unreal Engine 5 development.
+
+Active Project: {project_name}
+Path: {project_path}
+Metadata: {project_metadata}
+
+Provide helpful, accurate answers about this project. If you don't have specific data about files or assets, explain what information would be needed and suggest deploying the UE5 Python client for automatic project scanning."""
             else:
-                enriched_query = query
+                context = "You are an AI assistant for Unreal Engine 5 development. Provide helpful technical guidance."
             
-            # Use context-aware routing (execute_command expects "prompt" key)
-            command_response = await execute_command({"prompt": enriched_query})
+            # Call OpenAI API
+            response = openai.chat.completions.create(
+                model=app_config.get("model", "gpt-4o-mini"),
+                messages=[
+                    {"role": "system", "content": context},
+                    {"role": "user", "content": query}
+                ],
+                temperature=app_config.get("temperature", 0.7),
+                max_tokens=1500
+            )
+            
+            ai_response = response.choices[0].message.content.strip()
             
             return {
-                "response": command_response.get("response", ""),
+                "response": ai_response,
                 "project_context": active_project["name"] if active_project else None
             }
         except Exception as e:

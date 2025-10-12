@@ -1,5 +1,5 @@
 {
-  "active_project_id": "6d953fbbf247",
+  "active_project_id": "189fb60ac15d",
   "projects": {
     "6d953fbbf247": {
       "project_id": "6d953fbbf247",
@@ -17,10 +17,10 @@
       "version": "5.6",
       "metadata": {
         "manually_registered": true,
-        "registration_time": "2025-10-12T00:06:09.916Z"
+        "registration_time": "2025-10-12T00:08:20.617Z"
       },
-      "registered_at": "2025-10-12T00:06:09.988625",
-      "last_updated": "2025-10-12T00:06:09.988647"
+      "registered_at": "2025-10-12T00:08:20.699611",
+      "last_updated": "2025-10-12T00:08:20.699619"
     }
   }
 }
