@@ -1,0 +1,67 @@
+# UE5 AI Assistant - Quick Deploy Script
+# This script deploys the AI Assistant directly to your UE5 project
+
+param(
+    [Parameter(Mandatory=$true)]
+    [string]$ProjectPath
+)
+
+Write-Host "================================================" -ForegroundColor Cyan
+Write-Host "   UE5 AI Assistant - Quick Deploy" -ForegroundColor Cyan
+Write-Host "================================================" -ForegroundColor Cyan
+Write-Host ""
+
+# Validate project path
+if (!(Test-Path $ProjectPath)) {
+    Write-Host "[ERROR] Project path does not exist: $ProjectPath" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host "[1/2] Deploying files to: $ProjectPath" -ForegroundColor Yellow
+Write-Host ""
+
+# Call the working /api/deploy_client endpoint (POST bypasses CDN)
+$body = @{
+    project_path = $ProjectPath
+    overwrite = $true
+} | ConvertTo-Json
+
+try {
+    $response = Invoke-RestMethod -Method POST -Uri "https://ue5-assistant-noahbutcher97.replit.app/api/deploy_client" -Body $body -ContentType "application/json"
+    
+    if ($response.success) {
+        Write-Host "[SUCCESS] Deployed $($response.files_copied.Count) files!" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "Target: $($response.target_path)" -ForegroundColor Gray
+        Write-Host ""
+        
+        # Show new diagnostic files
+        $newFiles = $response.files_copied | Where-Object { $_ -match "diagnose|install_dependencies" }
+        if ($newFiles) {
+            Write-Host "New diagnostic tools:" -ForegroundColor Cyan
+            foreach ($file in $newFiles) {
+                Write-Host "  * $file" -ForegroundColor Green
+            }
+            Write-Host ""
+        }
+        
+        Write-Host "[2/2] Next Steps:" -ForegroundColor Yellow
+        Write-Host "  1. Open Unreal Editor" -ForegroundColor White
+        Write-Host "  2. Open Python Console (Tools -> Python Console)" -ForegroundColor White
+        Write-Host "  3. Run: import AIAssistant.install_dependencies" -ForegroundColor Cyan
+        Write-Host "  4. Then run: import AIAssistant.main" -ForegroundColor Cyan
+        Write-Host ""
+        Write-Host "[DONE] AI Assistant deployed successfully!" -ForegroundColor Green
+        
+    } else {
+        Write-Host "[ERROR] $($response.error)" -ForegroundColor Red
+        exit 1
+    }
+    
+} catch {
+    Write-Host "[ERROR] Failed to deploy: $_" -ForegroundColor Red
+    exit 1
+}
+
+Write-Host ""
+Write-Host "================================================" -ForegroundColor Cyan

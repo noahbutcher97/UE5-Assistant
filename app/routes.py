@@ -340,11 +340,28 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         return {"error": "Installer not found"}
     
     @app.get("/api/deploy_agent")
-    async def get_deploy_agent():
-        """Download the Deploy Agent Python script."""
+    async def get_deploy_agent_legacy():
+        """Legacy GET endpoint (kept for backwards compatibility)."""
         from fastapi.responses import Response
         from pathlib import Path
-        import time
+        
+        agent_path = Path("attached_assets/deploy_agent.py")
+        if agent_path.exists():
+            content = agent_path.read_text()
+            return Response(
+                content=content,
+                media_type="text/plain",
+                headers={
+                    "Content-Disposition": "attachment; filename=deploy_agent.py"
+                }
+            )
+        return {"error": "Deploy agent not found"}
+    
+    @app.post("/api/deploy_agent_bootstrap")
+    async def deploy_agent_bootstrap_post():
+        """Bootstrap endpoint for Deploy Agent (POST bypasses CDN cache)."""
+        from fastapi.responses import Response
+        from pathlib import Path
         
         agent_path = Path("attached_assets/deploy_agent.py")
         if agent_path.exists():
@@ -354,10 +371,25 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 media_type="text/plain",
                 headers={
                     "Content-Disposition": "attachment; filename=deploy_agent.py",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0",
-                    "X-Content-Version": str(int(time.time()))
+                    "Cache-Control": "no-cache, no-store, must-revalidate"
+                }
+            )
+        return {"error": "Deploy agent not found"}
+    
+    @app.get("/api/deploy_agent_bootstrap")
+    async def deploy_agent_bootstrap_get():
+        """Legacy GET endpoint (will be CDN cached, use POST instead)."""
+        from fastapi.responses import Response
+        from pathlib import Path
+        
+        agent_path = Path("attached_assets/deploy_agent.py")
+        if agent_path.exists():
+            content = agent_path.read_text()
+            return Response(
+                content=content,
+                media_type="text/plain",
+                headers={
+                    "Content-Disposition": "attachment; filename=deploy_agent.py"
                 }
             )
         return {"error": "Deploy agent not found"}
@@ -382,10 +414,23 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     
     @app.get("/api/installer_script")
     async def get_installer_script():
-        """Generate PowerShell installer script."""
+        """Generate PowerShell installer script (quick deploy version)."""
         from fastapi.responses import Response
         from pathlib import Path
         
+        # Try new quick_deploy script first
+        script_path = Path("quick_deploy.ps1")
+        if script_path.exists():
+            content = script_path.read_text()
+            return Response(
+                content=content,
+                media_type="text/plain",
+                headers={
+                    "Content-Disposition": "attachment; filename=quick_deploy.ps1"
+                }
+            )
+        
+        # Fallback to old installer
         script_path = Path("install_ue5_assistant.ps1")
         if script_path.exists():
             content = script_path.read_text()

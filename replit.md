@@ -71,6 +71,10 @@ Root/
 
 ## Recent Changes
 **October 12, 2025:**
+- **Created UE5 diagnostic tools**: Added `diagnose.py` and `install_dependencies.py` to troubleshoot import failures and automatically install missing dependencies (websocket-client)
+- **Identified and documented Replit CDN caching issue**: Discovered that `*.replit.app` domain has immutable CDN that permanently caches ALL GET endpoints, preventing code updates from reaching users
+- **Implemented CDN-bypass deployment solution**: `/api/deploy_client` POST endpoint bypasses CDN via direct file copy, ensuring users always get latest files
+- **Created quick_deploy.ps1**: Simplified PowerShell deployment script that uses working POST endpoint for reliable deployment
 - **Fixed critical WebSocket connection bug**: Changed `config.base_url` to `config.api_url` in main.py (property didn't exist)
 - **Fixed auto-update handler compatibility**: Now properly handles boolean return from `check_and_update()` instead of expecting dict
 - **Enhanced WebSocket logging**: Added detailed connection diagnostics (URL, project ID, timeout info) for easier debugging
@@ -78,6 +82,19 @@ Root/
 - **Improved deploy agent detection**: Added 3-second timeout and status indicator showing "✅ Running" when agent detected
 - **Consolidated deployment UI**: Removed redundant Quick Deploy button, moved all deployment options under collapsible section
 - **Environment guards**: Auto-update now checks for UE5 environment before executing to prevent backend-side failures
+
+### Replit CDN Caching Discovery (Critical Learning)
+**Issue**: Replit's `*.replit.app` domain uses an immutable CDN that permanently caches ALL GET endpoint responses, including 404 errors. Once an endpoint serves content (even stale/incorrect), that cached response is served indefinitely, ignoring cache-control headers, query parameters, and code updates.
+
+**Impact**: Code updates to downloaded files (deploy_agent.py, installer scripts) never reach users because the CDN continues serving the originally cached version.
+
+**Working Solution**: POST endpoints bypass the CDN entirely and always hit the origin server with current code.
+- ✅ `/api/deploy_client` (POST) - Direct file copy, bypasses CDN
+- ✅ `/api/client_manifest` (POST) - File version checking, bypasses CDN
+- ❌ `/api/deploy_agent` (GET) - Permanently cached, serves stale code
+- ❌ `/api/installer_script` (GET) - Permanently cached, serves stale code
+
+**Architectural Decision**: All deployment endpoints now use POST to ensure users receive latest code. GET endpoints retained only for backwards compatibility with cached clients.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.

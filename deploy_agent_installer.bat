@@ -29,9 +29,9 @@ echo.
 echo Project: %PROJECT_PATH%
 echo.
 
-:: Download deploy agent
+:: Download deploy agent (POST bypasses CDN cache)
 echo [1/3] Downloading Deploy Agent...
-powershell -Command "$timestamp = Get-Date -UFormat %%s; Invoke-WebRequest -Uri ('https://ue5-assistant-noahbutcher97.replit.app/api/deploy_agent?v=' + $timestamp) -OutFile 'deploy_agent.py'"
+powershell -Command "$response = Invoke-RestMethod -Method POST -Uri 'https://ue5-assistant-noahbutcher97.replit.app/api/deploy_agent_bootstrap' -Body '{}' -ContentType 'application/json'; Set-Content -Path 'deploy_agent.py' -Value $response"
 
 if not exist deploy_agent.py (
     echo [ERROR] Failed to download deploy_agent.py
