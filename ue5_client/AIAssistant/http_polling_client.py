@@ -38,6 +38,11 @@ class HTTPPollingClient:
         self.heartbeat_interval = 10.0  # seconds
         self.last_heartbeat = 0
         
+        # Auto-reconnect settings
+        self.consecutive_failures = 0
+        self.max_consecutive_failures = 3
+        self.reconnect_delay = 5.0  # seconds
+        
     def set_action_handler(self, handler: Callable[[str, Dict[str, Any]], Dict[str, Any]]):
         """
         Set the handler for incoming action commands.
@@ -111,13 +116,30 @@ class HTTPPollingClient:
                     # Process each command
                     for cmd in commands:
                         self._handle_command(cmd)
+                    
+                    # Reset failure counter on success
+                    self.consecutive_failures = 0
+                    self.connected = True
+                
+                else:
+                    # Non-200 status code
+                    self.consecutive_failures += 1
+                    print(f"⚠️ Poll failed with status {response.status_code} (attempt {self.consecutive_failures}/{self.max_consecutive_failures})")
+                    
+                    if self.consecutive_failures >= self.max_consecutive_failures:
+                        self._attempt_reconnect()
                 
                 # Wait before next poll
                 time.sleep(self.poll_interval)
                 
             except Exception as e:
-                print(f"⚠️ Polling error: {e}")
-                time.sleep(self.poll_interval * 2)  # Wait longer on error
+                self.consecutive_failures += 1
+                print(f"⚠️ Polling error: {e} (attempt {self.consecutive_failures}/{self.max_consecutive_failures})")
+                
+                if self.consecutive_failures >= self.max_consecutive_failures:
+                    self._attempt_reconnect()
+                else:
+                    time.sleep(self.poll_interval * 2)  # Wait longer on error
     
     def _send_heartbeat(self):
         """Send heartbeat to keep connection alive."""
@@ -129,6 +151,40 @@ class HTTPPollingClient:
             )
         except Exception as e:
             print(f"⚠️ Heartbeat failed: {e}")
+    
+    def _attempt_reconnect(self):
+        """Attempt to reconnect after multiple failures."""
+        self.connected = False
+        print(f"🔄 Backend connection lost. Attempting to re-register in {self.reconnect_delay}s...")
+        time.sleep(self.reconnect_delay)
+        
+        try:
+            # Re-register with backend
+            response = requests.post(
+                f"{self.base_url}/api/ue5/register_http",
+                json={
+                    "project_id": self.project_id,
+                    "project_name": self.project_name
+                },
+                timeout=5
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if result.get("success"):
+                    self.connected = True
+                    self.consecutive_failures = 0
+                    print(f"✅ Successfully re-registered: {self.project_id}")
+                    return True
+            
+            print(f"❌ Re-registration failed: {response.status_code}")
+            
+        except Exception as e:
+            print(f"❌ Re-registration error: {e}")
+        
+        # Reset counter to try again after more failures
+        self.consecutive_failures = 0
+        return False
     
     def _handle_command(self, cmd: dict):
         """Handle incoming command from backend."""
