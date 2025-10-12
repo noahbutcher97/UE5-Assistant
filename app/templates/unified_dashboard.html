@@ -1018,14 +1018,17 @@
             
         } catch (error) {
             console.error('Deploy error details:', error);
+            console.error('Error type:', error.constructor.name);
+            console.error('Error stack:', error.stack);
             
             // Show actual error message for debugging
             const errorMessage = error.message || 'Unknown error';
+            const errorType = error.constructor.name || 'Error';
             
             statusDiv.innerHTML = `
                 <div style="background: rgba(255, 107, 53, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 107, 53, 0.3);">
                     <h3 style="color: #ff6b35; margin-top: 0;">❌ Deployment Error</h3>
-                    <p style="color: #ff6b35; font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">${errorMessage}</p>
+                    <p style="color: #ff6b35; font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">${errorType}: ${errorMessage}</p>
                     <p style="color: #8b95a5; margin-top: 15px;">Troubleshooting:</p>
                     <ul style="color: #8b95a5; margin: 10px 0;">
                         <li>Make sure Deploy Agent is running (check the PowerShell window)</li>
