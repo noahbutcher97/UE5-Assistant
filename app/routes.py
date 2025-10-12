@@ -1631,3 +1631,100 @@ Return ONLY the JSON array, no explanation."""
         })
         
         return {"success": True}
+    
+    @app.post("/api/trigger_auto_update")
+    async def trigger_auto_update():
+        """Trigger auto-update on all connected UE5 clients."""
+        from app.websocket_manager import get_manager
+        import time
+        
+        print("📢 Broadcasting auto-update to all UE5 clients...")
+        
+        try:
+            manager = get_manager()
+            
+            # Send auto-update command to all UE5 clients via WebSocket
+            await manager.broadcast_to_ue5({
+                "type": "auto_update",
+                "command": "trigger_update"
+            })
+            
+            # Also send to HTTP polling clients
+            if hasattr(manager, 'http_clients'):
+                for project_id in list(manager.http_clients.keys()):
+                    if "pending_commands" not in manager.http_clients[project_id]:
+                        manager.http_clients[project_id]["pending_commands"] = []
+                    manager.http_clients[project_id]["pending_commands"].append({
+                        "type": "auto_update",
+                        "command": "trigger_update",
+                        "timestamp": time.time()
+                    })
+            
+            registered_count = len(manager.registered_projects) if hasattr(manager, 'registered_projects') else 0
+            
+            return {
+                "success": True,
+                "message": "Auto-update triggered for all connected clients",
+                "projects_notified": registered_count
+            }
+        except Exception as e:
+            print(f"❌ Auto-update trigger failed: {e}")
+            return {
+                "success": False,
+                "error": str(e)
+            }
+    
+    @app.post("/api/emergency_update")
+    async def emergency_update(request: Request):
+        """
+        Trigger emergency update (safe mode with no restart).
+        This is for fixing thread safety crashes without triggering UE5 restart.
+        """
+        from app.websocket_manager import get_manager
+        import time
+        
+        try:
+            body = await request.json()
+            mode = body.get("mode", "no_restart")
+            
+            print("🚨 Broadcasting EMERGENCY UPDATE (no-restart mode) to all UE5 clients...")
+            
+            manager = get_manager()
+            
+            # Send emergency update command with no_restart flag via WebSocket
+            await manager.broadcast_to_ue5({
+                "type": "emergency_update",
+                "command": "trigger_update",
+                "mode": "no_restart",  # Critical: tells client not to restart
+                "message": "Emergency update - files will be updated but UE5 will NOT restart. Please restart manually."
+            })
+            
+            # Also send to HTTP polling clients
+            if hasattr(manager, 'http_clients'):
+                for project_id in list(manager.http_clients.keys()):
+                    if "pending_commands" not in manager.http_clients[project_id]:
+                        manager.http_clients[project_id]["pending_commands"] = []
+                    manager.http_clients[project_id]["pending_commands"].append({
+                        "type": "emergency_update",
+                        "command": "trigger_update",
+                        "mode": "no_restart",
+                        "timestamp": time.time()
+                    })
+            
+            registered_count = len(manager.registered_projects) if hasattr(manager, 'registered_projects') else 0
+            
+            return {
+                "success": True,
+                "message": "Emergency update (no-restart mode) triggered for all connected clients",
+                "mode": mode,
+                "projects_notified": registered_count,
+                "instructions": "Files will be updated. Users must manually restart UE5 after update completes."
+            }
+        except Exception as e:
+            print(f"❌ Emergency update trigger failed: {e}")
+            import traceback
+            traceback.print_exc()
+            return {
+                "success": False,
+                "error": str(e)
+            }

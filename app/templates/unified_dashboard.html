@@ -164,6 +164,43 @@
             transform: translateY(0);
         }
         
+        .btn-emergency {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+            animation: emergencyPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes emergencyPulse {
+            0%, 100% { 
+                box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+            }
+            50% { 
+                box-shadow: 0 8px 30px rgba(239, 68, 68, 0.6);
+                transform: translateY(-1px);
+            }
+        }
+        
+        .btn-emergency:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(239, 68, 68, 0.7);
+            animation: none;
+        }
+        
+        .btn-emergency:active {
+            transform: translateY(0);
+        }
+        
         /* Tabs */
         .tabs {
             display: flex;
@@ -632,6 +669,10 @@
                 <span style="font-size: 18px;" class="spinner" id="updateSpinner" style="display: none;">⚙️</span>
                 <span style="font-size: 18px;" id="updateIcon">🔄</span>
                 <span id="updateText">Update All Clients</span>
+            </button>
+            <button class="btn-emergency" onclick="emergencyFixUpdate()" id="emergencyUpdateBtn" data-tooltip="Fix crash issues - Safe update mode that won't restart UE5 (you must restart manually)">
+                <span style="font-size: 18px;">🚨</span>
+                <span id="emergencyText">Fix Crash Issues</span>
             </button>
         </div>
     </div>
@@ -1213,6 +1254,52 @@
                     text.textContent = 'Update All Clients';
                     btn.disabled = false;
                 }, 2000);
+            }
+        }
+
+        // Emergency fix update (safe mode - no restart)
+        async function emergencyFixUpdate() {
+            const btn = document.getElementById('emergencyUpdateBtn');
+            const text = document.getElementById('emergencyText');
+            
+            const confirmMsg = '⚠️ Emergency Fix Update:\n\n' +
+                '1. This will download and update client files WITHOUT restarting UE5\n' +
+                '2. After update completes, you must manually restart UE5\n' +
+                '3. Use this if normal updates cause crashes\n\n' +
+                'Continue with emergency update?';
+            
+            if (!confirm(confirmMsg)) {
+                return;
+            }
+            
+            btn.disabled = true;
+            text.textContent = 'Fixing...';
+            
+            try {
+                const response = await fetch('/api/emergency_update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mode: 'no_restart' })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    text.textContent = 'Fixed!';
+                    alert('✅ Emergency update complete!\n\nPlease restart Unreal Engine 5 manually to complete the fix.');
+                    setTimeout(() => {
+                        text.textContent = 'Fix Crash Issues';
+                        btn.disabled = false;
+                    }, 3000);
+                } else {
+                    throw new Error(data.error || 'Emergency update failed');
+                }
+            } catch (error) {
+                text.textContent = 'Failed!';
+                alert('❌ Emergency update failed: ' + error.message + '\n\nPlease try manual installation.');
+                setTimeout(() => {
+                    text.textContent = 'Fix Crash Issues';
+                    btn.disabled = false;
+                }, 3000);
             }
         }
 

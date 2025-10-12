@@ -136,10 +136,16 @@ def clear_all_modules(preserve_queue=False):
     return len(modules_to_remove)
 
 
-def check_and_update():
+def check_and_update(mode="auto"):
     """
     Check for updates and install if available.
-    Automatically clears module cache and forces reload after successful update.
+    
+    Args:
+        mode: "auto" (default) - Normal update with auto-restart
+              "no_restart" - Emergency update mode, no automatic restart (manual restart required)
+    
+    Returns:
+        True if update was successful, False otherwise
     """
     global _version_marker
     
@@ -147,7 +153,39 @@ def check_and_update():
     _version_marker = str(uuid.uuid4())[:8]
     
     # Check if on background thread
-    if HAS_UNREAL and threading.current_thread() != threading.main_thread():
+    is_background_thread = HAS_UNREAL and threading.current_thread() != threading.main_thread()
+    
+    if mode == "no_restart":
+        print("=" * 60)
+        print("🚨 EMERGENCY UPDATE MODE (No Auto-Restart)")
+        print("=" * 60)
+        print("⚠️  Files will be updated WITHOUT restarting UE5")
+        print("⚠️  You MUST manually restart UE5 after update completes")
+        print("=" * 60)
+        
+        # Always use background-safe update for emergency mode
+        result = _do_background_update(skip_restart=True)
+        
+        if result:
+            print("=" * 60)
+            print("✅ EMERGENCY UPDATE COMPLETE!")
+            print("🔄 Please restart Unreal Engine 5 manually now")
+            print("=" * 60)
+            
+            # Show notification in UE5 if possible
+            if HAS_UNREAL and threading.current_thread() == threading.main_thread():
+                try:
+                    unreal.EditorDialog.show_message(
+                        "Emergency Update Complete",
+                        "Client files have been updated successfully.\n\nPlease restart Unreal Engine 5 now to apply the fixes.",
+                        unreal.AppMsgType.OK
+                    )
+                except:
+                    pass  # If dialog fails, continue - user saw console message
+        return result
+    
+    # Normal auto mode
+    if is_background_thread:
         print("📢 Auto-update triggered from background thread")
         print("⬇️  Downloading and installing files...")
         # Call background-safe version
@@ -158,7 +196,7 @@ def check_and_update():
     
     # If update successful, version marker changed
     # Ticker will detect version change and trigger restart on main thread
-    if result:
+    if result and mode == "auto":
         print(f"[AutoUpdate] 📦 Files updated successfully!")
         print(f"[AutoUpdate] ✅ Version marker updated: {_version_marker}")
         print(f"[AutoUpdate] ⏳ Ticker will detect version change and restart on main thread...")
@@ -166,14 +204,24 @@ def check_and_update():
     return result
 
 
-def _do_background_update():
-    """Update function that runs safely from background thread (no Unreal API calls)."""
+def _do_background_update(skip_restart=False):
+    """
+    Update function that runs safely from background thread (no Unreal API calls).
+    
+    Args:
+        skip_restart: If True, skips automatic restart (for emergency mode)
+    
+    Returns:
+        True if update successful, False otherwise
+    """
     global _version_marker
     backend_url = get_backend_url()
     download_url = f"{backend_url}/api/download_client"
     
+    title = "🚨 EMERGENCY UPDATE (No Restart)" if skip_restart else "🔄 UE5 AI Assistant Auto-Update (Background Thread Safe)"
+    
     print("=" * 60)
-    print("🔄 UE5 AI Assistant Auto-Update (Background Thread Safe)")
+    print(title)
     print("=" * 60)
     print(f"📡 Backend: {backend_url}")
     print(f"📦 Version: {_version_marker}")
@@ -228,9 +276,15 @@ def _do_background_update():
             print(f"⚠️ Could not clear bytecode cache: {e}")
         
         print("=" * 60)
-        print("✅ Auto-update complete! Files downloaded and installed.")
-        print(f"📦 New version marker: {_version_marker}")
-        print("🔄 Module cache will be cleared automatically...")
+        if skip_restart:
+            print("✅ EMERGENCY UPDATE COMPLETE! Files downloaded and installed.")
+            print(f"📦 New version marker: {_version_marker}")
+            print("⚠️  NO automatic restart was performed!")
+            print("🔄 Please restart Unreal Engine 5 manually to apply fixes")
+        else:
+            print("✅ Auto-update complete! Files downloaded and installed.")
+            print(f"📦 New version marker: {_version_marker}")
+            print("🔄 Module cache will be cleared automatically...")
         print("=" * 60)
         
         return True

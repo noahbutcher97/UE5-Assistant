@@ -436,6 +436,13 @@ class HTTPPollingClient:
                 print("📢 Backend update detected! Running auto-update...")
                 self._handle_auto_update()
             
+            elif message_type == "emergency_update":
+                # Backend triggered emergency update (no restart mode)
+                mode = cmd.get("mode", "no_restart")
+                print("🚨 EMERGENCY UPDATE REQUESTED! (No-restart mode)")
+                print("⚠️  Files will be updated WITHOUT restarting UE5")
+                self._handle_auto_update(mode="no_restart")
+                
             elif message_type == "force_reload":
                 # Backend triggered force module reload
                 print("📢 Force module reload requested by dashboard!")
@@ -444,10 +451,18 @@ class HTTPPollingClient:
         except Exception as e:
             print(f"❌ Error handling command: {e}")
     
-    def _handle_auto_update(self):
-        """Handle auto-update triggered by backend - thread safe version."""
+    def _handle_auto_update(self, mode="auto"):
+        """Handle auto-update triggered by backend - thread safe version.
+        
+        Args:
+            mode: "auto" (default) - Normal update with auto-restart
+                  "no_restart" - Emergency update mode, no automatic restart
+        """
         try:
-            print("[HTTPPolling] 🔄 Starting auto-update process...")
+            if mode == "no_restart":
+                print("[HTTPPolling] 🚨 Starting EMERGENCY UPDATE (no-restart mode)...")
+            else:
+                print("[HTTPPolling] 🔄 Starting auto-update process...")
             
             # Check if we're in UE5 environment
             try:
@@ -470,30 +485,35 @@ class HTTPPollingClient:
             auto_update._version_marker = version_marker
             
             # Run update (safe from background thread - just downloads files)
-            result = auto_update.check_and_update()
+            result = auto_update.check_and_update(mode=mode)
             
             if result:
-                print("[HTTPPolling] ✅ Auto-update downloaded successfully")
-                print("[HTTPPolling] ⏳ Queueing restart on main thread...")
-                
-                # Queue restart action to main thread instead of direct call
-                if self.action_queue:
-                    success, restart_result = self.action_queue.queue_action(
-                        'restart_assistant',
-                        {'reason': 'auto_update', 'version': version_marker},
-                        timeout=10.0
-                    )
-                    
-                    if success:
-                        print("[HTTPPolling] ✅ Assistant restart queued for main thread")
-                    else:
-                        print(f"[HTTPPolling] ❌ Failed to queue restart: {restart_result.get('error')}")
+                if mode == "no_restart":
+                    print("[HTTPPolling] ✅ Emergency update downloaded successfully!")
+                    print("[HTTPPolling] ⚠️  NO automatic restart performed")
+                    print("[HTTPPolling] 🔄 Please restart Unreal Engine 5 manually to apply fixes")
                 else:
-                    print("[HTTPPolling] ⚠️ No action queue - restart will happen on next ticker cycle")
-                
-                # Update version tracker  
-                self.last_module_version = version_marker
-                print(f"[HTTPPolling] 📦 Version marker updated: {version_marker}")
+                    print("[HTTPPolling] ✅ Auto-update downloaded successfully")
+                    print("[HTTPPolling] ⏳ Queueing restart on main thread...")
+                    
+                    # Queue restart action to main thread instead of direct call
+                    if self.action_queue:
+                        success, restart_result = self.action_queue.queue_action(
+                            'restart_assistant',
+                            {'reason': 'auto_update', 'version': version_marker},
+                            timeout=10.0
+                        )
+                        
+                        if success:
+                            print("[HTTPPolling] ✅ Assistant restart queued for main thread")
+                        else:
+                            print(f"[HTTPPolling] ❌ Failed to queue restart: {restart_result.get('error')}")
+                    else:
+                        print("[HTTPPolling] ⚠️ No action queue - restart will happen on next ticker cycle")
+                    
+                    # Update version tracker  
+                    self.last_module_version = version_marker
+                    print(f"[HTTPPolling] 📦 Version marker updated: {version_marker}")
                 
             else:
                 print("[HTTPPolling] ℹ️ No updates available or update failed")
