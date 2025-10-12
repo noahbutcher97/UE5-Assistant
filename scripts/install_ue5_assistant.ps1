@@ -75,14 +75,29 @@ AIAssistant.startup.configure_and_start('$BackendURL')
     $StartupScript | Out-File -FilePath $StartupFile -Encoding UTF8 -Force
     Write-Host "✅ Auto-startup configured" -ForegroundColor Green
     
-    # Copy startup command to clipboard
+    # Prepare startup command and copy to clipboard
     $StartupCommand = "exec(open(r'$StartupFile').read())"
+    
     try {
         Set-Clipboard -Value $StartupCommand
-        $ClipboardStatus = "✅ Copied to clipboard!"
+        $ClipboardStatus = "✅ Copied to clipboard - just Ctrl+V in UE5 Python console!"
     } catch {
-        $ClipboardStatus = ""
+        $ClipboardStatus = "⚠️  Clipboard copy failed - please copy command manually"
     }
+    
+    Write-Host ""
+    Write-Host "🚀 Ready to activate!" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "📋 Final Step - Run in UE5 Python Console:" -ForegroundColor Yellow
+    Write-Host "   $StartupCommand" -ForegroundColor White
+    Write-Host ""
+    Write-Host "   $ClipboardStatus" -ForegroundColor Green
+    Write-Host ""
+    Write-Host "💡 This ONE command will:" -ForegroundColor Cyan
+    Write-Host "   • Auto-configure backend URL: $BackendURL" -ForegroundColor White
+    Write-Host "   • Initialize the AI Assistant" -ForegroundColor White
+    Write-Host "   • Connect to the dashboard" -ForegroundColor White
+    Write-Host "   • Save configuration for future use" -ForegroundColor White
     
     Write-Host ""
     Write-Host "=" -NoNewline -ForegroundColor Green
@@ -91,23 +106,6 @@ AIAssistant.startup.configure_and_start('$BackendURL')
     Write-Host "=" -NoNewline -ForegroundColor Green
     Write-Host "================================================" -ForegroundColor Green
     Write-Host "📂 Installed $FileCount files to: $TargetPath" -ForegroundColor White
-    Write-Host ""
-    Write-Host "📋 Next Steps:" -ForegroundColor Cyan
-    Write-Host "   1. Open Unreal Editor for this project" -ForegroundColor White
-    Write-Host "   2. Open Python Console (Tools → Plugins → Python Console)" -ForegroundColor White
-    Write-Host "   3. Paste and run this ONE-LINE command:" -ForegroundColor White
-    Write-Host ""
-    Write-Host "   $StartupCommand" -ForegroundColor Yellow
-    Write-Host ""
-    if ($ClipboardStatus) {
-        Write-Host "   $ClipboardStatus" -ForegroundColor Green
-        Write-Host "   Just Ctrl+V in the Python console!" -ForegroundColor Green
-        Write-Host ""
-    }
-    Write-Host "   This will:" -ForegroundColor Cyan
-    Write-Host "   • Configure backend URL automatically" -ForegroundColor White
-    Write-Host "   • Start the AI Assistant" -ForegroundColor White
-    Write-Host "   • Connect to the dashboard" -ForegroundColor White
     Write-Host ""
     Write-Host "🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard" -ForegroundColor Cyan
     Write-Host ""

@@ -139,7 +139,7 @@ The project follows a clean, organized structure:
 - **One-Click Installer**: PowerShell script that downloads, installs, and configures the UE5 client
   - Auto-generates startup script (`_auto_start.py`) with backend URL pre-configured
   - Copies one-line `exec(open(...).read())` command to clipboard for easy paste into UE5 Python console
-  - Handles all configuration automatically (no manual setup needed)
+  - Single paste execution - no manual configuration needed
 - **Auto-Startup System**: `startup.py` module provides automatic configuration and initialization
   - Detects if backend URL matches known presets (production, dev, localhost)
   - For custom URLs, persists to `api_base_url` with `active_server="custom"`
