@@ -3,9 +3,10 @@ Actor Manipulator - Alignment, Transform, Organization
 UE 5.6 Compliant - Uses EditorActorSubsystem for actor operations
 """
 
-import unreal
-from typing import Dict, List, Optional, Tuple, Any
 import math
+from typing import Any, Dict, List, Optional, Tuple
+
+import unreal
 
 
 class ActorManipulator:
@@ -150,21 +151,21 @@ class ActorManipulator:
             
             if axis == 'x':
                 new_loc = unreal.Vector(
-                    getattr(start_loc, 'x') + i * spacing,
+                    start_loc.x + i * spacing,
                     loc.y,
                     loc.z
                 )
             elif axis == 'y':
                 new_loc = unreal.Vector(
                     loc.x,
-                    getattr(start_loc, 'y') + i * spacing,
+                    start_loc.y + i * spacing,
                     loc.z
                 )
             else:
                 new_loc = unreal.Vector(
                     loc.x,
                     loc.y,
-                    getattr(start_loc, 'z') + i * spacing
+                    start_loc.z + i * spacing
                 )
             
             actor.set_actor_location(new_loc, False, True)

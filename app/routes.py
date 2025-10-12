@@ -339,27 +339,6 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             )
         return {"error": "Installer not found"}
     
-    @app.get("/api/deploy_agent")
-    async def get_deploy_agent_legacy():
-        """DEPRECATED: GET endpoint cached by CDN. Use POST /api/deploy_agent_bootstrap."""
-        from pathlib import Path
-
-        from fastapi.responses import Response
-        
-        agent_path = Path("attached_assets/deploy_agent.py")
-        if agent_path.exists():
-            content = agent_path.read_text()
-            return Response(
-                content=content,
-                media_type="text/plain",
-                headers={
-                    "Content-Disposition": "attachment; filename=deploy_agent.py",
-                    "X-Deprecated": "true",
-                    "Warning": "299 - \"Use POST /api/deploy_agent_bootstrap for uncached version\""
-                }
-            )
-        return {"error": "Deploy agent not found"}
-    
     @app.post("/api/deploy_agent_bootstrap")
     async def deploy_agent_bootstrap_post():
         """Bootstrap endpoint for Deploy Agent (POST bypasses CDN cache)."""
@@ -376,25 +355,6 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 headers={
                     "Content-Disposition": "attachment; filename=deploy_agent.py",
                     "Cache-Control": "no-cache, no-store, must-revalidate"
-                }
-            )
-        return {"error": "Deploy agent not found"}
-    
-    @app.get("/api/deploy_agent_bootstrap")
-    async def deploy_agent_bootstrap_get():
-        """DEPRECATED: GET endpoint cached by CDN. Use POST /api/deploy_agent_bootstrap."""
-        from pathlib import Path
-
-        from fastapi.responses import Response
-        
-        agent_path = Path("attached_assets/deploy_agent.py")
-        if agent_path.exists():
-            content = agent_path.read_text()
-            return Response(
-                content=content,
-                media_type="text/plain",
-                headers={
-                    "Content-Disposition": "attachment; filename=deploy_agent.py"
                 }
             )
         return {"error": "Deploy agent not found"}
@@ -529,108 +489,6 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             headers=headers
         )
     
-    @app.get("/api/download_client")
-    async def download_client():
-        """DEPRECATED: GET endpoint cached by CDN. Use POST /api/download_client_bundle."""
-        import io
-        import zipfile
-        from pathlib import Path
-
-        from fastapi.responses import StreamingResponse
-        
-        # Create in-memory zip
-        zip_buffer = io.BytesIO()
-        
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            # Add all AIAssistant files
-            client_dir = Path("attached_assets/AIAssistant")
-            
-            if client_dir.exists():
-                for file_path in client_dir.rglob("*"):
-                    if file_path.is_file():
-                        arcname = str(file_path.relative_to("attached_assets"))
-                        zip_file.write(file_path, arcname)
-            
-            # Add setup instructions
-            setup_instructions = """# UE5 AI Assistant - Client Setup
-
-## Quick Install (Recommended)
-
-1. Extract this ZIP to: `YourProject/Content/Python/`
-   - Final path should be: `YourProject/Content/Python/AIAssistant/`
-
-2. In Unreal Editor, open the Python Console (Tools → Python Console)
-
-3. Run this one-liner:
-   ```python
-   import sys; import os; sys.path.append(os.path.join(unreal.Paths.project_dir(), "Content", "Python")); import AIAssistant.main
-   ```
-
-4. The client will auto-register your project with the backend!
-
-## Manual Install
-
-1. Extract ZIP to your project's Content/Python folder
-2. In UE5 Python console: `import AIAssistant.main`
-3. Project auto-registers on first run
-
-## Configure Backend URL
-
-Edit `AIAssistant/config.py` to set your backend URL:
-```python
-BACKEND_URL = "https://ue5-assistant-noahbutcher97.replit.app"
-```
-
-## Verify Installation
-
-Check the Output Log for:
-- ✅ AI Assistant initialized
-- ✅ Project registered: [Your Project Name]
-"""
-            zip_file.writestr("AIAssistant/SETUP_INSTRUCTIONS.md", setup_instructions)
-            
-            # Add quick installer script
-            installer_script = '''"""
-UE5 AI Assistant - Quick Installer
-Run this in UE5 Python Console to auto-setup
-"""
-import unreal
-import sys
-import os
-
-# Add Python path
-project_dir = unreal.Paths.project_dir()
-python_dir = os.path.join(project_dir, "Content", "Python")
-
-if python_dir not in sys.path:
-    sys.path.insert(0, python_dir)
-
-# Initialize AI Assistant
-try:
-    import AIAssistant.main
-    unreal.log("✅ AI Assistant installed and initialized!")
-except Exception as e:
-    unreal.log_error(f"❌ Installation failed: {e}")
-'''
-            zip_file.writestr("AIAssistant/install.py", installer_script)
-        
-        zip_buffer.seek(0)
-        
-        # Add cache-busting headers to prevent Replit CDN from serving stale ZIPs
-        import time
-        headers = {
-            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.zip",
-            "Cache-Control": "no-cache, no-store, must-revalidate",
-            "Pragma": "no-cache",
-            "Expires": "0",
-            "X-Content-Version": str(int(time.time()))
-        }
-        
-        return StreamingResponse(
-            zip_buffer,
-            media_type="application/zip",
-            headers=headers
-        )
 
     @app.get("/health")
     async def health_check():

@@ -4,9 +4,9 @@ Creates intelligent editor utilities that communicate with backend AI
 UE 5.6 Compliant
 """
 
+from typing import Any, Dict, List, Optional
+
 import unreal
-from typing import Dict, List, Optional, Any
-import json
 
 
 class AIAgentUtilityGenerator:
