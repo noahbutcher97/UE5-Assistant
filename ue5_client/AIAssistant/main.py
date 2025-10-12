@@ -377,42 +377,62 @@ class AIAssistant:
             import unreal
             import hashlib
             
-            # Check if websocket-client is installed
-            try:
-                import websocket
-                unreal.log("✅ websocket-client library detected")
-            except ImportError:
-                unreal.log_error("❌ websocket-client not installed!")
-                unreal.log_error("   Install with: pip install websocket-client")
-                unreal.log_error("   Real-time features will be disabled")
-                return
-            
             # Get project info
             project_path = unreal.Paths.project_dir()
+            project_name = unreal.Paths.get_project_file_path().split('/')[-1].replace('.uproject', '')
             project_id = hashlib.md5(project_path.encode()).hexdigest()
             
             unreal.log(f"📋 Project Path: {project_path}")
             unreal.log(f"📋 Project ID: {project_id}")
             
-            # Create WebSocket client
             base_url = self.config.api_url
             unreal.log(f"📋 Backend URL: {base_url}")
             
-            self.ws_client = WebSocketClient(base_url, project_id)
+            # Try WebSocket first (preferred)
+            ws_connected = False
+            try:
+                import websocket
+                unreal.log("✅ websocket-client library detected")
+                unreal.log("🔌 Attempting WebSocket connection...")
+                
+                # Create WebSocket client
+                self.ws_client = WebSocketClient(base_url, project_id)
+                self.ws_client.set_action_handler(self._handle_websocket_action)
+                
+                # Try to connect
+                if self.ws_client.connect():
+                    unreal.log("🌐 Real-time dashboard connection enabled (WebSocket)")
+                    ws_connected = True
+                else:
+                    unreal.log_warning("⚠️ WebSocket connection failed")
+                    
+            except ImportError:
+                unreal.log_warning("⚠️ websocket-client not installed")
+            except Exception as ws_error:
+                unreal.log_warning(f"⚠️ WebSocket init failed: {ws_error}")
             
-            # Set action handler
-            self.ws_client.set_action_handler(self._handle_websocket_action)
-            
-            # Connect (async, non-blocking)
-            if self.ws_client.connect():
-                unreal.log("🌐 Real-time dashboard connection enabled")
-            else:
-                unreal.log_warning("⚠️ WebSocket connection failed (dashboard features limited)")
-                unreal.log_warning("   Check UE5 Output Log for connection details")
+            # Fall back to HTTP Polling if WebSocket failed
+            if not ws_connected:
+                unreal.log("🔄 Falling back to HTTP polling...")
+                try:
+                    from .http_polling_client import HTTPPollingClient
+                    
+                    self.ws_client = HTTPPollingClient(base_url, project_id, project_name)
+                    self.ws_client.set_action_handler(self._handle_websocket_action)
+                    
+                    if self.ws_client.connect():
+                        unreal.log("✅ Real-time connection enabled (HTTP Polling)")
+                    else:
+                        unreal.log_warning("⚠️ HTTP Polling connection failed")
+                        unreal.log_warning("   Dashboard features will be limited")
+                        
+                except Exception as http_error:
+                    unreal.log_error(f"❌ HTTP Polling failed: {http_error}")
+                    unreal.log_error("   All real-time features disabled")
                 
         except Exception as e:
             import unreal
-            unreal.log_error(f"⚠️ WebSocket init failed: {e}")
+            unreal.log_error(f"⚠️ Connection init failed: {e}")
     
     def _handle_websocket_action(self, action: str, params: dict) -> dict:
         """

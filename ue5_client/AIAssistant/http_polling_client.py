@@ -1,0 +1,218 @@
+"""
+HTTP Polling client for UE5 - Fallback when WebSocket doesn't work.
+Provides same interface as WebSocketClient for seamless fallback.
+"""
+import json
+import threading
+import time
+from typing import Any, Callable, Dict, Optional
+import requests
+
+
+class HTTPPollingClient:
+    """
+    HTTP Polling client for UE5 to connect to the backend.
+    Fallback for when WebSocket connections are blocked.
+    """
+    
+    def __init__(self, base_url: str, project_id: str, project_name: str = "Unknown"):
+        """
+        Initialize HTTP Polling client.
+        
+        Args:
+            base_url: Backend base URL (e.g., "https://ue5-assistant-noahbutcher97.replit.app")
+            project_id: Unique project identifier
+            project_name: Human-readable project name
+        """
+        self.base_url = base_url.rstrip('/')
+        self.project_id = project_id
+        self.project_name = project_name
+        
+        self.connected = False
+        self.running = False
+        self.poll_thread = None
+        self.action_handler: Optional[Callable[[str, Dict[str, Any]], Dict[str, Any]]] = None
+        
+        # Polling settings
+        self.poll_interval = 2.0  # seconds
+        self.heartbeat_interval = 10.0  # seconds
+        self.last_heartbeat = 0
+        
+    def set_action_handler(self, handler: Callable[[str, Dict[str, Any]], Dict[str, Any]]):
+        """
+        Set the handler for incoming action commands.
+        
+        Args:
+            handler: Function that takes (action, params) and returns response dict
+        """
+        self.action_handler = handler
+    
+    def connect(self) -> bool:
+        """
+        Connect to the backend via HTTP polling.
+        
+        Returns:
+            True if connected successfully, False otherwise
+        """
+        try:
+            print(f"🔌 Attempting HTTP polling connection to: {self.base_url}")
+            
+            # Register with backend
+            response = requests.post(
+                f"{self.base_url}/api/ue5/register_http",
+                json={
+                    "project_id": self.project_id,
+                    "project_name": self.project_name
+                },
+                timeout=5
+            )
+            
+            if response.status_code == 200:
+                result = response.json()
+                if result.get("success"):
+                    self.connected = True
+                    
+                    # Start polling thread
+                    self.running = True
+                    self.poll_thread = threading.Thread(target=self._poll_loop, daemon=True)
+                    self.poll_thread.start()
+                    
+                    print(f"✅ HTTP polling connected: {self.project_id}")
+                    return True
+            
+            print(f"❌ HTTP polling registration failed: {response.status_code}")
+            return False
+            
+        except Exception as e:
+            print(f"❌ HTTP polling connection failed: {e}")
+            return False
+    
+    def _poll_loop(self):
+        """Main polling loop - runs in background thread."""
+        while self.running:
+            try:
+                # Send heartbeat periodically
+                current_time = time.time()
+                if current_time - self.last_heartbeat > self.heartbeat_interval:
+                    self._send_heartbeat()
+                    self.last_heartbeat = current_time
+                
+                # Poll for commands
+                response = requests.post(
+                    f"{self.base_url}/api/ue5/poll",
+                    json={"project_id": self.project_id},
+                    timeout=5
+                )
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    commands = data.get("commands", [])
+                    
+                    # Process each command
+                    for cmd in commands:
+                        self._handle_command(cmd)
+                
+                # Wait before next poll
+                time.sleep(self.poll_interval)
+                
+            except Exception as e:
+                print(f"⚠️ Polling error: {e}")
+                time.sleep(self.poll_interval * 2)  # Wait longer on error
+    
+    def _send_heartbeat(self):
+        """Send heartbeat to keep connection alive."""
+        try:
+            requests.post(
+                f"{self.base_url}/api/ue5/heartbeat",
+                json={"project_id": self.project_id},
+                timeout=5
+            )
+        except Exception as e:
+            print(f"⚠️ Heartbeat failed: {e}")
+    
+    def _handle_command(self, cmd: dict):
+        """Handle incoming command from backend."""
+        try:
+            message_type = cmd.get("type")
+            
+            if message_type == "execute_action":
+                # Execute action requested by dashboard
+                action = cmd.get("action")
+                params = cmd.get("params", {})
+                request_id = cmd.get("request_id")
+                
+                if self.action_handler:
+                    # Execute action
+                    result = self.action_handler(action, params)
+                    
+                    # Send response back (would need response endpoint)
+                    # For now, just log
+                    print(f"✅ Executed action: {action} (result: {result.get('success')})")
+                else:
+                    print(f"⚠️ No action handler for: {action}")
+            
+            elif message_type == "auto_update":
+                # Backend triggered auto-update
+                print("📢 Backend update detected! Running auto-update...")
+                self._handle_auto_update()
+                    
+        except Exception as e:
+            print(f"❌ Error handling command: {e}")
+    
+    def _handle_auto_update(self):
+        """Handle auto-update triggered by backend."""
+        try:
+            # Import here to avoid circular dependency
+            import importlib
+            import sys
+            
+            # Check if we're in UE5 environment
+            try:
+                import unreal
+            except ImportError:
+                print("⚠️ Auto-update skipped (not in UE5 environment)")
+                return
+            
+            # Run auto-update
+            if 'AIAssistant.auto_update' in sys.modules:
+                # Reload the module
+                importlib.reload(sys.modules['AIAssistant.auto_update'])
+            
+            from AIAssistant import auto_update
+            result = auto_update.check_and_update()
+            
+            # check_and_update returns bool
+            if result:
+                print("✅ Auto-update completed successfully")
+                print("🔄 Reloading AI Assistant...")
+                
+                # Reload main assistant
+                if 'AIAssistant.main' in sys.modules:
+                    importlib.reload(sys.modules['AIAssistant.main'])
+                    print("✅ AI Assistant reloaded with latest files")
+            else:
+                print("ℹ️ Auto-update failed or no updates available")
+                
+        except Exception as e:
+            print(f"❌ Auto-update failed: {e}")
+    
+    def send_message(self, data: dict):
+        """
+        Send message to backend (not implemented for HTTP polling).
+        
+        Args:
+            data: Message data to send
+        """
+        # HTTP polling is primarily receive-only
+        # Could add a send endpoint if needed
+        print(f"⚠️ HTTP polling doesn't support send_message yet")
+    
+    def disconnect(self):
+        """Disconnect from backend."""
+        self.running = False
+        self.connected = False
+        print("🔌 HTTP polling disconnected")
+    
+    def is_connected(self) -> bool:
+        """Check if connected."""
+        return self.connected
