@@ -137,9 +137,15 @@ The project follows a clean, organized structure:
 
 ### Installation & Startup
 - **One-Click Installer**: PowerShell script that downloads, installs, and configures the UE5 client
-  - Auto-generates startup script (`_auto_start.py`) with backend URL pre-configured
-  - Copies one-line `exec(open(...).read())` command to clipboard for easy paste into UE5 Python console
-  - Single paste execution - no manual configuration needed
+  - **FULLY AUTOMATED**: Creates `init_unreal.py` in `Content/Python/` directory
+  - UE5 auto-executes `init_unreal.py` on editor startup (built-in UE5.6 feature)
+  - Zero manual steps - just run installer and restart UE5 editor!
+  - Backup manual startup script included if needed
+- **init_unreal.py Integration**: Leverages UE5's built-in auto-execution system
+  - File placed at `YourProject/Content/Python/init_unreal.py`
+  - UE5 automatically runs this file on every editor launch
+  - Calls `AIAssistant.startup.configure_and_start(backend_url)` automatically
+  - Runs before startup level loads (immediate initialization)
 - **Auto-Startup System**: `startup.py` module provides automatic configuration and initialization
   - Detects if backend URL matches known presets (production, dev, localhost)
   - For custom URLs, persists to `api_base_url` with `active_server="custom"`
@@ -147,6 +153,7 @@ The project follows a clean, organized structure:
   - Initializes assistant automatically after configuration
 - **Update System**: Works even when breaking changes prevent "Update All Clients" button
   - Installer can be re-run to apply updates that modify core initialization
+  - Re-creates `init_unreal.py` with updated backend URL
   - Preserves existing configuration while updating code
 
 ### Communication Protocol

@@ -64,40 +64,61 @@ try {
     # Count files
     $FileCount = (Get-ChildItem -Path $TargetPath -Recurse -File).Count
     
-    # Create auto-startup script with backend URL
-    Write-Host "🔧 Configuring auto-startup..." -ForegroundColor Yellow
-    $StartupScript = @"
-# UE5 AI Assistant - Auto-configured startup
+    # Create init_unreal.py for FULLY AUTOMATED startup on next UE5 launch
+    Write-Host "🔧 Configuring fully automated startup..." -ForegroundColor Yellow
+    
+    $PythonDir = Join-Path $ProjectPath "Content\Python"
+    $InitUnrealFile = Join-Path $PythonDir "init_unreal.py"
+    
+    # Create init_unreal.py with our startup configuration
+    $InitUnrealScript = @"
+# init_unreal.py - UE5 AI Assistant Auto-Startup
+# This file is automatically executed by UE5 on editor startup
+
+import unreal
+
+try:
+    unreal.log("=" * 60)
+    unreal.log("🤖 UE5 AI Assistant - Auto-initializing...")
+    unreal.log("=" * 60)
+    
+    # Import and run auto-configured startup
+    import AIAssistant.startup
+    AIAssistant.startup.configure_and_start('$BackendURL')
+    
+except Exception as e:
+    unreal.log_error(f"❌ AI Assistant auto-startup failed: {e}")
+    unreal.log("💡 Manual start: import AIAssistant.main")
+"@
+    
+    $InitUnrealScript | Out-File -FilePath $InitUnrealFile -Encoding UTF8 -Force
+    Write-Host "✅ Created init_unreal.py for automatic startup" -ForegroundColor Green
+    
+    # Also create manual startup script as backup
+    $ManualStartFile = Join-Path $TargetPath "_manual_start.py"
+    $ManualScript = @"
+# Manual startup script (backup if init_unreal.py doesn't work)
 import AIAssistant.startup
 AIAssistant.startup.configure_and_start('$BackendURL')
 "@
-    $StartupFile = Join-Path $TargetPath "_auto_start.py"
-    $StartupScript | Out-File -FilePath $StartupFile -Encoding UTF8 -Force
-    Write-Host "✅ Auto-startup configured" -ForegroundColor Green
-    
-    # Prepare startup command and copy to clipboard
-    $StartupCommand = "exec(open(r'$StartupFile').read())"
-    
-    try {
-        Set-Clipboard -Value $StartupCommand
-        $ClipboardStatus = "✅ Copied to clipboard - just Ctrl+V in UE5 Python console!"
-    } catch {
-        $ClipboardStatus = "⚠️  Clipboard copy failed - please copy command manually"
-    }
+    $ManualScript | Out-File -FilePath $ManualStartFile -Encoding UTF8 -Force
     
     Write-Host ""
-    Write-Host "🚀 Ready to activate!" -ForegroundColor Cyan
+    Write-Host "🎉 Fully Automated Installation Complete!" -ForegroundColor Green
     Write-Host ""
-    Write-Host "📋 Final Step - Run in UE5 Python Console:" -ForegroundColor Yellow
-    Write-Host "   $StartupCommand" -ForegroundColor White
+    Write-Host "📋 What happens next:" -ForegroundColor Cyan
+    Write-Host "   1. Close this installer" -ForegroundColor White
+    Write-Host "   2. Launch/Restart your UE5 Editor" -ForegroundColor White
+    Write-Host "   3. AI Assistant will AUTO-START automatically!" -ForegroundColor Green
     Write-Host ""
-    Write-Host "   $ClipboardStatus" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "💡 This ONE command will:" -ForegroundColor Cyan
-    Write-Host "   • Auto-configure backend URL: $BackendURL" -ForegroundColor White
+    Write-Host "✨ init_unreal.py will:" -ForegroundColor Cyan
+    Write-Host "   • Auto-configure backend: $BackendURL" -ForegroundColor White
     Write-Host "   • Initialize the AI Assistant" -ForegroundColor White
     Write-Host "   • Connect to the dashboard" -ForegroundColor White
-    Write-Host "   • Save configuration for future use" -ForegroundColor White
+    Write-Host "   • Run every time you open this project" -ForegroundColor White
+    Write-Host ""
+    Write-Host "🔧 Backup (if auto-start doesn't work):" -ForegroundColor Yellow
+    Write-Host "   Run in Python Console: exec(open(r'$ManualStartFile').read())" -ForegroundColor Gray
     
     Write-Host ""
     Write-Host "=" -NoNewline -ForegroundColor Green
