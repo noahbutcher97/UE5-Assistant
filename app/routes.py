@@ -1371,6 +1371,22 @@ When users ask about their project's actual data (file counts, blueprints, etc),
         except WebSocketDisconnect:
             manager.disconnect_dashboard(websocket)
     
+    @app.post("/send_command_to_ue5")
+    async def send_command_to_ue5_endpoint(request: dict):
+        """Send a command from dashboard to UE5 and return the response."""
+        from app.websocket_manager import get_manager
+        
+        project_id = request.get("project_id")
+        command = request.get("command")
+        
+        if not project_id or not command:
+            return {"success": False, "error": "Missing project_id or command"}
+        
+        manager = get_manager()
+        response = await manager.send_command_to_ue5(project_id, command)
+        
+        return response
+    
     @app.post("/api/trigger_auto_update")
     async def trigger_auto_update():
         """Trigger auto-update for all connected UE5 clients (called on backend republish)."""

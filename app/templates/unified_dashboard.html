@@ -1003,8 +1003,42 @@
                 const data = await response.json();
                 
                 if (data.success) {
-                    resultDiv.className = 'output-box';
-                    resultDiv.textContent = data.response || data.result || 'No response';
+                    const responseText = data.response || data.result || 'No response';
+                    
+                    // Check if response is a UE_REQUEST token
+                    if (responseText.startsWith('[UE_REQUEST]')) {
+                        const action = responseText.replace('[UE_REQUEST]', '').trim();
+                        
+                        // Send command to UE5 and wait for response
+                        resultDiv.textContent = '🔄 Collecting data from UE5...';
+                        
+                        const ue5Response = await fetch('/send_command_to_ue5', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                project_id: document.getElementById('projectSelect').value,
+                                command: {
+                                    type: 'execute_action',
+                                    action: action,
+                                    params: {}
+                                }
+                            })
+                        });
+                        
+                        const ue5Data = await ue5Response.json();
+                        
+                        if (ue5Data.success && ue5Data.data) {
+                            resultDiv.className = 'output-box';
+                            resultDiv.textContent = JSON.stringify(ue5Data.data, null, 2);
+                        } else {
+                            resultDiv.className = 'output-box status-error';
+                            resultDiv.textContent = `Error: ${ue5Data.error || 'Failed to get data from UE5'}`;
+                        }
+                    } else {
+                        // Normal text response
+                        resultDiv.className = 'output-box';
+                        resultDiv.textContent = responseText;
+                    }
                 } else {
                     resultDiv.className = 'output-box status-error';
                     resultDiv.textContent = `Error: ${data.error || 'Unknown error'}`;
