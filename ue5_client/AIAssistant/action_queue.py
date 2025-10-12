@@ -215,9 +215,8 @@ class ActionQueue:
                 print(f"[ActionQueue] Error stopping ticker: {e}")
     
     def _check_for_updates(self):
-        """Check if modules have been updated and need reloading."""
+        """Check if auto_update module has new version marker."""
         try:
-            # Check if auto_update module exists and has new version
             import sys
             if 'AIAssistant.auto_update' in sys.modules:
                 auto_update = sys.modules['AIAssistant.auto_update']
@@ -232,25 +231,56 @@ class ActionQueue:
             pass
     
     def _trigger_module_reload(self):
-        """Trigger a module reload when updates are detected."""
+        """Trigger a complete assistant restart with fresh modules (main thread safe)."""
         try:
             import sys
-            import importlib
             
-            print("[ActionQueue] 🔄 Clearing module cache for updates...")
+            print("[ActionQueue] 🔄 Restarting assistant with fresh code...")
             
-            # Clear all AIAssistant modules
+            # Step 1: Disconnect and shutdown existing assistant instance
+            if 'AIAssistant.main' in sys.modules:
+                try:
+                    main_module = sys.modules['AIAssistant.main']
+                    if hasattr(main_module, '_assistant') and main_module._assistant is not None:
+                        assistant = main_module._assistant
+                        
+                        # Disconnect WebSocket/HTTP client
+                        if hasattr(assistant, 'ws_client') and assistant.ws_client:
+                            try:
+                                assistant.ws_client.disconnect()
+                                print("[ActionQueue] 🔌 Disconnected client")
+                            except:
+                                pass
+                        
+                        # Reset global instance
+                        main_module._assistant = None
+                        print("[ActionQueue] 🗑️ Shutdown existing assistant instance")
+                except:
+                    pass
+            
+            # Step 2: Clear all AIAssistant modules
             modules_to_remove = [key for key in list(sys.modules.keys()) if 'AIAssistant' in key]
             for module in modules_to_remove:
                 del sys.modules[module]
             
             print(f"[ActionQueue] 🗑️ Cleared {len(modules_to_remove)} cached modules")
             
-            # The modules will be re-imported on next use
-            print("[ActionQueue] ✅ Modules will reload with fresh code on next use")
+            # Step 3: Re-import and reinitialize main module
+            try:
+                import AIAssistant.main
+                # Force creation of new assistant instance
+                AIAssistant.main.get_assistant()
+                print("[ActionQueue] ✅ Assistant restarted successfully!")
+                print("[ActionQueue] ℹ️  Fresh code loaded and running")
+            except Exception as e:
+                print(f"[ActionQueue] ❌ Failed to restart assistant: {e}")
+                import traceback
+                traceback.print_exc()
             
         except Exception as e:
             print(f"[ActionQueue] ❌ Module reload failed: {e}")
+            import traceback
+            traceback.print_exc()
     
     def clear_all(self):
         """Clear all pending actions and results."""

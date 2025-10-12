@@ -152,16 +152,12 @@ def check_and_update():
         # On main thread, run full update with logging
         result = _do_update()
     
-    # If update successful, clear module cache and force reload
+    # If update successful, version marker changed
+    # Ticker will detect version change and trigger restart on main thread
     if result:
-        # Complete module clear (including action_queue)
-        cleared = clear_all_modules(preserve_queue=False)
-        print(f"[AutoUpdate] 🔄 Module cache cleared ({cleared} modules)")
-        
-        # Force restart the assistant with fresh code
-        force_restart_assistant()
-        
-        print("[AutoUpdate] ✅ Fresh code loaded and assistant restarted!")
+        print(f"[AutoUpdate] 📦 Files updated successfully!")
+        print(f"[AutoUpdate] ✅ Version marker updated: {_version_marker}")
+        print(f"[AutoUpdate] ⏳ Ticker will detect version change and restart on main thread...")
     
     return result
 
