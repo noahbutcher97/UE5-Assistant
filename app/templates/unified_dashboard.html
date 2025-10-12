@@ -285,11 +285,70 @@
 
     <!-- Project Hub Tab -->
     <div id="project-hub" class="tab-content active">
+        <!-- First-Time Deployment Section (Prominent) -->
+        <div class="card" style="border: 2px solid rgba(255,107,53,0.4); background: rgba(255,107,53,0.05); margin-bottom: 20px;">
+            <h2 style="color: #ff6b35; margin-bottom: 15px;">🚀 Deploy to New UE5 Project</h2>
+            <p style="color: #8b95a5; margin-bottom: 20px;">First time setup? Download and install the AI Assistant client to your Unreal Engine project:</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                <!-- Option 1: Quick Installer -->
+                <div style="background: rgba(139,92,246,0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(139,92,246,0.3);">
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <span style="font-size: 36px;">⚡</span>
+                        <h3 style="color: #8b5cf6; margin: 10px 0; font-size: 16px;">Quick Installer</h3>
+                        <p style="color: #8b95a5; font-size: 13px; margin-bottom: 15px;">Automated deployment</p>
+                    </div>
+                    <a href="/api/deploy_agent_installer" download style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 12px; text-decoration: none; color: white; border-radius: 8px; font-size: 14px; font-weight: 600;">
+                        <span>Download Installer</span>
+                    </a>
+                    <small style="color: #8b95a5; margin-top: 10px; display: block; text-align: center; font-size: 12px;">Run .bat file for one-click setup</small>
+                </div>
+                
+                <!-- Option 2: Client ZIP -->
+                <div style="background: rgba(0,217,255,0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(0,217,255,0.3);">
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <span style="font-size: 36px;">📦</span>
+                        <h3 style="color: #00d9ff; margin: 10px 0; font-size: 16px;">Client ZIP</h3>
+                        <p style="color: #8b95a5; font-size: 13px; margin-bottom: 15px;">Manual installation</p>
+                    </div>
+                    <button onclick="downloadClientZip()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); padding: 12px; border: none; color: white; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                        <span>Download ZIP</span>
+                    </button>
+                    <small style="color: #8b95a5; margin-top: 10px; display: block; text-align: center; font-size: 12px;">Extract to Content/Python</small>
+                </div>
+                
+                <!-- Option 3: PowerShell Script -->
+                <div style="background: rgba(16,185,129,0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(16,185,129,0.3);">
+                    <div style="text-align: center; margin-bottom: 12px;">
+                        <span style="font-size: 36px;">🖥️</span>
+                        <h3 style="color: #10b981; margin: 10px 0; font-size: 16px;">PowerShell Script</h3>
+                        <p style="color: #8b95a5; font-size: 13px; margin-bottom: 15px;">Command-line deploy</p>
+                    </div>
+                    <a href="/api/installer_script" download style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 12px; text-decoration: none; color: white; border-radius: 8px; font-size: 14px; font-weight: 600;">
+                        <span>Download Script</span>
+                    </a>
+                    <small style="color: #8b95a5; margin-top: 10px; display: block; text-align: center; font-size: 12px;">Run in PowerShell admin</small>
+                </div>
+            </div>
+            
+            <!-- Installation Instructions -->
+            <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; border: 1px solid rgba(139,149,165,0.2);">
+                <h4 style="color: #00d9ff; margin-top: 0; margin-bottom: 10px; font-size: 14px;">📋 After Download:</h4>
+                <ol style="color: #8b95a5; margin: 0; padding-left: 20px; font-size: 13px;">
+                    <li style="margin: 6px 0;">Run the installer OR extract ZIP to <code style="background: rgba(0,217,255,0.1); padding: 2px 6px; border-radius: 3px; color: #00d9ff;">YourProject/Content/Python/</code></li>
+                    <li style="margin: 6px 0;">Open Unreal Engine 5 editor</li>
+                    <li style="margin: 6px 0;">Open Python Console: <code style="background: rgba(0,217,255,0.1); padding: 2px 6px; border-radius: 3px; color: #00d9ff;">Tools → Plugins → Python Console</code></li>
+                    <li style="margin: 6px 0;">Run: <code style="background: rgba(0,217,255,0.1); padding: 2px 6px; border-radius: 3px; color: #00d9ff;">import AIAssistant.main</code></li>
+                    <li style="margin: 6px 0;">Your project will auto-connect to this dashboard! ✅</li>
+                </ol>
+            </div>
+        </div>
+        
         <!-- Quick Action Bar -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
             <button onclick="toggleProjectForm()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 18px; font-size: 18px; display: flex; align-items: center; gap: 12px; justify-content: center;">
                 <span style="font-size: 28px;">➕</span>
-                <span>Add Project / Deploy</span>
+                <span>Register Existing Project</span>
             </button>
             <button onclick="showTab('settings'); triggerAutoUpdate()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 18px; font-size: 18px; display: flex; align-items: center; gap: 12px; justify-content: center;">
                 <span style="font-size: 28px;">🔄</span>
