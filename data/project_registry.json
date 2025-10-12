@@ -36,6 +36,27 @@
       },
       "registered_at": "2025-10-12T09:06:45.519061",
       "last_updated": "2025-10-12T09:06:45.519071"
+    },
+    "9f29e3e8d7cc": {
+      "project_id": "9f29e3e8d7cc",
+      "name": "My UE5 Project",
+      "path": "D:/Projects/MyGame",
+      "version": "5.6",
+      "metadata": {
+        "blueprints_count": 10,
+        "modules_count": 3
+      },
+      "registered_at": "2025-10-12T10:02:32.560875",
+      "last_updated": "2025-10-12T10:02:32.560885"
+    },
+    "3c47c5576e27": {
+      "project_id": "3c47c5576e27",
+      "name": "Active Test Project",
+      "path": "/path/to/project",
+      "version": "5.6",
+      "metadata": {},
+      "registered_at": "2025-10-12T10:02:33.004925",
+      "last_updated": "2025-10-12T10:02:33.004932"
     }
   }
 }

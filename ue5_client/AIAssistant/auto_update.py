@@ -407,7 +407,7 @@ def force_restart_assistant():
         
         # Step 5: Re-initialize the assistant with fresh code
         print("📦 Step 4: Re-initializing assistant...")
-        fresh_main.initialize()
+        fresh_main.get_assistant()  # Creates new instance with fresh code
         
         print("✅ AI Assistant restarted with fresh code!")
         print(f"📦 Current version: {_version_marker}")
