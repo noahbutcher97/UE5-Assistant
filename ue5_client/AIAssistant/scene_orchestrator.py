@@ -3,8 +3,9 @@ Scene Orchestrator - AI-Powered Level Building & Actor Spawning
 UE 5.6 Compliant - Uses EditorActorSubsystem and modern APIs
 """
 
+from typing import Any, Dict, List, Optional, Tuple
+
 import unreal
-from typing import Dict, List, Optional, Tuple, Any
 
 
 class SceneOrchestrator:

@@ -1,9 +1,10 @@
 """
 Project Registration - Auto-register UE5 project with backend
 """
-import unreal
 import hashlib
-from typing import Dict, Any
+from typing import Any, Dict
+
+import unreal
 
 
 class ProjectRegistration:
