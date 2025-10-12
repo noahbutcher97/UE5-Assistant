@@ -256,7 +256,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         try:
             # Construct target path
             target_base = Path(project_path) / "Content" / "Python" / "AIAssistant"
-            source_base = Path("attached_assets/AIAssistant")
+            source_base = Path("ue5_client/AIAssistant")
             
             if not source_base.exists():
                 return {"success": False, "error": "Source files not found"}
@@ -346,7 +346,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
         from fastapi.responses import Response
         
-        agent_path = Path("attached_assets/deploy_agent.py")
+        agent_path = Path("ue5_client/deploy_agent.py")
         if agent_path.exists():
             content = agent_path.read_text()
             return Response(
@@ -419,7 +419,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         import hashlib
         from pathlib import Path
         
-        client_dir = Path("attached_assets/AIAssistant")
+        client_dir = Path("ue5_client/AIAssistant")
         
         # Collect all files and compute content hash
         files_data = []
@@ -434,7 +434,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                     hasher.update(str(file_path).encode())
                     
                     files_data.append({
-                        "path": str(file_path.relative_to("attached_assets")),
+                        "path": str(file_path.relative_to("ue5_client")),
                         "size": len(content)
                     })
         
@@ -466,12 +466,12 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         
         with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
             # Add all AIAssistant files (fresh read from filesystem)
-            client_dir = Path("attached_assets/AIAssistant")
+            client_dir = Path("ue5_client/AIAssistant")
             
             if client_dir.exists():
                 for file_path in client_dir.rglob("*"):
                     if file_path.is_file():
-                        arcname = str(file_path.relative_to("attached_assets"))
+                        arcname = str(file_path.relative_to("ue5_client"))
                         zip_file.write(file_path, arcname)
         
         zip_buffer.seek(0)
