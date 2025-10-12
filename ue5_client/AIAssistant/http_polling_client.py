@@ -441,20 +441,12 @@ class HTTPPollingClient:
             result = auto_update.check_and_update()
             
             if result:
-                print("[HTTPPolling] ✅ Auto-update completed successfully")
-                print("[HTTPPolling] 🔄 Triggering full module reload...")
+                print("[HTTPPolling] ✅ Auto-update downloaded successfully")
+                print("[HTTPPolling] 🔄 Forcing complete assistant restart...")
                 
-                # Force clear ALL AIAssistant modules except action_queue
-                modules_to_remove = [
-                    key for key in list(sys.modules.keys()) 
-                    if 'AIAssistant' in key and 'action_queue' not in key
-                ]
-                
-                for module in modules_to_remove:
-                    del sys.modules[module]
-                
-                print(f"[HTTPPolling] 🗑️ Cleared {len(modules_to_remove)} cached modules")
-                print("[HTTPPolling] ✅ Fresh code will load on next use")
+                # Trigger complete restart to load fresh code
+                auto_update.force_restart_assistant()
+                print("[HTTPPolling] ✅ Assistant restart completed with fresh code")
                 
                 # Update version tracker
                 self.last_module_version = auto_update._version_marker
@@ -500,6 +492,29 @@ class HTTPPollingClient:
         
         # All retries failed
         print(f"❌ Failed to send message after {max_retries} attempts")
+    
+    def _trigger_emergency_recovery(self):
+        """Force complete module reload and assistant restart."""
+        try:
+            print("[HTTPPolling] 🚨 Emergency Recovery: Force restarting assistant...")
+            
+            # Step 1: Stop current connections
+            self.disconnect()
+            
+            # Step 2: Import auto_update for restart functionality
+            if 'AIAssistant.auto_update' in sys.modules:
+                del sys.modules['AIAssistant.auto_update']
+            
+            from AIAssistant import auto_update
+            
+            # Step 3: Trigger complete restart (clears all modules and reinitializes)
+            print("[HTTPPolling] 🔄 Forcing complete module reload and restart...")
+            auto_update.force_restart_assistant()
+            
+        except Exception as e:
+            print(f"[HTTPPolling] ❌ Emergency recovery failed: {e}")
+            import traceback
+            traceback.print_exc()
     
     def disconnect(self):
         """Disconnect from backend."""

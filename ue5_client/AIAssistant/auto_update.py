@@ -405,8 +405,9 @@ def force_restart_assistant():
         print("📦 Step 3: Re-importing main module with fresh code...")
         import AIAssistant.main as fresh_main
         
-        # Store reference for recovery
-        sys.modules['AIAssistant.main']._assistant_instance = None
+        # Step 5: Re-initialize the assistant with fresh code
+        print("📦 Step 4: Re-initializing assistant...")
+        fresh_main.initialize()
         
         print("✅ AI Assistant restarted with fresh code!")
         print(f"📦 Current version: {_version_marker}")
