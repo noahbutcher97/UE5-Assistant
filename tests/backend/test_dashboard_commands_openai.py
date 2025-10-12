@@ -75,9 +75,10 @@ class TestDashboardListBlueprints:
         # Simulate blueprint list action
         blueprint_data = {
             "question": "List all blueprints in the project and describe their purpose",
-            "blueprint_context": {
+            "context": {
                 "blueprints": get_mock_blueprint_list()
-            }
+            },
+            "context_type": "blueprints"
         }
         
         response = client.post("/answer_with_context", json=blueprint_data)
@@ -99,9 +100,10 @@ class TestDashboardListBlueprints:
         """Test getting detailed blueprint information."""
         blueprint_data = {
             "question": "Describe the BP_Player blueprint in detail",
-            "blueprint_context": {
+            "context": {
                 "blueprints": get_mock_blueprint_list()
-            }
+            },
+            "context_type": "blueprints"
         }
         
         response = client.post("/answer_with_context", json=blueprint_data)
@@ -122,7 +124,8 @@ class TestDashboardProjectInfo:
         """Test project info quick action with AI summary."""
         project_data = {
             "question": "Summarize this Unreal Engine project",
-            "project_profile": get_mock_project_profile()
+            "context": get_mock_project_profile(),
+            "context_type": "project_info"
         }
         
         response = client.post("/answer_with_context", json=project_data)
@@ -144,7 +147,8 @@ class TestDashboardProjectInfo:
         """Test querying about project modules and plugins."""
         project_data = {
             "question": "What modules and plugins are enabled in this project?",
-            "project_profile": get_mock_project_profile()
+            "context": get_mock_project_profile(),
+            "context_type": "project_info"
         }
         
         response = client.post("/answer_with_context", json=project_data)
@@ -165,7 +169,8 @@ class TestDashboardBrowseFiles:
         """Test file browsing with AI description."""
         file_data = {
             "question": "What files and assets are in this project?",
-            "file_context": get_mock_file_context()
+            "context": get_mock_file_context(),
+            "context_type": "files"
         }
         
         response = client.post("/answer_with_context", json=file_data)
@@ -184,7 +189,8 @@ class TestDashboardBrowseFiles:
         """Test searching for specific files."""
         file_data = {
             "question": "Find all blueprint files",
-            "file_context": get_mock_file_context()
+            "context": get_mock_file_context(),
+            "context_type": "files"
         }
         
         response = client.post("/answer_with_context", json=file_data)
@@ -219,7 +225,8 @@ class TestDashboardIntegration:
         print("\n2. LIST BLUEPRINTS:")
         bp_data = {
             "question": "List the blueprints",
-            "blueprint_context": {"blueprints": get_mock_blueprint_list()}
+            "context": {"blueprints": get_mock_blueprint_list()},
+            "context_type": "blueprints"
         }
         response2 = client.post("/answer_with_context", json=bp_data)
         bp_list = response2.json()["response"]
@@ -230,7 +237,8 @@ class TestDashboardIntegration:
         print("\n3. PROJECT INFO:")
         proj_data = {
             "question": "What is this project?",
-            "project_profile": get_mock_project_profile()
+            "context": get_mock_project_profile(),
+            "context_type": "project_info"
         }
         response3 = client.post("/answer_with_context", json=proj_data)
         proj_info = response3.json()["response"]
@@ -241,7 +249,8 @@ class TestDashboardIntegration:
         print("\n4. BROWSE FILES:")
         file_data = {
             "question": "What assets are available?",
-            "file_context": get_mock_file_context()
+            "context": get_mock_file_context(),
+            "context_type": "files"
         }
         response4 = client.post("/answer_with_context", json=file_data)
         files = response4.json()["response"]

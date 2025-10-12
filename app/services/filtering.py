@@ -92,7 +92,7 @@ def filter_viewport_data(
         }
         filtered["lighting"] = lighting_data
         filtered["environment"] = {
-            "fog": environment_data.get("fog", [])[:2],
+            "fog": environment_data.get("fog", {}),
             "landscape": environment_data.get("landscape", {})
         }
     
