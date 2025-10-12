@@ -70,14 +70,13 @@ class DeployAgent(BaseHTTPRequestHandler):
             data = json.loads(body) if body else {}
             command = self.path.strip('/')
             
-            self.send_header('Access-Control-Allow-Origin', '*')
-            
             if command == 'deploy':
                 # Full deployment with auto-import
                 result = self.deploy_and_initialize(data)
                 
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 self.wfile.write(json.dumps(result).encode())
                 
@@ -88,16 +87,19 @@ class DeployAgent(BaseHTTPRequestHandler):
                 
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
+                self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 self.wfile.write(json.dumps(result).encode())
                 
             else:
                 self.send_response(404)
+                self.send_header('Access-Control-Allow-Origin', '*')
                 self.end_headers()
                 
         except Exception as e:
             self.send_response(500)
             self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps({'error': str(e)}).encode())
     
