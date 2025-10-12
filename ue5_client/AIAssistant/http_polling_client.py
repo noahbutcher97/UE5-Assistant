@@ -186,7 +186,7 @@ class HTTPPollingClient:
                 print("⚠️ Auto-update skipped (not in UE5 environment)")
                 return
             
-            # Run auto-update
+            # Run auto-update to download files
             if 'AIAssistant.auto_update' in sys.modules:
                 # Reload the module
                 importlib.reload(sys.modules['AIAssistant.auto_update'])
@@ -197,12 +197,17 @@ class HTTPPollingClient:
             # check_and_update returns bool
             if result:
                 print("✅ Auto-update completed successfully")
-                print("🔄 Reloading AI Assistant...")
+                print("🔄 Force reloading ALL AIAssistant modules...")
                 
-                # Reload main assistant
-                if 'AIAssistant.main' in sys.modules:
-                    importlib.reload(sys.modules['AIAssistant.main'])
-                    print("✅ AI Assistant reloaded with latest files")
+                # Force clear ALL AIAssistant modules from cache
+                modules_to_remove = [key for key in sys.modules.keys() if 'AIAssistant' in key]
+                for module in modules_to_remove:
+                    del sys.modules[module]
+                print(f"🗑️ Cleared {len(modules_to_remove)} cached modules")
+                
+                # Re-import fresh modules
+                import AIAssistant.main
+                print("✅ AI Assistant reloaded with latest code")
             else:
                 print("ℹ️ Auto-update failed or no updates available")
                 
