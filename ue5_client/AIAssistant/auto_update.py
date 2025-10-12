@@ -68,27 +68,62 @@ def get_backend_url():
         return "https://ue5-assistant-noahbutcher97.replit.app"
 
 
-def clear_all_modules():
+def clear_all_modules(preserve_queue=False):
     """
     Clear all AIAssistant modules from Python's cache.
     This ensures fresh code is loaded after updates.
+    
+    Args:
+        preserve_queue: If True, keeps action_queue module (default False for complete reload)
     """
     print("[AutoUpdate] 🗑️ Clearing module cache...")
     
-    # Get list of modules to clear (exclude action_queue to preserve the ticker)
-    modules_to_remove = [
-        key for key in list(sys.modules.keys()) 
-        if 'AIAssistant' in key and 'action_queue' not in key
-    ]
+    # Store action queue reference if needed
+    action_queue_ref = None
+    if preserve_queue and 'AIAssistant.action_queue' in sys.modules:
+        try:
+            from .action_queue import get_action_queue
+            action_queue_ref = get_action_queue()
+            print("[AutoUpdate] 📦 Preserving action queue reference...")
+        except:
+            pass
+    
+    # Get list of ALL AIAssistant modules (including action_queue for complete reload)
+    if preserve_queue:
+        modules_to_remove = [
+            key for key in list(sys.modules.keys()) 
+            if 'AIAssistant' in key and 'action_queue' not in key
+        ]
+    else:
+        # Complete clear - remove everything including action_queue
+        modules_to_remove = [
+            key for key in list(sys.modules.keys()) 
+            if 'AIAssistant' in key
+        ]
     
     # Clear each module
     for module_name in modules_to_remove:
         try:
+            # Get module reference before deletion
+            module = sys.modules.get(module_name)
+            
+            # Clean up module's globals if possible
+            if module and hasattr(module, '__dict__'):
+                module.__dict__.clear()
+            
+            # Remove from sys.modules
             del sys.modules[module_name]
         except:
             pass  # Module may already be deleted
     
     print(f"[AutoUpdate] ✅ Cleared {len(modules_to_remove)} cached modules")
+    
+    # Also clear importlib caches
+    try:
+        importlib.invalidate_caches()
+        print("[AutoUpdate] ✅ Invalidated import caches")
+    except:
+        pass
     
     # Trigger garbage collection
     import gc
@@ -100,7 +135,7 @@ def clear_all_modules():
 def check_and_update():
     """
     Check for updates and install if available.
-    Automatically clears module cache after successful update.
+    Automatically clears module cache and forces reload after successful update.
     """
     global _version_marker
     
@@ -117,11 +152,16 @@ def check_and_update():
         # On main thread, run full update with logging
         result = _do_update()
     
-    # If update successful, clear module cache
+    # If update successful, clear module cache and force reload
     if result:
-        cleared = clear_all_modules()
+        # Complete module clear (including action_queue)
+        cleared = clear_all_modules(preserve_queue=False)
         print(f"[AutoUpdate] 🔄 Module cache cleared ({cleared} modules)")
-        print("[AutoUpdate] ✅ Fresh code will be loaded on next use")
+        
+        # Force restart the assistant with fresh code
+        force_restart_assistant()
+        
+        print("[AutoUpdate] ✅ Fresh code loaded and assistant restarted!")
     
     return result
 
@@ -326,6 +366,63 @@ except Exception as e:
         return False
 
 
+def force_restart_assistant():
+    """
+    Force restart the AI Assistant with completely fresh code.
+    This is called automatically after updates and can also be triggered manually.
+    """
+    print("=" * 60)
+    print("🚀 Force Restarting AI Assistant with Fresh Code")
+    print("=" * 60)
+    
+    try:
+        # Step 1: Stop existing connections if any
+        print("📦 Step 1: Stopping existing connections...")
+        try:
+            # Try to stop HTTP polling if it exists
+            if 'AIAssistant.main' in sys.modules:
+                main_module = sys.modules['AIAssistant.main']
+                if hasattr(main_module, '_assistant_instance'):
+                    assistant = main_module._assistant_instance
+                    if hasattr(assistant, 'http_client') and assistant.http_client:
+                        assistant.http_client.disconnect()
+                        print("   - Stopped HTTP polling client")
+                    if hasattr(assistant, 'ws_client') and assistant.ws_client:
+                        assistant.ws_client.disconnect()
+                        print("   - Stopped WebSocket client")
+        except:
+            pass
+        
+        # Step 2: Clear ALL modules completely
+        print("📦 Step 2: Clearing all module cache...")
+        cleared = clear_all_modules(preserve_queue=False)
+        print(f"   - Cleared {cleared} modules")
+        
+        # Step 3: Invalidate import caches
+        importlib.invalidate_caches()
+        
+        # Step 4: Force reimport main module
+        print("📦 Step 3: Re-importing main module with fresh code...")
+        import AIAssistant.main as fresh_main
+        
+        # Store reference for recovery
+        sys.modules['AIAssistant.main']._assistant_instance = None
+        
+        print("✅ AI Assistant restarted with fresh code!")
+        print(f"📦 Current version: {_version_marker}")
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Restart failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+    
+    finally:
+        print("=" * 60)
+
+
 def force_reload_all():
     """
     Force a complete reload of all AIAssistant modules.
@@ -335,30 +432,14 @@ def force_reload_all():
     print("🔄 Force Reloading All AIAssistant Modules")
     print("=" * 60)
     
-    # Clear all modules
-    cleared = clear_all_modules()
+    # Use the new force restart function
+    success = force_restart_assistant()
     
-    # Try to reinitialize with fresh code
-    try:
-        print("📦 Re-importing main module with fresh code...")
-        import AIAssistant.main
-        
-        # Re-initialize action queue if needed
-        try:
-            from .action_queue import get_action_queue
-            queue = get_action_queue()
-            queue.start_ticker()
-            print("✅ Action queue ticker restarted")
-        except:
-            pass
-        
+    if success:
         print("✅ All modules reloaded successfully!")
         print(f"📦 Current version: {_version_marker}")
-        
-    except Exception as e:
-        print(f"❌ Reload failed: {e}")
-        import traceback
-        traceback.print_exc()
+    else:
+        print("❌ Reload encountered issues - check logs above")
     
     print("=" * 60)
 

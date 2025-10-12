@@ -290,7 +290,7 @@ class HTTPPollingClient:
         return False
     
     def _handle_command(self, cmd: dict):
-        """Handle incoming command from backend."""
+        """Handle incoming command from backend with automatic error recovery."""
         try:
             message_type = cmd.get("type")
             
@@ -313,6 +313,22 @@ class HTTPPollingClient:
                         success, result = self.action_queue.queue_action(
                             action, params, timeout=10.0
                         )
+                        
+                        # Check for threading errors and trigger automatic recovery
+                        if not success and result.get("error"):
+                            error_msg = str(result.get("error", ""))
+                            if any(err in error_msg.lower() for err in 
+                                   ["main thread scheduling failed", "thread", "threading", 
+                                    "unreal.ticker", "ticker failed"]):
+                                print("[HTTPPolling] 🚨 THREADING ERROR DETECTED!")
+                                print("[HTTPPolling] 🔄 Triggering automatic module reload for recovery...")
+                                self._trigger_emergency_recovery()
+                                
+                                # Retry the action after recovery
+                                print("[HTTPPolling] 🔁 Retrying action after recovery...")
+                                success, result = self.action_queue.queue_action(
+                                    action, params, timeout=10.0
+                                )
                         
                         if success:
                             print(f"[HTTPPolling] ✅ Action executed on main thread: {action}")
@@ -338,6 +354,18 @@ class HTTPPollingClient:
                         try:
                             result = self.action_handler(action, params)
                             
+                            # Check for threading errors in response
+                            if not result.get("success") and result.get("error"):
+                                error_msg = str(result.get("error", ""))
+                                if any(err in error_msg.lower() for err in 
+                                       ["main thread scheduling failed", "thread", "threading"]):
+                                    print("[HTTPPolling] 🚨 THREADING ERROR DETECTED!")
+                                    print("[HTTPPolling] 🔄 Triggering automatic module reload for recovery...")
+                                    self._trigger_emergency_recovery()
+                                    
+                                    # Retry after recovery
+                                    result = self.action_handler(action, params)
+                            
                             # Send response back via HTTP
                             response = {
                                 "request_id": request_id,
@@ -351,6 +379,13 @@ class HTTPPollingClient:
                             print(f"[HTTPPolling] Action completed: {action}")
                             
                         except Exception as e:
+                            error_msg = str(e)
+                            # Check if it's a threading error
+                            if any(err in error_msg.lower() for err in 
+                                   ["main thread", "thread", "threading", "ticker"]):
+                                print("[HTTPPolling] 🚨 THREADING ERROR DETECTED!")
+                                self._trigger_emergency_recovery()
+                            
                             print(f"[HTTPPolling] ❌ Direct execution error: {e}")
                             self.send_message({
                                 "request_id": request_id,
@@ -369,6 +404,11 @@ class HTTPPollingClient:
                 # Backend triggered auto-update
                 print("📢 Backend update detected! Running auto-update...")
                 self._handle_auto_update()
+            
+            elif message_type == "force_reload":
+                # Backend triggered force module reload
+                print("📢 Force module reload requested by dashboard!")
+                self._trigger_emergency_recovery()
                     
         except Exception as e:
             print(f"❌ Error handling command: {e}")
