@@ -200,16 +200,22 @@ def get_system_message(app_config: Dict[str, Any]) -> str:
         "When users ask about THEIR specific project/editor state, "
         "you can trigger real-time data collection by responding with "
         "[UE_REQUEST] tokens:\n"
-        "- [UE_REQUEST] get_project_info - Get actual project name, "
-        "modules, blueprints\n"
-        "- [UE_REQUEST] capture_blueprint - Capture screenshot of open "
-        "Blueprint\n"
-        "- [UE_REQUEST] describe_viewport - Get viewport/scene data\n"
-        "- [UE_REQUEST] browse_files - Browse project file structure\n"
-        "- [UE_REQUEST] list_blueprints - List all Blueprints in project\n"
         "\n"
-        "Use these when users ask 'what is my project', 'capture my "
-        "blueprint', etc.\n"
+        "VIEWPORT & SCENE:\n"
+        "- [UE_REQUEST] describe_viewport - When user asks 'describe my viewport', 'what's in my scene', 'describe what I see'\n"
+        "  Use this for 3D viewport scene description, actors, lighting, camera\n"
+        "\n"
+        "BLUEPRINTS:\n"
+        "- [UE_REQUEST] capture_blueprint - ONLY when user explicitly asks to 'capture blueprint' or 'screenshot blueprint'\n"
+        "  Requires Blueprint Editor to be open. NOT for viewport description!\n"
+        "- [UE_REQUEST] list_blueprints - List all Blueprint assets in project\n"
+        "\n"
+        "PROJECT INFO:\n"
+        "- [UE_REQUEST] get_project_info - Get project name, modules, blueprints count\n"
+        "- [UE_REQUEST] browse_files - Browse project file structure and count files\n"
+        "\n"
+        "CRITICAL: 'describe viewport' = describe_viewport, NOT capture_blueprint!\n"
+        "\n"
         "For GENERAL advice (e.g., 'how do I create a C++ file'), provide "
         "helpful guidance without tokens. "
     )
@@ -1080,7 +1086,7 @@ except Exception as e:
     async def project_query(request: dict):
         """
         Handle project intelligence queries from browser.
-        Uses active project context for accurate responses.
+        Uses active project context and can trigger UE5 data collection.
         """
         from app.project_registry import get_registry
         import openai
@@ -1095,34 +1101,54 @@ except Exception as e:
             registry = get_registry()
             active_project = registry.get_active_project()
             
-            # Build context-aware system message
+            # Build context-aware system message with UE_REQUEST capabilities
             if active_project:
                 project_name = active_project.get('name', 'Unknown')
                 project_path = active_project.get('path', '')
                 project_metadata = active_project.get('metadata', {})
                 
-                context = f"""You are an AI assistant for Unreal Engine 5 development.
+                context = f"""You are an AI assistant for Unreal Engine 5 with LIVE project data access.
 
 Active Project: {project_name}
 Path: {project_path}
 Metadata: {project_metadata}
 
-Provide helpful, accurate answers about this project. If you don't have specific data about files or assets, explain what information would be needed and suggest deploying the UE5 Python client for automatic project scanning."""
+IMPORTANT: You can collect REAL data from the running UE5 editor by using [UE_REQUEST] tokens:
+
+- [UE_REQUEST] get_project_info - Get actual project modules, blueprints count
+- [UE_REQUEST] browse_files - Browse and COUNT files in project (use for "how many files")
+- [UE_REQUEST] list_blueprints - List all Blueprint assets
+- [UE_REQUEST] describe_viewport - Describe 3D viewport scene
+
+When users ask about their project's actual data (file counts, blueprints, etc), ALWAYS use the appropriate [UE_REQUEST] to get real data instead of guessing. Respond ONLY with the [UE_REQUEST] token, nothing else."""
             else:
-                context = "You are an AI assistant for Unreal Engine 5 development. Provide helpful technical guidance."
+                context = "You are an AI assistant for Unreal Engine 5 development. No active project detected. Provide general technical guidance."
             
-            # Call OpenAI API
+            # Call OpenAI API to determine if UE_REQUEST is needed
             response = openai.chat.completions.create(
                 model=app_config.get("model", "gpt-4o-mini"),
                 messages=[
                     {"role": "system", "content": context},
                     {"role": "user", "content": query}
                 ],
-                temperature=app_config.get("temperature", 0.7),
+                temperature=0.3,  # Lower temp for more consistent token detection
                 max_tokens=1500
             )
             
             ai_response = response.choices[0].message.content.strip()
+            
+            # Check if AI wants to collect data from UE5
+            if ai_response.startswith("[UE_REQUEST]"):
+                # Extract action token
+                action = ai_response.replace("[UE_REQUEST]", "").strip()
+                
+                # TODO: In future, actually execute this in UE5 and get real data
+                # For now, inform user that client-side execution is needed
+                return {
+                    "response": f"🔄 This query requires live data from your UE5 editor.\n\nAction needed: {action}\n\nTo enable automatic data collection, make sure your UE5 project has the AI Assistant client running (import AIAssistant.main in UE5 Python Console).",
+                    "project_context": active_project["name"] if active_project else None,
+                    "ue_request": action
+                }
             
             return {
                 "response": ai_response,
