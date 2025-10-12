@@ -21,6 +21,20 @@
       },
       "registered_at": "2025-10-12T06:26:39.354393",
       "last_updated": "2025-10-12T06:26:39.354402"
+    },
+    "189fb60ac15dee00c81189bbf2abcc6c": {
+      "project_id": "189fb60ac15dee00c81189bbf2abcc6c",
+      "name": "UE5_Assistant",
+      "path": "D:/UnrealProjects/5.6/UE5_Assistant/",
+      "version": "5.6.1-44394996+++UE5+Release-5.6",
+      "metadata": {
+        "blueprint_count": 42,
+        "cpp_class_count": 0,
+        "content_path": "D:/UnrealProjects/5.6/UE5_Assistant/Content/",
+        "plugins_enabled": true
+      },
+      "registered_at": "2025-10-12T07:05:36.612337",
+      "last_updated": "2025-10-12T07:05:36.612347"
     }
   }
 }
