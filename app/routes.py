@@ -1395,3 +1395,92 @@ Return ONLY the JSON array, no explanation."""
                 
         except Exception as e:
             return {"error": str(e)}
+    
+    # ========================================================================
+    # HTTP Polling Endpoints (Fallback for when WebSocket doesn't work)
+    # Non-destructive addition - WebSocket code remains unchanged
+    # ========================================================================
+    
+    @app.post("/api/ue5/register_http")
+    async def register_ue5_http(request: dict):
+        """Register UE5 client via HTTP polling (WebSocket fallback)."""
+        from app.websocket_manager import get_manager
+        from datetime import datetime
+        
+        project_id = request.get("project_id")
+        project_name = request.get("project_name", "Unknown")
+        
+        if not project_id:
+            return {"success": False, "error": "project_id required"}
+        
+        manager = get_manager()
+        # Store as HTTP client instead of WebSocket
+        if not hasattr(manager, 'http_clients'):
+            manager.http_clients = {}
+        
+        manager.http_clients[project_id] = {
+            "name": project_name,
+            "last_poll": datetime.now(),
+            "pending_commands": []
+        }
+        
+        print(f"✅ UE5 HTTP client registered: {project_id} ({project_name})")
+        
+        # Notify dashboards
+        await manager.broadcast_to_dashboards({
+            "type": "ue5_status",
+            "project_id": project_id,
+            "status": "connected",
+            "connection_type": "http_polling",
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        return {"success": True, "message": "Registered via HTTP polling"}
+    
+    @app.post("/api/ue5/poll")
+    async def poll_for_commands(request: dict):
+        """UE5 client polls for pending commands."""
+        from app.websocket_manager import get_manager
+        from datetime import datetime
+        
+        project_id = request.get("project_id")
+        if not project_id:
+            return {"commands": []}
+        
+        manager = get_manager()
+        if not hasattr(manager, 'http_clients'):
+            manager.http_clients = {}
+        
+        # Update last poll time
+        if project_id in manager.http_clients:
+            manager.http_clients[project_id]["last_poll"] = datetime.now()
+            
+            # Get pending commands
+            commands = manager.http_clients[project_id].get("pending_commands", [])
+            
+            # Clear pending commands after sending
+            manager.http_clients[project_id]["pending_commands"] = []
+            
+            return {"commands": commands}
+        
+        return {"commands": []}
+    
+    @app.post("/api/ue5/heartbeat")
+    async def ue5_heartbeat(request: dict):
+        """Keep-alive heartbeat from UE5 HTTP client."""
+        from app.websocket_manager import get_manager
+        from datetime import datetime
+        
+        project_id = request.get("project_id")
+        if not project_id:
+            return {"success": False}
+        
+        manager = get_manager()
+        if not hasattr(manager, 'http_clients'):
+            manager.http_clients = {}
+        
+        if project_id in manager.http_clients:
+            manager.http_clients[project_id]["last_poll"] = datetime.now()
+            return {"success": True, "status": "alive"}
+        
+        return {"success": False, "error": "Not registered"}
