@@ -573,7 +573,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         # Accept both "prompt" (new) and "user_input" (legacy) for backwards compatibility
         user_input = request.get("prompt") or request.get("user_input", "")
         if not user_input:
-            return {"error": "No prompt provided."}
+            return {"success": False, "error": "No prompt provided."}
 
         try:
             lower = user_input.lower()
@@ -584,15 +584,15 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             if any(k in lower for k in [
                 "what do i see", "viewport", "describe viewport", "scene"
             ]):
-                return {"response": "[UE_REQUEST] describe_viewport"}
+                return {"success": True, "response": "[UE_REQUEST] describe_viewport"}
             
             # Actor list queries
             if "list actors" in lower or "list of actors" in lower:
-                return {"response": "[UE_REQUEST] list_actors"}
+                return {"success": True, "response": "[UE_REQUEST] list_actors"}
             
             # Selection queries
             if "selected" in lower and ("info" in lower or "details" in lower):
-                return {"response": "[UE_REQUEST] get_selected_info"}
+                return {"success": True, "response": "[UE_REQUEST] get_selected_info"}
             
             # Project-specific queries - need AI interpretation
             if any(k in lower for k in [
@@ -601,7 +601,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 "this project", "project info", "breakdown"
             ]):
                 # Signal UE5 to collect context and send for AI processing
-                return {"response": f"[UE_CONTEXT_REQUEST] project_info|{user_input}"}
+                return {"success": True, "response": f"[UE_CONTEXT_REQUEST] project_info|{user_input}"}
             
             # Blueprint capture requests - need AI interpretation
             if any(k in lower for k in [
@@ -611,6 +611,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 "blueprint", "bp_", "graph", "node"
             ]):
                 return {
+                    "success": True,
                     "response": f"[UE_CONTEXT_REQUEST] blueprint_capture|{user_input}"
                 }
             
@@ -619,11 +620,11 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 "show files", "list files", "browse files",
                 "what files", "project files"
             ]):
-                return {"response": "[UE_REQUEST] browse_files"}
+                return {"success": True, "response": "[UE_REQUEST] browse_files"}
             
             # Blueprint listing
             if "list" in lower and "blueprint" in lower:
-                return {"response": "[UE_REQUEST] list_blueprints"}
+                return {"success": True, "response": "[UE_REQUEST] list_blueprints"}
 
             # Update memory
             session_messages.append({"role": "user", "content": user_input})
@@ -647,19 +648,19 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             if reply.startswith("[UE_REQUEST]"):
                 token = reply.replace("[UE_REQUEST]", "").strip()
                 print(f"[AIConsole] Detected UE token: {token}")
-                return {"response": f"[UE_REQUEST] {token}"}
+                return {"success": True, "response": f"[UE_REQUEST] {token}"}
 
             # Append reply to memory
             session_messages.append({"role": "assistant", "content": reply})
             conversation.add_to_history(user_input, reply, "execute_command")
             
-            return {"response": reply}
+            return {"success": True, "response": reply}
 
         except Exception as e:
             print(f"[ERROR] {e}")
             error_msg = str(e)
             conversation.add_to_history(user_input, f"ERROR: {error_msg}", "execute_command", {"error": True})
-            return {"error": error_msg}
+            return {"success": False, "error": error_msg}
 
     @app.post("/answer_with_context")
     async def answer_with_context(request: dict):
