@@ -306,7 +306,7 @@
                         <code id="ps-command" style="display: block; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 6px; color: #10b981; font-family: 'Consolas', monospace; font-size: 13px; overflow-x: auto; white-space: nowrap;">
 irm https://ue5-assistant-noahbutcher97.replit.app/api/installer_script | iex
                         </code>
-                        <button onclick="copyPSCommand()" style="position: absolute; top: 8px; right: 8px; background: rgba(16,185,129,0.8); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">📋 Copy</button>
+                        <button onclick="copyPSCommand(event)" style="position: absolute; top: 8px; right: 8px; background: rgba(16,185,129,0.8); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">📋 Copy</button>
                     </div>
                 </div>
                 
@@ -1040,7 +1040,7 @@ irm https://ue5-assistant-noahbutcher97.replit.app/api/installer_script | iex
         }
         
         // Copy PowerShell command to clipboard
-        function copyPSCommand() {
+        function copyPSCommand(event) {
             const command = document.getElementById('ps-command').textContent.trim();
             navigator.clipboard.writeText(command).then(() => {
                 const btn = event.target;
