@@ -6,6 +6,50 @@ This project delivers a FastAPI backend service for generating AI-powered techni
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Project Structure
+
+The project follows a clean, organized structure:
+
+```
+/ (root)
+├── main.py                 # FastAPI entry point
+├── pyproject.toml          # Python project config & linting rules
+├── requirements.txt        # Python dependencies
+├── replit.md              # Project documentation (this file)
+├── app/                   # Backend application code
+│   ├── routes.py          # API endpoints
+│   ├── models.py          # Data models
+│   ├── config.py          # Configuration
+│   ├── project_registry.py # Project management
+│   ├── websocket_manager.py # WebSocket handling
+│   ├── services/          # Business logic services
+│   └── templates/         # HTML templates
+├── attached_assets/       # Static assets & UE5 client
+│   └── AIAssistant/       # UE5 Python client (authoritative source)
+├── scripts/               # Deployment & utility scripts
+│   ├── deploy_agent_installer.bat
+│   ├── install_ue5_assistant.ps1
+│   ├── quick_deploy.ps1
+│   ├── ue5_protocol_handler.reg
+│   └── check_imports.py
+├── docs/                  # Documentation
+│   ├── HOW_TO_USE_UPDATE_BUTTON.md
+│   └── UPDATE_SYSTEM_SUMMARY.md
+├── data/                  # Runtime data
+│   └── project_registry.json
+├── tests/                 # Test suite
+│   └── test_auto_update.py
+└── archived_docs/         # Legacy documentation (reference only)
+```
+
+### Key Directories
+- **app/**: Backend application with clean separation of concerns
+- **attached_assets/AIAssistant/**: Single authoritative source for UE5 client code
+- **scripts/**: All deployment scripts and utilities
+- **docs/**: Active documentation for users and developers
+- **data/**: Runtime data files (project registry, etc.)
+- **tests/**: Automated testing suite
+
 ## System Architecture
 
 ### UI/UX Decisions
@@ -84,7 +128,7 @@ Preferred communication style: Simple, everyday language.
 - **Auto-Reload**: UE5 clients automatically reload AIAssistant module after update
 
 ### Automated Test Suite
-- **Test File**: `test_auto_update.py` - Comprehensive testing without requiring UE5
+- **Test File**: `tests/test_auto_update.py` - Comprehensive testing without requiring UE5
 - **Test Coverage**:
   - ✅ Module import validation
   - ✅ Backend URL configuration
@@ -97,5 +141,5 @@ Preferred communication style: Simple, everyday language.
 - **Usage**: `python test_auto_update.py`
 
 ### Documentation
-- **User Guide**: `HOW_TO_USE_UPDATE_BUTTON.md` - Complete instructions for using the update feature
-- **Technical Details**: Architecture, WebSocket message format, security features, troubleshooting
+- **User Guide**: `docs/HOW_TO_USE_UPDATE_BUTTON.md` - Complete instructions for using the update feature
+- **Technical Summary**: `docs/UPDATE_SYSTEM_SUMMARY.md` - Architecture, WebSocket message format, security features, troubleshooting
