@@ -1,0 +1,56 @@
+LogPython: exec("""
+LogPython: 🚀 BOOTSTRAPPING UE5 AI ASSISTANT...
+LogPython: [ActionQueue] ✅ Main thread ticker started (vdb91e37b)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
+LogPython: 🔄 Reloading AIAssistant modules...
+LogPython: 🚀 Initializing AI Assistant...
+LogPython: [ActionQueue] ✅ Main thread ticker started (vc1fda620)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: ✅ AI Assistant is ready!
+LogPython: ============================================================
+LogPython: 💡 Usage: AIAssistant.main.send_command('your question')
+LogPython: 🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard
+LogPython: ✅ AI ASSISTANT READY!
