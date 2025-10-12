@@ -3,7 +3,7 @@ WebSocket Manager for UE5 <-> Dashboard Communication
 Enables real-time bidirectional communication between browser and Unreal Engine.
 """
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, Set
 
 from fastapi import WebSocket
@@ -238,6 +238,33 @@ class ConnectionManager:
             "clients_notified": total_notified,
             "clients_failed": len(disconnected)
         }
+
+    async def cleanup_inactive_clients(self):
+        """Remove HTTP polling clients that haven't polled in 10 seconds."""
+        if not hasattr(self, 'http_clients'):
+            return
+        
+        timeout = timedelta(seconds=10)
+        now = datetime.now()
+        inactive_clients = []
+        
+        for project_id, client_data in self.http_clients.items():
+            last_poll = client_data.get("last_poll")
+            if last_poll and (now - last_poll) > timeout:
+                inactive_clients.append(project_id)
+        
+        # Remove inactive clients and notify dashboards
+        for project_id in inactive_clients:
+            del self.http_clients[project_id]
+            print(f"🧹 Removed inactive HTTP client: {project_id[:16]} (timeout)")
+            
+            # Notify dashboards about disconnection
+            await self.broadcast_to_dashboards({
+                "type": "ue5_status",
+                "project_id": project_id,
+                "status": "disconnected",
+                "timestamp": datetime.now().isoformat()
+            })
 
 
 # Global manager instance

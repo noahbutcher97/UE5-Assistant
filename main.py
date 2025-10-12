@@ -51,6 +51,9 @@ async def startup_event():
     # Trigger auto-update for connected UE5 clients (after startup delay)
     import asyncio
     asyncio.create_task(trigger_auto_update_after_startup())
+    
+    # Start cleanup task for inactive HTTP polling clients
+    asyncio.create_task(cleanup_inactive_clients_loop())
 
 async def trigger_auto_update_after_startup():
     """Trigger auto-update for all connected UE5 clients after backend startup."""
@@ -69,6 +72,24 @@ async def trigger_auto_update_after_startup():
             print("\nℹ️ No UE5 clients connected for auto-update")
     except Exception as e:
         print(f"⚠️ Auto-update trigger failed: {e}")
+
+async def cleanup_inactive_clients_loop():
+    """Background task to cleanup inactive HTTP polling clients every 5 seconds."""
+    import asyncio
+    from app.websocket_manager import get_manager
+    
+    # Wait a bit before starting cleanup
+    await asyncio.sleep(5)
+    
+    while True:
+        try:
+            manager = get_manager()
+            await manager.cleanup_inactive_clients()
+        except Exception as e:
+            print(f"⚠️ Cleanup error: {e}")
+        
+        # Check every 5 seconds
+        await asyncio.sleep(5)
 
 if __name__ == "__main__":
     import uvicorn
