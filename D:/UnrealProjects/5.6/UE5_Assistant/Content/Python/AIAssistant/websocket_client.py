@@ -55,6 +55,8 @@ class WebSocketClient:
         try:
             import websocket
             
+            print(f"🔌 Attempting WebSocket connection to: {self.ws_url}")
+            
             self.ws = websocket.WebSocketApp(
                 self.ws_url,
                 on_message=self._on_message,
@@ -69,12 +71,15 @@ class WebSocketClient:
             self.receive_thread.start()
             
             # Wait for connection (max 5 seconds)
-            for _ in range(50):
+            for i in range(50):
                 if self.connected:
                     print(f"✅ WebSocket connected: {self.project_id}")
                     return True
                 time.sleep(0.1)
             
+            print(f"⚠️ WebSocket connection timeout after 5 seconds")
+            print(f"   URL attempted: {self.ws_url}")
+            print(f"   Project ID: {self.project_id}")
             return False
             
         except ImportError:
@@ -82,6 +87,7 @@ class WebSocketClient:
             return False
         except Exception as e:
             print(f"❌ WebSocket connection failed: {e}")
+            print(f"   URL: {self.ws_url}")
             return False
     
     def _run_forever(self):
@@ -144,6 +150,13 @@ class WebSocketClient:
             import sys
             import importlib
             
+            # Check if we're in UE5 environment
+            try:
+                import unreal
+            except ImportError:
+                print("⚠️ Auto-update skipped (not in UE5 environment)")
+                return
+            
             # Run auto-update
             if 'AIAssistant.auto_update' in sys.modules:
                 # Reload the module
@@ -152,7 +165,8 @@ class WebSocketClient:
             from AIAssistant import auto_update
             result = auto_update.check_and_update()
             
-            if result.get('updated'):
+            # check_and_update returns bool
+            if result:
                 print("✅ Auto-update completed successfully")
                 print("🔄 Reloading AI Assistant...")
                 
@@ -161,7 +175,7 @@ class WebSocketClient:
                     importlib.reload(sys.modules['AIAssistant.main'])
                     print("✅ AI Assistant reloaded with latest files")
             else:
-                print("ℹ️ Already up to date")
+                print("ℹ️ Auto-update failed or no updates available")
                 
         except Exception as e:
             print(f"❌ Auto-update failed: {e}")
