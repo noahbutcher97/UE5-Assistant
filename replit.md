@@ -86,3 +86,14 @@ The system features a **Universal Bootstrap Script** that handles both ZIP and T
 5. Registers with the server automatically
 
 This one-time bootstrap enables seamless auto-updates thereafter, with HTTP polling registration that actually works and proper connection tracking in the dashboard.
+
+### Emergency Fix Update System
+The system includes a **GUI-based Emergency Fix Update** mechanism designed for non-technical users experiencing thread safety crashes:
+- **Dashboard Button**: Prominent red "Fix Crash Issues" button in the control center
+- **No-Restart Mode**: Downloads and installs updates WITHOUT automatic restart to prevent crashes
+- **Universal Format Support**: Automatically detects and handles both ZIP and TAR.GZ archives using magic byte detection
+- **Thread Safety**: All update operations execute safely on background threads, avoiding Slate/UI thread violations
+- **User Instructions**: Clear messaging guides users to manually restart UE5 after emergency updates
+- **One-Click Solution**: Average users can fix crash issues without Python knowledge or console access
+
+This emergency system prevents the "Assertion failed: IsInGameThread() || IsInSlateThread()" crashes that occur when auto-update attempts to restart from background threads.
