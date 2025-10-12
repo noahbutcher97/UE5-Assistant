@@ -407,23 +407,35 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
         from fastapi.responses import Response
         
-        # Read the script and force the correct URLs regardless of file content
+        # Force read the actual file from disk, bypassing any caching
         script_path = Path("scripts/install_ue5_assistant.ps1")
         if script_path.exists():
-            # Read with explicit UTF-8 BOM handling
-            with open(script_path, 'r', encoding='utf-8-sig') as f:
-                content = f.read()
+            # Direct file read with fresh handle
+            content = script_path.read_text(encoding='utf-8')
             
-            # Force replace both old and potentially cached patterns
-            replacements = {
-                '/api/download_client"': '/api/download_client_bundle"',
-                'Invoke-WebRequest -Uri $DownloadURL -OutFile': 'Invoke-WebRequest -Uri $DownloadURL -Method Post -OutFile',
-                '📥 Download URL: $DownloadURL"': '📥 Download URL: $DownloadURL (POST - bypasses cache)"',
-                '   Source: $DownloadURL"': '   Source: $DownloadURL (POST method)"'
-            }
-            
-            for old, new in replacements.items():
-                content = content.replace(old, new)
+            return Response(
+                content=content,
+                media_type="text/plain; charset=utf-8",
+                headers={
+                    "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1",
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "X-Timestamp": str(__import__('time').time())
+                }
+            )
+        return {"error": "Installer script not found"}
+    
+    @app.post("/api/installer_script_v2")
+    async def get_installer_script_fresh():
+        """Fresh endpoint to bypass all caching layers."""
+        from pathlib import Path
+
+        from fastapi.responses import Response
+        
+        # Read the file directly
+        script_path = Path("scripts/install_ue5_assistant.ps1")
+        if script_path.exists():
+            content = script_path.read_text(encoding='utf-8')
             
             return Response(
                 content=content,
