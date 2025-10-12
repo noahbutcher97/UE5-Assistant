@@ -181,15 +181,17 @@ class TestProjectRegistrationEndpoints:
     """Test project registration and management."""
     
     def test_register_project(self):
-        """Test registering a new project."""
+        """Test registering a new project (UE5 client format)."""
         response = client.post("/api/register_project", json={
             "project_id": "test_project_456",
-            "name": "My UE5 Project",
-            "path": "D:/Projects/MyGame",
-            "version": "5.6",
-            "metadata": {
-                "blueprints_count": 10,
-                "modules_count": 3
+            "project_data": {
+                "name": "My UE5 Project",
+                "path": "D:/Projects/MyGame",
+                "version": "5.6",
+                "metadata": {
+                    "blueprints_count": 10,
+                    "modules_count": 3
+                }
             }
         })
         
@@ -219,10 +221,13 @@ class TestProjectRegistrationEndpoints:
         """Test setting active project."""
         project_id = "test_active_456"
         
+        # Register with UE5 client format
         client.post("/api/register_project", json={
             "project_id": project_id,
-            "name": "Active Test Project",
-            "path": "/path/to/project"
+            "project_data": {
+                "name": "Active Test Project",
+                "path": "/path/to/project"
+            }
         })
         
         response = client.post("/api/set_active_project", json={

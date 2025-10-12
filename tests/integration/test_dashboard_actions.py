@@ -30,10 +30,13 @@ class TestDashboardQuickActions:
             "project_name": self.project_name
         })
         
+        # Register with UE5 client format
         client.post("/api/register_project", json={
             "project_id": self.project_id,
-            "name": self.project_name,
-            "path": "D:/Projects/TestProject"
+            "project_data": {
+                "name": self.project_name,
+                "path": "D:/Projects/TestProject"
+            }
         })
         
         client.post("/api/set_active_project", json={
@@ -419,10 +422,13 @@ class TestDashboardMultiProject:
         project_id_2 = "switch_project_2"
         
         for pid in [project_id_1, project_id_2]:
+            # Register with UE5 client format
             client.post("/api/register_project", json={
                 "project_id": pid,
-                "name": f"Switch Project {pid}",
-                "path": f"/path/{pid}"
+                "project_data": {
+                    "name": f"Switch Project {pid}",
+                    "path": f"/path/{pid}"
+                }
             })
         
         client.post("/api/set_active_project", json={
