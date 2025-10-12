@@ -1028,8 +1028,29 @@
                         const ue5Data = await ue5Response.json();
                         
                         if (ue5Data.success && ue5Data.data) {
-                            resultDiv.className = 'output-box';
-                            resultDiv.textContent = JSON.stringify(ue5Data.data, null, 2);
+                            // Format the data with AI for a natural language response
+                            resultDiv.textContent = '🤖 Formatting response with AI...';
+                            
+                            const formatResponse = await fetch('/answer_with_context', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    question: query,
+                                    context: ue5Data.data,
+                                    context_type: action
+                                })
+                            });
+                            
+                            const formattedData = await formatResponse.json();
+                            
+                            if (formattedData.response) {
+                                resultDiv.className = 'output-box';
+                                resultDiv.textContent = formattedData.response;
+                            } else {
+                                // Fallback to raw data if formatting fails
+                                resultDiv.className = 'output-box';
+                                resultDiv.textContent = JSON.stringify(ue5Data.data, null, 2);
+                            }
                         } else {
                             resultDiv.className = 'output-box status-error';
                             resultDiv.textContent = `Error: ${ue5Data.error || 'Failed to get data from UE5'}`;
