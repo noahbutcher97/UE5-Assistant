@@ -215,22 +215,30 @@ class HTTPPollingClient:
                     action = "get_project_info"
                 
                 if self.action_handler:
-                    # HTTP Polling limitation: Cannot execute Unreal API calls from background thread
-                    # Send instructions for manual execution instead
-                    print(f"⚠️ HTTP Polling cannot execute '{action}' - requires main thread")
-                    print(f"💡 Run this in UE5 Python Console instead:")
-                    print(f"   AIAssistant.main.send_command('{action}')")
-                    
-                    # Send helpful error response
-                    self.send_message({
-                        "request_id": request_id,
-                        "success": False,
-                        "error": (
-                            "HTTP Polling mode cannot execute this action directly. "
-                            f"Please run this in UE5 Python Console: "
-                            f"AIAssistant.main.send_command('{action}')"
-                        )
-                    })
+                    # Execute action directly (from background thread)
+                    # Note: This may cause threading warnings for some Unreal API calls,
+                    # but it's the only way to make HTTP polling work with dashboard actions
+                    try:
+                        result = self.action_handler(action, params)
+                        
+                        # Send response back via HTTP
+                        response = {
+                            "request_id": request_id,
+                            "action": action,
+                            "success": result.get("success", True),
+                            "data": result.get("data"),
+                            "error": result.get("error")
+                        }
+                        
+                        self.send_message(response)
+                        print(f"✅ Executed action: {action} (result: {result.get('success')})")
+                    except Exception as e:
+                        print(f"❌ Action execution error: {e}")
+                        self.send_message({
+                            "request_id": request_id,
+                            "success": False,
+                            "error": str(e)
+                        })
                 else:
                     # No handler - send error response
                     self.send_message({
