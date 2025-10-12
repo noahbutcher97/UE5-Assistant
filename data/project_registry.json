@@ -46,8 +46,8 @@
         "blueprints_count": 10,
         "modules_count": 3
       },
-      "registered_at": "2025-10-12T10:02:32.560875",
-      "last_updated": "2025-10-12T10:02:32.560885"
+      "registered_at": "2025-10-12T10:04:56.448049",
+      "last_updated": "2025-10-12T10:04:56.448057"
     },
     "3c47c5576e27": {
       "project_id": "3c47c5576e27",
@@ -55,8 +55,17 @@
       "path": "/path/to/project",
       "version": "5.6",
       "metadata": {},
-      "registered_at": "2025-10-12T10:02:33.004925",
-      "last_updated": "2025-10-12T10:02:33.004932"
+      "registered_at": "2025-10-12T10:04:56.897913",
+      "last_updated": "2025-10-12T10:04:56.897919"
+    },
+    "2d09f0b7a58d": {
+      "project_id": "2d09f0b7a58d",
+      "name": "Dashboard Test Project",
+      "path": "D:/Projects/TestProject",
+      "version": "5.6",
+      "metadata": {},
+      "registered_at": "2025-10-12T10:06:26.078112",
+      "last_updated": "2025-10-12T10:06:26.078119"
     }
   }
 }
