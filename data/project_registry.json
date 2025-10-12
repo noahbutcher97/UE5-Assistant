@@ -1,5 +1,5 @@
 {
-  "active_project_id": "189fb60ac15dee00c81189bbf2abcc6c",
+  "active_project_id": "189fb60ac15d",
   "projects": {
     "6d953fbbf247": {
       "project_id": "6d953fbbf247",
@@ -20,7 +20,7 @@
         "registration_time": "2025-10-12T06:26:39.209Z"
       },
       "registered_at": "2025-10-12T06:26:39.354393",
-      "last_updated": "2025-10-12T07:41:41.930170",
+      "last_updated": "2025-10-12T07:43:15.839345",
       "connection_mode": "http"
     },
     "189fb60ac15dee00c81189bbf2abcc6c": {
