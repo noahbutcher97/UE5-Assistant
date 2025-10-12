@@ -28,30 +28,43 @@ The project follows a clean, organized structure:
 │   ├── AIAssistant/       # Client module code
 │   └── deploy_agent.py    # Local deployment service
 ├── attached_assets/       # User-uploaded assets (images, files, etc.)
-├── scripts/               # Deployment & utility scripts
+├── scripts/               # Active deployment & utility scripts
 │   ├── deploy_agent_installer.bat
 │   ├── install_ue5_assistant.ps1
 │   ├── quick_deploy.ps1
 │   ├── ue5_protocol_handler.reg
 │   └── check_imports.py
-├── docs/                  # Documentation
+├── docs/                  # Active documentation
 │   ├── HOW_TO_USE_UPDATE_BUTTON.md
 │   └── UPDATE_SYSTEM_SUMMARY.md
 ├── data/                  # Runtime data
 │   └── project_registry.json
-├── tests/                 # Test suite
-│   └── test_auto_update.py
-└── archived_docs/         # Legacy documentation (reference only)
+├── tests/                 # Test suite (organized by type)
+│   ├── backend/           # Backend/API tests
+│   │   ├── test_auto_update.py
+│   │   └── test_new_endpoints.py
+│   ├── ue5_client/        # UE5 client tests
+│   │   ├── mock_unreal.py
+│   │   └── test_runner.py
+│   └── integration/       # Integration tests
+└── archive/               # Archived materials (historical reference)
+    ├── docs/              # Deprecated documentation
+    ├── scripts/           # Deprecated scripts
+    └── tests/             # Deprecated tests
 ```
 
 ### Key Directories
 - **app/**: Backend application with clean separation of concerns
 - **ue5_client/**: Single authoritative source for UE5 client code (isolated from attachments)
 - **attached_assets/**: Reserved for user-uploaded assets (images, files, etc.)
-- **scripts/**: All deployment scripts and utilities
+- **scripts/**: Active deployment scripts and utilities
 - **docs/**: Active documentation for users and developers
 - **data/**: Runtime data files (project registry, etc.)
-- **tests/**: Automated testing suite
+- **tests/**: Organized test suite
+  - **backend/**: Backend and API tests
+  - **ue5_client/**: UE5 client-specific tests
+  - **integration/**: End-to-end integration tests
+- **archive/**: Historical materials (docs, scripts, tests) - reference only
 
 ## System Architecture
 
@@ -131,7 +144,7 @@ The project follows a clean, organized structure:
 - **Auto-Reload**: UE5 clients automatically reload AIAssistant module after update
 
 ### Automated Test Suite
-- **Test File**: `tests/test_auto_update.py` - Comprehensive testing without requiring UE5
+- **Test File**: `tests/backend/test_auto_update.py` - Comprehensive testing without requiring UE5
 - **Test Coverage**:
   - ✅ Module import validation
   - ✅ Backend URL configuration
@@ -141,7 +154,7 @@ The project follows a clean, organized structure:
   - ✅ Download endpoint verification (localhost)
   - ✅ ZIP integrity and contents validation
 - **Results**: 5/7 core tests pass (Replit proxy limitation prevents POST testing on deployed URL, but localhost confirms functionality)
-- **Usage**: `python test_auto_update.py`
+- **Usage**: `python tests/backend/test_auto_update.py`
 
 ### Documentation
 - **User Guide**: `docs/HOW_TO_USE_UPDATE_BUTTON.md` - Complete instructions for using the update feature
