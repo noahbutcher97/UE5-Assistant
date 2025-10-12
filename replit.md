@@ -89,6 +89,7 @@ Preferred communication style: Simple, everyday language.
 - **Editor Orchestration Systems**: Complete scene building via SceneOrchestrator (spawn actors/primitives/blueprints), ViewportController (camera control), and ActorManipulator (align/distribute/arrange).
 - **UE 5.6 Compliant Utility Generator**: Generates Editor Utility Widgets with proper @unreal.uclass() decorators, EditorUtilityWidget base class, @unreal.ufunction methods, and full backend API integration.
 - **Unified Dashboard**: Main interface at `/dashboard` with Project Hub as primary tab, replacing separate dashboard pages.
+- **Real-Time WebSocket Communication**: Bidirectional WebSocket system enables dashboard to directly trigger UE5 actions (browse_files, get_project_info, etc.) with live data collection. Features automatic reconnection with exponential backoff (max 10 attempts), real-time connection status updates, and robust error handling.
 - **Deploy Agent**: Local Python service (localhost:7865) bridges browser to UE5, enabling frictionless deployment and auto-import without browser security limitations.
 - **Data Flow**: Unreal Engine Python scripts collect viewport data and POST it to FastAPI endpoints. Pydantic models validate requests. AI processes data, and descriptions are returned to UE5.
 - **UE5 Python Integration**: Automatic installation of dependencies, bi-directional HTTP communication, file-based state management (`Saved/AIConsole`), persistent conversation logging, and intelligent context-aware command routing with expanded keyword detection.
@@ -121,6 +122,7 @@ Preferred communication style: Simple, everyday language.
 ### Python Packages (Backend)
 - **fastapi** (0.112.x): Core web framework.
 - **uvicorn** (0.23.2): ASGI server.
+- **websockets** (15.0.1): WebSocket protocol support for real-time communication.
 - **pydantic** (2.10.3+): Data validation and settings management.
 - **openai** (1.57.0): Official OpenAI Python client.
 - **requests** (2.32.3): HTTP library.
@@ -128,6 +130,7 @@ Preferred communication style: Simple, everyday language.
 
 ### Unreal Engine Integration
 - **UE5.6+ Python API** (3.11.8): Native Python environment for editor interactions, viewport querying, and file system operations (`unreal.Paths`).
+- **websocket-client**: Python WebSocket client library for UE5 to establish real-time connection with backend.
 - **pip**: Package manager for installing Python dependencies within UE's environment.
 
 ### Deployment Platform

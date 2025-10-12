@@ -50,11 +50,19 @@ class ConnectionManager:
             "timestamp": datetime.now().isoformat()
         })
     
-    def disconnect_ue5(self, project_id: str):
-        """Unregister UE5 client."""
+    async def disconnect_ue5(self, project_id: str):
+        """Unregister UE5 client and notify dashboards."""
         if project_id in self.ue5_clients:
             del self.ue5_clients[project_id]
             print(f"❌ UE5 client disconnected: {project_id}")
+            
+            # Notify all dashboards about disconnection
+            await self.broadcast_to_dashboards({
+                "type": "ue5_status",
+                "project_id": project_id,
+                "status": "disconnected",
+                "timestamp": datetime.now().isoformat()
+            })
     
     def disconnect_dashboard(self, websocket: WebSocket):
         """Unregister dashboard connection."""

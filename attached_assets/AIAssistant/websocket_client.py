@@ -31,6 +31,11 @@ class WebSocketClient:
         self.receive_thread = None
         self.action_handler: Optional[Callable[[str, Dict[str, Any]], Dict[str, Any]]] = None
         
+        # Reconnection settings
+        self.reconnect_attempts = 0
+        self.max_reconnect_attempts = 10
+        self.base_reconnect_delay = 2  # seconds
+        
     def set_action_handler(self, handler: Callable[[str, Dict[str, Any]], Dict[str, Any]]):
         """
         Set the handler for incoming action commands.
@@ -87,6 +92,7 @@ class WebSocketClient:
     def _on_open(self, ws):
         """Handle WebSocket connection opened."""
         self.connected = True
+        self.reconnect_attempts = 0  # Reset counter on successful connection
         print(f"🔗 WebSocket opened for project: {self.project_id}")
     
     def _on_message(self, ws, message):
@@ -129,11 +135,45 @@ class WebSocketClient:
     def _on_error(self, ws, error):
         """Handle WebSocket error."""
         print(f"❌ WebSocket error: {error}")
+        self.connected = False
     
     def _on_close(self, ws, close_status_code, close_msg):
         """Handle WebSocket connection closed."""
         self.connected = False
         print(f"🔌 WebSocket closed: {close_msg}")
+        
+        # Auto-reconnect with exponential backoff
+        if self.running and self.reconnect_attempts < self.max_reconnect_attempts:
+            self.reconnect_attempts += 1
+            delay = min(self.base_reconnect_delay * (2 ** (self.reconnect_attempts - 1)), 60)
+            print(f"🔄 Reconnecting in {delay}s (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})...")
+            time.sleep(delay)
+            self._reconnect()
+        elif self.reconnect_attempts >= self.max_reconnect_attempts:
+            print(f"❌ Max reconnection attempts reached. WebSocket permanently disconnected.")
+            self.running = False
+    
+    def _reconnect(self):
+        """Attempt to reconnect to WebSocket."""
+        if not self.running:
+            return
+            
+        try:
+            import websocket
+            
+            self.ws = websocket.WebSocketApp(
+                self.ws_url,
+                on_message=self._on_message,
+                on_error=self._on_error,
+                on_close=self._on_close,
+                on_open=self._on_open
+            )
+            
+            # Run in current thread (called from _on_close)
+            self.ws.run_forever()
+            
+        except Exception as e:
+            print(f"❌ Reconnection failed: {e}")
     
     def send_message(self, data: dict):
         """

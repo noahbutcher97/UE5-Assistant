@@ -1175,13 +1175,7 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                 await manager.handle_ue5_response(project_id, data)
                 
         except WebSocketDisconnect:
-            manager.disconnect_ue5(project_id)
-            # Notify dashboards
-            await manager.broadcast_to_dashboards({
-                "type": "ue5_status",
-                "project_id": project_id,
-                "status": "disconnected"
-            })
+            await manager.disconnect_ue5(project_id)
     
     @app.websocket("/ws/dashboard")
     async def websocket_dashboard_endpoint(websocket: WebSocket):
