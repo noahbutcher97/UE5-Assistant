@@ -372,7 +372,7 @@ class AIAssistant:
             )
     
     def _init_websocket(self):
-        """Initialize WebSocket connection for real-time communication."""
+        """Initialize connection for real-time communication (HTTP Polling mode)."""
         try:
             import unreal
             import hashlib
@@ -388,47 +388,24 @@ class AIAssistant:
             base_url = self.config.api_url
             unreal.log(f"📋 Backend URL: {base_url}")
             
-            # Try WebSocket first (preferred)
-            ws_connected = False
+            # Use HTTP Polling (WebSocket under construction)
+            unreal.log("📡 Connection Mode: HTTP Polling")
             try:
-                import websocket
-                unreal.log("✅ websocket-client library detected")
-                unreal.log("🔌 Attempting WebSocket connection...")
+                from .http_polling_client import HTTPPollingClient
                 
-                # Create WebSocket client
-                self.ws_client = WebSocketClient(base_url, project_id)
+                self.ws_client = HTTPPollingClient(base_url, project_id, project_name)
                 self.ws_client.set_action_handler(self._handle_websocket_action)
                 
-                # Try to connect
                 if self.ws_client.connect():
-                    unreal.log("🌐 Real-time dashboard connection enabled (WebSocket)")
-                    ws_connected = True
+                    unreal.log("✅ Real-time connection enabled (HTTP Polling)")
+                    unreal.log("💡 WebSocket mode coming soon - HTTP provides reliable communication")
                 else:
-                    unreal.log_warning("⚠️ WebSocket connection failed")
+                    unreal.log_warning("⚠️ HTTP Polling connection failed")
+                    unreal.log_warning("   Dashboard features will be limited")
                     
-            except ImportError:
-                unreal.log_warning("⚠️ websocket-client not installed")
-            except Exception as ws_error:
-                unreal.log_warning(f"⚠️ WebSocket init failed: {ws_error}")
-            
-            # Fall back to HTTP Polling if WebSocket failed
-            if not ws_connected:
-                unreal.log("🔄 Falling back to HTTP polling...")
-                try:
-                    from .http_polling_client import HTTPPollingClient
-                    
-                    self.ws_client = HTTPPollingClient(base_url, project_id, project_name)
-                    self.ws_client.set_action_handler(self._handle_websocket_action)
-                    
-                    if self.ws_client.connect():
-                        unreal.log("✅ Real-time connection enabled (HTTP Polling)")
-                    else:
-                        unreal.log_warning("⚠️ HTTP Polling connection failed")
-                        unreal.log_warning("   Dashboard features will be limited")
-                        
-                except Exception as http_error:
-                    unreal.log_error(f"❌ HTTP Polling failed: {http_error}")
-                    unreal.log_error("   All real-time features disabled")
+            except Exception as http_error:
+                unreal.log_error(f"❌ HTTP Polling failed: {http_error}")
+                unreal.log_error("   Real-time dashboard features disabled")
                 
         except Exception as e:
             import unreal

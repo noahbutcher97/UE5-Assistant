@@ -275,6 +275,44 @@
         </div>
     </div>
 
+    <!-- Connection Mode Toggle -->
+    <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin: 20px; border: 1px solid rgba(139,92,246,0.3);">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px;">
+            <div style="flex: 1;">
+                <h3 style="color: #a78bfa; margin: 0 0 8px 0; font-size: 16px;">📡 Connection Mode</h3>
+                <p style="color: #8b95a5; margin: 0; font-size: 13px;">Choose how the dashboard communicates with UE5</p>
+            </div>
+            
+            <div style="display: flex; gap: 12px;">
+                <!-- HTTP Polling Mode (Active) -->
+                <div id="http-mode-btn" onclick="setConnectionMode('http')" style="position: relative; cursor: pointer; padding: 16px 24px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 10px; border: 2px solid #10b981; transition: all 0.3s;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 4px;">📊</div>
+                        <div style="font-weight: 600; font-size: 14px;">HTTP Polling</div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.8); margin-top: 2px;">✅ Active</div>
+                    </div>
+                </div>
+                
+                <!-- WebSocket Mode (Under Construction) -->
+                <div id="websocket-mode-btn" style="position: relative; cursor: not-allowed; padding: 16px 24px; background: rgba(139,92,246,0.1); border-radius: 10px; border: 2px dashed rgba(139,92,246,0.3); opacity: 0.5; transition: all 0.3;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 4px;">🔌</div>
+                        <div style="font-weight: 600; font-size: 14px; color: #8b95a5;">WebSocket</div>
+                        <div style="font-size: 11px; color: #8b95a5; margin-top: 2px;">⏸️ Coming Soon</div>
+                    </div>
+                    
+                    <!-- Construction Overlay -->
+                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7); border-radius: 8px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 32px; margin-bottom: 4px;">🚧</div>
+                            <div style="font-size: 10px; color: #fbbf24; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Under Construction</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="tabs">
         <button class="tab active" onclick="showTab('project-hub')">🎮 Project Hub</button>
         <button class="tab" onclick="showTab('conversations')">💬 Conversations</button>
@@ -834,12 +872,41 @@
 
     <script>
         let currentTab = 'project-hub';
+        let connectionMode = 'http'; // Default to HTTP polling (WebSocket under construction)
 
         // Load projects on page load
         loadProjects();
         loadConversations();
         loadConfig();
         loadRecentPaths();
+
+        function setConnectionMode(mode) {
+            // Only HTTP mode is available (WebSocket under construction)
+            if (mode !== 'http') {
+                alert('🚧 WebSocket mode is currently under construction!\n\nHTTP Polling provides reliable communication and is the recommended mode for now.');
+                return;
+            }
+            
+            connectionMode = mode;
+            
+            // Update UI
+            const httpBtn = document.getElementById('http-mode-btn');
+            const wsBtn = document.getElementById('websocket-mode-btn');
+            
+            if (mode === 'http') {
+                httpBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                httpBtn.style.border = '2px solid #10b981';
+                httpBtn.style.opacity = '1';
+            } else {
+                httpBtn.style.background = 'rgba(16,185,129,0.1)';
+                httpBtn.style.border = '2px dashed rgba(16,185,129,0.3)';
+                httpBtn.style.opacity = '0.5';
+            }
+            
+            // Store preference
+            localStorage.setItem('connectionMode', mode);
+            console.log(`📡 Connection mode set to: ${mode.toUpperCase()}`);
+        }
 
         function showTab(tabName) {
             // Hide all tabs
