@@ -385,14 +385,14 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
         from fastapi.responses import Response
         
-        script_path = Path("scripts/install_client.bat")
+        script_path = Path("scripts/install_ue5_assistant.ps1")
         if script_path.exists():
             content = script_path.read_text()
             return Response(
                 content=content,
                 media_type="text/plain",
                 headers={
-                    "Content-Disposition": "attachment; filename=install_ue5_assistant.bat",
+                    "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1",
                     "Cache-Control": "no-cache, no-store, must-revalidate",
                     "Pragma": "no-cache",
                     "Expires": "0"
