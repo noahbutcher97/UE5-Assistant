@@ -33,7 +33,6 @@ def add_orchestration_actions(executor):
     
     def _build_scene():
         """Execute AI-generated scene building plan."""
-        from .scene_orchestrator import get_orchestrator
         
         # This will be called with a full action plan from AI
         return (
@@ -55,7 +54,6 @@ def add_orchestration_actions(executor):
     
     def _move_camera():
         """Move camera to location."""
-        from .viewport_controller import get_viewport_controller
         
         return (
             "move_camera requires target location from AI. "
@@ -64,8 +62,9 @@ def add_orchestration_actions(executor):
     
     def _orbit_camera():
         """Orbit camera around selection."""
-        from .viewport_controller import get_viewport_controller
         import unreal
+
+        from .viewport_controller import get_viewport_controller
         
         actor_subsystem = unreal.get_editor_subsystem(
             unreal.EditorActorSubsystem
@@ -152,7 +151,6 @@ def add_orchestration_actions(executor):
     # Editor Utility Generation
     def _generate_editor_tool():
         """Generate editor utility widget from AI spec."""
-        from .editor_utility_generator import get_utility_generator
         
         return (
             "generate_tool requires AI specification. "
