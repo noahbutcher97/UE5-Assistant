@@ -126,7 +126,25 @@ class DeployAgent(BaseHTTPRequestHandler):
             
             print(f"✅ Deployed {len(files_deployed)} files")
             
-            # Step 3: Auto-execute import in UE5 (if requested)
+            # Step 3: Create auto_start.py for auto-initialization
+            auto_start_path = target_path / "auto_start.py"
+            auto_start_content = """# Auto-generated initialization script for UE5 AI Assistant
+# This file automatically initializes the AI Assistant when UE5 loads
+
+import unreal
+
+try:
+    # Import and initialize the AI Assistant
+    import AIAssistant.main
+    unreal.log("✅ AI Assistant auto-initialized successfully!")
+except Exception as e:
+    unreal.log_error(f"❌ Failed to auto-initialize AI Assistant: {e}")
+    unreal.log("💡 You can manually initialize by running: import AIAssistant.main")
+"""
+            auto_start_path.write_text(auto_start_content)
+            print("✅ Created auto_start.py for automatic initialization")
+            
+            # Step 4: Auto-execute import in UE5 (if requested)
             auto_import = data.get('auto_import', True)
             import_result = None
             
@@ -139,7 +157,8 @@ class DeployAgent(BaseHTTPRequestHandler):
                 'files_deployed': len(files_deployed),
                 'project': self.ue5_project,
                 'auto_import': import_result if auto_import else None,
-                'message': 'Deployment complete! AI Assistant is ready in UE5.'
+                'auto_start_created': True,
+                'message': 'Deployment complete! AI Assistant is ready in UE5 with auto-initialization.'
             }
             
         except Exception as e:

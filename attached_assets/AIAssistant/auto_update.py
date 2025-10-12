@@ -68,6 +68,29 @@ def check_and_update():
                 updated_files.append(file_info.filename)
         
         unreal.log(f"✅ Updated {len(updated_files)} files")
+        
+        # Create auto_start.py for auto-initialization
+        auto_start_path = os.path.join(target_base, "auto_start.py")
+        auto_start_content = """# Auto-generated initialization script for UE5 AI Assistant
+# This file automatically initializes the AI Assistant when UE5 loads
+
+import unreal
+
+try:
+    # Import and initialize the AI Assistant
+    import AIAssistant.main
+    unreal.log("✅ AI Assistant auto-initialized successfully!")
+except Exception as e:
+    unreal.log_error(f"❌ Failed to auto-initialize AI Assistant: {e}")
+    unreal.log("💡 You can manually initialize by running: import AIAssistant.main")
+"""
+        try:
+            with open(auto_start_path, 'w') as f:
+                f.write(auto_start_content)
+            unreal.log("✅ Created auto_start.py for automatic initialization")
+        except Exception as e:
+            unreal.log_error(f"⚠️ Could not create auto_start.py: {e}")
+        
         unreal.log("=" * 60)
         unreal.log("📋 Updated Files:")
         for f in updated_files:

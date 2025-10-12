@@ -1,0 +1,146 @@
+LogPython: ✅ Switched to production server: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [Blueprint Helper] Server switch: success|https://ue5-assistant-noahbutcher97.replit.app
+LogPython: ✅ Switched to dev server: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: [Blueprint Helper] Server switch: success|https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 1, in <module>
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 357, in send_command
+LogPython: Error:     assistant = get_assistant()
+LogPython: Error:                 ^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 330, in get_assistant
+LogPython: Error:     _assistant = AIAssistant()
+LogPython: Error:                  ^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 22, in __init__
+LogPython: Error:     self.executor = get_executor()
+LogPython: Error:                     ^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 369, in get_executor
+LogPython: Error:     _executor = ActionExecutor()
+LogPython: Error:                 ^^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 50, in __init__
+LogPython: Error:     self._register_default_actions()
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 81, in _register_default_actions
+LogPython: Error:     self.register("spawn_actor", self._spawn_actor)
+LogPython: Error:                                  ^^^^^^^^^^^^^^^^^
+LogPython: Error: AttributeError: 'ActionExecutor' object has no attribute '_spawn_actor'
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 1, in <module>
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 357, in send_command
+LogPython: Error:     assistant = get_assistant()
+LogPython: Error:                 ^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 330, in get_assistant
+LogPython: Error:     _assistant = AIAssistant()
+LogPython: Error:                  ^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 22, in __init__
+LogPython: Error:     self.executor = get_executor()
+LogPython: Error:                     ^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 369, in get_executor
+LogPython: Error:     _executor = ActionExecutor()
+LogPython: Error:                 ^^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 50, in __init__
+LogPython: Error:     self._register_default_actions()
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 81, in _register_default_actions
+LogPython: Error:     self.register("spawn_actor", self._spawn_actor)
+LogPython: Error:                                  ^^^^^^^^^^^^^^^^^
+LogPython: Error: AttributeError: 'ActionExecutor' object has no attribute '_spawn_actor'
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 1, in <module>
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 357, in send_command
+LogPython: Error:     assistant = get_assistant()
+LogPython: Error:                 ^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 330, in get_assistant
+LogPython: Error:     _assistant = AIAssistant()
+LogPython: Error:                  ^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 22, in __init__
+LogPython: Error:     self.executor = get_executor()
+LogPython: Error:                     ^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 369, in get_executor
+LogPython: Error:     _executor = ActionExecutor()
+LogPython: Error:                 ^^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 50, in __init__
+LogPython: Error:     self._register_default_actions()
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 81, in _register_default_actions
+LogPython: Error:     self.register("spawn_actor", self._spawn_actor)
+LogPython: Error:                                  ^^^^^^^^^^^^^^^^^
+LogPython: Error: AttributeError: 'ActionExecutor' object has no attribute '_spawn_actor'
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 1, in <module>
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 357, in send_command
+LogPython: Error:     assistant = get_assistant()
+LogPython: Error:                 ^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 330, in get_assistant
+LogPython: Error:     _assistant = AIAssistant()
+LogPython: Error:                  ^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 22, in __init__
+LogPython: Error:     self.executor = get_executor()
+LogPython: Error:                     ^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 369, in get_executor
+LogPython: Error:     _executor = ActionExecutor()
+LogPython: Error:                 ^^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 50, in __init__
+LogPython: Error:     self._register_default_actions()
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 81, in _register_default_actions
+LogPython: Error:     self.register("spawn_actor", self._spawn_actor)
+LogPython: Error:                                  ^^^^^^^^^^^^^^^^^
+LogPython: Error: AttributeError: 'ActionExecutor' object has no attribute '_spawn_actor'
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 1, in <module>
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 357, in send_command
+LogPython: Error:     assistant = get_assistant()
+LogPython: Error:                 ^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 330, in get_assistant
+LogPython: Error:     _assistant = AIAssistant()
+LogPython: Error:                  ^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 22, in __init__
+LogPython: Error:     self.executor = get_executor()
+LogPython: Error:                     ^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 369, in get_executor
+LogPython: Error:     _executor = ActionExecutor()
+LogPython: Error:                 ^^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 50, in __init__
+LogPython: Error:     self._register_default_actions()
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 81, in _register_default_actions
+LogPython: Error:     self.register("spawn_actor", self._spawn_actor)
+LogPython: Error:                                  ^^^^^^^^^^^^^^^^^
+LogPython: Error: AttributeError: 'ActionExecutor' object has no attribute '_spawn_actor'
+LogPython: ✅ Switched to production server: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [Blueprint Helper] Server switch: success|https://ue5-assistant-noahbutcher97.replit.app
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 1, in <module>
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 357, in send_command
+LogPython: Error:     assistant = get_assistant()
+LogPython: Error:                 ^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 330, in get_assistant
+LogPython: Error:     _assistant = AIAssistant()
+LogPython: Error:                  ^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 22, in __init__
+LogPython: Error:     self.executor = get_executor()
+LogPython: Error:                     ^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 369, in get_executor
+LogPython: Error:     _executor = ActionExecutor()
+LogPython: Error:                 ^^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 50, in __init__
+LogPython: Error:     self._register_default_actions()
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 81, in _register_default_actions
+LogPython: Error:     self.register("spawn_actor", self._spawn_actor)
+LogPython: Error:                                  ^^^^^^^^^^^^^^^^^
+LogPython: Error: AttributeError: 'ActionExecutor' object has no attribute '_spawn_actor'
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 1, in <module>
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 357, in send_command
+LogPython: Error:     assistant = get_assistant()
+LogPython: Error:                 ^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 330, in get_assistant
+LogPython: Error:     _assistant = AIAssistant()
+LogPython: Error:                  ^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\main.py", line 22, in __init__
+LogPython: Error:     self.executor = get_executor()
+LogPython: Error:                     ^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 369, in get_executor
+LogPython: Error:     _executor = ActionExecutor()
+LogPython: Error:                 ^^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 50, in __init__
+LogPython: Error:     self._register_default_actions()
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_executor.py", line 81, in _register_default_actions
+LogPython: Error:     self.register("spawn_actor", self._spawn_actor)
+LogPython: Error:                                  ^^^^^^^^^^^^^^^^^
+LogPython: Error: AttributeError: 'ActionExecutor' object has no attribute '_spawn_actor'

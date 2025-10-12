@@ -208,6 +208,55 @@
             content: "✅ ";
             margin-right: 10px;
         }
+
+        /* Loading and status styles */
+        .status-loading {
+            background: rgba(0, 217, 255, 0.1) !important;
+            border: 1px solid rgba(0, 217, 255, 0.3) !important;
+            color: #00d9ff !important;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .status-success {
+            background: rgba(16, 185, 129, 0.2) !important;
+            border: 1px solid rgba(16, 185, 129, 0.3) !important;
+            color: #10b981 !important;
+        }
+
+        .status-error {
+            background: rgba(239, 68, 68, 0.2) !important;
+            border: 1px solid rgba(239, 68, 68, 0.3) !important;
+            color: #ef4444 !important;
+        }
+
+        .status-warning {
+            background: rgba(255, 107, 53, 0.2) !important;
+            border: 1px solid rgba(255, 107, 53, 0.3) !important;
+            color: #ff6b35 !important;
+        }
+
+        .status-info {
+            background: rgba(0, 217, 255, 0.1) !important;
+            border: 1px solid rgba(0, 217, 255, 0.3) !important;
+            color: #00d9ff !important;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -589,8 +638,9 @@
                     saveRecentPath(path);
                     
                     alert(`✅ Project "${name}" registered successfully!`);
-                    document.getElementById('manual-name').value = '';
-                    document.getElementById('manual-path').value = '';
+                    // DO NOT clear the fields - keep them populated for immediate deploy
+                    // document.getElementById('manual-name').value = '';
+                    // document.getElementById('manual-path').value = '';
                     await loadProjects();
                 } else {
                     alert(`❌ Registration failed: ${data.error || 'Unknown error'}`);
@@ -600,28 +650,41 @@
             }
         }
         
+        // Helper function to update deploy status
+        function updateDeployStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('deploy-status');
+            statusDiv.style.display = 'block';
+            statusDiv.innerHTML = message;
+            statusDiv.className = `status-${type}`;
+        }
+        
         async function frictionlessDeploy() {
-        const projectName = document.getElementById('project-name').value;
-        const projectPath = document.getElementById('project-path').value;
+        const projectName = document.getElementById('manual-name').value;
+        const projectPath = document.getElementById('manual-path').value;
+        
+        // Show immediate feedback
+        const statusDiv = document.getElementById('deploy-status');
+        statusDiv.style.display = 'block';
+        statusDiv.className = 'status-loading';
+        statusDiv.innerHTML = '<span class="loading-spinner">⚙️</span> Starting deployment process...';
         
         if (!projectPath) {
-            updateDeployStatus('Please enter the project path first', 'error');
+            updateDeployStatus('❌ Please enter the project path first', 'error');
             return;
         }
         
-        const statusDiv = document.getElementById('deploy-status');
-        statusDiv.style.display = 'block';
-        
         // First, check if Deploy Agent is running
         try {
-            statusDiv.innerHTML = '🔍 Checking for Deploy Agent...';
-            statusDiv.className = 'status-info';
+            await new Promise(resolve => setTimeout(resolve, 500)); // Brief delay to show loading state
+            statusDiv.innerHTML = '<span class="loading-spinner">🔍</span> Checking for Deploy Agent on your PC...';
+            statusDiv.className = 'status-loading';
             
             const agentResponse = await fetch('http://localhost:7865/status');
             
             if (agentResponse.ok) {
                 // Agent is running! Do frictionless deploy
-                statusDiv.innerHTML = '⚡ Deploy Agent found! Starting instant deployment...';
+                statusDiv.innerHTML = '<span class="loading-spinner">⚡</span> Deploy Agent found! Starting instant deployment...';
+                statusDiv.className = 'status-loading';
                 
                 const deployResponse = await fetch('http://localhost:7865/deploy', {
                     method: 'POST',
