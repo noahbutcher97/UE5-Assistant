@@ -398,9 +398,50 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             )
         return {"error": "Installer script not found"}
     
-    @app.get("/api/download_client_v2")
-    async def download_client_v2():
-        """Generate downloadable client package - v2 endpoint to bypass CDN cache."""
+    @app.post("/api/client_manifest")
+    async def get_client_manifest():
+        """
+        Return manifest of current client files (bypasses CDN via POST).
+        Includes content hash for Deploy Agent to detect updates.
+        """
+        import hashlib
+        from pathlib import Path
+        
+        client_dir = Path("attached_assets/AIAssistant")
+        
+        # Collect all files and compute content hash
+        files_data = []
+        hasher = hashlib.sha256()
+        
+        if client_dir.exists():
+            for file_path in sorted(client_dir.rglob("*")):
+                if file_path.is_file():
+                    # Add file content to hash
+                    content = file_path.read_bytes()
+                    hasher.update(content)
+                    hasher.update(str(file_path).encode())
+                    
+                    files_data.append({
+                        "path": str(file_path.relative_to("attached_assets")),
+                        "size": len(content)
+                    })
+        
+        content_hash = hasher.hexdigest()
+        
+        return {
+            "version": content_hash[:12],  # Short version for readability
+            "full_hash": content_hash,
+            "file_count": len(files_data),
+            "files": files_data,
+            "timestamp": __import__('time').time()
+        }
+    
+    @app.post("/api/download_client_bundle")
+    async def download_client_bundle():
+        """
+        Download client bundle via POST (bypasses CDN cache).
+        Deploy Agent should use this instead of GET /api/download_client.
+        """
         import zipfile
         import io
         import time
@@ -422,12 +463,10 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         
         zip_buffer.seek(0)
         
-        # Aggressive cache-busting headers
+        # POST requests bypass CDN, but add headers anyway
         headers = {
-            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client_v2.zip",
-            "Cache-Control": "no-cache, no-store, must-revalidate, private",
-            "Pragma": "no-cache",
-            "Expires": "0",
+            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.zip",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
             "X-Content-Version": str(int(time.time()))
         }
         
