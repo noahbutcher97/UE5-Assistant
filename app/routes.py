@@ -305,6 +305,24 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 "error": f"Deployment failed: {str(e)}. Browser cannot access local files - please use manual download."
             }
     
+    @app.get("/api/installer_script")
+    async def get_installer_script():
+        """Generate PowerShell installer script."""
+        from fastapi.responses import Response
+        from pathlib import Path
+        
+        script_path = Path("install_ue5_assistant.ps1")
+        if script_path.exists():
+            content = script_path.read_text()
+            return Response(
+                content=content,
+                media_type="text/plain",
+                headers={
+                    "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1"
+                }
+            )
+        return {"error": "Installer script not found"}
+    
     @app.get("/api/download_client")
     async def download_client():
         """Generate downloadable client package with setup instructions."""
