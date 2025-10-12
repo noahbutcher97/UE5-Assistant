@@ -261,9 +261,8 @@ class HTTPPollingClient:
                     del sys.modules[module]
                 print(f"🗑️ Cleared {len(modules_to_remove)} cached modules")
                 
-                # Re-import fresh modules
-                import AIAssistant.main
-                print("✅ AI Assistant reloaded with latest code")
+                # Don't re-import from background thread - let UE5 reload naturally
+                print("✅ Modules cleared. Fresh code will load on next request.")
             else:
                 print("ℹ️ Auto-update failed or no updates available")
                 
