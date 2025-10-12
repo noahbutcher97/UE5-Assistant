@@ -47,6 +47,28 @@ async def startup_event():
     print(f"✅ Conversation history: {len(conversation.conversation_history)} entries")
     print(f"✅ OpenAI API: {'configured' if os.getenv('OPENAI_API_KEY') else 'NOT configured'}")
     print("=" * 60)
+    
+    # Trigger auto-update for connected UE5 clients (after startup delay)
+    import asyncio
+    asyncio.create_task(trigger_auto_update_after_startup())
+
+async def trigger_auto_update_after_startup():
+    """Trigger auto-update for all connected UE5 clients after backend startup."""
+    import asyncio
+    # Wait for websocket connections to establish
+    await asyncio.sleep(3)
+    
+    try:
+        from app.websocket_manager import get_manager
+        manager = get_manager()
+        
+        if len(manager.ue5_clients) > 0:
+            print(f"\n📢 Triggering auto-update for {len(manager.ue5_clients)} connected UE5 client(s)...")
+            await manager.broadcast_update_to_ue5_clients()
+        else:
+            print("\nℹ️ No UE5 clients connected for auto-update")
+    except Exception as e:
+        print(f"⚠️ Auto-update trigger failed: {e}")
 
 if __name__ == "__main__":
     import uvicorn

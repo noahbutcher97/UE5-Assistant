@@ -128,9 +128,43 @@ class WebSocketClient:
                         "success": False,
                         "error": "No action handler configured"
                     })
+            
+            elif message_type == "auto_update":
+                # Backend triggered auto-update
+                print("📢 Backend update detected! Running auto-update...")
+                self._handle_auto_update()
                     
         except Exception as e:
             print(f"❌ Error handling message: {e}")
+    
+    def _handle_auto_update(self):
+        """Handle auto-update triggered by backend."""
+        try:
+            # Import here to avoid circular dependency
+            import sys
+            import importlib
+            
+            # Run auto-update
+            if 'AIAssistant.auto_update' in sys.modules:
+                # Reload the module
+                importlib.reload(sys.modules['AIAssistant.auto_update'])
+            
+            from AIAssistant import auto_update
+            result = auto_update.check_and_update()
+            
+            if result.get('updated'):
+                print("✅ Auto-update completed successfully")
+                print("🔄 Reloading AI Assistant...")
+                
+                # Reload main assistant
+                if 'AIAssistant.main' in sys.modules:
+                    importlib.reload(sys.modules['AIAssistant.main'])
+                    print("✅ AI Assistant reloaded with latest files")
+            else:
+                print("ℹ️ Already up to date")
+                
+        except Exception as e:
+            print(f"❌ Auto-update failed: {e}")
     
     def _on_error(self, ws, error):
         """Handle WebSocket error."""

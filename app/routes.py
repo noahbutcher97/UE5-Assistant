@@ -1217,6 +1217,16 @@ When users ask about their project's actual data (file counts, blueprints, etc),
         except WebSocketDisconnect:
             manager.disconnect_dashboard(websocket)
     
+    @app.post("/api/trigger_auto_update")
+    async def trigger_auto_update():
+        """Trigger auto-update for all connected UE5 clients (called on backend republish)."""
+        from app.websocket_manager import get_manager
+        
+        manager = get_manager()
+        result = await manager.broadcast_update_to_ue5_clients()
+        
+        return result
+    
     @app.post("/api/generate_utility")
     async def generate_utility(request: dict):
         """Generate UE 5.6 compliant editor utility widget."""

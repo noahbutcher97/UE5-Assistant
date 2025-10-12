@@ -281,94 +281,88 @@
 
     <!-- Project Hub Tab -->
     <div id="project-hub" class="tab-content active">
-        <!-- Manual Project Registration -->
-        <div id="manual-registration" class="card" style="border: 1px solid rgba(0,217,255,0.3); display: none;">
-            <h2>➕ Add New Project</h2>
-            <p style="color: #8b95a5; margin-bottom: 20px;">Register additional UE5 projects or deploy the Python client.</p>
-            
-            <div class="input-group">
-                <label>Project Name</label>
-                <input type="text" id="manual-name" placeholder="UE5_Assistant">
+        <!-- Quick Action Bar -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+            <button onclick="toggleProjectForm()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 15px; font-size: 16px; display: flex; align-items: center; gap: 10px; justify-content: center;">
+                <span style="font-size: 24px;">➕</span>
+                <span>Add Project</span>
+            </button>
+            <button onclick="frictionlessDeploy()" style="background: linear-gradient(135deg, #ff6b35 0%, #f54023 100%); padding: 15px; font-size: 16px; display: flex; align-items: center; gap: 10px; justify-content: center;">
+                <span style="font-size: 24px;">⚡</span>
+                <span>Quick Deploy</span>
+            </button>
+            <a href="/api/download_client" style="background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); padding: 15px; font-size: 16px; display: flex; align-items: center; gap: 10px; justify-content: center; text-decoration: none; color: white; border-radius: 8px;">
+                <span style="font-size: 24px;">📦</span>
+                <span>Download Client</span>
+            </a>
+            <button onclick="showTab('settings'); triggerAutoUpdate()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 15px; font-size: 16px; display: flex; align-items: center; gap: 10px; justify-content: center;">
+                <span style="font-size: 24px;">🔄</span>
+                <span>Update All</span>
+            </button>
+        </div>
+
+        <!-- Project Registration Form (Collapsible) -->
+        <div id="project-form" class="card" style="border: 2px solid rgba(139,92,246,0.3); display: none; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">➕ Add New Project</h2>
+                <button onclick="toggleProjectForm()" style="background: none; border: none; color: #8b95a5; font-size: 24px; cursor: pointer; padding: 0 10px;">×</button>
             </div>
             
-            <div class="input-group">
-                <label>Project Path</label>
-                <input type="text" id="manual-path" 
-                    placeholder="D:/UnrealProjects/5.6/UE5_Assistant/"
-                    list="recent-paths"
-                    autocomplete="off">
-                <datalist id="recent-paths">
-                    <!-- Recent paths populated by JavaScript -->
-                </datalist>
-                <small style="color: #8b95a5; margin-top: 5px; display: block;">
-                    💡 Tip: Path should end with forward slash (/)
-                </small>
+            <div class="grid" style="gap: 15px;">
+                <div class="input-group">
+                    <label>Project Name</label>
+                    <input type="text" id="manual-name" placeholder="UE5_Assistant" style="font-size: 16px; padding: 12px;">
+                </div>
+                
+                <div class="input-group">
+                    <label>Project Path</label>
+                    <input type="text" id="manual-path" 
+                        placeholder="D:/UnrealProjects/5.6/UE5_Assistant/"
+                        list="recent-paths"
+                        autocomplete="off"
+                        style="font-size: 16px; padding: 12px;">
+                    <datalist id="recent-paths"></datalist>
+                    <small style="color: #8b95a5; margin-top: 5px; display: block;">💡 Path should end with /</small>
+                </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                <button onclick="registerManualProject()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
+                <button onclick="registerManualProject()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 14px; font-size: 15px;">
                     ✅ Register Project
                 </button>
-                <button onclick="frictionlessDeploy()" style="background: linear-gradient(135deg, #ff6b35 0%, #f54023 100%);">
+                <button onclick="frictionlessDeploy()" style="background: linear-gradient(135deg, #ff6b35 0%, #f54023 100%); padding: 14px; font-size: 15px;">
                     ⚡ Instant Deploy & Run
                 </button>
             </div>
             
-            <div id="deploy-status" style="margin-top: 15px; display: none; padding: 12px; border-radius: 8px; font-size: 14px;"></div>
-            
-            <div style="margin-top: 15px; padding: 12px; background: rgba(0,217,255,0.1); border-radius: 8px; font-size: 14px; color: #8b95a5;">
-                💡 <strong>Installation Options:</strong><br>
-                <strong>🆕 Modern (No Download!):</strong> <a href="/deploy/modern" target="_blank" style="color: #00d9ff; text-decoration: underline;">✨ Direct Browser Deploy</a> - Uses File System API (Chrome/Edge)<br>
-                <strong>Classic:</strong> <a href="/api/installer_script" style="color: #00d9ff; text-decoration: underline;">⚡ PowerShell Installer</a> | <a href="/api/download_client" style="color: #00d9ff; text-decoration: underline;">📦 Manual ZIP</a><br>
-                <strong>Protocol:</strong> <a href="#" onclick="showProtocolInstructions(); return false;" style="color: #9333ea; text-decoration: underline;">🔗 Register ue5assistant:// handler</a>
-            </div>
-            
-            <div id="protocol-instructions" style="display: none; margin-top: 15px; padding: 15px; background: rgba(147, 51, 234, 0.1); border-radius: 8px; border: 1px solid rgba(147, 51, 234, 0.3);">
-                <h4 style="color: #9333ea; margin-top: 0;">🔗 Protocol Handler Setup:</h4>
-                <p style="font-size: 14px; color: #8b95a5;">Register a custom protocol to deploy with one click from any webpage!</p>
-                <ol style="font-size: 14px; color: #8b95a5;">
-                    <li>Download: <a href="/api/protocol_handler" style="color: #9333ea;">ue5_protocol_handler.reg</a></li>
-                    <li>Double-click the .reg file and accept the prompt</li>
-                    <li>Now you can click links like: <a href="ue5assistant://deploy/D%3A%2FUnrealProjects%2F5.6%2FUE5_Assistant" style="color: #9333ea;">ue5assistant://deploy/YourProject</a></li>
-                </ol>
-            </div>
-            
-            <script>
-            function showProtocolInstructions() {
-                const el = document.getElementById('protocol-instructions');
-                el.style.display = el.style.display === 'none' ? 'block' : 'none';
-            }
-            </script>
+            <div id="deploy-status" style="margin-top: 15px; display: none; padding: 15px; border-radius: 8px;"></div>
         </div>
-        
-        <div class="grid">
-            <div class="card">
-                <h2>📊 Project Intelligence</h2>
-                <p style="color: #8b95a5; margin-bottom: 15px;">
-                    Query your active UE5 project with AI-powered intelligence
-                </p>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
+            <!-- AI Project Intelligence -->
+            <div class="card" style="background: linear-gradient(135deg, rgba(0,217,255,0.05) 0%, rgba(0,0,0,0.2) 100%);">
+                <h2>🧠 AI Project Intelligence</h2>
+                <p style="color: #8b95a5; margin-bottom: 15px;">Real-time AI queries with live UE5 data collection</p>
                 
                 <div class="input-group">
-                    <label>Your Question</label>
                     <input type="text" id="projectQuery" 
-                        placeholder="What blueprints inherit from Character?">
+                        placeholder="Ask anything: file count, blueprints, project info..."
+                        style="font-size: 16px; padding: 14px;">
                 </div>
 
-                <button onclick="queryProject()">🔍 Query Project</button>
+                <button onclick="queryProject()" style="width: 100%; padding: 14px; font-size: 16px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%);">
+                    🔍 Query Project
+                </button>
 
-                <div class="input-group" style="margin-top: 15px;">
-                    <label>AI Response</label>
-                    <div class="output-box" id="queryOutput">
-                        Response will appear here...
-                    </div>
+                <div class="output-box" id="queryOutput" style="margin-top: 15px; min-height: 150px; max-height: 300px; font-size: 14px;">
+                    Response will appear here...
                 </div>
             </div>
 
-            <div class="card">
-                <h2>🛠️ AI Agent Utility Generator</h2>
-                <p style="color: #8b95a5; margin-bottom: 15px;">
-                    Generate intelligent editor utilities with backend integration
-                </p>
+            <!-- AI Agent Utility Generator -->
+            <div class="card" style="background: linear-gradient(135deg, rgba(139,92,246,0.05) 0%, rgba(0,0,0,0.2) 100%);">
+                <h2>🛠️ AI Utility Generator</h2>
+                <p style="color: #8b95a5; margin-bottom: 15px;">Generate UE5.6 Editor Utilities with AI backend integration</p>
 
                 <div class="input-group">
                     <label>Utility Name</label>
@@ -514,6 +508,9 @@
                 </button>
                 <button onclick="testOpenAIConnection()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
                     🔌 Test OpenAI Connection
+                </button>
+                <button onclick="triggerAutoUpdate()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                    📢 Trigger UE5 Auto-Update
                 </button>
             </div>
             
@@ -729,6 +726,15 @@
             }
         }
 
+        function toggleProjectForm() {
+            const form = document.getElementById('project-form');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        }
+
         async function loadProjects() {
             try {
                 const response = await fetch('/api/projects');
@@ -736,8 +742,6 @@
                 
                 const select = document.getElementById('projectSelect');
                 select.innerHTML = '<option value="">No project selected</option>';
-                
-                const manualReg = document.getElementById('manual-registration');
                 
                 if (data.success && data.projects.length > 0) {
                     data.projects.forEach(project => {
@@ -753,11 +757,10 @@
                         }
                         select.appendChild(option);
                     });
-                    // Always show registration panel for adding more projects or deploying
-                    if (manualReg) manualReg.style.display = 'block';
                 } else {
-                    // Show manual registration if no projects
-                    if (manualReg) manualReg.style.display = 'block';
+                    // Auto-show project form if no projects
+                    const form = document.getElementById('project-form');
+                    if (form) form.style.display = 'block';
                 }
             } catch (error) {
                 console.error('Failed to load projects:', error);
@@ -1531,6 +1534,34 @@
             } catch (error) {
                 statusDiv.className = 'status-error';
                 statusDiv.textContent = '❌ Connection test failed: ' + error.message;
+            }
+        }
+
+        async function triggerAutoUpdate() {
+            const statusDiv = document.getElementById('settings-status');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status-loading';
+            statusDiv.innerHTML = '📢 Triggering auto-update for connected UE5 clients...';
+            
+            try {
+                const response = await fetch('/api/trigger_auto_update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusDiv.className = 'status-success';
+                    statusDiv.innerHTML = `✅ Auto-update triggered!<br>
+                        📊 ${result.clients_notified} client(s) notified<br>
+                        ${result.clients_failed > 0 ? `⚠️ ${result.clients_failed} client(s) failed` : '✨ All clients updated successfully'}`;
+                } else {
+                    statusDiv.className = 'status-error';
+                    statusDiv.textContent = '❌ ' + (result.error || 'Update trigger failed');
+                }
+            } catch (error) {
+                statusDiv.className = 'status-error';
+                statusDiv.textContent = '❌ Auto-update failed: ' + error.message;
             }
         }
 

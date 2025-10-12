@@ -154,6 +154,41 @@ class ConnectionManager:
         # Clean up disconnected clients
         for client in disconnected:
             self.disconnect_dashboard(client)
+    
+    async def broadcast_update_to_ue5_clients(self):
+        """Broadcast update notification to all connected UE5 clients."""
+        print("📢 Broadcasting auto-update to all UE5 clients...")
+        
+        disconnected = []
+        
+        for project_id, websocket in self.ue5_clients.items():
+            try:
+                await websocket.send_json({
+                    "type": "auto_update",
+                    "message": "Backend updated. Auto-updating client files...",
+                    "timestamp": datetime.now().isoformat()
+                })
+                print(f"✅ Update notification sent to: {project_id}")
+            except Exception as e:
+                print(f"❌ Failed to send update to {project_id}: {e}")
+                disconnected.append(project_id)
+        
+        # Clean up disconnected clients
+        for project_id in disconnected:
+            await self.disconnect_ue5(project_id)
+        
+        # Notify dashboards about the update
+        await self.broadcast_to_dashboards({
+            "type": "backend_update",
+            "message": f"Backend updated. Notified {len(self.ue5_clients)} UE5 client(s)",
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        return {
+            "success": True,
+            "clients_notified": len(self.ue5_clients),
+            "clients_failed": len(disconnected)
+        }
 
 
 # Global manager instance
