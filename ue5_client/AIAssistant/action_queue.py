@@ -78,6 +78,9 @@ class ActionQueue:
         Returns:
             Tuple of (success, result_dict)
         """
+        # Import time locally to avoid module clearing issues
+        import time as time_module
+        
         request_id = str(uuid.uuid4())
         
         # Create event for synchronization
@@ -89,7 +92,7 @@ class ActionQueue:
             'request_id': request_id,
             'action': action,
             'params': params,
-            'timestamp': time.time()
+            'timestamp': time_module.time()
         })
         
         # Wait for result (with timeout)
@@ -117,11 +120,14 @@ class ActionQueue:
         Returns:
             Number of actions processed
         """
+        # Import time locally to avoid module clearing issues
+        import time as time_module
+        
         if not self.action_handler:
             return 0
         
         # Check if enough time has passed since last process
-        current_time = time.time()
+        current_time = time_module.time()
         if current_time - self.last_process_time < self.min_process_interval:
             return 0
         
@@ -159,7 +165,7 @@ class ActionQueue:
             except Exception as e:
                 print(f"[ActionQueue] Error processing action: {e}")
         
-        self.last_process_time = current_time
+        self.last_process_time = time_module.time()
         return processed
     
     def start_ticker(self):

@@ -3,12 +3,11 @@ HTTP Polling client for UE5 - Fallback when WebSocket doesn't work.
 Provides same interface as WebSocketClient for seamless fallback.
 Now with thread-safe action execution via queue system.
 """
-import json
 import sys
-import importlib
 import threading
 import time
 from typing import Any, Callable, Dict, Optional
+
 import requests
 
 # Import action queue for thread-safe execution
@@ -102,12 +101,12 @@ class HTTPPollingClient:
             print(f"[HTTP] Payload: {payload}")
             
             # Log just before making the request
-            print(f"[HTTP] About to send POST request with requests library...")
+            print("[HTTP] About to send POST request with requests library...")
             try:
                 response = requests.post(url, json=payload, timeout=5)
-                print(f"[HTTP] Request completed! Got response object")
+                print("[HTTP] Request completed! Got response object")
             except requests.exceptions.Timeout:
-                print(f"[HTTP] ❌ Request timed out after 5 seconds!")
+                print("[HTTP] ❌ Request timed out after 5 seconds!")
                 raise
             except requests.exceptions.ConnectionError as ce:
                 print(f"[HTTP] ❌ Connection error: {ce}")
@@ -456,10 +455,10 @@ class HTTPPollingClient:
                 print("[HTTPPolling] Cleared old auto_update module")
             
             # Import fresh auto_update module
-            from AIAssistant import auto_update
-            
             # Add version marker for tracking
             import uuid
+
+            from AIAssistant import auto_update
             version_marker = str(uuid.uuid4())[:8]
             auto_update._version_marker = version_marker
             
@@ -530,19 +529,52 @@ class HTTPPollingClient:
             self.disconnect()
             
             # Step 2: Import auto_update for restart functionality
+            # Clear the module cache first
             if 'AIAssistant.auto_update' in sys.modules:
                 del sys.modules['AIAssistant.auto_update']
             
-            from AIAssistant import auto_update
+            # Invalidate caches to ensure fresh import
+            importlib.invalidate_caches()
             
-            # Step 3: Trigger complete restart (clears all modules and reinitializes)
-            print("[HTTPPolling] 🔄 Forcing complete module reload and restart...")
-            auto_update.force_restart_assistant()
+            # Import the module
+            import AIAssistant.auto_update as auto_update
+            
+            # Step 3: Check that the function exists before calling
+            if hasattr(auto_update, 'force_restart_assistant'):
+                print("[HTTPPolling] 🔄 Forcing complete module reload and restart...")
+                auto_update.force_restart_assistant()
+            else:
+                print("[HTTPPolling] ⚠️ force_restart_assistant function not found, attempting manual restart...")
+                # Fallback: try to manually restart
+                self._manual_restart_assistant()
             
         except Exception as e:
             print(f"[HTTPPolling] ❌ Emergency recovery failed: {e}")
             import traceback
             traceback.print_exc()
+    
+    def _manual_restart_assistant(self):
+        """Manual restart fallback if force_restart_assistant is not available."""
+        try:
+            print("[HTTPPolling] 🔄 Attempting manual restart...")
+            
+            # Clear all AIAssistant modules except action_queue
+            modules_to_remove = [
+                key for key in list(sys.modules.keys()) 
+                if 'AIAssistant' in key and 'action_queue' not in key
+            ]
+            for module in modules_to_remove:
+                del sys.modules[module]
+            
+            print(f"[HTTPPolling] 🗑️ Cleared {len(modules_to_remove)} cached modules")
+            
+            # Re-import main module
+            import AIAssistant.main as fresh_main
+            fresh_main.get_assistant()
+            print("[HTTPPolling] ✅ Manual restart complete")
+            
+        except Exception as e:
+            print(f"[HTTPPolling] ❌ Manual restart failed: {e}")
     
     def disconnect(self):
         """Disconnect from backend."""

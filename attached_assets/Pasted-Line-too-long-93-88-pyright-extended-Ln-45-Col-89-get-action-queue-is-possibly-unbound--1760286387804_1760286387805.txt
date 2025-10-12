@@ -1,0 +1,108 @@
+Line too long (93 > 88)
+(pyright-extended)
+Ln 45, Col 89
+"get_action_queue" is possibly unbound
+(pyright-extended)
+Ln 64, Col 33
+Line too long (97 > 88)
+(pyright-extended)
+Ln 68, Col 90
+Line too long (91 > 88)
+(pyright-extended)
+Ln 70, Col 89
+Line too long (119 > 88)
+(pyright-extended)
+Ln 119, Col 89
+Line too long (92 > 88)
+(pyright-extended)
+Ln 132, Col 89
+Line too long (105 > 88)
+(pyright-extended)
+Ln 138, Col 88
+Line too long (103 > 88)
+(pyright-extended)
+Ln 141, Col 88
+Line too long (148 > 88)
+(pyright-extended)
+Ln 201, Col 90
+Line too long (116 > 88)
+(pyright-extended)
+Ln 211, Col 90
+Line too long (96 > 88)
+(pyright-extended)
+Ln 228, Col 89
+Line too long (121 > 88)
+(pyright-extended)
+Ln 229, Col 88
+Line too long (90 > 88)
+(pyright-extended)
+Ln 254, Col 88
+Line too long (101 > 88)
+(pyright-extended)
+Ln 276, Col 88
+Line too long (93 > 88)
+(pyright-extended)
+Ln 331, Col 88
+Line too long (92 > 88)
+(pyright-extended)
+Ln 336, Col 88
+Argument of type "Unknown | Literal['get_project_info'] | None" cannot be assigned to parameter "action" of type "str" in function "queue_action"   Type "Unknown | Literal['get_project_info'] | None" cannot be assigned to type "str"     "None" is incompatible with "str"
+(pyright-extended)
+Ln 338, Col 29
+Line too long (92 > 88)
+(pyright-extended)
+Ln 345, Col 89
+Line too long (108 > 88)
+(pyright-extended)
+Ln 348, Col 88
+Line too long (91 > 88)
+(pyright-extended)
+Ln 352, Col 88
+Argument of type "Unknown | Literal['get_project_info'] | None" cannot be assigned to parameter "action" of type "str" in function "queue_action"   Type "Unknown | Literal['get_project_info'] | None" cannot be assigned to type "str"     "None" is incompatible with "str"
+(pyright-extended)
+Ln 354, Col 37
+Line too long (95 > 88)
+(pyright-extended)
+Ln 358, Col 88
+Line too long (108 > 88)
+(pyright-extended)
+Ln 360, Col 88
+Line too long (99 > 88)
+(pyright-extended)
+Ln 375, Col 90
+Line too long (103 > 88)
+(pyright-extended)
+Ln 376, Col 90
+Argument of type "Unknown | Literal['get_project_info'] | None" cannot be assigned to parameter of type "str"   Type "Unknown | Literal['get_project_info'] | None" cannot be assigned to type "str"     "None" is incompatible with "str"
+(pyright-extended)
+Ln 379, Col 58
+Line too long (97 > 88)
+(pyright-extended)
+Ln 385, Col 89
+Line too long (112 > 88)
+(pyright-extended)
+Ln 387, Col 88
+Argument of type "Unknown | Literal['get_project_info'] | None" cannot be assigned to parameter of type "str"   Type "Unknown | Literal['get_project_info'] | None" cannot be assigned to type "str"     "None" is incompatible with "str"
+(pyright-extended)
+Ln 391, Col 66
+`unreal` imported but unused; consider using `importlib.util.find_spec` to test for availability
+(pyright-extended)
+Ln 447, Col 24
+Import "unreal" could not be resolved
+(pyright-extended)
+Ln 447, Col 24
+Line too long (91 > 88)
+(pyright-extended)
+Ln 470, Col 88
+Line too long (101 > 88)
+(pyright-extended)
+Ln 472, Col 89
+Line too long (102 > 88)
+(pyright-extended)
+Ln 473, Col 89
+Line too long (114 > 88)
+(pyright-extended)
+Ln 511, Col 90
+Line too long (93 > 88)
+(pyright-extended)
+Ln 514, Col 9
