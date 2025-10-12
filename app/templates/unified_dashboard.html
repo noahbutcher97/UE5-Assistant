@@ -857,8 +857,8 @@
         }
         
         async function frictionlessDeploy() {
-        const projectName = document.getElementById('manual-name').value;
-        const projectPath = document.getElementById('manual-path').value;
+        const projectName = document.getElementById('project-name').value;
+        const projectPath = document.getElementById('project-path').value;
         
         // Show immediate feedback
         const statusDiv = document.getElementById('deploy-status');
@@ -1387,12 +1387,12 @@
                 const response = await fetch('/ping_openai');
                 const result = await response.json();
                 
-                if (result.status === 'connected') {
+                if (result.openai_status === 'connected') {
                     statusDiv.className = 'status-success';
-                    statusDiv.innerHTML = `✅ OpenAI connected! Model: ${result.model} | Response time: ${result.latency_ms}ms`;
+                    statusDiv.innerHTML = `✅ OpenAI connected! Response: ${result.response || 'pong'}`;
                 } else {
                     statusDiv.className = 'status-error';
-                    statusDiv.textContent = '❌ ' + result.error;
+                    statusDiv.textContent = '❌ ' + (result.error || 'Connection failed');
                 }
             } catch (error) {
                 statusDiv.className = 'status-error';
@@ -1461,7 +1461,7 @@
                 const openaiData = await openaiResponse.json();
                 
                 const openaiStatus = document.getElementById('openai-status');
-                if (openaiData.status === 'connected') {
+                if (openaiData.openai_status === 'connected') {
                     openaiStatus.innerHTML = '<span style="color: #10b981;">✅ Connected</span>';
                 } else {
                     openaiStatus.innerHTML = '<span style="color: #ef4444;">❌ Disconnected</span>';
