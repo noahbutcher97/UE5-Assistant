@@ -1529,7 +1529,7 @@ Return ONLY the JSON array, no explanation."""
         
         project_id = request.get("project_id")
         if not project_id:
-            return {"commands": []}
+            return {"commands": [], "registered": False}
         
         manager = get_manager()
         if not hasattr(manager, 'http_clients'):
@@ -1545,9 +1545,10 @@ Return ONLY the JSON array, no explanation."""
             # Clear pending commands after sending
             manager.http_clients[project_id]["pending_commands"] = []
             
-            return {"commands": commands}
+            return {"commands": commands, "registered": True}
         
-        return {"commands": []}
+        # Client not registered - signal to re-register
+        return {"commands": [], "registered": False}
     
     @app.post("/api/ue5/heartbeat")
     async def ue5_heartbeat(request: dict):

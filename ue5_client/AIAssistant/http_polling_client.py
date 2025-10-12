@@ -113,6 +113,12 @@ class HTTPPollingClient:
                     data = response.json()
                     commands = data.get("commands", [])
                     
+                    # Check if we're still registered
+                    if not data.get("registered", True):
+                        print("⚠️ Server doesn't recognize us - re-registering...")
+                        self._attempt_reconnect()
+                        continue
+                    
                     # Process each command
                     for cmd in commands:
                         self._handle_command(cmd)
