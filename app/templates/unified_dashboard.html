@@ -300,18 +300,13 @@
                     </div>
                 </div>
                 
-                <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; border: 1px solid rgba(16,185,129,0.3); margin-bottom: 15px;">
-                    <p style="color: #8b95a5; margin: 0 0 10px 0; font-size: 13px;">Copy and run in PowerShell (admin):</p>
-                    <div style="position: relative;">
-                        <code id="ps-command" style="display: block; background: rgba(0,0,0,0.5); padding: 12px; border-radius: 6px; color: #10b981; font-family: 'Consolas', monospace; font-size: 13px; overflow-x: auto; white-space: nowrap;">
-irm https://ue5-assistant-noahbutcher97.replit.app/api/installer_script | iex
-                        </code>
-                        <button onclick="copyPSCommand(event)" style="position: absolute; top: 8px; right: 8px; background: rgba(16,185,129,0.8); border: none; color: white; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px;">📋 Copy</button>
-                    </div>
-                </div>
+                <button onclick="downloadInstaller()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 16px; border: none; color: white; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 15px;">
+                    <span style="font-size: 24px;">📥</span>
+                    <span>Download Installer Script</span>
+                </button>
                 
                 <div style="background: rgba(251,191,36,0.1); padding: 12px; border-radius: 6px; border: 1px solid rgba(251,191,36,0.3);">
-                    <p style="color: #fbbf24; margin: 0; font-size: 13px;">💡 The script will prompt you for your UE5 project path, then download and install everything automatically</p>
+                    <p style="color: #fbbf24; margin: 0; font-size: 13px;">💡 After downloading, run the .ps1 file in PowerShell (admin). It will prompt you for your UE5 project path, then install everything automatically</p>
                 </div>
             </div>
             
@@ -389,9 +384,11 @@ irm https://ue5-assistant-noahbutcher97.replit.app/api/installer_script | iex
         <!-- Project Registration Form (Collapsible) -->
         <div id="project-form" class="card" style="border: 2px solid rgba(139,92,246,0.3); display: none; margin-bottom: 20px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0;">➕ Add New Project</h2>
+                <h2 style="margin: 0;">➕ Register Existing Project</h2>
                 <button onclick="toggleProjectForm()" style="background: none; border: none; color: #8b95a5; font-size: 24px; cursor: pointer; padding: 0 10px;">×</button>
             </div>
+            
+            <p style="color: #8b95a5; margin-bottom: 20px;">Already installed the client? Register your project here to track it in the dashboard.</p>
             
             <div class="grid" style="gap: 15px;">
                 <div class="input-group">
@@ -412,50 +409,8 @@ irm https://ue5-assistant-noahbutcher97.replit.app/api/installer_script | iex
             </div>
             
             <button onclick="registerManualProject()" style="width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 14px; font-size: 16px; margin-top: 20px;">
-                ✅ Register Project Only
+                ✅ Register Project
             </button>
-            
-            <div style="margin-top: 20px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; border: 1px solid rgba(0,217,255,0.2);">
-                <h3 style="color: #00d9ff; margin-top: 0; margin-bottom: 15px; font-size: 16px;">🚀 Deployment Options</h3>
-                
-                <!-- Step 1: Download Deploy Agent Installer (Always Visible) -->
-                <div style="margin-bottom: 15px; padding: 12px; background: rgba(139,92,246,0.1); border-radius: 8px; border: 1px solid rgba(139,92,246,0.3);">
-                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                        <span style="color: #8b5cf6; font-size: 14px; font-weight: 600;">Step 1: Setup Deploy Agent (One-time)</span>
-                    </div>
-                    <a href="/api/deploy_agent_installer" download style="display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 10px; text-decoration: none; color: white; border-radius: 6px; font-size: 14px;">
-                        <span style="font-size: 18px;">⚡</span>
-                        <span>Download Deploy Agent Installer (.bat)</span>
-                    </a>
-                    <small style="color: #8b95a5; margin-top: 8px; display: block; text-align: center;">Run the .bat file, then keep PowerShell window open</small>
-                </div>
-                
-                <!-- Deploy Agent Status Indicator -->
-                <div id="deploy-agent-indicator" style="margin-bottom: 15px; padding: 10px; border-radius: 8px; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); display: none;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 20px;">⚡</span>
-                        <span style="color: #fbbf24; font-size: 14px;">Deploy Agent: <span id="agent-status-text">Checking...</span></span>
-                    </div>
-                </div>
-                
-                <!-- Instant Deploy Button -->
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
-                    <button onclick="frictionlessDeploy()" style="flex: 1; background: linear-gradient(135deg, #ff6b35 0%, #f54023 100%); padding: 14px; font-size: 15px;">
-                        ⚡ Instant Deploy & Run
-                    </button>
-                    <span id="deploy-badge" style="color: #10b981; font-size: 14px;">✨ Recommended</span>
-                </div>
-                <div id="deploy-status" style="margin-bottom: 15px; display: none; padding: 12px; border-radius: 8px;"></div>
-                
-                <!-- Alternative: Manual Download -->
-                <div style="border-top: 1px solid rgba(139,149,165,0.2); padding-top: 15px; margin-top: 15px;">
-                    <p style="color: #8b95a5; font-size: 14px; margin-bottom: 10px;">Or download and install manually:</p>
-                    <button onclick="downloadClientZip()" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; background: linear-gradient(135deg, #00d9ff 0%, #0891b2 100%); padding: 12px; border: none; color: white; border-radius: 8px; font-size: 15px; cursor: pointer;">
-                        <span style="font-size: 20px;">📦</span>
-                        <span>Download Client ZIP</span>
-                    </button>
-                </div>
-            </div>
         </div>
 
         <!-- Connection Guide (shown when projects registered but not connected) -->
@@ -1039,21 +994,12 @@ irm https://ue5-assistant-noahbutcher97.replit.app/api/installer_script | iex
             statusDiv.className = `status-${type}`;
         }
         
-        // Copy PowerShell command to clipboard
-        function copyPSCommand(event) {
-            const command = document.getElementById('ps-command').textContent.trim();
-            navigator.clipboard.writeText(command).then(() => {
-                const btn = event.target;
-                const originalText = btn.textContent;
-                btn.textContent = '✅ Copied!';
-                btn.style.background = 'rgba(16,185,129,1)';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.background = 'rgba(16,185,129,0.8)';
-                }, 2000);
-            }).catch(err => {
-                alert('Failed to copy: ' + err);
-            });
+        // Download installer script
+        function downloadInstaller() {
+            // Use timestamp to bypass cache
+            const timestamp = new Date().getTime();
+            const url = `/api/get_installer_script?t=${timestamp}`;
+            window.location.href = url;
         }
         
         // Download client ZIP using POST to bypass CDN cache

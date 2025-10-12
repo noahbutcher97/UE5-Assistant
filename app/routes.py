@@ -378,26 +378,13 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             )
         return {"error": "Protocol handler not found"}
     
-    @app.get("/api/installer_script")
-    async def get_installer_script():
-        """Generate PowerShell installer script (quick deploy version)."""
+    @app.get("/api/get_installer_script")
+    async def get_installer_script_new():
+        """Download PowerShell installer that prompts for project path."""
         from pathlib import Path
 
         from fastapi.responses import Response
         
-        # Try new quick_deploy script first
-        script_path = Path("scripts/quick_deploy.ps1")
-        if script_path.exists():
-            content = script_path.read_text()
-            return Response(
-                content=content,
-                media_type="text/plain",
-                headers={
-                    "Content-Disposition": "attachment; filename=quick_deploy.ps1"
-                }
-            )
-        
-        # Fallback to old installer
         script_path = Path("scripts/install_ue5_assistant.ps1")
         if script_path.exists():
             content = script_path.read_text()
@@ -405,7 +392,30 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 content=content,
                 media_type="text/plain",
                 headers={
-                    "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1"
+                    "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1",
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0"
+                }
+            )
+        return {"error": "Installer script not found"}
+    
+    @app.post("/api/installer_script")
+    async def get_installer_script_post():
+        """POST version to bypass CDN cache completely."""
+        from pathlib import Path
+
+        from fastapi.responses import Response
+        
+        script_path = Path("scripts/install_ue5_assistant.ps1")
+        if script_path.exists():
+            content = script_path.read_text()
+            return Response(
+                content=content,
+                media_type="text/plain",
+                headers={
+                    "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1",
+                    "Cache-Control": "no-cache, no-store, must-revalidate"
                 }
             )
         return {"error": "Installer script not found"}
