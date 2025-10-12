@@ -7,7 +7,6 @@ This file serves as the application factory, wiring together all components.
 import os
 import openai
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 
 from app.config import load_config, save_config
 from app.services import conversation
@@ -29,10 +28,6 @@ app = FastAPI(
     ),
     version="3.0",
 )
-
-# Mount static files directory (for direct file downloads)
-if os.path.exists("static"):
-    app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Load conversation history from file
 conversation.load_conversations()

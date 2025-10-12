@@ -24,49 +24,27 @@ if "%PROJECT_PATH%"=="" (
 echo Selected: %PROJECT_PATH%
 echo.
 
-REM Create PowerShell installer directly
+REM Download enhanced PowerShell installer
 set "PS_INSTALLER=%TEMP%\install_ue5_assistant.ps1"
 set "BACKEND_URL=https://ue5-assistant-noahbutcher97.replit.app"
 
-echo Creating installer...
-
-(
-echo param^(
-echo     [string]$ProjectPath = "",
-echo     [string]$BackendURL = "https://ue5-assistant-noahbutcher97.replit.app"
-echo ^)
-echo.
-echo $TargetPath = Join-Path $ProjectPath "Content\Python\AIAssistant"
-echo $DownloadURL = "$BackendURL/api/download_client_bundle"
-echo $TempZip = Join-Path $env:TEMP "ue5_assistant_client.zip"
-echo.
-echo Write-Host "Downloading from: $DownloadURL (POST method)..." -ForegroundColor Cyan
-echo Invoke-WebRequest -Uri $DownloadURL -Method Post -OutFile $TempZip -UseBasicParsing
-echo.
-echo Write-Host "Extracting..." -ForegroundColor Cyan
-echo if ^(Test-Path $TargetPath^) { Remove-Item $TargetPath -Recurse -Force }
-echo Expand-Archive -Path $TempZip -DestinationPath (Join-Path $ProjectPath "Content\Python"^) -Force
-echo Remove-Item $TempZip -Force
-echo.
-echo Write-Host "Installation complete!" -ForegroundColor Green
-echo Write-Host "Restart Unreal Engine to activate the AI Assistant" -ForegroundColor Yellow
-echo pause
-) > "%PS_INSTALLER%"
+echo Downloading enhanced installer...
+powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $response = Invoke-WebRequest -Uri '%BACKEND_URL%/api/installer_script' -Method POST -UseBasicParsing; [System.IO.File]::WriteAllText('%PS_INSTALLER%', $response.Content, [System.Text.Encoding]::UTF8)}"
 
 if not exist "%PS_INSTALLER%" (
     color 0C
-    echo ERROR: Failed to create installer
+    echo ERROR: Failed to download installer
     pause
     exit /b 1
 )
 
 echo.
 echo ================================================
-echo   Running Installer...
+echo   Running Enhanced Installer...
 echo ================================================
 echo.
 
-REM Execute PowerShell installer
+REM Execute enhanced PowerShell installer with selected project path
 powershell -ExecutionPolicy Bypass -File "%PS_INSTALLER%" -ProjectPath "%PROJECT_PATH%" -BackendURL "%BACKEND_URL%"
 
 REM Cleanup

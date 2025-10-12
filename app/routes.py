@@ -402,82 +402,20 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     
     @app.post("/api/installer_script")
     async def get_installer_script_post():
-        """POST version to bypass CDN cache - returns batch installer with embedded PowerShell."""
-        import hashlib
+        """POST version to bypass CDN cache completely."""
         from pathlib import Path
 
         from fastapi.responses import Response
         
-        # Return the batch installer with embedded PowerShell script
-        script_path = Path("scripts/install_client.bat")
-        if script_path.exists():
-            content = script_path.read_text(encoding='utf-8')
-            content_hash = hashlib.md5(content.encode()).hexdigest()[:8]
-            
-            return Response(
-                content=content,
-                media_type="text/plain; charset=utf-8",
-                headers={
-                    "Content-Disposition": "attachment; filename=install_ue5_assistant.bat",
-                    "Cache-Control": "private, max-age=0, no-store, no-cache, must-revalidate",
-                    "CDN-Cache-Control": "no-store",
-                    "Surrogate-Control": "no-store",
-                    "Pragma": "no-cache",
-                    "Expires": "0",
-                    "X-Content-Hash": content_hash,
-                    "X-Timestamp": str(__import__('time').time())
-                }
-            )
-        return {"error": "Installer script not found"}
-    
-    @app.post("/api/get_installer_v3")
-    async def get_installer_script_v3():
-        """POST endpoint to bypass CDN cache - returns embedded PowerShell batch installer."""
-        import hashlib
-        from pathlib import Path
-
-        from fastapi.responses import Response
-        
-        script_path = Path("scripts/install_client.bat")
-        if script_path.exists():
-            content = script_path.read_text(encoding='utf-8')
-            content_hash = hashlib.md5(content.encode()).hexdigest()[:8]
-            
-            return Response(
-                content=content,
-                media_type="text/plain; charset=utf-8",
-                headers={
-                    "Content-Disposition": "attachment; filename=install_ue5_assistant.bat",
-                    "Cache-Control": "private, max-age=0, no-store, no-cache, must-revalidate",
-                    "CDN-Cache-Control": "no-store",
-                    "Surrogate-Control": "no-store",
-                    "Pragma": "no-cache",
-                    "Expires": "0",
-                    "X-Content-Hash": content_hash,
-                    "X-Timestamp": str(__import__('time').time())
-                }
-            )
-        return {"error": "Installer script not found"}
-    
-    @app.post("/api/installer_script_v2")
-    async def get_installer_script_fresh():
-        """Fresh endpoint to bypass all caching layers."""
-        from pathlib import Path
-
-        from fastapi.responses import Response
-        
-        # Read the file directly
         script_path = Path("scripts/install_ue5_assistant.ps1")
         if script_path.exists():
             content = script_path.read_text(encoding='utf-8')
-            
             return Response(
                 content=content,
                 media_type="text/plain; charset=utf-8",
                 headers={
                     "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache"
+                    "Cache-Control": "no-cache, no-store, must-revalidate"
                 }
             )
         return {"error": "Installer script not found"}
@@ -545,12 +483,6 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                     if file_path.is_file():
                         arcname = str(file_path.relative_to("ue5_client"))
                         zip_file.write(file_path, arcname)
-            
-            # Also include init_unreal.py and test_connection.py at root level
-            for extra_file in ["init_unreal.py", "test_connection.py"]:
-                extra_path = Path(f"ue5_client/{extra_file}")
-                if extra_path.exists():
-                    zip_file.write(extra_path, extra_file)
         
         zip_buffer.seek(0)
         
@@ -571,20 +503,20 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     async def download_client():
         """
         Download client bundle via GET (reliable Replit-compatible endpoint).
-        This is the primary download endpoint used by installers.
-        Returns ZIP for Windows compatibility (PowerShell Expand-Archive).
+        This is the primary download endpoint used by UE5 auto-update.
+        Returns a proper tar.gz archive.
         """
         import io
+        import tarfile
         import time
-        import zipfile
         from pathlib import Path
 
         from fastapi.responses import StreamingResponse
         
-        # Create in-memory ZIP for Windows native support
-        zip_buffer = io.BytesIO()
+        # Create in-memory tar.gz
+        tar_buffer = io.BytesIO()
         
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        with tarfile.open(fileobj=tar_buffer, mode='w:gz') as tar_file:
             # Add all AIAssistant files (fresh read from filesystem)
             client_dir = Path("ue5_client/AIAssistant")
             
@@ -592,19 +524,13 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 for file_path in client_dir.rglob("*"):
                     if file_path.is_file():
                         arcname = str(file_path.relative_to("ue5_client"))
-                        zip_file.write(file_path, arcname)
-            
-            # Also include init_unreal.py and test_connection.py at root level
-            for extra_file in ["init_unreal.py", "test_connection.py"]:
-                extra_path = Path(f"ue5_client/{extra_file}")
-                if extra_path.exists():
-                    zip_file.write(extra_path, extra_file)
+                        tar_file.add(str(file_path), arcname=arcname)
         
-        zip_buffer.seek(0)
+        tar_buffer.seek(0)
         
         # Add cache-busting headers
         headers = {
-            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.zip",
+            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.tar.gz",
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Pragma": "no-cache",
             "Expires": "0",
@@ -612,8 +538,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         }
         
         return StreamingResponse(
-            zip_buffer,
-            media_type="application/zip",
+            tar_buffer,
+            media_type="application/gzip",
             headers=headers
         )
     
