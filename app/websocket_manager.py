@@ -83,6 +83,7 @@ class ConnectionManager:
                                   command: dict) -> dict:
         """
         Send command from dashboard to UE5 and wait for response.
+        Supports both WebSocket and HTTP Polling clients.
         
         Args:
             project_id: Target UE5 project
@@ -91,10 +92,14 @@ class ConnectionManager:
         Returns:
             Response from UE5 or error dict
         """
-        if project_id not in self.ue5_clients:
+        # Check if client is connected (WebSocket or HTTP Polling)
+        is_websocket = project_id in self.ue5_clients
+        is_http_polling = hasattr(self, 'http_clients') and project_id in self.http_clients
+        
+        if not is_websocket and not is_http_polling:
             return {
                 "success": False,
-                "error": f"UE5 client not connected for project: {project_id}"
+                "error": f"UE5 client not connected for project: {project_id[:16]}"
             }
 
         # Generate request ID
@@ -102,9 +107,20 @@ class ConnectionManager:
         command["request_id"] = request_id
 
         try:
-            # Send command to UE5
-            websocket = self.ue5_clients[project_id]
-            await websocket.send_json(command)
+            if is_websocket:
+                # Send via WebSocket
+                websocket = self.ue5_clients[project_id]
+                await websocket.send_json(command)
+            else:
+                # Queue command for HTTP polling client
+                if not hasattr(self, 'http_clients'):
+                    self.http_clients = {}
+                
+                if "pending_commands" not in self.http_clients[project_id]:
+                    self.http_clients[project_id]["pending_commands"] = []
+                
+                self.http_clients[project_id]["pending_commands"].append(command)
+                print(f"[HTTP Polling] Queued command for {project_id}: {command.get('action', command.get('type'))}")
 
             # Wait for response (with timeout)
             response = await asyncio.wait_for(

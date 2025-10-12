@@ -1570,8 +1570,15 @@ Return ONLY the JSON array, no explanation."""
         if not project_id:
             return {"success": False, "error": "project_id required"}
         
-        # Forward response to dashboards (same as WebSocket would do)
         manager = get_manager()
+        
+        # Store response for pending requests (same as WebSocket does)
+        request_id = response_data.get("request_id")
+        if request_id:
+            manager.pending_requests[request_id] = response_data
+            print(f"[HTTP Polling] Received response for request: {request_id}")
+        
+        # Forward response to dashboards (same as WebSocket would do)
         await manager.broadcast_to_dashboards({
             "type": "action_result",
             "project_id": project_id,
