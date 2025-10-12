@@ -515,13 +515,27 @@ class AIAssistant:
             import unreal
             from .http_polling_client import HTTPPollingClient
             
+            print(f"[HTTP] Creating HTTP client with:")
+            print(f"[HTTP]   Base URL: {base_url}")
+            print(f"[HTTP]   Project ID: {project_id}")
+            print(f"[HTTP]   Project Name: {project_name}")
+            
             self.ws_client = HTTPPollingClient(base_url, project_id, project_name)
             self.ws_client.set_action_handler(self._handle_websocket_action)
             
-            return self.ws_client.connect()
+            print(f"[HTTP] Calling connect() on HTTP client...")
+            result = self.ws_client.connect()
+            print(f"[HTTP] Connect result: {result}")
+            
+            if not result:
+                unreal.log_error("HTTP Polling connection failed - connect() returned False")
+            
+            return result
         except Exception as e:
             import unreal
             unreal.log_error(f"HTTP Polling connection failed: {e}")
+            import traceback
+            traceback.print_exc()
             return False
     
     def _execute_action_wrapper(self, action: str, params: dict) -> dict:

@@ -118,12 +118,20 @@ class HTTPPollingClient:
                     
                     print(f"✅ HTTP polling connected: {self.project_id}")
                     return True
+                else:
+                    print(f"❌ HTTP polling registration failed: {result.get('error', 'Unknown error')}")
+                    return False
+            else:
+                print(f"❌ HTTP polling registration failed: {response.status_code} - {response.text}")
+                return False
             
-            print(f"❌ HTTP polling registration failed: {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"❌ HTTP polling connection error (network): {e}")
             return False
-            
         except Exception as e:
-            print(f"❌ HTTP polling connection failed: {e}")
+            print(f"❌ HTTP polling connection error: {e}")
+            import traceback
+            traceback.print_exc()
             return False
     
     def _poll_loop(self):
