@@ -1,0 +1,162 @@
+Line too long (92 > 88)
+(pyright-extended)
+Ln 181, Col 89
+Line too long (129 > 88)
+(pyright-extended)
+Ln 204, Col 89
+Line too long (126 > 88)
+(pyright-extended)
+Ln 208, Col 89
+Line too long (89 > 88)
+(pyright-extended)
+Ln 213, Col 89
+Line too long (150 > 88)
+(pyright-extended)
+Ln 305, Col 89
+Line too long (120 > 88)
+(pyright-extended)
+Ln 310, Col 89
+Line too long (92 > 88)
+(pyright-extended)
+Ln 337, Col 89
+Line too long (90 > 88)
+(pyright-extended)
+Ln 376, Col 89
+Line too long (92 > 88)
+(pyright-extended)
+Ln 395, Col 89
+Line too long (92 > 88)
+(pyright-extended)
+Ln 417, Col 89
+Line too long (93 > 88)
+(pyright-extended)
+Ln 554, Col 89
+Line too long (90 > 88)
+(pyright-extended)
+Ln 574, Col 89
+Line too long (103 > 88)
+(pyright-extended)
+Ln 605, Col 89
+Line too long (107 > 88)
+(pyright-extended)
+Ln 635, Col 89
+Line too long (110 > 88)
+(pyright-extended)
+Ln 663, Col 89
+Line too long (100 > 88)
+(pyright-extended)
+Ln 739, Col 89
+Line too long (121 > 88)
+(pyright-extended)
+Ln 740, Col 89
+Line too long (92 > 88)
+(pyright-extended)
+Ln 741, Col 89
+Line too long (89 > 88)
+(pyright-extended)
+Ln 780, Col 89
+Line too long (93 > 88)
+(pyright-extended)
+Ln 815, Col 89
+Line too long (89 > 88)
+(pyright-extended)
+Ln 840, Col 89
+Line too long (92 > 88)
+(pyright-extended)
+Ln 874, Col 89
+Line too long (90 > 88)
+(pyright-extended)
+Ln 933, Col 89
+Line too long (104 > 88)
+(pyright-extended)
+Ln 1196, Col 89
+Line too long (94 > 88)
+(pyright-extended)
+Ln 1202, Col 89
+Line too long (90 > 88)
+(pyright-extended)
+Ln 1205, Col 89
+Line too long (217 > 88)
+(pyright-extended)
+Ln 1209, Col 89
+Line too long (148 > 88)
+(pyright-extended)
+Ln 1211, Col 89
+Line too long (157 > 88)
+(pyright-extended)
+Ln 1259, Col 89
+Line too long (132 > 88)
+(pyright-extended)
+Ln 1260, Col 89
+Line too long (111 > 88)
+(pyright-extended)
+Ln 1266, Col 89
+Line too long (106 > 88)
+(pyright-extended)
+Ln 1270, Col 89
+Line too long (126 > 88)
+(pyright-extended)
+Ln 1275, Col 89
+Line too long (222 > 88)
+(pyright-extended)
+Ln 1277, Col 90
+Line too long (105 > 88)
+(pyright-extended)
+Ln 1278, Col 89
+Line too long (270 > 88)
+(pyright-extended)
+Ln 1283, Col 88
+Line too long (102 > 88)
+(pyright-extended)
+Ln 1284, Col 89
+Line too long (183 > 88)
+(pyright-extended)
+Ln 1290, Col 88
+Function declaration "trigger_auto_update" is obscured by a declaration of the same name
+(pyright-extended)
+Ln 1393, Col 15
+Line too long (94 > 88)
+(pyright-extended)
+Ln 1394, Col 89
+Line too long (96 > 88)
+(pyright-extended)
+Ln 1458, Col 89
+Line too long (117 > 88)
+(pyright-extended)
+Ln 1480, Col 89
+Redefinition of unused `trigger_auto_update` from line 1393
+(pyright-extended)
+Ln 1639, Col 15
+Cannot access member "broadcast_to_ue5" for type "ConnectionManager"   Member "broadcast_to_ue5" is unknown
+(pyright-extended)
+Ln 1651, Col 27
+Cannot access member "registered_projects" for type "ConnectionManager"   Member "registered_projects" is unknown
+(pyright-extended)
+Ln 1667, Col 44
+Line too long (113 > 88)
+(pyright-extended)
+Ln 1667, Col 89
+Line too long (93 > 88)
+(pyright-extended)
+Ln 1695, Col 88
+Line too long (120 > 88)
+(pyright-extended)
+Ln 1707, Col 89
+Undefined name `time`
+(pyright-extended)
+Ln 1729, Col 38
+"time" is not defined
+(pyright-extended)
+Ln 1729, Col 38
+Line too long (106 > 88)
+(pyright-extended)
+Ln 1746, Col 89
+Line too long (100 > 88)
+(pyright-extended)
+Ln 1747, Col 89
+Line too long (112 > 88)
+(pyright-extended)
+Ln 1750, Col 89
+Line too long (120 > 88)
+(pyright-extended)
+Ln 1757, Col 89

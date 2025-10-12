@@ -16,6 +16,7 @@ import threading
 import urllib.error
 import urllib.request
 import uuid
+import zipfile
 
 # Version marker for tracking module updates (changes with each update)
 _version_marker = str(uuid.uuid4())[:8]
@@ -227,15 +228,35 @@ def _do_background_update(skip_restart=False):
     print(f"📦 Version: {_version_marker}")
     
     try:
-        # Download tar.gz from backend
+        # Download archive from backend
         print(f"⬇️  Downloading: {download_url}")
         
         with urllib.request.urlopen(download_url, timeout=30) as response:
-            tar_data = response.read()
+            archive_data = response.read()
         
-        print(f"✅ Downloaded {len(tar_data)} bytes")
+        print(f"✅ Downloaded {len(archive_data)} bytes")
         
-        # Extract tar.gz (pure Python, no Unreal API)
+        # Detect format by magic bytes
+        is_zip = False
+        is_tar_gz = False
+        
+        if len(archive_data) >= 2:
+            # Check magic bytes
+            if archive_data[:2] == b'PK':  # ZIP magic bytes (0x50 0x4B)
+                is_zip = True
+                print("📦 Detected format: ZIP")
+            elif archive_data[:2] == b'\x1f\x8b':  # GZIP magic bytes
+                is_tar_gz = True
+                print("📦 Detected format: TAR.GZ")
+            else:
+                # Try to determine by attempting TAR.GZ extraction
+                print("⚠️ Unknown format, attempting TAR.GZ extraction...")
+                is_tar_gz = True
+        else:
+            print("⚠️ Archive too small, assuming TAR.GZ format...")
+            is_tar_gz = True
+        
+        # Extract archive (pure Python, no Unreal API)
         import pathlib
         
         # Find project dir from current module path
@@ -246,19 +267,52 @@ def _do_background_update(skip_restart=False):
         
         updated_files = []
         
-        with tarfile.open(fileobj=io.BytesIO(tar_data), mode='r:gz') as tar_file:
-            for member in tar_file.getmembers():
-                if member.isfile():
-                    # Extract file content
-                    file_content = tar_file.extractfile(member).read()
-                    
-                    target_path = os.path.join(target_base, member.name)
-                    os.makedirs(os.path.dirname(target_path), exist_ok=True)
-                    
-                    with open(target_path, 'wb') as target_file:
-                        target_file.write(file_content)
-                    
-                    updated_files.append(member.name)
+        # Extract based on detected format
+        if is_zip:
+            # Extract ZIP archive
+            import zipfile
+            
+            try:
+                with zipfile.ZipFile(io.BytesIO(archive_data), 'r') as zip_file:
+                    for file_info in zip_file.filelist:
+                        if not file_info.is_dir():
+                            # Extract file content
+                            file_content = zip_file.read(file_info.filename)
+                            
+                            target_path = os.path.join(target_base, file_info.filename)
+                            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                            
+                            with open(target_path, 'wb') as target_file:
+                                target_file.write(file_content)
+                            
+                            updated_files.append(file_info.filename)
+            except zipfile.BadZipFile as e:
+                print(f"❌ Invalid ZIP file: {e}")
+                return False
+        
+        elif is_tar_gz:
+            # Extract TAR.GZ archive
+            try:
+                with tarfile.open(fileobj=io.BytesIO(archive_data), mode='r:gz') as tar_file:
+                    for member in tar_file.getmembers():
+                        if member.isfile():
+                            # Extract file content
+                            file_content = tar_file.extractfile(member).read()
+                            
+                            target_path = os.path.join(target_base, member.name)
+                            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                            
+                            with open(target_path, 'wb') as target_file:
+                                target_file.write(file_content)
+                            
+                            updated_files.append(member.name)
+            except tarfile.TarError as e:
+                print(f"❌ Invalid TAR.GZ file: {e}")
+                return False
+        
+        else:
+            print("❌ Unable to determine archive format!")
+            return False
         
         print(f"✅ Updated {len(updated_files)} files")
         
@@ -280,6 +334,7 @@ def _do_background_update(skip_restart=False):
             print("✅ EMERGENCY UPDATE COMPLETE! Files downloaded and installed.")
             print(f"📦 New version marker: {_version_marker}")
             print("⚠️  NO automatic restart was performed!")
+            print("✅ Emergency update complete. Please restart UE5 manually.")
             print("🔄 Please restart Unreal Engine 5 manually to apply fixes")
         else:
             print("✅ Auto-update complete! Files downloaded and installed.")
@@ -309,37 +364,90 @@ def _do_update():
     unreal.log(f"📦 Current Version: {_version_marker}")
     
     try:
-        # Download tar.gz from backend
+        # Download archive from backend
         unreal.log(f"⬇️  Downloading latest client from: {download_url}")
         
         with urllib.request.urlopen(download_url, timeout=30) as response:
-            tar_data = response.read()
+            archive_data = response.read()
         
-        unreal.log(f"✅ Downloaded {len(tar_data)} bytes")
+        unreal.log(f"✅ Downloaded {len(archive_data)} bytes")
         
-        # Extract tar.gz
+        # Detect format by magic bytes
+        is_zip = False
+        is_tar_gz = False
+        
+        if len(archive_data) >= 2:
+            # Check magic bytes
+            if archive_data[:2] == b'PK':  # ZIP magic bytes (0x50 0x4B)
+                is_zip = True
+                unreal.log("📦 Detected format: ZIP")
+            elif archive_data[:2] == b'\x1f\x8b':  # GZIP magic bytes
+                is_tar_gz = True
+                unreal.log("📦 Detected format: TAR.GZ")
+            else:
+                # Try to determine by attempting TAR.GZ extraction
+                unreal.log("⚠️ Unknown format, attempting TAR.GZ extraction...")
+                is_tar_gz = True
+        else:
+            unreal.log("⚠️ Archive too small, assuming TAR.GZ format...")
+            is_tar_gz = True
+        
+        # Get project directory for extraction
         project_dir = unreal.Paths.project_dir()
         target_base = os.path.join(project_dir, "Content", "Python")
         
         updated_files = []
         
-        with tarfile.open(fileobj=io.BytesIO(tar_data), mode='r:gz') as tar_file:
-            for member in tar_file.getmembers():
-                if member.isfile():
-                    # Extract file content
-                    file_content = tar_file.extractfile(member).read()
-                    
-                    # Extract to target
-                    target_path = os.path.join(target_base, member.name)
-                    
-                    # Create parent directories
-                    os.makedirs(os.path.dirname(target_path), exist_ok=True)
-                    
-                    # Write file
-                    with open(target_path, 'wb') as target_file:
-                        target_file.write(file_content)
-                    
-                    updated_files.append(member.name)
+        # Extract based on detected format
+        if is_zip:
+            # Extract ZIP archive
+            import zipfile
+            
+            try:
+                with zipfile.ZipFile(io.BytesIO(archive_data), 'r') as zip_file:
+                    for file_info in zip_file.filelist:
+                        if not file_info.is_dir():
+                            # Extract file content
+                            file_content = zip_file.read(file_info.filename)
+                            
+                            target_path = os.path.join(target_base, file_info.filename)
+                            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                            
+                            with open(target_path, 'wb') as target_file:
+                                target_file.write(file_content)
+                            
+                            updated_files.append(file_info.filename)
+            except zipfile.BadZipFile as e:
+                unreal.log_error(f"❌ Invalid ZIP file: {e}")
+                return False
+        
+        elif is_tar_gz:
+            # Extract TAR.GZ archive
+            try:
+                with tarfile.open(fileobj=io.BytesIO(archive_data), mode='r:gz') as tar_file:
+                    for member in tar_file.getmembers():
+                        if member.isfile():
+                            # Extract file content
+                            file_content = tar_file.extractfile(member).read()
+                            
+                            # Extract to target
+                            target_path = os.path.join(target_base, member.name)
+                            
+                            # Create parent directories
+                            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                            
+                            # Write file
+                            with open(target_path, 'wb') as target_file:
+                                target_file.write(file_content)
+                            
+                            updated_files.append(member.name)
+            except tarfile.TarError as e:
+                unreal.log_error(f"❌ Invalid TAR.GZ file: {e}")
+                return False
+        
+        else:
+            unreal.log_error("❌ Unable to determine archive format!")
+            return False
         
         unreal.log(f"✅ Updated {len(updated_files)} files")
         

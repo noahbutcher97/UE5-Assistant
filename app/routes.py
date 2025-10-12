@@ -1507,8 +1507,9 @@ Return ONLY the JSON array, no explanation."""
     @app.post("/api/ue5/register_http")
     async def register_ue5_http(request: dict):
         """Register UE5 client via HTTP polling (WebSocket fallback)."""
-        from app.websocket_manager import get_manager
         from datetime import datetime
+
+        from app.websocket_manager import get_manager
         
         project_id = request.get("project_id")
         project_name = request.get("project_name", "Unknown")
@@ -1543,8 +1544,9 @@ Return ONLY the JSON array, no explanation."""
     @app.post("/api/ue5/poll")
     async def poll_for_commands(request: dict):
         """UE5 client polls for pending commands."""
-        from app.websocket_manager import get_manager
         from datetime import datetime
+
+        from app.websocket_manager import get_manager
         
         project_id = request.get("project_id")
         if not project_id:
@@ -1587,8 +1589,9 @@ Return ONLY the JSON array, no explanation."""
     @app.post("/api/ue5/heartbeat")
     async def ue5_heartbeat(request: dict):
         """Keep-alive heartbeat from UE5 HTTP client."""
-        from app.websocket_manager import get_manager
         from datetime import datetime
+
+        from app.websocket_manager import get_manager
         
         project_id = request.get("project_id")
         if not project_id:
@@ -1635,8 +1638,9 @@ Return ONLY the JSON array, no explanation."""
     @app.post("/api/trigger_auto_update")
     async def trigger_auto_update():
         """Trigger auto-update on all connected UE5 clients."""
-        from app.websocket_manager import get_manager
         import time
+
+        from app.websocket_manager import get_manager
         
         print("📢 Broadcasting auto-update to all UE5 clients...")
         
@@ -1680,24 +1684,44 @@ Return ONLY the JSON array, no explanation."""
         Trigger emergency update (safe mode with no restart).
         This is for fixing thread safety crashes without triggering UE5 restart.
         """
+        from datetime import datetime
+
         from app.websocket_manager import get_manager
-        import time
         
         try:
-            body = await request.json()
-            mode = body.get("mode", "no_restart")
+            # Make JSON body optional - handle both empty requests and JSON requests
+            mode = "no_restart"  # Default mode
+            try:
+                body = await request.json()
+                mode = body.get("mode", "no_restart")
+            except Exception:
+                # No body or invalid JSON - that's fine, use defaults
+                pass
             
             print("🚨 Broadcasting EMERGENCY UPDATE (no-restart mode) to all UE5 clients...")
             
             manager = get_manager()
             
             # Send emergency update command with no_restart flag via WebSocket
-            await manager.broadcast_to_ue5({
+            disconnected = []
+            total_notified = 0
+            
+            emergency_command = {
                 "type": "emergency_update",
                 "command": "trigger_update",
                 "mode": "no_restart",  # Critical: tells client not to restart
                 "message": "Emergency update - files will be updated but UE5 will NOT restart. Please restart manually."
-            })
+            }
+            
+            # Send to WebSocket clients
+            for project_id, websocket in manager.ue5_clients.items():
+                try:
+                    await websocket.send_json(emergency_command)
+                    print(f"✅ Emergency update sent to WebSocket: {project_id}")
+                    total_notified += 1
+                except Exception as e:
+                    print(f"❌ Failed to send emergency update to {project_id}: {e}")
+                    disconnected.append(project_id)
             
             # Also send to HTTP polling clients
             if hasattr(manager, 'http_clients'):
@@ -1710,14 +1734,25 @@ Return ONLY the JSON array, no explanation."""
                         "mode": "no_restart",
                         "timestamp": time.time()
                     })
+                    total_notified += 1
             
-            registered_count = len(manager.registered_projects) if hasattr(manager, 'registered_projects') else 0
+            # Clean up disconnected WebSocket clients
+            for project_id in disconnected:
+                await manager.disconnect_ue5(project_id)
+            
+            # Notify dashboards about the emergency update
+            await manager.broadcast_to_dashboards({
+                "type": "emergency_update_triggered",
+                "message": f"Emergency update triggered for {total_notified} client(s)",
+                "mode": "no_restart",
+                "timestamp": datetime.now().isoformat()
+            })
             
             return {
-                "success": True,
+                "status": "success",  # Changed from "success" to "status" to match JavaScript expectation
                 "message": "Emergency update (no-restart mode) triggered for all connected clients",
                 "mode": mode,
-                "projects_notified": registered_count,
+                "projects_notified": total_notified,
                 "instructions": "Files will be updated. Users must manually restart UE5 after update completes."
             }
         except Exception as e:
@@ -1725,6 +1760,6 @@ Return ONLY the JSON array, no explanation."""
             import traceback
             traceback.print_exc()
             return {
-                "success": False,
+                "status": "error",  # Changed from "success": False to "status": "error" to match JavaScript expectation
                 "error": str(e)
             }
