@@ -1207,13 +1207,69 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                 # Extract action token
                 action = ai_response.replace("[UE_REQUEST]", "").strip()
                 
-                # TODO: In future, actually execute this in UE5 and get real data
-                # For now, inform user that client-side execution is needed
-                return {
-                    "response": f"🔄 This query requires live data from your UE5 editor.\n\nAction needed: {action}\n\nTo enable automatic data collection, make sure your UE5 project has the AI Assistant client running (import AIAssistant.main in UE5 Python Console).",
-                    "project_context": active_project["name"] if active_project else None,
-                    "ue_request": action
-                }
+                # Try to execute in connected UE5 client
+                from app.websocket_manager import get_manager
+                manager = get_manager()
+                
+                # Check if UE5 client is connected for this project
+                if active_project:
+                    project_id = active_project.get("project_id")
+                    
+                    # Try to send command to UE5
+                    try:
+                        ue5_response = await manager.send_command_to_ue5(
+                            project_id,
+                            {
+                                "type": "execute_action",
+                                "action": action,
+                                "params": {}
+                            },
+                            timeout=10.0  # 10 second timeout
+                        )
+                        
+                        if ue5_response and ue5_response.get("success"):
+                            # Got data from UE5! Now ask AI to format it nicely
+                            ue5_data = ue5_response.get("data", {})
+                            
+                            # Second AI call to format the raw UE5 data
+                            format_response = openai.chat.completions.create(
+                                model=app_config.get("model", "gpt-4o-mini"),
+                                messages=[
+                                    {"role": "system", "content": f"You are an AI assistant. Format this UE5 data into a helpful response for: {query}"},
+                                    {"role": "user", "content": f"Raw data from UE5:\n{ue5_data}\n\nOriginal question: {query}"}
+                                ],
+                                temperature=0.7,
+                                max_tokens=1500
+                            )
+                            
+                            formatted_response = (format_response.choices[0].message.content or "").strip()
+                            
+                            return {
+                                "response": formatted_response,
+                                "project_context": active_project["name"] if active_project else None,
+                                "ue5_data": ue5_data
+                            }
+                        else:
+                            # UE5 didn't respond properly
+                            error_msg = ue5_response.get("error", "No response") if ue5_response else "Connection timeout"
+                            return {
+                                "response": f"⚠️ UE5 client didn't respond to: {action}\n\nError: {error_msg}\n\nMake sure your UE5 project has the AI Assistant running (import AIAssistant.main in UE5 Python Console).",
+                                "project_context": active_project["name"] if active_project else None
+                            }
+                    except Exception as e:
+                        # Connection failed - inform user
+                        return {
+                            "response": f"🔄 This query requires live data from your UE5 editor.\n\nAction needed: {action}\n\nError connecting to UE5: {str(e)}\n\nTo enable automatic data collection, make sure your UE5 project has the AI Assistant client running.",
+                            "project_context": active_project["name"] if active_project else None,
+                            "ue_request": action
+                        }
+                else:
+                    # No active project
+                    return {
+                        "response": f"🔄 This query requires live data from your UE5 editor.\n\nAction needed: {action}\n\nNo active project selected. Please select a project first.",
+                        "project_context": None,
+                        "ue_request": action
+                    }
             
             return {
                 "response": ai_response,
