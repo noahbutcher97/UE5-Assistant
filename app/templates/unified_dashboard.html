@@ -260,8 +260,8 @@
                 <button onclick="registerManualProject()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
                     ✅ Register Project
                 </button>
-                <button onclick="deployClient()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
-                    🚀 Auto-Deploy Client
+                <button onclick="frictionlessDeploy()" style="background: linear-gradient(135deg, #ff6b35 0%, #f54023 100%);">
+                    ⚡ Instant Deploy & Run
                 </button>
             </div>
             
@@ -269,10 +269,27 @@
             
             <div style="margin-top: 15px; padding: 12px; background: rgba(0,217,255,0.1); border-radius: 8px; font-size: 14px; color: #8b95a5;">
                 💡 <strong>Installation Options:</strong><br>
-                <strong>Option 1 (Easiest):</strong> <a href="/api/installer_script" style="color: #00d9ff; text-decoration: underline;">⚡ Download PowerShell Installer</a> - Run as admin, auto-installs everything<br>
-                <strong>Option 2:</strong> <a href="/api/download_client" style="color: #00d9ff; text-decoration: underline;">📦 Download ZIP</a> - Manual extract to Content/Python/<br>
-                <strong>Option 3:</strong> Use "Auto-Deploy Client" button (may not work due to browser security)
+                <strong>🆕 Modern (No Download!):</strong> <a href="/deploy/modern" target="_blank" style="color: #00d9ff; text-decoration: underline;">✨ Direct Browser Deploy</a> - Uses File System API (Chrome/Edge)<br>
+                <strong>Classic:</strong> <a href="/api/installer_script" style="color: #00d9ff; text-decoration: underline;">⚡ PowerShell Installer</a> | <a href="/api/download_client" style="color: #00d9ff; text-decoration: underline;">📦 Manual ZIP</a><br>
+                <strong>Protocol:</strong> <a href="#" onclick="showProtocolInstructions(); return false;" style="color: #9333ea; text-decoration: underline;">🔗 Register ue5assistant:// handler</a>
             </div>
+            
+            <div id="protocol-instructions" style="display: none; margin-top: 15px; padding: 15px; background: rgba(147, 51, 234, 0.1); border-radius: 8px; border: 1px solid rgba(147, 51, 234, 0.3);">
+                <h4 style="color: #9333ea; margin-top: 0;">🔗 Protocol Handler Setup:</h4>
+                <p style="font-size: 14px; color: #8b95a5;">Register a custom protocol to deploy with one click from any webpage!</p>
+                <ol style="font-size: 14px; color: #8b95a5;">
+                    <li>Download: <a href="/api/protocol_handler" style="color: #9333ea;">ue5_protocol_handler.reg</a></li>
+                    <li>Double-click the .reg file and accept the prompt</li>
+                    <li>Now you can click links like: <a href="ue5assistant://deploy/D%3A%2FUnrealProjects%2F5.6%2FUE5_Assistant" style="color: #9333ea;">ue5assistant://deploy/YourProject</a></li>
+                </ol>
+            </div>
+            
+            <script>
+            function showProtocolInstructions() {
+                const el = document.getElementById('protocol-instructions');
+                el.style.display = el.style.display === 'none' ? 'block' : 'none';
+            }
+            </script>
         </div>
         
         <div class="grid">
@@ -583,7 +600,101 @@
             }
         }
         
-        async function deployClient() {
+        async function frictionlessDeploy() {
+        const projectName = document.getElementById('project-name').value;
+        const projectPath = document.getElementById('project-path').value;
+        
+        if (!projectPath) {
+            updateDeployStatus('Please enter the project path first', 'error');
+            return;
+        }
+        
+        const statusDiv = document.getElementById('deploy-status');
+        statusDiv.style.display = 'block';
+        
+        // First, check if Deploy Agent is running
+        try {
+            statusDiv.innerHTML = '🔍 Checking for Deploy Agent...';
+            statusDiv.className = 'status-info';
+            
+            const agentResponse = await fetch('http://localhost:7865/status');
+            
+            if (agentResponse.ok) {
+                // Agent is running! Do frictionless deploy
+                statusDiv.innerHTML = '⚡ Deploy Agent found! Starting instant deployment...';
+                
+                const deployResponse = await fetch('http://localhost:7865/deploy', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        project_path: projectPath,
+                        auto_import: true
+                    })
+                });
+                
+                const result = await deployResponse.json();
+                
+                if (result.success) {
+                    statusDiv.innerHTML = `
+                        <div style="text-align: center;">
+                            <div style="font-size: 48px; margin: 20px 0;">🎉</div>
+                            <h3 style="color: #00ff88; margin: 10px 0;">Instant Deployment Complete!</h3>
+                            <p>✅ ${result.files_deployed} files deployed</p>
+                            <p>✅ AI Assistant auto-imported in UE5</p>
+                            <p style="font-size: 18px; color: #00d9ff; margin-top: 20px;">
+                                🚀 Your AI Assistant is ready to use in Unreal Engine!
+                            </p>
+                        </div>
+                    `;
+                    statusDiv.className = 'status-success';
+                    
+                    // Auto-register the project too
+                    setTimeout(() => registerManualProject(), 2000);
+                } else {
+                    throw new Error(result.error || 'Deployment failed');
+                }
+                
+            } else {
+                throw new Error('Deploy Agent not running');
+            }
+            
+        } catch (error) {
+            // Agent not running - show instructions to set it up
+            statusDiv.innerHTML = `
+                <div style="background: rgba(255, 107, 53, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 107, 53, 0.3);">
+                    <h3 style="color: #ff6b35; margin-top: 0;">⚡ One-Time Setup Required</h3>
+                    <p style="color: #8b95a5;">To enable instant deployment, run the Deploy Agent on your PC:</p>
+                    
+                    <div style="background: #0a1628; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                        <code style="color: #00d9ff;">
+                            <strong>Option A (Easiest):</strong><br>
+                            1. Download: <a href="/api/deploy_agent_installer" style="color: #ff6b35;">deploy_agent_installer.bat</a><br>
+                            2. Double-click the .bat file<br>
+                            3. Enter your project path when prompted<br>
+                            <br>
+                            <strong>Option B (Manual):</strong><br>
+                            1. Download: <a href="/api/deploy_agent" style="color: #ff6b35;">deploy_agent.py</a><br>
+                            2. Run: python deploy_agent.py --ue5-project "${projectPath}"
+                        </code>
+                    </div>
+                    
+                    <p style="color: #8b95a5; font-size: 14px;">
+                        The Deploy Agent runs locally and enables:<br>
+                        • Instant deployment from browser<br>
+                        • Auto-import in UE5<br>
+                        • Zero manual steps<br>
+                    </p>
+                    
+                    <button onclick="deployClient()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); width: 100%; padding: 12px; border: none; border-radius: 8px; color: white; cursor: pointer; margin-top: 10px;">
+                        Use Classic Deploy Instead
+                    </button>
+                </div>
+            `;
+            statusDiv.className = 'status-warning';
+        }
+    }
+    
+    async function deployClient() {
             let path = document.getElementById('manual-path').value;
             
             if (!path) {

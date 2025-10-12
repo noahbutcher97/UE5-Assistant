@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UE5 Assistant - Modern File Deploy</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0a1628, #1e3a5f);
+            color: #ffffff;
+            font-family: 'Inter', -apple-system, sans-serif;
+            padding: 40px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+        }
+        
+        h1 {
+            color: #00d9ff;
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 30px;
+        }
+        
+        .deploy-button {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #00d9ff, #0099cc);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+        }
+        
+        .deploy-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.4);
+        }
+        
+        .deploy-button:disabled {
+            background: #3a4554;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            background: rgba(0, 217, 255, 0.1);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+        }
+        
+        .error {
+            background: rgba(255, 0, 100, 0.1);
+            border-color: rgba(255, 0, 100, 0.3);
+            color: #ff9999;
+        }
+        
+        .success {
+            background: rgba(0, 255, 100, 0.1);
+            border-color: rgba(0, 255, 100, 0.3);
+            color: #99ff99;
+        }
+        
+        .feature-box {
+            background: rgba(0, 217, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .code {
+            background: #0a1628;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        
+        .protocol-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #9333ea, #6b21a8);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        
+        .protocol-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(147, 51, 234, 0.4);
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 UE5 Assistant - Direct File System Deploy</h1>
+        
+        <div class="feature-box">
+            <h2>✨ Modern Browser File Access</h2>
+            <p>This uses the new File System Access API to deploy directly to your UE5 project folder. 
+            No downloads, no scripts - just pick your folder and deploy!</p>
+        </div>
+        
+        <button id="pickFolder" class="deploy-button">
+            📁 Select Your UE5 Project Folder
+        </button>
+        
+        <button id="deployFiles" class="deploy-button hidden">
+            🚀 Deploy Client to Selected Folder
+        </button>
+        
+        <div id="status" class="status hidden"></div>
+        
+        <div class="feature-box">
+            <h3>💡 How it Works:</h3>
+            <ol>
+                <li>Click "Select Your UE5 Project Folder"</li>
+                <li>Navigate to your UE5 project (e.g., D:/UnrealProjects/5.6/UE5_Assistant)</li>
+                <li>Grant permission when prompted</li>
+                <li>Click "Deploy Client" to install files directly!</li>
+            </ol>
+        </div>
+        
+        <div class="feature-box">
+            <h3>🔒 Security Note:</h3>
+            <p>This requires browser permission to access your file system. 
+            You maintain full control - the browser will ask for permission each time.</p>
+            <p><strong>Supported Browsers:</strong> Chrome, Edge, Opera (Firefox coming soon)</p>
+        </div>
+    </div>
+    
+    <script>
+        let selectedHandle = null;
+        
+        document.getElementById('pickFolder').addEventListener('click', async () => {
+            try {
+                // Request folder access
+                selectedHandle = await window.showDirectoryPicker({
+                    startIn: 'desktop',
+                    mode: 'readwrite'
+                });
+                
+                document.getElementById('pickFolder').textContent = `✅ Selected: ${selectedHandle.name}`;
+                document.getElementById('deployFiles').classList.remove('hidden');
+                updateStatus(`Folder selected: ${selectedHandle.name}`, 'success');
+                
+            } catch (err) {
+                if (err.name === 'AbortError') {
+                    updateStatus('Folder selection cancelled', 'error');
+                } else if (err.name === 'SecurityError' || err.name === 'NotAllowedError') {
+                    updateStatus('File System Access API not supported or permission denied. Use Chrome/Edge/Opera.', 'error');
+                } else {
+                    updateStatus(`Error: ${err.message}`, 'error');
+                }
+            }
+        });
+        
+        document.getElementById('deployFiles').addEventListener('click', async () => {
+            if (!selectedHandle) {
+                updateStatus('No folder selected', 'error');
+                return;
+            }
+            
+            const deployBtn = document.getElementById('deployFiles');
+            deployBtn.disabled = true;
+            deployBtn.textContent = '⏳ Deploying...';
+            
+            try {
+                updateStatus('📥 Downloading client package...', '');
+                
+                // Fetch client ZIP from backend
+                const response = await fetch('/api/download_client');
+                const blob = await response.blob();
+                
+                updateStatus('📦 Extracting and deploying files...', '');
+                
+                // Use JSZip to extract in browser
+                const JSZip = await import('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js').then(m => window.JSZip);
+                const zip = await JSZip.loadAsync(blob);
+                
+                // Create Content/Python directory structure
+                const contentDir = await selectedHandle.getDirectoryHandle('Content', { create: true });
+                const pythonDir = await contentDir.getDirectoryHandle('Python', { create: true });
+                
+                let fileCount = 0;
+                
+                // Deploy each file
+                for (const [path, zipEntry] of Object.entries(zip.files)) {
+                    if (zipEntry.dir) continue;
+                    
+                    const pathParts = path.split('/');
+                    let currentDir = pythonDir;
+                    
+                    // Create nested directories
+                    for (let i = 0; i < pathParts.length - 1; i++) {
+                        currentDir = await currentDir.getDirectoryHandle(pathParts[i], { create: true });
+                    }
+                    
+                    // Write file
+                    const fileName = pathParts[pathParts.length - 1];
+                    const fileHandle = await currentDir.getFileHandle(fileName, { create: true });
+                    const writable = await fileHandle.createWritable();
+                    const content = await zipEntry.async('blob');
+                    await writable.write(content);
+                    await writable.close();
+                    
+                    fileCount++;
+                }
+                
+                updateStatus(`✅ Successfully deployed ${fileCount} files to ${selectedHandle.name}/Content/Python/`, 'success');
+                deployBtn.textContent = '🎉 Deployment Complete!';
+                
+                setTimeout(() => {
+                    deployBtn.disabled = false;
+                    deployBtn.textContent = '🚀 Deploy Client to Selected Folder';
+                }, 3000);
+                
+            } catch (err) {
+                updateStatus(`❌ Deployment failed: ${err.message}`, 'error');
+                deployBtn.disabled = false;
+                deployBtn.textContent = '🚀 Deploy Client to Selected Folder';
+            }
+        });
+        
+        function updateStatus(message, type) {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status';
+            if (type) status.classList.add(type);
+            status.classList.remove('hidden');
+        }
+        
+        // Check API support
+        if (!('showDirectoryPicker' in window)) {
+            updateStatus('⚠️ File System Access API not supported in this browser. Please use Chrome, Edge, or Opera.', 'error');
+            document.getElementById('pickFolder').disabled = true;
+        }
+    </script>
+</body>
+</html>

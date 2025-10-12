@@ -45,12 +45,27 @@ Root/
 
 **Boundary Check**: Run `python3 check_imports.py` to verify backend isolation from UE5 client code
 
-### Deployment Workflow
-**To deploy UE5 client to your Unreal Engine project:**
-1. Download entire `attached_assets/AIAssistant/` folder from Replit
-2. Paste to: `D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant`
-3. Overwrite previous versions
-4. **DO NOT** include `ue5_client_tests/` folder (Replit testing infrastructure only)
+### Deployment Options
+
+#### **🚀 Frictionless Deployment (Recommended)**
+**One-time setup:**
+1. Run Deploy Agent on your PC:
+   - Download: [deploy_agent_installer.bat](https://ue5-assistant-noahbutcher97.replit.app/api/deploy_agent_installer)
+   - Double-click to run (enters your UE5 project path)
+   - Keep window open while using dashboard
+
+2. Use Dashboard:
+   - Go to [Control Center](https://ue5-assistant-noahbutcher97.replit.app/dashboard)
+   - Enter project path
+   - Click **"⚡ Instant Deploy & Run"**
+   - Files deployed + auto-imported in UE5 instantly!
+
+**Features:** Zero manual steps, auto-import in UE5, project registration, instant readiness
+
+#### **Classic Deployment Options**
+- **PowerShell Installer:** Download and run [install_ue5_assistant.ps1](https://ue5-assistant-noahbutcher97.replit.app/api/installer_script)
+- **Manual ZIP:** Download from [dashboard](https://ue5-assistant-noahbutcher97.replit.app/dashboard), extract to `Content/Python/`
+- **UE5 Auto-Update:** Run `import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()` in UE5 console
 
 **Backend:** FastAPI server runs on Replit at `https://ue5-assistant-noahbutcher97.replit.app`
 
@@ -74,6 +89,7 @@ Preferred communication style: Simple, everyday language.
 - **Editor Orchestration Systems**: Complete scene building via SceneOrchestrator (spawn actors/primitives/blueprints), ViewportController (camera control), and ActorManipulator (align/distribute/arrange).
 - **UE 5.6 Compliant Utility Generator**: Generates Editor Utility Widgets with proper @unreal.uclass() decorators, EditorUtilityWidget base class, @unreal.ufunction methods, and full backend API integration.
 - **Unified Dashboard**: Main interface at `/dashboard` with Project Hub as primary tab, replacing separate dashboard pages.
+- **Deploy Agent**: Local Python service (localhost:7865) bridges browser to UE5, enabling frictionless deployment and auto-import without browser security limitations.
 - **Data Flow**: Unreal Engine Python scripts collect viewport data and POST it to FastAPI endpoints. Pydantic models validate requests. AI processes data, and descriptions are returned to UE5.
 - **UE5 Python Integration**: Automatic installation of dependencies, bi-directional HTTP communication, file-based state management (`Saved/AIConsole`), persistent conversation logging, and intelligent context-aware command routing with expanded keyword detection.
 - **Context-Aware Command Routing**: Backend intelligently detects user intent and routes context-specific queries (project info, blueprint capture, file browsing) to appropriate UE5 data collection actions while maintaining AI-powered responses for general guidance questions.

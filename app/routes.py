@@ -305,6 +305,70 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 "error": f"Deployment failed: {str(e)}. Browser cannot access local files - please use manual download."
             }
     
+    @app.get("/deploy/modern")
+    async def modern_deploy_page():
+        """Serve the modern File System Access API deployment page."""
+        from pathlib import Path
+        template_path = Path("app/templates/file_system_access.html")
+        if template_path.exists():
+            content = template_path.read_text()
+            return HTMLResponse(content=content)
+        return {"error": "Deployment page not found"}
+    
+    @app.get("/api/deploy_agent_installer")
+    async def get_deploy_agent_installer():
+        """Download the Deploy Agent installer batch file."""
+        from fastapi.responses import Response
+        from pathlib import Path
+        
+        installer_path = Path("deploy_agent_installer.bat")
+        if installer_path.exists():
+            content = installer_path.read_text()
+            return Response(
+                content=content,
+                media_type="text/plain",
+                headers={
+                    "Content-Disposition": "attachment; filename=deploy_agent_installer.bat"
+                }
+            )
+        return {"error": "Installer not found"}
+    
+    @app.get("/api/deploy_agent")
+    async def get_deploy_agent():
+        """Download the Deploy Agent Python script."""
+        from fastapi.responses import Response
+        from pathlib import Path
+        
+        agent_path = Path("attached_assets/deploy_agent.py")
+        if agent_path.exists():
+            content = agent_path.read_text()
+            return Response(
+                content=content,
+                media_type="text/plain",
+                headers={
+                    "Content-Disposition": "attachment; filename=deploy_agent.py"
+                }
+            )
+        return {"error": "Deploy agent not found"}
+    
+    @app.get("/api/protocol_handler")
+    async def get_protocol_handler():
+        """Generate Windows registry file for protocol handler."""
+        from fastapi.responses import Response
+        from pathlib import Path
+        
+        reg_path = Path("ue5_protocol_handler.reg")
+        if reg_path.exists():
+            content = reg_path.read_bytes()  # Use read_bytes for .reg files
+            return Response(
+                content=content,
+                media_type="application/octet-stream",
+                headers={
+                    "Content-Disposition": "attachment; filename=ue5_protocol_handler.reg"
+                }
+            )
+        return {"error": "Protocol handler not found"}
+    
     @app.get("/api/installer_script")
     async def get_installer_script():
         """Generate PowerShell installer script."""

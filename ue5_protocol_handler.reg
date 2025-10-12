@@ -1,0 +1,15 @@
+Windows Registry Editor Version 5.00
+
+[HKEY_CLASSES_ROOT\ue5assistant]
+@="URL:UE5 Assistant Protocol"
+"URL Protocol"=""
+
+[HKEY_CLASSES_ROOT\ue5assistant\DefaultIcon]
+@="powershell.exe,0"
+
+[HKEY_CLASSES_ROOT\ue5assistant\shell]
+
+[HKEY_CLASSES_ROOT\ue5assistant\shell\open]
+
+[HKEY_CLASSES_ROOT\ue5assistant\shell\open\command]
+@="powershell.exe -ExecutionPolicy Bypass -Command \"& {$url='%1'; $url = $url -replace 'ue5assistant://',''; $parts = $url -split '/'; if($parts[0] -eq 'deploy'){ $projectPath = [System.Uri]::UnescapeDataString($parts[1]); Write-Host 'Deploying to:' $projectPath; Invoke-WebRequest -Uri 'https://ue5-assistant-noahbutcher97.replit.app/api/download_client' -OutFile \"$env:TEMP\\ue5_client.zip\"; Expand-Archive -Path \"$env:TEMP\\ue5_client.zip\" -DestinationPath \"$projectPath\\Content\\Python\" -Force; Write-Host 'Deployment complete!'; Remove-Item \"$env:TEMP\\ue5_client.zip\"; pause}}\""
