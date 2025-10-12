@@ -182,11 +182,13 @@ class ConnectionManager:
             self.disconnect_dashboard(client)
 
     async def broadcast_update_to_ue5_clients(self):
-        """Broadcast update notification to all connected UE5 clients."""
+        """Broadcast update notification to all connected UE5 clients (WebSocket + HTTP)."""
         print("📢 Broadcasting auto-update to all UE5 clients...")
 
         disconnected = []
+        total_notified = 0
 
+        # Send to WebSocket clients
         for project_id, websocket in self.ue5_clients.items():
             try:
                 await websocket.send_json({
@@ -197,12 +199,27 @@ class ConnectionManager:
                     "timestamp":
                     datetime.now().isoformat()
                 })
-                print(f"✅ Update notification sent to: {project_id}")
+                print(f"✅ Update notification sent to WebSocket: {project_id}")
+                total_notified += 1
             except Exception as e:
                 print(f"❌ Failed to send update to {project_id}: {e}")
                 disconnected.append(project_id)
 
-        # Clean up disconnected clients
+        # Send to HTTP Polling clients
+        for project_id, client_data in self.http_clients.items():
+            try:
+                # Queue auto-update command
+                client_data["pending_commands"].append({
+                    "type": "auto_update",
+                    "message": "Backend updated. Auto-updating client files...",
+                    "timestamp": datetime.now().isoformat()
+                })
+                print(f"✅ Update queued for HTTP Polling: {project_id}")
+                total_notified += 1
+            except Exception as e:
+                print(f"❌ Failed to queue update for {project_id}: {e}")
+
+        # Clean up disconnected WebSocket clients
         for project_id in disconnected:
             await self.disconnect_ue5(project_id)
 
@@ -211,14 +228,14 @@ class ConnectionManager:
             "type":
             "backend_update",
             "message":
-            f"Backend updated. Notified {len(self.ue5_clients)} UE5 client(s)",
+            f"Backend updated. Notified {total_notified} UE5 client(s)",
             "timestamp":
             datetime.now().isoformat()
         })
 
         return {
             "success": True,
-            "clients_notified": len(self.ue5_clients),
+            "clients_notified": total_notified,
             "clients_failed": len(disconnected)
         }
 
