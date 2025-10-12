@@ -338,6 +338,29 @@
             <div id="deploy-status" style="margin-top: 15px; display: none; padding: 15px; border-radius: 8px;"></div>
         </div>
 
+        <!-- Connection Guide (shown when projects registered but not connected) -->
+        <div id="connection-guide" class="card" style="border: 2px solid rgba(251,191,36,0.3); background: rgba(251,191,36,0.05); display: none; margin-bottom: 20px;">
+            <h2 style="color: #fbbf24;">⚠️ UE5 Client Not Connected</h2>
+            <p style="color: #8b95a5; margin-bottom: 15px;">You have projects registered, but no UE5 clients are connected. Follow these steps to connect:</p>
+            
+            <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <h3 style="color: #00d9ff; margin-top: 0; font-size: 16px;">📋 Quick Start:</h3>
+                <ol style="color: #8b95a5; margin: 10px 0; padding-left: 20px;">
+                    <li style="margin: 8px 0;">Open Unreal Engine 5 editor for your project</li>
+                    <li style="margin: 8px 0;">Open Python console: <code style="background: rgba(0,217,255,0.1); padding: 2px 8px; border-radius: 4px; color: #00d9ff;">Tools → Plugins → Python Console</code></li>
+                    <li style="margin: 8px 0;">Run: <code style="background: rgba(0,217,255,0.1); padding: 2px 8px; border-radius: 4px; color: #00d9ff;">import AIAssistant.main</code></li>
+                    <li style="margin: 8px 0;">Status will turn green when connected! ✅</li>
+                </ol>
+            </div>
+            
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button onclick="checkConnection()" style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 10px 20px;">
+                    🔄 Check Connection
+                </button>
+                <span style="color: #8b95a5; font-size: 14px;">Refresh to see if client connected</span>
+            </div>
+        </div>
+
         <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));">
             <!-- AI Project Intelligence -->
             <div class="card" style="background: linear-gradient(135deg, rgba(0,217,255,0.05) 0%, rgba(0,0,0,0.2) 100%);">
@@ -1118,22 +1141,40 @@
 
         function updateConnectionIndicator() {
             const status = document.getElementById('projectStatus');
+            const select = document.getElementById('projectSelect');
+            const registeredCount = select.options.length - 1; // Exclude "No project selected" option
+            const connectionGuide = document.getElementById('connection-guide');
+            
             if (wsConnected && ue5ProjectsConnected.length > 0) {
-                status.innerHTML = `🌐 Real-time: ${ue5ProjectsConnected.length} UE5 client(s) connected`;
+                status.innerHTML = `✅ ${ue5ProjectsConnected.length} of ${registeredCount} connected`;
                 status.style.background = 'rgba(0, 255, 136, 0.1)';
                 status.style.borderColor = 'rgba(0, 255, 136, 0.3)';
                 status.style.color = '#00ff88';
-            } else if (wsConnected) {
-                status.innerHTML = '⚠️ WebSocket ready, no UE5 clients';
+                if (connectionGuide) connectionGuide.style.display = 'none';
+            } else if (wsConnected && registeredCount > 0) {
+                status.innerHTML = `⚠️ ${registeredCount} registered, 0 connected`;
                 status.style.background = 'rgba(251, 191, 36, 0.1)';
                 status.style.borderColor = 'rgba(251, 191, 36, 0.3)';
                 status.style.color = '#fbbf24';
+                if (connectionGuide) connectionGuide.style.display = 'block';
+            } else if (wsConnected) {
+                status.innerHTML = '⚠️ No projects';
+                status.style.background = 'rgba(251, 191, 36, 0.1)';
+                status.style.borderColor = 'rgba(251, 191, 36, 0.3)';
+                status.style.color = '#fbbf24';
+                if (connectionGuide) connectionGuide.style.display = 'none';
             } else {
-                status.innerHTML = '❌ Not connected';
+                status.innerHTML = '❌ Dashboard offline';
                 status.style.background = 'rgba(239, 68, 68, 0.1)';
                 status.style.borderColor = 'rgba(239, 68, 68, 0.3)';
                 status.style.color = '#ef4444';
+                if (connectionGuide) connectionGuide.style.display = 'none';
             }
+        }
+        
+        function checkConnection() {
+            // Refresh WebSocket status
+            loadProjects();
         }
 
         async function queryProject() {

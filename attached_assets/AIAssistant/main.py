@@ -420,6 +420,23 @@ def get_assistant() -> AIAssistant:
     return _assistant
 
 
+# Auto-initialize on import to establish WebSocket connection immediately
+def _auto_init():
+    """Auto-initialize assistant when module is imported."""
+    try:
+        get_assistant()
+    except Exception as e:
+        print(f"⚠️ AI Assistant auto-init warning: {e}")
+
+# Run auto-init only if imported in UE5 environment
+try:
+    import unreal
+    _auto_init()
+except ImportError:
+    # Not in UE5 environment, skip auto-init
+    pass
+
+
 def send_command(user_input: str, use_async: bool = False) -> str:
     """
     Main entry point for Editor Utility Widget.
