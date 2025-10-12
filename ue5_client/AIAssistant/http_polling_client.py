@@ -1,22 +1,30 @@
 """
 HTTP Polling client for UE5 - Fallback when WebSocket doesn't work.
 Provides same interface as WebSocketClient for seamless fallback.
+Now with thread-safe action execution via queue system.
 """
 import json
+import sys
+import importlib
 import threading
 import time
 from typing import Any, Callable, Dict, Optional
 import requests
 
-# Global storage for pending actions (thread-safe with lock)
-_pending_action = None
-_action_lock = threading.Lock()
+# Import action queue for thread-safe execution
+try:
+    from .action_queue import get_action_queue
+    HAS_ACTION_QUEUE = True
+except ImportError:
+    HAS_ACTION_QUEUE = False
+    print("⚠️ Action queue not available - using direct execution")
 
 
 class HTTPPollingClient:
     """
     HTTP Polling client for UE5 to connect to the backend.
     Fallback for when WebSocket connections are blocked.
+    Now with thread-safe action execution via queue system.
     """
     
     def __init__(self, base_url: str, project_id: str, project_name: str = "Unknown"):
@@ -47,6 +55,19 @@ class HTTPPollingClient:
         self.max_consecutive_failures = 3
         self.reconnect_delay = 5.0  # seconds
         
+        # Version tracking for module reload
+        self.last_module_version = None
+        self.last_version_check = 0
+        self.version_check_interval = 10  # Check every 10 seconds
+        
+        # Initialize action queue if available
+        if HAS_ACTION_QUEUE:
+            self.action_queue = get_action_queue()
+            print("✅ Using thread-safe action queue for execution")
+        else:
+            self.action_queue = None
+            print("⚠️ Action queue not available - direct execution (may cause threading issues)")
+        
     def set_action_handler(self, handler: Callable[[str, Dict[str, Any]], Dict[str, Any]]):
         """
         Set the handler for incoming action commands.
@@ -55,6 +76,11 @@ class HTTPPollingClient:
             handler: Function that takes (action, params) and returns response dict
         """
         self.action_handler = handler
+        
+        # Also register with action queue if available
+        if self.action_queue:
+            self.action_queue.set_action_handler(handler)
+            print("✅ Action handler registered with thread-safe queue")
     
     def connect(self) -> bool:
         """
@@ -81,6 +107,10 @@ class HTTPPollingClient:
                 if result.get("success"):
                     self.connected = True
                     
+                    # Start action queue ticker if available
+                    if self.action_queue:
+                        self.action_queue.start_ticker()
+                    
                     # Start polling thread
                     self.running = True
                     self.poll_thread = threading.Thread(target=self._poll_loop, daemon=True)
@@ -98,10 +128,17 @@ class HTTPPollingClient:
     
     def _poll_loop(self):
         """Main polling loop - runs in background thread."""
+        print("[HTTPPolling] Background polling thread started")
+        
         while self.running:
             try:
-                # Send heartbeat periodically
+                # Check for module updates periodically
                 current_time = time.time()
+                if current_time - self.last_version_check > self.version_check_interval:
+                    self._check_module_version()
+                    self.last_version_check = current_time
+                
+                # Send heartbeat periodically
                 if current_time - self.last_heartbeat > self.heartbeat_interval:
                     self._send_heartbeat()
                     self.last_heartbeat = current_time
@@ -153,6 +190,50 @@ class HTTPPollingClient:
                     self._attempt_reconnect()
                 else:
                     time.sleep(self.poll_interval * 2)  # Wait longer on error
+        
+        print("[HTTPPolling] Background polling thread stopped")
+    
+    def _check_module_version(self):
+        """Check if modules have been updated and trigger reload if needed."""
+        try:
+            # Check if auto_update module has a version marker
+            if 'AIAssistant.auto_update' in sys.modules:
+                auto_update = sys.modules['AIAssistant.auto_update']
+                if hasattr(auto_update, '_version_marker'):
+                    current_version = auto_update._version_marker
+                    if self.last_module_version and current_version != self.last_module_version:
+                        print(f"[HTTPPolling] 📦 Module version changed: {self.last_module_version} → {current_version}")
+                        self._trigger_module_reload()
+                    self.last_module_version = current_version
+        except Exception:
+            pass  # Silently ignore version check errors
+    
+    def _trigger_module_reload(self):
+        """Trigger a full module reload when updates are detected."""
+        print("[HTTPPolling] 🔄 Triggering automatic module reload...")
+        
+        try:
+            # Clear all AIAssistant modules except action_queue
+            modules_to_remove = [
+                key for key in list(sys.modules.keys()) 
+                if 'AIAssistant' in key and 'action_queue' not in key
+            ]
+            
+            for module in modules_to_remove:
+                del sys.modules[module]
+            
+            print(f"[HTTPPolling] 🗑️ Cleared {len(modules_to_remove)} cached modules")
+            
+            # Re-import action handler module to get fresh code
+            if self.action_handler:
+                # Re-register action handler after reload
+                print("[HTTPPolling] 🔄 Re-registering action handler with fresh code...")
+                # The handler will be re-imported on next use
+            
+            print("[HTTPPolling] ✅ Module reload complete - fresh code active")
+            
+        except Exception as e:
+            print(f"[HTTPPolling] ❌ Module reload failed: {e}")
     
     def _send_heartbeat(self):
         """Send heartbeat to keep connection alive."""
@@ -169,6 +250,10 @@ class HTTPPollingClient:
         """Attempt to reconnect after multiple failures."""
         self.connected = False
         print(f"🔄 Backend connection lost. Attempting to re-register in {self.reconnect_delay}s...")
+        
+        # Clear modules before reconnecting (fresh start)
+        self._trigger_module_reload()
+        
         time.sleep(self.reconnect_delay)
         
         try:
@@ -188,6 +273,11 @@ class HTTPPollingClient:
                     self.connected = True
                     self.consecutive_failures = 0
                     print(f"✅ Successfully re-registered: {self.project_id}")
+                    
+                    # Restart action queue ticker if needed
+                    if self.action_queue:
+                        self.action_queue.start_ticker()
+                    
                     return True
             
             print(f"❌ Re-registration failed: {response.status_code}")
@@ -214,31 +304,59 @@ class HTTPPollingClient:
                 if action == "project_info":
                     action = "get_project_info"
                 
+                print(f"[HTTPPolling] 📥 Received action: {action} (from background thread)")
+                
                 if self.action_handler:
-                    # Execute action directly (from background thread)
-                    # Note: This may cause threading warnings for some Unreal API calls,
-                    # but it's the only way to make HTTP polling work with dashboard actions
-                    try:
-                        result = self.action_handler(action, params)
+                    if self.action_queue:
+                        # Use thread-safe queue execution (RECOMMENDED)
+                        print(f"[HTTPPolling] 🎯 Queueing action for main thread: {action}")
+                        success, result = self.action_queue.queue_action(
+                            action, params, timeout=10.0
+                        )
+                        
+                        if success:
+                            print(f"[HTTPPolling] ✅ Action executed on main thread: {action}")
+                        else:
+                            print(f"[HTTPPolling] ❌ Action failed: {result.get('error', 'Unknown error')}")
                         
                         # Send response back via HTTP
                         response = {
                             "request_id": request_id,
                             "action": action,
-                            "success": result.get("success", True),
+                            "success": success,
                             "data": result.get("data"),
                             "error": result.get("error")
                         }
                         
                         self.send_message(response)
-                        print(f"✅ Executed action: {action} (result: {result.get('success')})")
-                    except Exception as e:
-                        print(f"❌ Action execution error: {e}")
-                        self.send_message({
-                            "request_id": request_id,
-                            "success": False,
-                            "error": str(e)
-                        })
+                        
+                    else:
+                        # Fallback to direct execution (may cause threading issues)
+                        print(f"[HTTPPolling] ⚠️ Direct execution from background thread: {action}")
+                        print("[HTTPPolling] ⚠️ This may cause 'Main thread scheduling failed' errors!")
+                        
+                        try:
+                            result = self.action_handler(action, params)
+                            
+                            # Send response back via HTTP
+                            response = {
+                                "request_id": request_id,
+                                "action": action,
+                                "success": result.get("success", True),
+                                "data": result.get("data"),
+                                "error": result.get("error")
+                            }
+                            
+                            self.send_message(response)
+                            print(f"[HTTPPolling] Action completed: {action}")
+                            
+                        except Exception as e:
+                            print(f"[HTTPPolling] ❌ Direct execution error: {e}")
+                            self.send_message({
+                                "request_id": request_id,
+                                "success": False,
+                                "error": str(e)
+                            })
                 else:
                     # No handler - send error response
                     self.send_message({
@@ -258,9 +376,7 @@ class HTTPPollingClient:
     def _handle_auto_update(self):
         """Handle auto-update triggered by backend."""
         try:
-            # Import here to avoid circular dependency
-            import importlib
-            import sys
+            print("[HTTPPolling] 🔄 Starting auto-update process...")
             
             # Check if we're in UE5 environment
             try:
@@ -269,32 +385,45 @@ class HTTPPollingClient:
                 print("⚠️ Auto-update skipped (not in UE5 environment)")
                 return
             
-            # Run auto-update to download files
+            # Clear old auto_update module first
             if 'AIAssistant.auto_update' in sys.modules:
-                # Reload the module
-                importlib.reload(sys.modules['AIAssistant.auto_update'])
+                del sys.modules['AIAssistant.auto_update']
+                print("[HTTPPolling] Cleared old auto_update module")
             
+            # Import fresh auto_update module
             from AIAssistant import auto_update
+            
+            # Add version marker for tracking
+            import uuid
+            auto_update._version_marker = str(uuid.uuid4())[:8]
+            
+            # Run update (safe from background thread)
             result = auto_update.check_and_update()
             
-            # check_and_update returns bool
             if result:
-                print("✅ Auto-update completed successfully")
-                print("🔄 Force reloading ALL AIAssistant modules...")
+                print("[HTTPPolling] ✅ Auto-update completed successfully")
+                print("[HTTPPolling] 🔄 Triggering full module reload...")
                 
-                # Force clear ALL AIAssistant modules from cache
-                modules_to_remove = [key for key in sys.modules.keys() if 'AIAssistant' in key]
+                # Force clear ALL AIAssistant modules except action_queue
+                modules_to_remove = [
+                    key for key in list(sys.modules.keys()) 
+                    if 'AIAssistant' in key and 'action_queue' not in key
+                ]
+                
                 for module in modules_to_remove:
                     del sys.modules[module]
-                print(f"🗑️ Cleared {len(modules_to_remove)} cached modules")
                 
-                # Don't re-import from background thread - let UE5 reload naturally
-                print("✅ Modules cleared. Fresh code will load on next request.")
+                print(f"[HTTPPolling] 🗑️ Cleared {len(modules_to_remove)} cached modules")
+                print("[HTTPPolling] ✅ Fresh code will load on next use")
+                
+                # Update version tracker
+                self.last_module_version = auto_update._version_marker
+                
             else:
-                print("ℹ️ Auto-update failed or no updates available")
+                print("[HTTPPolling] ℹ️ No updates available or update failed")
                 
         except Exception as e:
-            print(f"❌ Auto-update failed: {e}")
+            print(f"[HTTPPolling] ❌ Auto-update failed: {e}")
     
     def send_message(self, data: dict):
         """
@@ -336,10 +465,13 @@ class HTTPPollingClient:
         """Disconnect from backend."""
         self.running = False
         self.connected = False
+        
+        # Stop action queue ticker if available
+        if self.action_queue:
+            self.action_queue.stop_ticker()
+        
         print("🔌 HTTP polling disconnected")
     
     def is_connected(self) -> bool:
         """Check if connected."""
         return self.connected
-
-

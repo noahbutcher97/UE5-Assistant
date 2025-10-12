@@ -64,6 +64,19 @@ class AIAssistant:
         # WebSocket connection for real-time communication
         self.ws_client: Optional[WebSocketClient] = None
         
+        # HTTP polling client for fallback connection
+        self.http_client = None
+        
+        # Initialize action queue for thread-safe execution
+        try:
+            from .action_queue import get_action_queue
+            self.action_queue = get_action_queue()
+            self.action_queue.set_action_handler(self._execute_action_wrapper)
+            print("[AIAssistant] ✅ Action queue initialized for thread-safe execution")
+        except ImportError:
+            self.action_queue = None
+            print("[AIAssistant] ⚠️ Action queue not available")
+        
         # Auto-register project with backend
         self._auto_register_project()
         
@@ -460,9 +473,38 @@ class AIAssistant:
             unreal.log_error(f"HTTP Polling connection failed: {e}")
             return False
     
+    def _execute_action_wrapper(self, action: str, params: dict) -> dict:
+        """
+        Wrapper for executing actions - used by action queue for thread-safe execution.
+        This method will be called on the main thread by the action queue ticker.
+        
+        Args:
+            action: Action name (e.g., 'browse_files', 'get_project_info')
+            params: Action parameters
+        
+        Returns:
+            Action result dict with success status and data/error
+        """
+        try:
+            # Execute action using action executor
+            result = self.executor.execute(action, params)
+            
+            # Ensure result is a dict
+            if not isinstance(result, dict):
+                result = {"success": True, "data": result}
+            
+            return result
+        except Exception as e:
+            return {
+                "success": False,
+                "error": str(e)
+            }
+    
     def _handle_websocket_action(self, action: str, params: dict) -> dict:
         """
-        Handle actions requested from dashboard via WebSocket.
+        Handle actions requested from dashboard via WebSocket/HTTP Polling.
+        For HTTP polling, this will queue the action for main thread execution.
+        For WebSocket, it may execute directly (if on main thread).
         
         Args:
             action: Action name (e.g., 'browse_files', 'get_project_info')
@@ -472,13 +514,20 @@ class AIAssistant:
             Action result dict
         """
         try:
-            # Execute action using action executor (params not currently used by actions)
-            result = self.executor.execute(action)
-            
-            return {
-                "success": True,
-                "data": result
-            }
+            # If we have an action queue and we're on a background thread, use it
+            import threading
+            if self.action_queue and threading.current_thread() != threading.main_thread():
+                # Queue for main thread execution (thread-safe)
+                success, result = self.action_queue.queue_action(action, params, timeout=10.0)
+                return result
+            else:
+                # Execute directly (we're on main thread or no queue available)
+                result = self.executor.execute(action, params)
+                
+                return {
+                    "success": True,
+                    "data": result
+                }
         except Exception as e:
             return {
                 "success": False,

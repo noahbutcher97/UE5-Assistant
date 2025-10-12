@@ -114,8 +114,24 @@ class WebSocketClient:
                 request_id = data.get("request_id")
                 
                 if self.action_handler:
-                    # Execute action
-                    result = self.action_handler(action, params)
+                    # Check if we're on a background thread and have action queue
+                    import threading
+                    try:
+                        from .action_queue import get_action_queue
+                        action_queue = get_action_queue()
+                        
+                        if threading.current_thread() != threading.main_thread():
+                            # Queue for main thread execution (thread-safe)
+                            print(f"[WebSocket] 🎯 Queueing action for main thread: {action}")
+                            success, result = action_queue.queue_action(action, params, timeout=10.0)
+                            if not success:
+                                result = {"success": False, "error": result.get("error", "Queue timeout")}
+                        else:
+                            # Execute directly on main thread
+                            result = self.action_handler(action, params)
+                    except ImportError:
+                        # No action queue, execute directly (may cause threading issues)
+                        result = self.action_handler(action, params)
                     
                     # Send response back
                     response = {
