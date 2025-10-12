@@ -344,6 +344,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         """Download the Deploy Agent Python script."""
         from fastapi.responses import Response
         from pathlib import Path
+        import time
         
         agent_path = Path("attached_assets/deploy_agent.py")
         if agent_path.exists():
@@ -352,7 +353,11 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 content=content,
                 media_type="text/plain",
                 headers={
-                    "Content-Disposition": "attachment; filename=deploy_agent.py"
+                    "Content-Disposition": "attachment; filename=deploy_agent.py",
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache",
+                    "Expires": "0",
+                    "X-Content-Version": str(int(time.time()))
                 }
             )
         return {"error": "Deploy agent not found"}

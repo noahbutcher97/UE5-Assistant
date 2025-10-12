@@ -31,7 +31,7 @@ echo.
 
 :: Download deploy agent
 echo [1/3] Downloading Deploy Agent...
-powershell -Command "Invoke-WebRequest -Uri 'https://ue5-assistant-noahbutcher97.replit.app/api/deploy_agent' -OutFile 'deploy_agent.py'"
+powershell -Command "$timestamp = Get-Date -UFormat %%s; Invoke-WebRequest -Uri ('https://ue5-assistant-noahbutcher97.replit.app/api/deploy_agent?v=' + $timestamp) -OutFile 'deploy_agent.py'"
 
 if not exist deploy_agent.py (
     echo [ERROR] Failed to download deploy_agent.py
