@@ -2,7 +2,7 @@
 # Downloads and installs the client to your UE5 project
 
 param(
-    [string]$ProjectPath = "D:/UnrealProjects/5.6/UE5_Assistant",
+    [string]$ProjectPath = "",
     [string]$BackendURL = "https://ue5-assistant-noahbutcher97.replit.app"
 )
 
@@ -13,10 +13,21 @@ Write-Host "=" -NoNewline -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 
+# Prompt for project path if not provided
+if ([string]::IsNullOrWhiteSpace($ProjectPath)) {
+    Write-Host "📁 Enter your UE5 project path:" -ForegroundColor Cyan
+    Write-Host "   Example: D:\UnrealProjects\5.6\MyProject" -ForegroundColor Gray
+    Write-Host "" -NoNewline
+    $ProjectPath = Read-Host "   Path"
+    Write-Host ""
+}
+
 # Validate project path
 if (-not (Test-Path $ProjectPath)) {
     Write-Host "❌ Error: Project path not found: $ProjectPath" -ForegroundColor Red
-    Write-Host "💡 Usage: .\install_ue5_assistant.ps1 -ProjectPath 'D:\YourProject'" -ForegroundColor Yellow
+    Write-Host "💡 Make sure the path exists and is correct" -ForegroundColor Yellow
+    Write-Host "   Press any key to exit..." -ForegroundColor Gray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     exit 1
 }
 
@@ -62,18 +73,20 @@ try {
     Write-Host "📂 Installed $FileCount files to: $TargetPath" -ForegroundColor White
     Write-Host ""
     Write-Host "📋 Next Steps:" -ForegroundColor Cyan
-    Write-Host "   1. Open Unreal Editor" -ForegroundColor White
-    Write-Host "   2. Open Python Console (Tools → Python Console)" -ForegroundColor White
+    Write-Host "   1. Open Unreal Editor for this project" -ForegroundColor White
+    Write-Host "   2. Open Python Console: Tools → Plugins → Python Console" -ForegroundColor White
     Write-Host "   3. Run: import AIAssistant.main" -ForegroundColor White
-    Write-Host "   4. Check Output Log for registration confirmation" -ForegroundColor White
+    Write-Host "   4. Your project will auto-connect to the dashboard!" -ForegroundColor White
     Write-Host ""
-    Write-Host "🌐 Optional - Enable Command Center:" -ForegroundColor Cyan
-    Write-Host "   Run: import AIAssistant.local_server" -ForegroundColor White
-    Write-Host "   Then: AIAssistant.local_server.start_server()" -ForegroundColor White
+    Write-Host "🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard" -ForegroundColor Cyan
     Write-Host ""
+    Write-Host "   Press any key to exit..." -ForegroundColor Gray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     
 } catch {
     Write-Host ""
     Write-Host "❌ Installation failed: $_" -ForegroundColor Red
+    Write-Host "   Press any key to exit..." -ForegroundColor Gray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
     exit 1
 }
