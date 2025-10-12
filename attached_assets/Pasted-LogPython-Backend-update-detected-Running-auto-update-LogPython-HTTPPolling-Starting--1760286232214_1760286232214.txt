@@ -1,0 +1,32 @@
+LogPython: 📢 Backend update detected! Running auto-update...
+LogPython: [HTTPPolling] 🔄 Starting auto-update process...
+LogPython: 💡 Auto-update module loaded (vdb6eea3f)
+LogPython: 📢 Auto-update triggered from background thread
+LogPython: ⬇️  Downloading and installing files...
+LogPython: ============================================================
+LogPython: 🔄 UE5 AI Assistant Auto-Update (Background Thread Safe)
+LogPython: ============================================================
+LogPython: 📡 Backend: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📦 Version: 45dc0434
+LogPython: ⬇️  Downloading: https://ue5-assistant-noahbutcher97.replit.app/api/download_client
+LogPython: ✅ Downloaded 195564 bytes
+LogPython: ✅ Updated 56 files
+LogPython: ✅ Cleared Python bytecode cache
+LogPython: ============================================================
+LogPython: ✅ Auto-update complete! Files downloaded and installed.
+LogPython: 📦 New version marker: 280afb3d
+LogPython: 🔄 Module cache will be cleared automatically...
+LogPython: ============================================================
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 22 cached modules
+LogPython: [AutoUpdate] 🔄 Module cache cleared (22 modules)
+LogPython: [ActionQueue] Tick error: name 'time' is not defined
+LogPython: [HTTPPolling] ❌ Auto-update failed: name 'force_restart_assistant' is not defined
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\http_polling_client.py", line 442, in _handle_auto_update
+    result = auto_update.check_and_update()
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_queue.py", line 181, in tick_callback
+    num_processed = self.process_queue()
+                    ^^^^^^^^^^^^^^^^^^^^
