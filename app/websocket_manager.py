@@ -21,6 +21,9 @@ class ConnectionManager:
 
         # Pending requests waiting for UE5 response
         self.pending_requests: Dict[str, dict] = {}
+        
+        # HTTP Polling clients (keyed by project_id)
+        self.http_clients: Dict[str, dict] = {}
 
     async def connect_ue5(self, websocket: WebSocket, project_id: str):
         """Register UE5 client connection."""
