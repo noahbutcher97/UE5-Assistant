@@ -125,6 +125,36 @@ class AIAssistant:
             self.logger.error(f"Command failed: {e}")
             return error_msg
 
+    def _extract_token_from_response(self, response: str) -> tuple:
+        """
+        Extract action tokens from anywhere in the response.
+        
+        Returns:
+            (token_type, token_content, explanatory_text)
+            token_type: "UE_REQUEST" | "UE_CONTEXT_REQUEST" | None
+            token_content: The extracted token string
+            explanatory_text: AI explanation text (if any)
+        """
+        import re
+        
+        # Check for UE_REQUEST token
+        ue_request_match = re.search(r'\[UE_REQUEST\]\s*(\S+(?:\s+\S+)*?)(?=\s*\[|$)', response)
+        if ue_request_match:
+            token_content = ue_request_match.group(1).strip()
+            # Extract any explanatory text before the token
+            explanatory_text = response[:ue_request_match.start()].strip()
+            return ("UE_REQUEST", token_content, explanatory_text)
+        
+        # Check for UE_CONTEXT_REQUEST token
+        context_match = re.search(r'\[UE_CONTEXT_REQUEST\]\s*([^[]+?)(?=\s*\[|$)', response)
+        if context_match:
+            token_content = context_match.group(1).strip()
+            explanatory_text = response[:context_match.start()].strip()
+            return ("UE_CONTEXT_REQUEST", token_content, explanatory_text)
+        
+        # No token found
+        return (None, None, response)
+    
     def _process_sync(self, user_input: str) -> str:
         """
         Synchronous processing (blocks editor).
@@ -132,19 +162,28 @@ class AIAssistant:
         """
         response = self._process_with_ai_sync(user_input)
 
+        # Extract token from anywhere in response
+        token_type, token_content, explanatory_text = self._extract_token_from_response(response)
+        
         # Handle UE_REQUEST tokens (direct actions)
-        if response.startswith("[UE_REQUEST]"):
-            token = response.replace("[UE_REQUEST]", "").strip()
-            response = self.executor.execute(token)
+        if token_type == "UE_REQUEST":
+            response = self.executor.execute(token_content)
+            # Prepend AI explanation if present
+            if explanatory_text:
+                response = f"{explanatory_text}\n\n{response}"
         
         # Handle UE_CONTEXT_REQUEST tokens (collect context, send to AI)
-        elif response.startswith("[UE_CONTEXT_REQUEST]"):
-            parts = response.replace("[UE_CONTEXT_REQUEST]", "").strip()
-            context_type, original_question = parts.split("|", 1)
-            response = self._process_context_request(
-                context_type.strip(),
-                original_question.strip()
-            )
+        elif token_type == "UE_CONTEXT_REQUEST":
+            parts = token_content.split("|", 1)
+            if len(parts) == 2:
+                context_type, original_question = parts
+                response = self._process_context_request(
+                    context_type.strip(),
+                    original_question.strip()
+                )
+                # Prepend AI explanation if present
+                if explanatory_text:
+                    response = f"{explanatory_text}\n\n{response}"
 
         self.ui.show_response(response)
         self.ui.log_exchange(user_input, response)
@@ -180,23 +219,28 @@ class AIAssistant:
                     )
                     response = self.ui.format_error(error)
 
+                # Extract token from anywhere in response
+                token_type, token_content, explanatory_text = self._extract_token_from_response(response)
+                
                 # Handle UE_REQUEST tokens (direct actions)
-                if response.startswith("[UE_REQUEST]"):
-                    token = response.replace(
-                        "[UE_REQUEST]", ""
-                    ).strip()
-                    response = self.executor.execute(token)
+                if token_type == "UE_REQUEST":
+                    response = self.executor.execute(token_content)
+                    # Prepend AI explanation if present
+                    if explanatory_text:
+                        response = f"{explanatory_text}\n\n{response}"
                 
                 # Handle UE_CONTEXT_REQUEST tokens (collect, send to AI)
-                elif response.startswith("[UE_CONTEXT_REQUEST]"):
-                    parts = response.replace(
-                        "[UE_CONTEXT_REQUEST]", ""
-                    ).strip()
-                    context_type, original_question = parts.split("|", 1)
-                    response = self._process_context_request(
-                        context_type.strip(),
-                        original_question.strip()
-                    )
+                elif token_type == "UE_CONTEXT_REQUEST":
+                    parts = token_content.split("|", 1)
+                    if len(parts) == 2:
+                        context_type, original_question = parts
+                        response = self._process_context_request(
+                            context_type.strip(),
+                            original_question.strip()
+                        )
+                        # Prepend AI explanation if present
+                        if explanatory_text:
+                            response = f"{explanatory_text}\n\n{response}"
                 else:
                     # Add to history
                     self.session_messages.append(
