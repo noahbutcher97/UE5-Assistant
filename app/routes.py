@@ -1228,6 +1228,10 @@ When users ask about their project's actual data (file counts, blueprints, etc),
         """WebSocket endpoint for UE5 client connections."""
         from app.websocket_manager import get_manager
         
+        print(f"🔌 WebSocket connection attempt from UE5: {project_id}")
+        print(f"   Headers: {websocket.headers}")
+        print(f"   Client: {websocket.client}")
+        
         manager = get_manager()
         await manager.connect_ue5(websocket, project_id)
         
