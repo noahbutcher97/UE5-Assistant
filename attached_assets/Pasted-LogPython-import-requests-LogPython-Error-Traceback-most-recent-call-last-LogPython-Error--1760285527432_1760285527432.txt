@@ -1,0 +1,49 @@
+LogPython: import requests
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 2, in <module>
+LogPython: Error: UnicodeDecodeError: 'utf-8' codec can't decode byte 0x83 in position 11: invalid start byte
+LogPython: exec("""
+LogPython: 🚀 BOOTSTRAPPING UE5 AI ASSISTANT...
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\tarfile.py", line 1878, in gzopen
+LogPython: Error:     t = cls.taropen(name, mode, fileobj, **kwargs)
+LogPython: Error:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\tarfile.py", line 1855, in taropen
+LogPython: Error:     return cls(name, mode, fileobj, **kwargs)
+LogPython: Error:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\tarfile.py", line 1715, in __init__
+LogPython: Error:     self.firstmember = self.next()
+LogPython: Error:                        ^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\tarfile.py", line 2633, in next
+LogPython: Error:     raise e
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\tarfile.py", line 2606, in next
+LogPython: Error:     tarinfo = self.tarinfo.fromtarfile(self)
+LogPython: Error:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\tarfile.py", line 1293, in fromtarfile
+LogPython: Error:     buf = tarfile.fileobj.read(BLOCKSIZE)
+LogPython: Error:           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\gzip.py", line 301, in read
+LogPython: Error:     return self._buffer.read(size)
+LogPython: Error:            ^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\_compression.py", line 68, in readinto
+LogPython: Error:     data = self.read(len(byte_view))
+LogPython: Error:            ^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\gzip.py", line 499, in read
+LogPython: Error:     if not self._read_gzip_header():
+LogPython: Error:            ^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\gzip.py", line 468, in _read_gzip_header
+LogPython: Error:     last_mtime = _read_gzip_header(self._fp)
+LogPython: Error:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\gzip.py", line 428, in _read_gzip_header
+LogPython: Error:     raise BadGzipFile('Not a gzipped file (%r)' % magic)
+LogPython: Error: gzip.BadGzipFile: Not a gzipped file (b'PK')
+LogPython: Error: The above exception was the direct cause of the following exception:
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "<string>", line 1, in <module>
+LogPython: Error:   File "<string>", line 8, in <module>
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\tarfile.py", line 1825, in open
+LogPython: Error:     return func(name, filemode, fileobj, **kwargs)
+LogPython: Error:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\tarfile.py", line 1882, in gzopen
+LogPython: Error:     raise ReadError("not a gzip file") from e
+LogPython: Error: tarfile.ReadError: not a gzip file

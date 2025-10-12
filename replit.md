@@ -76,3 +76,13 @@ Tests use `mock_openai_responses.py` fixtures providing deterministic response g
 
 ### Flexible Token Extraction
 The UE5 client uses **regex-based token extraction** to detect action tokens anywhere in AI responses, not just at the start. This enables natural AI explanations before commands (e.g., "Let me help you. [UE_REQUEST] describe_viewport"). The system preserves explanatory text and prepends it to action results, creating a more user-friendly experience. Both `[UE_REQUEST]` and `[UE_CONTEXT_REQUEST]` patterns are supported with comprehensive test coverage in `test_token_extraction_standalone.py`.
+
+### Universal Bootstrap System
+The system features a **Universal Bootstrap Script** that handles both ZIP and TAR.GZ formats automatically, ensuring compatibility regardless of CDN caching or server format changes. The bootstrap process:
+1. Downloads the latest client from the server
+2. Auto-detects archive format (ZIP or TAR.GZ)
+3. Extracts and installs to the correct UE5 project path
+4. Initializes the assistant with auto-updates enabled
+5. Registers with the server automatically
+
+This one-time bootstrap enables seamless auto-updates thereafter, with HTTP polling registration that actually works and proper connection tracking in the dashboard.
