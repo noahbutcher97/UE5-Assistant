@@ -1,8 +1,10 @@
 """
 Action execution system with command registry pattern.
 Handles [UE_REQUEST] tokens and executes Unreal Engine operations.
+Thread-safe implementation using action queue for background thread calls.
 """
-from typing import Any, Callable, Dict, Optional
+import threading
+from typing import Any, Callable, Dict, Optional, Tuple
 
 try:
     import unreal  # type: ignore
@@ -18,6 +20,14 @@ from .context_collector import get_collector
 from .file_collector import FileCollector
 from .project_metadata_collector import get_collector as get_metadata_collector
 from .utils import Logger
+
+# Import action queue for thread-safe execution
+try:
+    from .action_queue import get_action_queue
+    HAS_ACTION_QUEUE = True
+except ImportError:
+    HAS_ACTION_QUEUE = False
+    print("⚠️ ActionExecutor: Action queue not available - thread safety disabled")
 
 # Import new orchestration systems
 try:
@@ -44,6 +54,19 @@ class ActionExecutor:
         cache_ttl = self.config.get("project_metadata_cache_ttl", 300)
         self.metadata_collector = get_metadata_collector()
         self.metadata_collector.cache_ttl_seconds = cache_ttl
+        
+        # Track main thread ID for thread safety checks
+        self.main_thread_id = threading.main_thread().ident
+        
+        # Initialize action queue if available
+        if HAS_ACTION_QUEUE:
+            self.action_queue = get_action_queue()
+            # Don't set handler here - let main.py coordinate the handlers
+            # The main.py will set up proper handler that calls our execute_with_queue
+            self.logger.info("✅ Thread-safe action queue initialized")
+        else:
+            self.action_queue = None
+            self.logger.warning("⚠️ Action queue not available - thread safety disabled")
 
         self._register_default_actions()
 
@@ -79,9 +102,15 @@ class ActionExecutor:
         """Register a new action handler."""
         self.actions[action_name] = handler
         self.logger.debug(f"Registered action: {action_name}")
+    
+    def _is_main_thread(self) -> bool:
+        """Check if we're running on the main thread."""
+        current_thread_id = threading.current_thread().ident
+        return current_thread_id == self.main_thread_id
 
     def execute(self, action_token: str, params: Optional[Dict] = None) -> str:
         """Execute an action by token name.
+        Thread-safe implementation that uses action queue when called from background threads.
         
         Args:
             action_token: The action to execute
@@ -94,15 +123,91 @@ class ActionExecutor:
             self.logger.error(error_msg)
             return error_msg
 
+        # Check if we're on the main thread
+        if self._is_main_thread():
+            # On main thread - execute directly
+            try:
+                self.logger.info(f"[Main Thread] Executing: {action_name}")
+                result = self.actions[action_name]()
+                self.logger.success(f"[Main Thread] Action completed: {action_name}")
+                return result
+            except Exception as e:
+                error_msg = (f"[UE_ERROR] Action '{action_name}' failed: {e}")
+                self.logger.error(error_msg)
+                return error_msg
+        else:
+            # On background thread - use action queue for thread safety
+            if self.action_queue:
+                self.logger.info(f"[Background Thread] Queueing action: {action_name}")
+                try:
+                    # Queue the action for main thread execution
+                    success, result = self.action_queue.queue_action(
+                        action_name, 
+                        params or {},
+                        timeout=10.0  # 10 second timeout
+                    )
+                    
+                    if success:
+                        self.logger.success(f"[Background Thread] Action completed via queue: {action_name}")
+                        # Extract the actual result data
+                        if isinstance(result, dict) and 'data' in result:
+                            return result['data']
+                        elif isinstance(result, dict) and 'error' in result:
+                            return f"[UE_ERROR] {result['error']}"
+                        else:
+                            return str(result)
+                    else:
+                        error_msg = result.get('error', 'Unknown error')
+                        self.logger.error(f"[Background Thread] Action failed: {error_msg}")
+                        return f"[UE_ERROR] {error_msg}"
+                        
+                except Exception as e:
+                    error_msg = f"[UE_ERROR] Failed to queue action '{action_name}': {e}"
+                    self.logger.error(error_msg)
+                    return error_msg
+            else:
+                # No action queue available - fallback to direct execution with warning
+                self.logger.warning(f"⚠️ [Background Thread] No action queue - executing directly (may cause threading issues)")
+                try:
+                    result = self.actions[action_name]()
+                    return result
+                except Exception as e:
+                    error_msg = (f"[UE_ERROR] Action '{action_name}' failed (threading issue likely): {e}")
+                    self.logger.error(error_msg)
+                    return error_msg
+    
+    def execute_with_queue(self, action_name: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Execute an action using the action queue system.
+        This method is called by the action queue's handler.
+        
+        Args:
+            action_name: Name of the action to execute
+            params: Parameters for the action
+        
+        Returns:
+            Dict with success status and result data
+        """
+        action_name = action_name.lower().strip()
+        
+        if action_name not in self.actions:
+            return {
+                'success': False,
+                'error': f"Unknown action: {action_name}"
+            }
+        
         try:
-            self.logger.info(f"Executing: {action_name}")
+            # Execute the action handler
             result = self.actions[action_name]()
-            self.logger.success(f"Action completed: {action_name}")
-            return result
+            return {
+                'success': True,
+                'data': result
+            }
         except Exception as e:
-            error_msg = (f"[UE_ERROR] Action '{action_name}' failed: {e}")
-            self.logger.error(error_msg)
-            return error_msg
+            return {
+                'success': False,
+                'error': str(e)
+            }
 
     def _describe_viewport(self) -> str:
         """Collect viewport data and send to API for description."""
