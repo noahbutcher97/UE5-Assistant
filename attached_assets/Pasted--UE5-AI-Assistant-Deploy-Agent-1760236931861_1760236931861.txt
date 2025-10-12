@@ -1,0 +1,34 @@
+============================================================
+       UE5 AI Assistant - Deploy Agent Installer
+============================================================                                                                                                                                                                                    Enter your UE5 project path (e.g., D:\UnrealProjects\5.6\UE5_Assistant): D:/UnrealProjects/5.6/UE5_Assistant/                                                                                                                                   Project: D:/UnrealProjects/5.6/UE5_Assistant/
+
+[1/3] Downloading Deploy Agent...
+[2/3] Starting Deploy Agent...
+
+============================================================
+    Deploy Agent is starting on http://localhost:7865
+    Keep this window open while using the dashboard!
+============================================================
+
+============================================================
+🚀 UE5 Deploy Agent Started
+============================================================
+📡 Listening on: http://localhost:7865
+📁 UE5 Project: D:/UnrealProjects/5.6/UE5_Assistant/
+🌐 Backend: https://ue5-assistant-noahbutcher97.replit.app
+============================================================
+💡 Browser dashboard can now auto-deploy to your UE5 project!
+   Keep this window open while using the dashboard.
+============================================================
+[22:40:11] "GET /status HTTP/1.1" 200 -
+[22:40:11] "OPTIONS /deploy HTTP/1.1" 200 -
+📥 Downloading from https://ue5-assistant-noahbutcher97.replit.app...
+✅ Deployed 35 files
+[22:40:11] "POST /deploy HTTP/1.1" 200 -
+[22:41:13] "GET /status HTTP/1.1" 200 -
+[22:41:31] "GET /status HTTP/1.1" 200 -
+[22:41:43] "GET /status HTTP/1.1" 200 -
+[22:41:43] "OPTIONS /deploy HTTP/1.1" 200 -
+📥 Downloading from https://ue5-assistant-noahbutcher97.replit.app...
+✅ Deployed 35 files
+[22:41:44] "POST /deploy HTTP/1.1" 200 -
