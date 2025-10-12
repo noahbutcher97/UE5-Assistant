@@ -93,14 +93,18 @@ class HTTPPollingClient:
             print(f"🔌 Attempting HTTP polling connection to: {self.base_url}")
             
             # Register with backend
-            response = requests.post(
-                f"{self.base_url}/api/ue5/register_http",
-                json={
-                    "project_id": self.project_id,
-                    "project_name": self.project_name
-                },
-                timeout=5
-            )
+            url = f"{self.base_url}/api/ue5/register_http"
+            payload = {
+                "project_id": self.project_id,
+                "project_name": self.project_name
+            }
+            print(f"[HTTP] Making registration POST request to: {url}")
+            print(f"[HTTP] Payload: {payload}")
+            
+            response = requests.post(url, json=payload, timeout=5)
+            
+            print(f"[HTTP] Registration response status: {response.status_code}")
+            print(f"[HTTP] Registration response text: {response.text[:200] if response.text else 'No response body'}")
             
             if response.status_code == 200:
                 result = response.json()
