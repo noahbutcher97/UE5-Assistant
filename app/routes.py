@@ -327,7 +327,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
         from fastapi.responses import Response
         
-        installer_path = Path("deploy_agent_installer.bat")
+        installer_path = Path("scripts/deploy_agent_installer.bat")
         if installer_path.exists():
             content = installer_path.read_text()
             return Response(
@@ -366,7 +366,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
         from fastapi.responses import Response
         
-        reg_path = Path("ue5_protocol_handler.reg")
+        reg_path = Path("scripts/ue5_protocol_handler.reg")
         if reg_path.exists():
             content = reg_path.read_bytes()  # Use read_bytes for .reg files
             return Response(
@@ -386,7 +386,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         from fastapi.responses import Response
         
         # Try new quick_deploy script first
-        script_path = Path("quick_deploy.ps1")
+        script_path = Path("scripts/quick_deploy.ps1")
         if script_path.exists():
             content = script_path.read_text()
             return Response(
@@ -398,7 +398,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             )
         
         # Fallback to old installer
-        script_path = Path("install_ue5_assistant.ps1")
+        script_path = Path("scripts/install_ue5_assistant.ps1")
         if script_path.exists():
             content = script_path.read_text()
             return Response(

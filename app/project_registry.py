@@ -13,7 +13,7 @@ class ProjectRegistry:
     def __init__(self):
         self.projects: Dict[str, Dict[str, Any]] = {}
         self.active_project_id: Optional[str] = None
-        self.registry_file = Path("project_registry.json")
+        self.registry_file = Path("data/project_registry.json")
         self._load_registry()
     
     def register_project(
