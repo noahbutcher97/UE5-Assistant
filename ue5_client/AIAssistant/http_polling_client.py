@@ -215,36 +215,22 @@ class HTTPPollingClient:
                     action = "get_project_info"
                 
                 if self.action_handler:
-                    # Store action globally for main thread execution (non-blocking)
-                    global _pending_action
-                    with _action_lock:
-                        _pending_action = {
-                            "handler": self.action_handler,
-                            "action": action,
-                            "params": params,
-                            "request_id": request_id,
-                            "client": self,
-                            "base_url": self.base_url,
-                            "project_id": self.project_id
-                        }
+                    # HTTP Polling limitation: Cannot execute Unreal API calls from background thread
+                    # Send instructions for manual execution instead
+                    print(f"⚠️ HTTP Polling cannot execute '{action}' - requires main thread")
+                    print(f"💡 Run this in UE5 Python Console instead:")
+                    print(f"   AIAssistant.main.send_command('{action}')")
                     
-                    # Schedule execution on main thread (non-blocking!)
-                    try:
-                        import unreal
-                        unreal.PythonScriptLibrary.execute_python_command(
-                            "import AIAssistant.http_polling_client; "
-                            "AIAssistant.http_polling_client._execute_pending_action_on_main_thread()"
+                    # Send helpful error response
+                    self.send_message({
+                        "request_id": request_id,
+                        "success": False,
+                        "error": (
+                            "HTTP Polling mode cannot execute this action directly. "
+                            f"Please run this in UE5 Python Console: "
+                            f"AIAssistant.main.send_command('{action}')"
                         )
-                        print(f"📤 Scheduled action on main thread: {action}")
-                        
-                    except Exception as e:
-                        print(f"❌ Failed to schedule action on main thread: {e}")
-                        # Send error response
-                        self.send_message({
-                            "request_id": request_id,
-                            "success": False,
-                            "error": f"Main thread scheduling failed: {e}"
-                        })
+                    })
                 else:
                     # No handler - send error response
                     self.send_message({
@@ -349,68 +335,3 @@ class HTTPPollingClient:
         return self.connected
 
 
-def _execute_pending_action_on_main_thread():
-    """Execute pending action on main thread and send response (called via execute_python_command)."""
-    global _pending_action
-    
-    with _action_lock:
-        if _pending_action is None:
-            return
-        
-        action_info = _pending_action
-        _pending_action = None
-    
-    # Execute on main thread
-    try:
-        handler = action_info["handler"]
-        action = action_info["action"]
-        params = action_info["params"]
-        request_id = action_info["request_id"]
-        base_url = action_info["base_url"]
-        project_id = action_info["project_id"]
-        
-        result = handler(action, params)
-        
-        # Send response directly from main thread
-        response = {
-            "request_id": request_id,
-            "action": action,
-            "success": result.get("success", True),
-            "data": result.get("data"),
-            "error": result.get("error")
-        }
-        
-        # Send via HTTP POST
-        try:
-            import requests
-            requests.post(
-                f"{base_url}/api/ue5/response",
-                json={
-                    "project_id": project_id,
-                    "response": response
-                },
-                timeout=5
-            )
-            print(f"✅ Executed and sent response: {action} (success: {result.get('success')})")
-        except Exception as e:
-            print(f"❌ Failed to send response: {e}")
-            
-    except Exception as e:
-        print(f"❌ Action execution error on main thread: {e}")
-        # Try to send error response
-        try:
-            import requests
-            requests.post(
-                f"{action_info['base_url']}/api/ue5/response",
-                json={
-                    "project_id": action_info["project_id"],
-                    "response": {
-                        "request_id": action_info["request_id"],
-                        "success": False,
-                        "error": str(e)
-                    }
-                },
-                timeout=5
-            )
-        except:
-            pass  # Silently fail if we can't send error
