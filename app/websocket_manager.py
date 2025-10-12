@@ -96,7 +96,10 @@ class ConnectionManager:
         is_websocket = project_id in self.ue5_clients
         is_http_polling = hasattr(self, 'http_clients') and project_id in self.http_clients
         
+        print(f"[send_command_to_ue5] project_id={project_id[:16]}, ws={is_websocket}, http={is_http_polling}, action={command.get('action', command.get('type'))}")
+        
         if not is_websocket and not is_http_polling:
+            print(f"[send_command_to_ue5] No connection found!")
             return {
                 "success": False,
                 "error": f"UE5 client not connected for project: {project_id[:16]}"
