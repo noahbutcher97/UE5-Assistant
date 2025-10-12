@@ -11,7 +11,6 @@ def configure_and_start(backend_url=None, force_production=True):
         force_production: If True, always use production server (default: True)
     """
     import sys
-    import importlib
     
     try:
         from AIAssistant.config import get_config
@@ -43,7 +42,7 @@ def configure_and_start(backend_url=None, force_production=True):
                 # Use custom URL directly
                 config.set("api_base_url", backend_url)
                 config.set("active_server", "custom")
-                print(f"✅ Configured for custom server")
+                print("✅ Configured for custom server")
             
             print(f"✅ Backend URL: {config.api_url}")
         else:
@@ -58,7 +57,6 @@ def configure_and_start(backend_url=None, force_production=True):
         
         # Step 3: Import and initialize main module
         print("🚀 Initializing AI Assistant...")
-        import AIAssistant.main
         
         print("")
         print("=" * 60)
