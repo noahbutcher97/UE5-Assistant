@@ -14,6 +14,18 @@
       },
       "registered_at": "2025-10-12T15:16:17.066470",
       "last_updated": "2025-10-12T15:16:17.066480"
+    },
+    "189fb60ac15d": {
+      "project_id": "189fb60ac15d",
+      "name": "UE5_Assistant",
+      "path": "D:/UnrealProjects/5.6/UE5_Assistant/",
+      "version": "5.6",
+      "metadata": {
+        "manually_registered": true,
+        "registration_time": "2025-10-12T15:33:41.930Z"
+      },
+      "registered_at": "2025-10-12T15:34:53.324697",
+      "last_updated": "2025-10-12T15:34:53.324700"
     }
   }
 }
