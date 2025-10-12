@@ -1,0 +1,202 @@
+LogAudio: Display: Audio Device (ID: 1) registered with world 'Untitled'.
+LogAudioMixer: Initializing Audio Bus Subsystem for audio device with ID 1
+LogCsvProfiler: Display: Metadata set : largeworldcoordinates="1"
+LogInit: Undo buffer set to 256 MB
+LogInit: Transaction tracking system initialized
+LogSourceControl: Display: Uncontrolled Changelist persistency file loaded D:/UnrealProjects/5.6/UE5_Assistant/Saved/SourceControl/UncontrolledChangelists.json
+LocalizationService: Localization service is disabled
+LogFileCache: Scanning file cache for directory 'D:/UnrealProjects/5.6/UE5_Assistant/Content/' took 0.02s
+LogPython: Python enabled via CVar 'Engine.Python.IsEnabledByDefault'
+LogPython: Using Python 3.11.8
+LogPython: Display: No pip-enabled plugins with python dependencies found, skipping
+LogRenderer: Requested compilation of Path Tracing RTPSOs (16 permutations).
+LogSlate: Could not load file for Slate resource: [C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Experimental/SubtitlesAndClosedCaptions/Resources/Icon128.png] file: [C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Experimental/SubtitlesAndClosedCaptions/Resources/Icon128.png]
+LogPluginBuilder: ==================== Installed Engine Versions ====================
+LogPluginBuilder: 5.3 (C:/Program Files/Epic Games/UE_5.3)
+LogPluginBuilder: 5.5 (C:/Program Files/Epic Games/UE_5.5)
+LogPluginBuilder: 5.6 (C:/Program Files/Epic Games/UE_5.6)
+LogPluginBuilder: ==================== Available Host Platforms ===================
+LogPluginBuilder: Win64 (Desktop)
+LogPluginBuilder: ==================== Available Target Platforms ===================
+LogPluginBuilder: IOS (Mobile)
+LogPluginBuilder: Win64 (Desktop)
+LogLevelSequenceEditor: LevelSequenceEditor subsystem initialized.
+LogEditorDataStorage: Initializing
+LogEditorDataStorage: Initialized
+LogCore: Display: GameplayInsights module auto-connecting to local trace server...
+LogInit: Display: Engine is initialized. Leaving FEngineLoop::Init()
+SourceControl: Revision control is disabled
+LogUnrealEdMisc: Loading editor; pre map load, took 8.846
+Cmd: MAP LOAD FILE="../../../Engine/Content/Maps/Templates/OpenWorld.umap" TEMPLATE=1 SHOWPROGRESS=1 FEATURELEVEL=4
+LogWorld: UWorld::CleanupWorld for Untitled, bSessionEnded=true, bCleanupResources=true
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogAssetRegistry: Display: Triggering cache save on discovery complete
+LogAudio: Display: Audio Device unregistered from world 'None'.
+LogUObjectHash: Compacting FUObjectHashTables data took   1.66ms
+LogAudio: Display: Audio Device (ID: 1) registered with world 'Untitled_1'.
+LogChaosDD: Creating Chaos Debug Draw Scene for world Untitled_1
+LogWorldPartition: ULevel::OnLevelLoaded(Untitled_1)(bIsOwningWorldGameWorld=0, bIsOwningWorldPartitioned=1, InitializeForMainWorld=1, InitializeForEditor=1, InitializeForGame=0)
+LogWorldPartition: Display: WorldPartition initialize started...
+LogWorldPartition: UWorldPartition::Initialize : World = /Temp/Untitled_1.Untitled_1, World Type = Editor, IsMainWorldPartition = 1, Location = V(0), Rotation = R(0), IsEditor = 1, IsGame = 0, IsPIEWorldTravel = 0, IsCooking = 0
+LogDeviceProfileManager: Going up to parent DeviceProfile []
+LogDeviceProfileManager: Going up to parent DeviceProfile []
+LogDeviceProfileManager: Going up to parent DeviceProfile []
+LogDeviceProfileManager: Going up to parent DeviceProfile [AppleTV]
+LogDeviceProfileManager: Going up to parent DeviceProfile [IOS]
+LogDeviceProfileManager: Going up to parent DeviceProfile []
+LogDeviceProfileManager: Display: Deviceprofile None not found.
+LogWorldPartition: Display: WorldPartition initialize took 377.401 ms
+LogEditorServer: Finished looking for orphan Actors (0.000 secs)
+LogUObjectHash: Compacting FUObjectHashTables data took   0.44ms
+Cmd: MAP CHECKDEP NOCLEARLOG
+MapCheck: Map check complete: 0 Error(s), 0 Warning(s), took 0.997ms to complete.
+LogUnrealEdMisc: Total Editor Startup Time, took 9.471
+LogPlacementMode: Display: The Asset Registry is not yet fully loaded so some placeable classes might be missing.
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogAssetRegistry: Display: Asset registry cache written as 67.0 MiB to D:/UnrealProjects/5.6/UE5_Assistant/Intermediate/CachedAssetRegistry_*.bin
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogSlate: Updating window title bar state: overlay mode, drag disabled, window buttons hidden, title bar hidden
+LogSlate: Took 0.000196 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/DroidSansMono.ttf' (77K)
+LogSlate: Took 0.000153 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/Roboto-Regular.ttf' (155K)
+LogPython: [ActionQueue] ✅ Main thread ticker started (v78be7f9a)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: 📡 Connection Mode: HTTP
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: 🔌 Attempting HTTP polling connection to: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
+LogPython: [Blueprint Helper] Active server: dev
+LogPython: ✅ Switched to dev server: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: [Blueprint Helper] Server switch: success|https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/StarterContent.upack', mount point: 'root:/'
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/TP_FirstPerson.upack', mount point: 'root:/'
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/TP_FirstPersonBP.upack', mount point: 'root:/'
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/TP_HandheldARBP.upack', mount point: 'root:/'
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/TP_ThirdPerson.upack', mount point: 'root:/'
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/TP_ThirdPersonBP.upack', mount point: 'root:/'
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/TP_TopDown.upack', mount point: 'root:/'
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/TP_TopDownBP.upack', mount point: 'root:/'
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/TP_VehicleAdvBP.upack', mount point: 'root:/'
+LogPakFile: Initializing PakPlatformFile
+LogPakFile: Display: Mounted Pak file 'C:/Program Files/Epic Games/UE_5.6/FeaturePacks/TP_VirtualRealityBP.upack', mount point: 'root:/'
+LogStall: Startup...
+LogStall: Startup complete.
+LogLoad: (Engine Initialization) Total time: 11.98 seconds
+LogContentStreaming: Texture pool size now 600 MB
+LogCsvProfiler: Display: Metadata set : streamingpoolsizemb="600"
+LogSlate: Took 0.000156 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/Roboto-Italic.ttf' (157K)
+LogStreaming: Display: FlushAsyncLoading(472): 1 QueuedPackages, 0 AsyncPackages
+LogSlate: Took 0.005124 seconds to synchronously load lazily loaded font '../../../Engine/Content/Editor/Slate/Fonts/NotoColorEmoji.ttf' (7610K)
+LogSlate: Took 0.002085 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf' (3848K)
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Last resort fallback font was requested. Font: '../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf', Character: 'ℹ (U+2139)'
+LogSlate: Took 0.002764 seconds to synchronously load lazily loaded font '../../../Engine/Content/SlateDebug/Fonts/LastResort.ttf' (5269K)
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: InvalidateAllWidgets triggered.  All widgets were invalidated
+LogPython: Display: Running start-up script D:/UnrealProjects/5.6/UE5_Assistant/Content/Python/init_unreal.py... started...
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Auto-initializing...
+LogPython: ============================================================
+LogPython: 🔧 Configuring backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: ✅ Configured for production server
+LogPython: ✅ Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 🔄 Reloading AIAssistant modules...
+LogPython: 🚀 Initializing AI Assistant...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v42e302db)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: ✅ AI Assistant is ready!
+LogPython: ============================================================
+LogPython: 💡 Usage: AIAssistant.main.send_command('your question')
+LogPython: 🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard
+LogPython: Display: Running start-up script D:/UnrealProjects/5.6/UE5_Assistant/Content/Python/init_unreal.py... took 1.31 sec
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Importers/USDImporter/Content/Python/init_unreal.py... started...
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Importers/USDImporter/Content/Python/init_unreal.py... took 263 us (total: 1.31 sec)
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... started...
+LogPython: registering <class 'ControlRigWorkflows.workflow_deformation_rig_preset.provider'>
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... took 27.549 ms (total: 1.34 sec)
+LogAssetRegistry: AssetRegistryGather time 0.2171s: AssetDataDiscovery 0.0123s, AssetDataGather 0.0562s, StoreResults 0.1487s. Wall time 9.8370s.
+    NumCachedDirectories 1782. NumUncachedDirectories 22. NumCachedFiles 7666. NumUncachedFiles 0.
+    BackgroundTickInterruptions 4.
+LogPlacementMode: Display: The Asset Registry is done with its initial scan, the list of placeable classes has been updated.
+LogCollectionManager: Fixed up redirectors for 0 collections in 0.000000 seconds (updated 0 objects)
+LogSourceControl: Uncontrolled asset discovery started...
+LogSlate: Took 0.000155 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/Roboto-Bold.ttf' (160K)
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: Display: Generating Python API stub file...
+LogPython: Display:   ...generating Python API: glue code (types)
+LogSourceControl: Uncontrolled asset discovery finished in 0.440035 seconds (Found 7642 uncontrolled assets)
+LogPython: Display:   ...generating Python API: glue code (methods)
+LogPython: Display:   ...generating Python API: additional code
+LogPython: Display:   ...generated: D:/UnrealProjects/5.6/UE5_Assistant/Intermediate/PythonStub/unreal.py
+LogEOSSDK: LogEOS: SDK Config Platform Update Request Successful, Time: 7.584114
+LogEOSSDK: LogEOSAnalytics: EOS SDK Analytics disabled for route [1].
+LogEOSSDK: LogEOS: Updating Product SDK Config, Time: 8.284512
+LogEOSSDK: LogEOSAnalytics: Start Session (User: ...)
+LogEOSSDK: LogEOS: SDK Config Product Update Request Successful, Time: 8.524714
+LogEOSSDK: LogEOS: SDK Config Data - Watermark: -227189215
+LogEOSSDK: LogEOS: ScheduleNextSDKConfigDataUpdate - Time: 8.524714, Update Interval: 326.895355
+LogPython: [HTTPPolling] 📥 Received action: describe_viewport (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [HTTPPolling] ✅ Action executed on main thread: describe_viewport
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
