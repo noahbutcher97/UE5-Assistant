@@ -3,6 +3,7 @@ HTTP Polling client for UE5 - Fallback when WebSocket doesn't work.
 Provides same interface as WebSocketClient for seamless fallback.
 Now with thread-safe action execution via queue system.
 """
+import importlib
 import sys
 import threading
 import time
@@ -324,6 +325,12 @@ class HTTPPollingClient:
                 params = cmd.get("params", {})
                 request_id = cmd.get("request_id")
                 
+                # Ensure action is a string (fix type error)
+                if not action:
+                    action = "unknown"
+                else:
+                    action = str(action)
+                
                 # Fix action name mapping
                 if action == "project_info":
                     action = "get_project_info"
@@ -438,7 +445,7 @@ class HTTPPollingClient:
             print(f"❌ Error handling command: {e}")
     
     def _handle_auto_update(self):
-        """Handle auto-update triggered by backend."""
+        """Handle auto-update triggered by backend - thread safe version."""
         try:
             print("[HTTPPolling] 🔄 Starting auto-update process...")
             
@@ -467,10 +474,22 @@ class HTTPPollingClient:
             
             if result:
                 print("[HTTPPolling] ✅ Auto-update downloaded successfully")
-                print("[HTTPPolling] ⏳ Restart will happen automatically on next tick...")
+                print("[HTTPPolling] ⏳ Queueing restart on main thread...")
                 
-                # DON'T call force_restart_assistant here - it accesses Unreal API from wrong thread!
-                # The ActionQueue ticker will detect version change and trigger restart on main thread
+                # Queue restart action to main thread instead of direct call
+                if self.action_queue:
+                    success, restart_result = self.action_queue.queue_action(
+                        'restart_assistant',
+                        {'reason': 'auto_update', 'version': version_marker},
+                        timeout=10.0
+                    )
+                    
+                    if success:
+                        print("[HTTPPolling] ✅ Assistant restart queued for main thread")
+                    else:
+                        print(f"[HTTPPolling] ❌ Failed to queue restart: {restart_result.get('error')}")
+                else:
+                    print("[HTTPPolling] ⚠️ No action queue - restart will happen on next ticker cycle")
                 
                 # Update version tracker  
                 self.last_module_version = version_marker
@@ -521,42 +540,62 @@ class HTTPPollingClient:
         print(f"❌ Failed to send message after {max_retries} attempts")
     
     def _trigger_emergency_recovery(self):
-        """Force complete module reload and assistant restart."""
+        """Force complete module reload and assistant restart - thread safe version."""
         try:
-            print("[HTTPPolling] 🚨 Emergency Recovery: Force restarting assistant...")
+            print("[HTTPPolling] 🚨 Emergency Recovery: Queueing restart on main thread...")
             
             # Step 1: Stop current connections
             self.disconnect()
             
-            # Step 2: Import auto_update for restart functionality
-            # Clear the module cache first
-            if 'AIAssistant.auto_update' in sys.modules:
-                del sys.modules['AIAssistant.auto_update']
-            
-            # Invalidate caches to ensure fresh import
-            importlib.invalidate_caches()
-            
-            # Import the module
-            import AIAssistant.auto_update as auto_update
-            
-            # Step 3: Check that the function exists before calling
-            if hasattr(auto_update, 'force_restart_assistant'):
-                print("[HTTPPolling] 🔄 Forcing complete module reload and restart...")
-                auto_update.force_restart_assistant()
+            # Step 2: Queue restart action to main thread (thread-safe)
+            if self.action_queue:
+                print("[HTTPPolling] 🎯 Queueing restart action for main thread execution...")
+                success, result = self.action_queue.queue_action(
+                    'restart_assistant',  # Special internal action
+                    {'reason': 'emergency_recovery'},
+                    timeout=10.0
+                )
+                
+                if success:
+                    print("[HTTPPolling] ✅ Assistant restart queued successfully")
+                else:
+                    print(f"[HTTPPolling] ❌ Failed to queue restart: {result.get('error', 'Unknown error')}")
+                    # Try manual restart as fallback
+                    self._queue_manual_restart()
             else:
-                print("[HTTPPolling] ⚠️ force_restart_assistant function not found, attempting manual restart...")
-                # Fallback: try to manually restart
-                self._manual_restart_assistant()
+                # No action queue - queue a manual restart
+                print("[HTTPPolling] ⚠️ No action queue available - attempting manual restart...")
+                self._queue_manual_restart()
             
         except Exception as e:
             print(f"[HTTPPolling] ❌ Emergency recovery failed: {e}")
             import traceback
             traceback.print_exc()
     
+    def _queue_manual_restart(self):
+        """Queue a manual restart action to main thread."""
+        try:
+            if self.action_queue:
+                print("[HTTPPolling] 🔄 Queueing manual restart on main thread...")
+                success, result = self.action_queue.queue_action(
+                    'manual_restart',
+                    {'reason': 'fallback'},
+                    timeout=10.0
+                )
+                if success:
+                    print("[HTTPPolling] ✅ Manual restart queued successfully")
+                else:
+                    print(f"[HTTPPolling] ❌ Failed to queue manual restart: {result.get('error')}")
+            else:
+                print("[HTTPPolling] ❌ Cannot queue manual restart - no action queue available")
+        except Exception as e:
+            print(f"[HTTPPolling] ❌ Failed to queue manual restart: {e}")
+    
     def _manual_restart_assistant(self):
         """Manual restart fallback if force_restart_assistant is not available."""
+        # This should only be called from main thread via action queue
         try:
-            print("[HTTPPolling] 🔄 Attempting manual restart...")
+            print("[HTTPPolling] 🔄 Attempting manual restart (main thread)...")
             
             # Clear all AIAssistant modules except action_queue
             modules_to_remove = [

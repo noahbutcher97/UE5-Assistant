@@ -7,15 +7,15 @@ Usage in UE5 Python Console:
     import AIAssistant.auto_update
     # Shows current version and checks for updates
 """
+import importlib
 import io
 import os
 import sys
-import uuid
-import importlib
-import threading
-import urllib.request
-import urllib.error
 import tarfile
+import threading
+import urllib.error
+import urllib.request
+import uuid
 
 # Version marker for tracking module updates (changes with each update)
 _version_marker = str(uuid.uuid4())[:8]

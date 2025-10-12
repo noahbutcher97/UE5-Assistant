@@ -94,6 +94,10 @@ class ActionExecutor:
         # Blueprint capture actions
         self.register("capture_blueprint", self._capture_blueprint)
         self.register("list_blueprints", self._list_blueprints)
+        
+        # System restart actions (for thread-safe restart from background threads)
+        self.register("restart_assistant", self._restart_assistant)
+        self.register("manual_restart", self._manual_restart)
 
         # Note: Orchestration actions are registered by action_executor_extensions.py
         # when HAS_ORCHESTRATION is True (see __init__ method above)
@@ -373,6 +377,57 @@ class ActionExecutor:
             return "\n".join(lines)
         except Exception as e:
             return f"[UE_ERROR] search_files failed: {e}"
+
+    def _restart_assistant(self) -> str:
+        """Restart the assistant with fresh code - thread-safe main thread operation."""
+        try:
+            # This method is called on the main thread via action queue
+            # Safe to perform UI operations here
+            self.logger.info("🔄 Executing assistant restart on main thread...")
+            
+            # Import auto_update module
+            import sys
+            if 'AIAssistant.auto_update' in sys.modules:
+                del sys.modules['AIAssistant.auto_update']
+            
+            # Import fresh and call force_restart
+            import AIAssistant.auto_update as auto_update
+            result = auto_update.force_restart_assistant()
+            
+            if result:
+                return "✅ Assistant restarted successfully with fresh code"
+            else:
+                return "[UE_ERROR] Failed to restart assistant - check logs"
+                
+        except Exception as e:
+            return f"[UE_ERROR] restart_assistant failed: {e}"
+    
+    def _manual_restart(self) -> str:
+        """Manual restart of the assistant - thread-safe main thread operation."""
+        try:
+            # This method is called on the main thread via action queue
+            self.logger.info("🔄 Executing manual restart on main thread...")
+            
+            # Clear all AIAssistant modules except action_queue
+            import sys
+            modules_to_remove = [
+                key for key in list(sys.modules.keys()) 
+                if 'AIAssistant' in key and 'action_queue' not in key
+            ]
+            
+            for module in modules_to_remove:
+                del sys.modules[module]
+            
+            self.logger.info(f"🗑️ Cleared {len(modules_to_remove)} cached modules")
+            
+            # Re-import main module
+            import AIAssistant.main as fresh_main
+            fresh_main.get_assistant()
+            
+            return "✅ Manual restart complete - assistant reloaded"
+            
+        except Exception as e:
+            return f"[UE_ERROR] manual_restart failed: {e}"
 
     def _show_project_info(self) -> str:
         """Show project metadata summary."""
