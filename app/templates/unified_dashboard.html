@@ -256,13 +256,20 @@
                 </small>
             </div>
             
-            <button onclick="registerManualProject()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                ✅ Register Project
-            </button>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button onclick="registerManualProject()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    ✅ Register Project
+                </button>
+                <button onclick="deployClient()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                    🚀 Auto-Deploy Client
+                </button>
+            </div>
+            
+            <div id="deploy-status" style="margin-top: 15px; display: none; padding: 12px; border-radius: 8px; font-size: 14px;"></div>
             
             <div style="margin-top: 15px; padding: 12px; background: rgba(0,217,255,0.1); border-radius: 8px; font-size: 14px; color: #8b95a5;">
-                💡 <strong>Tip:</strong> For automatic registration, download and deploy the UE5 Python client:
-                <a href="/api/download_client" style="color: #00d9ff; text-decoration: underline; margin-left: 10px;">📦 Download UE5 Client</a>
+                💡 <strong>Options:</strong> Use "Register Project" for quick setup, or "Auto-Deploy Client" to copy files automatically. 
+                <br>Manual download: <a href="/api/download_client" style="color: #00d9ff; text-decoration: underline;">📦 Download ZIP</a>
             </div>
         </div>
         
@@ -567,6 +574,68 @@
                 }
             } catch (error) {
                 alert(`❌ Error: ${error.message}`);
+            }
+        }
+        
+        async function deployClient() {
+            let path = document.getElementById('manual-path').value;
+            
+            if (!path) {
+                alert('Please enter the project path first');
+                return;
+            }
+            
+            // Ensure path ends with /
+            if (!path.endsWith('/') && !path.endsWith('\\')) {
+                path = path + '/';
+            }
+            
+            const statusDiv = document.getElementById('deploy-status');
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = 'rgba(139, 92, 246, 0.2)';
+            statusDiv.style.color = '#a78bfa';
+            statusDiv.innerHTML = '🚀 Attempting to deploy client files...';
+            
+            try {
+                const response = await fetch('/api/deploy_client', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        project_path: path,
+                        overwrite: true
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusDiv.style.background = 'rgba(16, 185, 129, 0.2)';
+                    statusDiv.style.color = '#10b981';
+                    statusDiv.innerHTML = `
+                        ✅ ${data.message}<br>
+                        <small>Target: ${data.target_path}</small><br>
+                        <strong>Next steps:</strong>
+                        <ol style="margin: 10px 0 0 20px; text-align: left;">
+                            ${data.instructions.map(i => `<li>${i}</li>`).join('')}
+                        </ol>
+                    `;
+                    
+                    saveRecentPath(path);
+                } else {
+                    statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+                    statusDiv.style.color = '#ef4444';
+                    statusDiv.innerHTML = `
+                        ❌ ${data.error}<br>
+                        <small>Try downloading the ZIP file manually instead.</small>
+                    `;
+                }
+            } catch (error) {
+                statusDiv.style.background = 'rgba(239, 68, 68, 0.2)';
+                statusDiv.style.color = '#ef4444';
+                statusDiv.innerHTML = `
+                    ❌ Deployment failed: ${error.message}<br>
+                    <small>Browser cannot access local files. Please download ZIP manually.</small>
+                `;
             }
         }
 

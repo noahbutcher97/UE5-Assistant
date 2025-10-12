@@ -1,0 +1,26 @@
+{
+  "active_project_id": "6d953fbbf247",
+  "projects": {
+    "6d953fbbf247": {
+      "project_id": "6d953fbbf247",
+      "name": "TestProject",
+      "path": "D:/Test/",
+      "version": "5.6",
+      "metadata": {},
+      "registered_at": "2025-10-12T00:05:50.489754",
+      "last_updated": "2025-10-12T00:05:50.489763"
+    },
+    "189fb60ac15d": {
+      "project_id": "189fb60ac15d",
+      "name": "UE5_Assistant",
+      "path": "D:/UnrealProjects/5.6/UE5_Assistant/",
+      "version": "5.6",
+      "metadata": {
+        "manually_registered": true,
+        "registration_time": "2025-10-12T00:06:09.916Z"
+      },
+      "registered_at": "2025-10-12T00:06:09.988625",
+      "last_updated": "2025-10-12T00:06:09.988647"
+    }
+  }
+}

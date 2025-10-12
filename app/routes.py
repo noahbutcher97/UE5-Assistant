@@ -236,6 +236,70 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         """Redirect to dashboard."""
         return RedirectResponse(url="/dashboard", status_code=307)
     
+    @app.post("/api/deploy_client")
+    async def deploy_client(request: dict):
+        """Deploy client files directly to UE5 project path."""
+        import shutil
+        from pathlib import Path
+        
+        project_path = request.get("project_path", "")
+        overwrite = request.get("overwrite", True)
+        
+        if not project_path:
+            return {"success": False, "error": "No project path provided"}
+        
+        try:
+            # Construct target path
+            target_base = Path(project_path) / "Content" / "Python" / "AIAssistant"
+            source_base = Path("attached_assets/AIAssistant")
+            
+            if not source_base.exists():
+                return {"success": False, "error": "Source files not found"}
+            
+            # Create target directory
+            target_base.mkdir(parents=True, exist_ok=True)
+            
+            # Copy files
+            copied_files = []
+            for file_path in source_base.rglob("*"):
+                if file_path.is_file():
+                    rel_path = file_path.relative_to(source_base)
+                    target_file = target_base / rel_path
+                    
+                    # Check if file exists
+                    if target_file.exists() and not overwrite:
+                        continue
+                    
+                    # Create parent directory
+                    target_file.parent.mkdir(parents=True, exist_ok=True)
+                    
+                    # Copy file
+                    shutil.copy2(file_path, target_file)
+                    copied_files.append(str(rel_path))
+            
+            return {
+                "success": True,
+                "message": f"Deployed {len(copied_files)} files to {target_base}",
+                "files_copied": copied_files,
+                "target_path": str(target_base),
+                "instructions": [
+                    "1. Open Unreal Editor",
+                    "2. Open Python Console (Tools → Python Console)",
+                    "3. Run: import AIAssistant.main",
+                    "4. Project will auto-register!"
+                ]
+            }
+        except PermissionError:
+            return {
+                "success": False,
+                "error": "Permission denied. The browser cannot write to your local file system. Please download the client ZIP and extract manually."
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"Deployment failed: {str(e)}. Browser cannot access local files - please use manual download."
+            }
+    
     @app.get("/api/download_client")
     async def download_client():
         """Generate downloadable client package with setup instructions."""
@@ -838,11 +902,34 @@ except Exception as e:
     # Project Registry Endpoints
     @app.post("/api/register_project")
     async def register_project(request: dict):
-        """Register a UE5 project from the client."""
+        """Register a UE5 project from the client or browser."""
         from app.project_registry import get_registry
+        import hashlib
         
-        project_id = request.get("project_id", "")
-        project_data = request.get("project_data", {})
+        # Support both formats: direct fields or nested project_data
+        if "project_data" in request:
+            # Format from UE5 client
+            project_id = request.get("project_id", "")
+            project_data = request.get("project_data", {})
+        else:
+            # Format from browser manual registration
+            name = request.get("name", "")
+            path = request.get("path", "")
+            version = request.get("version", "5.6")
+            metadata = request.get("metadata", {})
+            
+            if not path:
+                return {"success": False, "error": "No project path provided"}
+            
+            # Generate project_id from path hash
+            project_id = hashlib.md5(path.encode()).hexdigest()[:12]
+            
+            project_data = {
+                "name": name or path.split('/')[-2],  # Use folder name if no name
+                "path": path,
+                "version": version,
+                "metadata": metadata
+            }
         
         if not project_id:
             return {"success": False, "error": "No project_id provided"}
