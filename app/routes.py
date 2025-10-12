@@ -1,7 +1,7 @@
 """API routes for the UE5 AI Assistant backend."""
 from typing import Any, Dict, List, Optional, cast
 
-from fastapi import HTTPException, Request
+from fastapi import HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.config import DEFAULT_CONFIG, RESPONSE_STYLES
@@ -1156,6 +1156,72 @@ When users ask about their project's actual data (file counts, blueprints, etc),
             }
         except Exception as e:
             return {"error": str(e)}
+    
+    # WebSocket endpoints for real-time UE5 <-> Dashboard communication
+    @app.websocket("/ws/ue5/{project_id}")
+    async def websocket_ue5_endpoint(websocket: WebSocket, project_id: str):
+        """WebSocket endpoint for UE5 client connections."""
+        from app.websocket_manager import get_manager
+        
+        manager = get_manager()
+        await manager.connect_ue5(websocket, project_id)
+        
+        try:
+            while True:
+                # Receive messages from UE5
+                data = await websocket.receive_json()
+                
+                # Handle UE5 response
+                await manager.handle_ue5_response(project_id, data)
+                
+        except WebSocketDisconnect:
+            manager.disconnect_ue5(project_id)
+            # Notify dashboards
+            await manager.broadcast_to_dashboards({
+                "type": "ue5_status",
+                "project_id": project_id,
+                "status": "disconnected"
+            })
+    
+    @app.websocket("/ws/dashboard")
+    async def websocket_dashboard_endpoint(websocket: WebSocket):
+        """WebSocket endpoint for dashboard connections."""
+        from app.websocket_manager import get_manager
+        
+        manager = get_manager()
+        await manager.connect_dashboard(websocket)
+        
+        try:
+            while True:
+                # Receive commands from dashboard
+                data = await websocket.receive_json()
+                
+                command_type = data.get("type")
+                
+                if command_type == "execute_action":
+                    # Execute action in UE5
+                    project_id = data.get("project_id")
+                    action = data.get("action")
+                    params = data.get("params", {})
+                    
+                    response = await manager.send_command_to_ue5(
+                        project_id,
+                        {
+                            "type": "execute_action",
+                            "action": action,
+                            "params": params
+                        }
+                    )
+                    
+                    # Send response back to dashboard
+                    await websocket.send_json({
+                        "type": "action_result",
+                        "action": action,
+                        "result": response
+                    })
+                    
+        except WebSocketDisconnect:
+            manager.disconnect_dashboard(websocket)
     
     @app.post("/api/generate_utility")
     async def generate_utility(request: dict):
