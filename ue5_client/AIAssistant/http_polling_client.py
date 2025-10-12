@@ -11,7 +11,6 @@ import requests
 # Global storage for pending actions (thread-safe with lock)
 _pending_action = None
 _action_lock = threading.Lock()
-_action_result = None
 
 
 class HTTPPollingClient:
@@ -216,54 +215,27 @@ class HTTPPollingClient:
                     action = "get_project_info"
                 
                 if self.action_handler:
-                    # Store action globally for main thread execution
-                    global _pending_action, _action_result
+                    # Store action globally for main thread execution (non-blocking)
+                    global _pending_action
                     with _action_lock:
                         _pending_action = {
                             "handler": self.action_handler,
                             "action": action,
                             "params": params,
                             "request_id": request_id,
-                            "client": self
+                            "client": self,
+                            "base_url": self.base_url,
+                            "project_id": self.project_id
                         }
-                        _action_result = None
                     
-                    # Schedule execution on main thread
+                    # Schedule execution on main thread (non-blocking!)
                     try:
                         import unreal
                         unreal.PythonScriptLibrary.execute_python_command(
                             "import AIAssistant.http_polling_client; "
                             "AIAssistant.http_polling_client._execute_pending_action_on_main_thread()"
                         )
-                        
-                        # Wait for result (with timeout)
-                        max_wait = 10  # seconds
-                        wait_interval = 0.1
-                        total_waited = 0
-                        
-                        while total_waited < max_wait:
-                            with _action_lock:
-                                if _action_result is not None:
-                                    result = _action_result
-                                    _action_result = None
-                                    break
-                            time.sleep(wait_interval)
-                            total_waited += wait_interval
-                        else:
-                            # Timeout
-                            result = {"success": False, "error": "Action execution timeout"}
-                        
-                        # Send response
-                        response = {
-                            "request_id": request_id,
-                            "action": action,
-                            "success": result.get("success", True),
-                            "data": result.get("data"),
-                            "error": result.get("error")
-                        }
-                        
-                        self.send_message(response)
-                        print(f"✅ Executed action: {action} (result: {result.get('success')})")
+                        print(f"📤 Scheduled action on main thread: {action}")
                         
                     except Exception as e:
                         print(f"❌ Failed to schedule action on main thread: {e}")
@@ -378,8 +350,8 @@ class HTTPPollingClient:
 
 
 def _execute_pending_action_on_main_thread():
-    """Execute pending action on main thread (called via execute_python_command)."""
-    global _pending_action, _action_result
+    """Execute pending action on main thread and send response (called via execute_python_command)."""
+    global _pending_action
     
     with _action_lock:
         if _pending_action is None:
@@ -393,14 +365,52 @@ def _execute_pending_action_on_main_thread():
         handler = action_info["handler"]
         action = action_info["action"]
         params = action_info["params"]
+        request_id = action_info["request_id"]
+        base_url = action_info["base_url"]
+        project_id = action_info["project_id"]
         
         result = handler(action, params)
         
-        # Store result
-        with _action_lock:
-            _action_result = result
+        # Send response directly from main thread
+        response = {
+            "request_id": request_id,
+            "action": action,
+            "success": result.get("success", True),
+            "data": result.get("data"),
+            "error": result.get("error")
+        }
+        
+        # Send via HTTP POST
+        try:
+            import requests
+            requests.post(
+                f"{base_url}/api/ue5/response",
+                json={
+                    "project_id": project_id,
+                    "response": response
+                },
+                timeout=5
+            )
+            print(f"✅ Executed and sent response: {action} (success: {result.get('success')})")
+        except Exception as e:
+            print(f"❌ Failed to send response: {e}")
             
     except Exception as e:
         print(f"❌ Action execution error on main thread: {e}")
-        with _action_lock:
-            _action_result = {"success": False, "error": str(e)}
+        # Try to send error response
+        try:
+            import requests
+            requests.post(
+                f"{action_info['base_url']}/api/ue5/response",
+                json={
+                    "project_id": action_info["project_id"],
+                    "response": {
+                        "request_id": action_info["request_id"],
+                        "success": False,
+                        "error": str(e)
+                    }
+                },
+                timeout=5
+            )
+        except:
+            pass  # Silently fail if we can't send error
