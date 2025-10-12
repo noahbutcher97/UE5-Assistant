@@ -123,7 +123,7 @@ class WebSocketClient:
                         if threading.current_thread() != threading.main_thread():
                             # Queue for main thread execution (thread-safe)
                             print(f"[WebSocket] 🎯 Queueing action for main thread: {action}")
-                            success, result = action_queue.queue_action(action, params, timeout=10.0)
+                            success, result = action_queue.queue_action(action, params, timeout=30.0)
                             if not success:
                                 result = {"success": False, "error": result.get("error", "Queue timeout")}
                         else:

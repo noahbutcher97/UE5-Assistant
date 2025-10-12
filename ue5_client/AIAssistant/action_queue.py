@@ -174,11 +174,14 @@ class ActionQueue:
             def tick_callback(delta_time):
                 """Called by UE5 on main thread every tick."""
                 try:
+                    # Import time locally to avoid module clearing issues
+                    import time as time_module
+                    
                     # Process any pending actions
                     num_processed = self.process_queue()
                     
                     # Check for updates periodically
-                    current_time = time.time()
+                    current_time = time_module.time()
                     if current_time - self.last_update_check > self.update_check_interval:
                         self._check_for_updates()
                         self.last_update_check = current_time
@@ -187,6 +190,8 @@ class ActionQueue:
                     
                 except Exception as e:
                     print(f"[ActionQueue] Tick error: {e}")
+                    import traceback
+                    traceback.print_exc()
                     return True  # Continue even on error
             
             # Register ticker with UE5

@@ -311,7 +311,7 @@ class HTTPPollingClient:
                         # Use thread-safe queue execution (RECOMMENDED)
                         print(f"[HTTPPolling] 🎯 Queueing action for main thread: {action}")
                         success, result = self.action_queue.queue_action(
-                            action, params, timeout=10.0
+                            action, params, timeout=30.0
                         )
                         
                         # Check for threading errors and trigger automatic recovery
@@ -327,7 +327,7 @@ class HTTPPollingClient:
                                 # Retry the action after recovery
                                 print("[HTTPPolling] 🔁 Retrying action after recovery...")
                                 success, result = self.action_queue.queue_action(
-                                    action, params, timeout=10.0
+                                    action, params, timeout=30.0
                                 )
                         
                         if success:
@@ -435,27 +435,30 @@ class HTTPPollingClient:
             
             # Add version marker for tracking
             import uuid
-            auto_update._version_marker = str(uuid.uuid4())[:8]
+            version_marker = str(uuid.uuid4())[:8]
+            auto_update._version_marker = version_marker
             
-            # Run update (safe from background thread)
+            # Run update (safe from background thread - just downloads files)
             result = auto_update.check_and_update()
             
             if result:
                 print("[HTTPPolling] ✅ Auto-update downloaded successfully")
-                print("[HTTPPolling] 🔄 Forcing complete assistant restart...")
+                print("[HTTPPolling] ⏳ Restart will happen automatically on next tick...")
                 
-                # Trigger complete restart to load fresh code
-                auto_update.force_restart_assistant()
-                print("[HTTPPolling] ✅ Assistant restart completed with fresh code")
+                # DON'T call force_restart_assistant here - it accesses Unreal API from wrong thread!
+                # The ActionQueue ticker will detect version change and trigger restart on main thread
                 
-                # Update version tracker
-                self.last_module_version = auto_update._version_marker
+                # Update version tracker  
+                self.last_module_version = version_marker
+                print(f"[HTTPPolling] 📦 Version marker updated: {version_marker}")
                 
             else:
                 print("[HTTPPolling] ℹ️ No updates available or update failed")
                 
         except Exception as e:
             print(f"[HTTPPolling] ❌ Auto-update failed: {e}")
+            import traceback
+            traceback.print_exc()
     
     def send_message(self, data: dict):
         """

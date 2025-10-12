@@ -144,7 +144,7 @@ class ActionExecutor:
                     success, result = self.action_queue.queue_action(
                         action_name, 
                         params or {},
-                        timeout=10.0  # 10 second timeout
+                        timeout=30.0  # 30 second timeout (matches backend)
                     )
                     
                     if success:

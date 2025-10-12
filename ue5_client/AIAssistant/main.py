@@ -569,7 +569,7 @@ class AIAssistant:
             import threading
             if self.action_queue and threading.current_thread() != threading.main_thread():
                 # Queue for main thread execution (thread-safe)
-                success, result = self.action_queue.queue_action(action, params, timeout=10.0)
+                success, result = self.action_queue.queue_action(action, params, timeout=30.0)
                 return result
             else:
                 # Execute directly (we're on main thread or no queue available)
