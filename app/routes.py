@@ -503,20 +503,20 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     async def download_client():
         """
         Download client bundle via GET (reliable Replit-compatible endpoint).
-        This is the primary download endpoint used by UE5 auto-update.
-        Returns a proper tar.gz archive.
+        This is the primary download endpoint used by installers.
+        Returns ZIP for Windows compatibility (PowerShell Expand-Archive).
         """
         import io
-        import tarfile
         import time
+        import zipfile
         from pathlib import Path
 
         from fastapi.responses import StreamingResponse
         
-        # Create in-memory tar.gz
-        tar_buffer = io.BytesIO()
+        # Create in-memory ZIP for Windows native support
+        zip_buffer = io.BytesIO()
         
-        with tarfile.open(fileobj=tar_buffer, mode='w:gz') as tar_file:
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
             # Add all AIAssistant files (fresh read from filesystem)
             client_dir = Path("ue5_client/AIAssistant")
             
@@ -524,13 +524,19 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 for file_path in client_dir.rglob("*"):
                     if file_path.is_file():
                         arcname = str(file_path.relative_to("ue5_client"))
-                        tar_file.add(str(file_path), arcname=arcname)
+                        zip_file.write(file_path, arcname)
+            
+            # Also include init_unreal.py and test_connection.py at root level
+            for extra_file in ["init_unreal.py", "test_connection.py"]:
+                extra_path = Path(f"ue5_client/{extra_file}")
+                if extra_path.exists():
+                    zip_file.write(extra_path, extra_file)
         
-        tar_buffer.seek(0)
+        zip_buffer.seek(0)
         
         # Add cache-busting headers
         headers = {
-            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.tar.gz",
+            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.zip",
             "Cache-Control": "no-cache, no-store, must-revalidate",
             "Pragma": "no-cache",
             "Expires": "0",
@@ -538,8 +544,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         }
         
         return StreamingResponse(
-            tar_buffer,
-            media_type="application/gzip",
+            zip_buffer,
+            media_type="application/zip",
             headers=headers
         )
     
