@@ -5,7 +5,6 @@ from fastapi import HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.config import DEFAULT_CONFIG, RESPONSE_STYLES
-from app.dashboard import get_dashboard_html
 from app.models import (
     BlueprintCapture,
     ConfigUpdate,
@@ -324,8 +323,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     @app.get("/api/deploy_agent_installer")
     async def get_deploy_agent_installer():
         """Download the Deploy Agent installer batch file."""
-        from fastapi.responses import Response
         from pathlib import Path
+
+        from fastapi.responses import Response
         
         installer_path = Path("deploy_agent_installer.bat")
         if installer_path.exists():
@@ -342,8 +342,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     @app.get("/api/deploy_agent")
     async def get_deploy_agent_legacy():
         """Legacy GET endpoint (kept for backwards compatibility)."""
-        from fastapi.responses import Response
         from pathlib import Path
+
+        from fastapi.responses import Response
         
         agent_path = Path("attached_assets/deploy_agent.py")
         if agent_path.exists():
@@ -360,8 +361,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     @app.post("/api/deploy_agent_bootstrap")
     async def deploy_agent_bootstrap_post():
         """Bootstrap endpoint for Deploy Agent (POST bypasses CDN cache)."""
-        from fastapi.responses import Response
         from pathlib import Path
+
+        from fastapi.responses import Response
         
         agent_path = Path("attached_assets/deploy_agent.py")
         if agent_path.exists():
@@ -379,8 +381,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     @app.get("/api/deploy_agent_bootstrap")
     async def deploy_agent_bootstrap_get():
         """Legacy GET endpoint (will be CDN cached, use POST instead)."""
-        from fastapi.responses import Response
         from pathlib import Path
+
+        from fastapi.responses import Response
         
         agent_path = Path("attached_assets/deploy_agent.py")
         if agent_path.exists():
@@ -397,8 +400,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     @app.get("/api/protocol_handler")
     async def get_protocol_handler():
         """Generate Windows registry file for protocol handler."""
-        from fastapi.responses import Response
         from pathlib import Path
+
+        from fastapi.responses import Response
         
         reg_path = Path("ue5_protocol_handler.reg")
         if reg_path.exists():
@@ -415,8 +419,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     @app.get("/api/installer_script")
     async def get_installer_script():
         """Generate PowerShell installer script (quick deploy version)."""
-        from fastapi.responses import Response
         from pathlib import Path
+
+        from fastapi.responses import Response
         
         # Try new quick_deploy script first
         script_path = Path("quick_deploy.ps1")
@@ -487,10 +492,11 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         Download client bundle via POST (bypasses CDN cache).
         Deploy Agent should use this instead of GET /api/download_client.
         """
-        import zipfile
         import io
         import time
+        import zipfile
         from pathlib import Path
+
         from fastapi.responses import StreamingResponse
         
         # Create in-memory zip
@@ -524,9 +530,10 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     @app.get("/api/download_client")
     async def download_client():
         """Generate downloadable client package with setup instructions."""
-        import zipfile
         import io
+        import zipfile
         from pathlib import Path
+
         from fastapi.responses import StreamingResponse
         
         # Create in-memory zip
@@ -581,7 +588,7 @@ Check the Output Log for:
             zip_file.writestr("AIAssistant/SETUP_INSTRUCTIONS.md", setup_instructions)
             
             # Add quick installer script
-            installer_script = f'''"""
+            installer_script = '''"""
 UE5 AI Assistant - Quick Installer
 Run this in UE5 Python Console to auto-setup
 """
@@ -601,7 +608,7 @@ try:
     import AIAssistant.main
     unreal.log("✅ AI Assistant installed and initialized!")
 except Exception as e:
-    unreal.log_error(f"❌ Installation failed: {{e}}")
+    unreal.log_error(f"❌ Installation failed: {e}")
 '''
             zip_file.writestr("AIAssistant/install.py", installer_script)
         
@@ -744,6 +751,7 @@ except Exception as e:
         This allows natural language responses instead of canned summaries.
         """
         import json
+
         import openai
         user_question = request.get("question", "")
         context_data = request.get("context", {})
@@ -1134,8 +1142,9 @@ except Exception as e:
     @app.post("/api/register_project")
     async def register_project(request: dict):
         """Register a UE5 project from the client or browser."""
-        from app.project_registry import get_registry
         import hashlib
+
+        from app.project_registry import get_registry
         
         # Support both formats: direct fields or nested project_data
         if "project_data" in request:
@@ -1226,8 +1235,9 @@ except Exception as e:
         Handle project intelligence queries from browser.
         Uses active project context and can trigger UE5 data collection.
         """
-        from app.project_registry import get_registry
         import openai
+
+        from app.project_registry import get_registry
         
         query = request.get("query", "")
         
@@ -1368,8 +1378,8 @@ When users ask about their project's actual data (file counts, blueprints, etc),
     @app.post("/api/generate_utility")
     async def generate_utility(request: dict):
         """Generate UE 5.6 compliant editor utility widget."""
+
         from app.project_registry import get_registry
-        import json
         
         name = request.get("name", "CustomTool")
         description = request.get("description", "")

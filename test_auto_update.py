@@ -13,7 +13,7 @@ def test_import():
     """Test that auto_update can be imported without UE5."""
     print("🧪 Test 1: Import auto_update module...")
     try:
-        from AIAssistant import auto_update
+        from AIAssistant import auto_update  # type: ignore
         print("   ✅ Module imported successfully")
         print(f"   📦 Module location: {auto_update.__file__}")
         return True
@@ -25,7 +25,7 @@ def test_backend_connection():
     """Test backend URL detection."""
     print("\n🧪 Test 2: Backend URL configuration...")
     try:
-        from AIAssistant.auto_update import get_backend_url
+        from AIAssistant.auto_update import get_backend_url  # type: ignore
         url = get_backend_url()
         print(f"   ✅ Backend URL: {url}")
         return True
@@ -38,7 +38,7 @@ def test_download_endpoint():
     print("\n🧪 Test 3: Download endpoint (CDN bypass test)...")
     try:
         import urllib.request
-        from AIAssistant.auto_update import get_backend_url
+        from AIAssistant.auto_update import get_backend_url  # type: ignore
         
         backend_url = get_backend_url()
         download_url = f"{backend_url}/api/download_client_bundle"
@@ -69,7 +69,7 @@ def test_safe_logging():
     """Test safe logging in non-UE5 environment."""
     print("\n🧪 Test 4: Safe logging system...")
     try:
-        from AIAssistant.auto_update import _safe_log
+        from AIAssistant.auto_update import _safe_log  # type: ignore
         
         _safe_log("Test normal log")
         _safe_log("Test error log", is_error=True)
@@ -83,7 +83,7 @@ def test_version_display():
     """Test version checking in non-UE5 environment."""
     print("\n🧪 Test 5: Version display (non-UE5 environment)...")
     try:
-        from AIAssistant.auto_update import show_version
+        from AIAssistant.auto_update import show_version  # type: ignore
         show_version()
         print("   ✅ Version check handled gracefully")
         return True
@@ -95,7 +95,7 @@ def test_update_prevention():
     """Test that update is prevented in non-UE5 environment."""
     print("\n🧪 Test 6: Update prevention (safety check)...")
     try:
-        from AIAssistant.auto_update import check_and_update
+        from AIAssistant.auto_update import check_and_update  # type: ignore
         result = check_and_update()
         
         if result is False:
@@ -115,7 +115,7 @@ def test_zip_contents():
         import urllib.request
         import zipfile
         import io
-        from AIAssistant.auto_update import get_backend_url
+        from AIAssistant.auto_update import get_backend_url  # type: ignore
         
         backend_url = get_backend_url()
         download_url = f"{backend_url}/api/download_client_bundle"
