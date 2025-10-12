@@ -394,8 +394,39 @@
     <!-- Conversations Tab -->
     <div id="conversations" class="tab-content">
         <div class="card">
-            <h2>💬 Recent Conversations</h2>
-            <div id="conversation-list" style="margin-top: 20px;">
+            <h2>💬 Conversation History</h2>
+            
+            <!-- Search and Filter Controls -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <input type="text" id="conversationSearch" placeholder="🔍 Search conversations..." 
+                    style="flex: 1;" onkeyup="filterConversations()">
+                
+                <select id="conversationProjectFilter" onchange="filterConversations()">
+                    <option value="">All Projects</option>
+                </select>
+                
+                <select id="conversationTypeFilter" onchange="filterConversations()">
+                    <option value="">All Types</option>
+                    <option value="execute_command">Commands</option>
+                    <option value="project_query">Project Queries</option>
+                    <option value="describe_viewport">Viewport Description</option>
+                    <option value="guidance">Guidance</option>
+                </select>
+                
+                <button onclick="confirmClearHistory()" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                    🗑️ Clear History
+                </button>
+            </div>
+            
+            <!-- Conversation Statistics -->
+            <div id="conversationStats" style="padding: 10px; background: rgba(10, 14, 39, 0.6); border-radius: 6px; margin-bottom: 15px;">
+                <span style="color: #8b95a5;">Total: <span id="totalConversations" style="color: #00d9ff;">0</span></span> | 
+                <span style="color: #8b95a5;">Filtered: <span id="filteredConversations" style="color: #00d9ff;">0</span></span> | 
+                <span style="color: #8b95a5;">Active Project: <span id="activeProjectName" style="color: #10b981;">None</span></span>
+            </div>
+            
+            <!-- Conversation List -->
+            <div id="conversation-list" style="max-height: 600px; overflow-y: auto;">
                 <div style="text-align: center; padding: 40px; color: #8b95a5;">
                     <p>Loading conversations...</p>
                 </div>
@@ -406,41 +437,131 @@
     <!-- Settings Tab -->
     <div id="settings" class="tab-content">
         <div class="card">
-            <h2>⚙️ AI Configuration</h2>
-            <div class="input-group">
-                <label>AI Model</label>
-                <select id="modelSelect">
-                    <option value="gpt-4o-mini">GPT-4o Mini (Fast, Cost-effective)</option>
-                    <option value="gpt-4o">GPT-4o (Advanced)</option>
-                </select>
+            <h2>⚙️ Configuration Settings</h2>
+            
+            <div class="grid">
+                <!-- AI Configuration -->
+                <div>
+                    <h3 style="color: #00d9ff; margin-bottom: 15px;">🤖 AI Configuration</h3>
+                    
+                    <div class="input-group">
+                        <label>AI Model</label>
+                        <select id="modelSelect">
+                            <option value="gpt-4o-mini">GPT-4o Mini (Fast, Cost-effective)</option>
+                            <option value="gpt-4o">GPT-4o (Advanced)</option>
+                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                            <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Response Style</label>
+                        <select id="styleSelect">
+                            <option value="concise">Concise</option>
+                            <option value="balanced">Balanced</option>
+                            <option value="detailed">Detailed</option>
+                            <option value="technical">Technical</option>
+                            <option value="descriptive">Descriptive</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Temperature (Creativity): <span id="tempValue">0.7</span></label>
+                        <input type="range" id="tempSlider" min="0" max="1" step="0.1" value="0.7" 
+                            oninput="document.getElementById('tempValue').textContent = this.value"
+                            style="width: 100%; padding: 0;">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Max Tokens (Response Length): <span id="maxTokensValue">1500</span></label>
+                        <input type="range" id="maxTokensSlider" min="500" max="4000" step="100" value="1500" 
+                            oninput="document.getElementById('maxTokensValue').textContent = this.value"
+                            style="width: 100%; padding: 0;">
+                    </div>
+                </div>
+                
+                <!-- System Configuration -->
+                <div>
+                    <h3 style="color: #00d9ff; margin-bottom: 15px;">⚙️ System Settings</h3>
+                    
+                    <div class="input-group">
+                        <label>Backend URL (for local testing)</label>
+                        <input type="text" id="backendUrl" placeholder="http://localhost:5000" 
+                            value="https://ue5-assistant-noahbutcher97.replit.app">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Max Context Turns</label>
+                        <input type="number" id="maxContextTurns" min="1" max="20" value="6">
+                    </div>
+                    
+                    <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="verboseLogging" style="width: auto;">
+                        <label for="verboseLogging" style="margin: 0;">Enable Verbose Logging</label>
+                    </div>
+                    
+                    <div class="input-group" style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" id="autoScroll" style="width: auto;" checked>
+                        <label for="autoScroll" style="margin: 0;">Auto-scroll Conversations</label>
+                    </div>
+                </div>
             </div>
             
-            <div class="input-group">
-                <label>Response Style</label>
-                <select id="styleSelect">
-                    <option value="concise">Concise</option>
-                    <option value="balanced">Balanced</option>
-                    <option value="detailed">Detailed</option>
-                </select>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="saveSettings()">💾 Save Settings</button>
+                <button onclick="resetToDefaults()" style="background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);">
+                    🔄 Reset to Defaults
+                </button>
+                <button onclick="testOpenAIConnection()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    🔌 Test OpenAI Connection
+                </button>
             </div>
-
-            <div class="input-group">
-                <label>Temperature (Creativity): <span id="tempValue">0.7</span></label>
-                <input type="range" id="tempSlider" min="0" max="1" step="0.1" value="0.7" 
-                    oninput="document.getElementById('tempValue').textContent = this.value"
-                    style="width: 100%; padding: 0;">
-            </div>
-
-            <button onclick="saveSettings()">💾 Save Settings</button>
+            
+            <div id="settings-status" style="margin-top: 15px; display: none; padding: 12px; border-radius: 8px;"></div>
         </div>
     </div>
 
     <!-- API Info Tab -->
     <div id="api" class="tab-content">
         <div class="card">
-            <h2>🔧 API Endpoints</h2>
+            <h2>🔧 API Endpoints & Status</h2>
             
-            <h3 style="color: #00d9ff; margin-top: 20px;">Project Management</h3>
+            <!-- System Status -->
+            <div style="padding: 15px; background: rgba(10, 14, 39, 0.8); border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #00d9ff; margin-top: 0;">📊 System Status</h3>
+                <div id="system-status" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                    <div>
+                        <span style="color: #8b95a5;">Backend:</span>
+                        <span id="backend-status" style="margin-left: 10px;">Checking...</span>
+                    </div>
+                    <div>
+                        <span style="color: #8b95a5;">Deploy Agent:</span>
+                        <span id="deploy-agent-status" style="margin-left: 10px;">Checking...</span>
+                    </div>
+                    <div>
+                        <span style="color: #8b95a5;">Version:</span>
+                        <span id="version-info" style="margin-left: 10px;">v3.2</span>
+                    </div>
+                    <div>
+                        <span style="color: #8b95a5;">OpenAI API:</span>
+                        <span id="openai-status" style="margin-left: 10px;">Checking...</span>
+                    </div>
+                </div>
+            </div>
+            
+            <h3 style="color: #00d9ff; margin-top: 20px;">🔍 Health Check Endpoints</h3>
+            <div class="api-endpoint">
+                <code>GET /health</code>
+                <p>Check backend health status</p>
+                <button onclick="testEndpoint('/health', 'GET')" style="padding: 6px 12px; font-size: 0.9em;">Test</button>
+            </div>
+            <div class="api-endpoint">
+                <code>GET /ping_openai</code>
+                <p>Test OpenAI API connectivity</p>
+                <button onclick="testEndpoint('/ping_openai', 'GET')" style="padding: 6px 12px; font-size: 0.9em;">Test</button>
+            </div>
+
+            <h3 style="color: #00d9ff; margin-top: 20px;">📦 Project Management</h3>
             <div class="api-endpoint">
                 <code>POST /api/register_project</code>
                 <p>Register UE5 project from client</p>
@@ -448,13 +569,14 @@
             <div class="api-endpoint">
                 <code>GET /api/projects</code>
                 <p>List all registered projects</p>
+                <button onclick="testEndpoint('/api/projects', 'GET')" style="padding: 6px 12px; font-size: 0.9em;">Test</button>
             </div>
             <div class="api-endpoint">
                 <code>POST /api/set_active_project</code>
                 <p>Set active project for queries</p>
             </div>
 
-            <h3 style="color: #00d9ff; margin-top: 20px;">AI Interaction</h3>
+            <h3 style="color: #00d9ff; margin-top: 20px;">🤖 AI Interaction</h3>
             <div class="api-endpoint">
                 <code>POST /execute_command</code>
                 <p>Send commands to AI (supports "prompt" or "user_input")</p>
@@ -464,7 +586,7 @@
                 <p>Query active project with AI</p>
             </div>
 
-            <h3 style="color: #00d9ff; margin-top: 20px;">Utility Generation</h3>
+            <h3 style="color: #00d9ff; margin-top: 20px;">🛠️ Utility Generation</h3>
             <div class="api-endpoint">
                 <code>POST /api/generate_utility</code>
                 <p>Generate AI agent editor utilities</p>
@@ -472,6 +594,22 @@
             <div class="api-endpoint">
                 <code>POST /api/generate_action_plan</code>
                 <p>Generate scene building action plans</p>
+            </div>
+            
+            <h3 style="color: #00d9ff; margin-top: 20px;">💬 Conversation Management</h3>
+            <div class="api-endpoint">
+                <code>GET /api/conversations</code>
+                <p>Get conversation history</p>
+                <button onclick="testEndpoint('/api/conversations?limit=5', 'GET')" style="padding: 6px 12px; font-size: 0.9em;">Test</button>
+            </div>
+            <div class="api-endpoint">
+                <code>DELETE /api/conversations</code>
+                <p>Clear all conversation history</p>
+            </div>
+            
+            <div id="api-test-result" style="margin-top: 20px; padding: 15px; background: rgba(10, 14, 39, 0.9); border-radius: 8px; display: none;">
+                <h4 style="color: #00d9ff; margin-top: 0;">Test Result:</h4>
+                <pre id="api-test-output" style="white-space: pre-wrap; color: #8b95a5;"></pre>
             </div>
         </div>
     </div>
@@ -481,33 +619,82 @@
         <div class="card">
             <h2>ℹ️ About UE5 AI Assistant v3.2</h2>
             
-            <h3 style="color: #00d9ff; margin: 20px 0 10px;">Core Capabilities</h3>
+            <h3 style="color: #00d9ff; margin: 20px 0 10px;">✨ Latest Features</h3>
             <ul class="feature-list">
-                <li>Multi-project management with browser-based project selection</li>
-                <li>Context-aware AI responses using active project metadata</li>
-                <li>AI-powered Editor Utility Widget generation (UE 5.6 compliant)</li>
-                <li>Scene orchestration (spawn actors, primitives, blueprints)</li>
-                <li>Viewport control (camera focus, movement, orbit)</li>
-                <li>Actor manipulation (align, distribute, grid/circle arrangement)</li>
-                <li>Blueprint screenshot capture and analysis</li>
-                <li>Project file browsing and source code analysis</li>
+                <li><strong>Deploy Agent</strong> - Frictionless one-click deployment from browser</li>
+                <li><strong>File System Access API</strong> - Direct browser deployment without downloads</li>
+                <li><strong>Auto-initialization</strong> - Client automatically registers projects on startup</li>
+                <li><strong>UE5 Local Server</strong> - Run AI backend locally for offline development</li>
+                <li><strong>Protocol Handler</strong> - Deploy via ue5assistant:// URLs</li>
+                <li><strong>Multi-project Management</strong> - Switch between projects seamlessly</li>
+                <li><strong>Context-aware AI</strong> - Responses tailored to active project</li>
+                <li><strong>Editor Utility Generation</strong> - Create AI-powered UE5.6 utilities</li>
+                <li><strong>Scene Orchestration</strong> - Spawn and arrange actors programmatically</li>
+                <li><strong>Blueprint Analysis</strong> - Capture and analyze Blueprint graphs</li>
             </ul>
 
-            <h3 style="color: #00d9ff; margin: 20px 0 10px;">Architecture</h3>
+            <h3 style="color: #00d9ff; margin: 20px 0 10px;">📚 Quick Links</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <a href="/deploy/modern" target="_blank" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
+                    ✨ Modern Deploy Page
+                </a>
+                <a href="/api/download_client" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
+                    📦 Download Client ZIP
+                </a>
+                <a href="/api/installer_script" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
+                    ⚡ PowerShell Installer
+                </a>
+                <a href="/api/protocol_handler" style="padding: 10px; background: rgba(0, 217, 255, 0.1); border: 1px solid rgba(0, 217, 255, 0.3); border-radius: 6px; text-align: center; color: #00d9ff; text-decoration: none;">
+                    🔗 Protocol Handler
+                </a>
+            </div>
+
+            <h3 style="color: #00d9ff; margin: 20px 0 10px;">💻 System Requirements</h3>
+            <ul class="feature-list">
+                <li><strong>Unreal Engine:</strong> 5.6 or later</li>
+                <li><strong>Python:</strong> 3.11+ (included with UE5)</li>
+                <li><strong>Browser:</strong> Chrome/Edge (for File System API deployment)</li>
+                <li><strong>Memory:</strong> 16GB RAM recommended</li>
+                <li><strong>OS:</strong> Windows 10/11</li>
+            </ul>
+
+            <h3 style="color: #00d9ff; margin: 20px 0 10px;">🔧 Troubleshooting Tips</h3>
+            <div style="background: rgba(255, 107, 53, 0.1); padding: 15px; border-radius: 8px; border: 1px solid rgba(255, 107, 53, 0.3);">
+                <p style="margin: 0 0 10px 0;"><strong>Client not connecting?</strong></p>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li>Verify backend URL in AIAssistant/config.py</li>
+                    <li>Check UE5 Output Log for error messages</li>
+                    <li>Ensure Python plugin is enabled in UE5</li>
+                </ul>
+                
+                <p style="margin: 15px 0 10px 0;"><strong>Deploy Agent issues?</strong></p>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li>Ensure Deploy Agent is running on port 7865</li>
+                    <li>Check Windows firewall isn't blocking local connections</li>
+                    <li>Run Deploy Agent as Administrator if permission issues</li>
+                </ul>
+                
+                <p style="margin: 15px 0 10px 0;"><strong>AI responses not working?</strong></p>
+                <ul style="margin: 0; padding-left: 20px;">
+                    <li>Test OpenAI connection in Settings tab</li>
+                    <li>Verify API key is set in backend environment</li>
+                    <li>Check conversation history for error messages</li>
+                </ul>
+            </div>
+
+            <h3 style="color: #00d9ff; margin: 20px 0 10px;">🏗️ Architecture</h3>
             <p style="line-height: 1.8; color: #8b95a5;">
-                The system consists of a <strong>FastAPI backend</strong> (hosted on Replit) 
-                and a <strong>UE5 Python client</strong> (runs in your editor). The client 
-                automatically registers your project on startup, uploading metadata to the backend. 
-                You can then query your project from any browser using the Project Hub dashboard.
+                The system uses a <strong>client-server architecture</strong> with a FastAPI backend 
+                (hosted on Replit) and UE5 Python client. The client auto-registers projects and 
+                uploads metadata. The web dashboard provides project management and AI querying 
+                capabilities from any browser.
             </p>
 
-            <h3 style="color: #00d9ff; margin: 20px 0 10px;">Technology Stack</h3>
-            <ul class="feature-list">
-                <li>Backend: FastAPI + OpenAI API (GPT-4o)</li>
-                <li>Frontend: Vanilla JS + Modern CSS</li>
-                <li>UE5 Client: Python 3.11 + Unreal Python API</li>
-                <li>Communication: RESTful HTTP/JSON</li>
-            </ul>
+            <h3 style="color: #00d9ff; margin: 20px 0 10px;">📞 Support</h3>
+            <p style="color: #8b95a5;">
+                For issues or feature requests, check the project documentation or contact support. 
+                The system is actively maintained and regularly updated with new capabilities.
+            </p>
         </div>
     </div>
 
@@ -529,6 +716,17 @@
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
             currentTab = tabName;
+            
+            // Run specific actions based on tab
+            if (tabName === 'api') {
+                checkSystemStatus();
+            } else if (tabName === 'conversations') {
+                if (allConversations.length === 0) {
+                    loadConversations();
+                }
+            } else if (tabName === 'settings') {
+                loadConfig();
+            }
         }
 
         async function loadProjects() {
@@ -930,61 +1128,346 @@
             }
         }
 
+        // Enhanced conversation management
+        let allConversations = [];
+        let filteredConversationsList = [];
+
         async function loadConversations() {
             try {
                 const response = await fetch('/api/conversations?limit=50');
                 const data = await response.json();
                 
-                const list = document.getElementById('conversation-list');
-                
-                if (data.conversations && data.conversations.length > 0) {
-                    list.innerHTML = data.conversations.map(conv => `
-                        <div style="padding: 15px; border-bottom: 1px solid rgba(0,217,255,0.1);">
-                            <strong style="color: #00d9ff;">User:</strong> ${conv.user_input || 'N/A'}<br>
-                            <strong style="color: #8b95a5;">AI:</strong> ${(conv.ai_response || '').substring(0, 200)}${conv.ai_response && conv.ai_response.length > 200 ? '...' : ''}
-                        </div>
-                    `).join('');
-                } else {
-                    list.innerHTML = '<p style="text-align: center; color: #8b95a5;">No conversations yet</p>';
+                if (data.conversations) {
+                    allConversations = data.conversations;
+                    
+                    // Update project filter dropdown
+                    const projectFilter = document.getElementById('conversationProjectFilter');
+                    const uniqueProjects = [...new Set(data.conversations
+                        .filter(c => c.metadata && c.metadata.project_context)
+                        .map(c => c.metadata.project_context))];
+                    
+                    if (uniqueProjects.length > 0) {
+                        projectFilter.innerHTML = '<option value="">All Projects</option>';
+                        uniqueProjects.forEach(project => {
+                            const option = document.createElement('option');
+                            option.value = project;
+                            option.textContent = project;
+                            projectFilter.appendChild(option);
+                        });
+                    }
+                    
+                    // Apply filters and display
+                    filterConversations();
+                    
+                    // Update statistics
+                    document.getElementById('totalConversations').textContent = data.total || allConversations.length;
                 }
             } catch (error) {
                 console.error('Failed to load conversations:', error);
+                document.getElementById('conversation-list').innerHTML = 
+                    '<div style="padding: 20px; color: #ef4444;">Failed to load conversations</div>';
+            }
+        }
+
+        function filterConversations() {
+            const searchText = document.getElementById('conversationSearch')?.value?.toLowerCase() || '';
+            const projectFilter = document.getElementById('conversationProjectFilter')?.value || '';
+            const typeFilter = document.getElementById('conversationTypeFilter')?.value || '';
+            
+            filteredConversationsList = allConversations.filter(conv => {
+                // Search filter
+                if (searchText && !conv.user_input.toLowerCase().includes(searchText) && 
+                    !conv.assistant_response.toLowerCase().includes(searchText)) {
+                    return false;
+                }
+                
+                // Project filter
+                if (projectFilter && conv.metadata && conv.metadata.project_context !== projectFilter) {
+                    return false;
+                }
+                
+                // Type filter
+                if (typeFilter && conv.command_type !== typeFilter) {
+                    return false;
+                }
+                
+                return true;
+            });
+            
+            // Update filtered count
+            document.getElementById('filteredConversations').textContent = filteredConversationsList.length;
+            
+            // Display filtered conversations
+            const listEl = document.getElementById('conversation-list');
+            
+            if (filteredConversationsList.length === 0) {
+                listEl.innerHTML = '<div style="padding: 20px; text-align: center; color: #8b95a5;">No matching conversations found</div>';
+                return;
+            }
+            
+            listEl.innerHTML = filteredConversationsList.map(conv => {
+                const timestamp = new Date(conv.timestamp).toLocaleString();
+                const responseLength = conv.assistant_response.length;
+                const projectContext = conv.metadata?.project_context || 'No project';
+                const isError = conv.metadata?.error;
+                
+                return `
+                    <div style="border: 1px solid rgba(0, 217, 255, 0.2); border-radius: 8px; padding: 15px; margin-bottom: 10px; background: rgba(26, 31, 58, 0.4);">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="color: #00d9ff; font-size: 0.9em;">${timestamp}</span>
+                            <div style="display: flex; gap: 10px;">
+                                <span style="padding: 2px 8px; background: rgba(0, 217, 255, 0.1); border-radius: 4px; font-size: 0.85em; color: #8b95a5;">
+                                    ${conv.command_type}
+                                </span>
+                                <span style="padding: 2px 8px; background: rgba(16, 185, 129, 0.1); border-radius: 4px; font-size: 0.85em; color: #10b981;">
+                                    ${projectContext}
+                                </span>
+                                ${isError ? '<span style="padding: 2px 8px; background: rgba(239, 68, 68, 0.2); border-radius: 4px; font-size: 0.85em; color: #ef4444;">Error</span>' : ''}
+                            </div>
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong style="color: #8b95a5;">User:</strong>
+                            <div style="margin: 5px 0; padding: 10px; background: rgba(10, 14, 39, 0.6); border-radius: 4px;">
+                                ${conv.user_input}
+                            </div>
+                        </div>
+                        <div>
+                            <strong style="color: #8b95a5;">Assistant (${responseLength} chars):</strong>
+                            <div style="margin: 5px 0; padding: 10px; background: rgba(10, 14, 39, 0.6); border-radius: 4px; max-height: 200px; overflow-y: auto;">
+                                ${conv.assistant_response}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Auto-scroll if enabled
+            if (document.getElementById('autoScroll')?.checked) {
+                listEl.scrollTop = listEl.scrollHeight;
+            }
+        }
+
+        async function confirmClearHistory() {
+            if (!confirm('⚠️ Are you sure you want to clear all conversation history? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/conversations', {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Conversation history cleared successfully');
+                    allConversations = [];
+                    filterConversations();
+                    document.getElementById('totalConversations').textContent = '0';
+                } else {
+                    alert('❌ Failed to clear history: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('❌ Error clearing history: ' + error.message);
             }
         }
 
         async function loadConfig() {
             try {
                 const response = await fetch('/api/config');
-                const config = await response.json();
+                const data = await response.json();
                 
-                document.getElementById('modelSelect').value = config.model;
-                document.getElementById('styleSelect').value = config.response_style;
-                document.getElementById('tempSlider').value = config.temperature;
-                document.getElementById('tempValue').textContent = config.temperature;
+                if (data.config) {
+                    // Update UI with current config
+                    document.getElementById('modelSelect').value = data.config.model || 'gpt-4o-mini';
+                    document.getElementById('styleSelect').value = data.config.response_style || 'balanced';
+                    document.getElementById('tempSlider').value = data.config.temperature || 0.7;
+                    document.getElementById('tempValue').textContent = data.config.temperature || 0.7;
+                    document.getElementById('maxContextTurns').value = data.config.max_context_turns || 6;
+                    
+                    // Update active project in conversations
+                    loadActiveProject();
+                }
+                
+                // Check system status when API tab is shown
+                if (currentTab === 'api') {
+                    checkSystemStatus();
+                }
             } catch (error) {
                 console.error('Failed to load config:', error);
             }
         }
 
-        async function saveSettings() {
-            const config = {
-                model: document.getElementById('modelSelect').value,
-                response_style: document.getElementById('styleSelect').value,
-                temperature: parseFloat(document.getElementById('tempSlider').value)
-            };
-
+        async function loadActiveProject() {
             try {
+                const response = await fetch('/api/active_project');
+                const data = await response.json();
+                
+                if (data.success && data.project) {
+                    document.getElementById('activeProjectName').textContent = data.project.name;
+                } else {
+                    document.getElementById('activeProjectName').textContent = 'None';
+                }
+            } catch (error) {
+                console.error('Failed to load active project:', error);
+            }
+        }
+
+        async function saveSettings() {
+            const statusDiv = document.getElementById('settings-status');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status-loading';
+            statusDiv.textContent = 'Saving settings...';
+            
+            try {
+                const config = {
+                    model: document.getElementById('modelSelect').value,
+                    response_style: document.getElementById('styleSelect').value,
+                    temperature: parseFloat(document.getElementById('tempSlider').value),
+                    max_context_turns: parseInt(document.getElementById('maxContextTurns').value)
+                };
+                
                 const response = await fetch('/api/config', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(config)
                 });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    statusDiv.className = 'status-success';
+                    statusDiv.textContent = '✅ Settings saved successfully!';
+                    
+                    // Save local preferences
+                    localStorage.setItem('ue5_verbose_logging', document.getElementById('verboseLogging').checked);
+                    localStorage.setItem('ue5_auto_scroll', document.getElementById('autoScroll').checked);
+                    localStorage.setItem('ue5_backend_url', document.getElementById('backendUrl').value);
+                } else {
+                    throw new Error('Failed to save settings');
+                }
+                
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 3000);
+            } catch (error) {
+                statusDiv.className = 'status-error';
+                statusDiv.textContent = '❌ Failed to save settings: ' + error.message;
+            }
+        }
 
-                if (response.ok) {
-                    alert('✅ Settings saved successfully!');
+        async function resetToDefaults() {
+            if (!confirm('Reset all settings to default values?')) {
+                return;
+            }
+            
+            // Reset UI to defaults
+            document.getElementById('modelSelect').value = 'gpt-4o-mini';
+            document.getElementById('styleSelect').value = 'balanced';
+            document.getElementById('tempSlider').value = 0.7;
+            document.getElementById('tempValue').textContent = '0.7';
+            document.getElementById('maxTokensSlider').value = 1500;
+            document.getElementById('maxTokensValue').textContent = '1500';
+            document.getElementById('maxContextTurns').value = 6;
+            document.getElementById('verboseLogging').checked = false;
+            document.getElementById('autoScroll').checked = true;
+            document.getElementById('backendUrl').value = 'https://ue5-assistant-noahbutcher97.replit.app';
+            
+            // Save to backend
+            saveSettings();
+        }
+
+        async function testOpenAIConnection() {
+            const statusDiv = document.getElementById('settings-status');
+            statusDiv.style.display = 'block';
+            statusDiv.className = 'status-loading';
+            statusDiv.textContent = 'Testing OpenAI connection...';
+            
+            try {
+                const response = await fetch('/ping_openai');
+                const result = await response.json();
+                
+                if (result.status === 'connected') {
+                    statusDiv.className = 'status-success';
+                    statusDiv.innerHTML = `✅ OpenAI connected! Model: ${result.model} | Response time: ${result.latency_ms}ms`;
+                } else {
+                    statusDiv.className = 'status-error';
+                    statusDiv.textContent = '❌ ' + result.error;
                 }
             } catch (error) {
-                alert('❌ Failed to save settings');
+                statusDiv.className = 'status-error';
+                statusDiv.textContent = '❌ Connection test failed: ' + error.message;
+            }
+        }
+
+        async function testEndpoint(endpoint, method = 'GET') {
+            const resultDiv = document.getElementById('api-test-result');
+            const outputDiv = document.getElementById('api-test-output');
+            
+            resultDiv.style.display = 'block';
+            outputDiv.textContent = 'Testing endpoint...';
+            
+            try {
+                const response = await fetch(endpoint, { method });
+                const data = await response.json();
+                
+                outputDiv.textContent = JSON.stringify(data, null, 2);
+                
+                if (response.ok) {
+                    resultDiv.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+                } else {
+                    resultDiv.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                }
+            } catch (error) {
+                outputDiv.textContent = 'Error: ' + error.message;
+                resultDiv.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+            }
+        }
+
+        async function checkSystemStatus() {
+            // Check backend status
+            try {
+                const healthResponse = await fetch('/health');
+                const healthData = await healthResponse.json();
+                
+                const backendStatus = document.getElementById('backend-status');
+                if (healthResponse.ok) {
+                    backendStatus.innerHTML = '<span style="color: #10b981;">✅ Online</span>';
+                    document.getElementById('version-info').textContent = healthData.version || 'v3.2';
+                } else {
+                    backendStatus.innerHTML = '<span style="color: #ef4444;">❌ Offline</span>';
+                }
+            } catch (error) {
+                document.getElementById('backend-status').innerHTML = '<span style="color: #ef4444;">❌ Unreachable</span>';
+            }
+            
+            // Check Deploy Agent status
+            try {
+                const agentResponse = await fetch('http://localhost:7865/status');
+                const deployStatus = document.getElementById('deploy-agent-status');
+                
+                if (agentResponse.ok) {
+                    deployStatus.innerHTML = '<span style="color: #10b981;">✅ Running</span>';
+                } else {
+                    deployStatus.innerHTML = '<span style="color: #fbbf24;">⚠️ Not running</span>';
+                }
+            } catch (error) {
+                document.getElementById('deploy-agent-status').innerHTML = '<span style="color: #fbbf24;">⚠️ Not detected</span>';
+            }
+            
+            // Check OpenAI status
+            try {
+                const openaiResponse = await fetch('/ping_openai');
+                const openaiData = await openaiResponse.json();
+                
+                const openaiStatus = document.getElementById('openai-status');
+                if (openaiData.status === 'connected') {
+                    openaiStatus.innerHTML = '<span style="color: #10b981;">✅ Connected</span>';
+                } else {
+                    openaiStatus.innerHTML = '<span style="color: #ef4444;">❌ Disconnected</span>';
+                }
+            } catch (error) {
+                document.getElementById('openai-status').innerHTML = '<span style="color: #ef4444;">❌ Error</span>';
             }
         }
 
