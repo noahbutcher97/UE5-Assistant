@@ -64,6 +64,26 @@ try {
     # Count files
     $FileCount = (Get-ChildItem -Path $TargetPath -Recurse -File).Count
     
+    # Create auto-startup script with backend URL
+    Write-Host "🔧 Configuring auto-startup..." -ForegroundColor Yellow
+    $StartupScript = @"
+# UE5 AI Assistant - Auto-configured startup
+import AIAssistant.startup
+AIAssistant.startup.configure_and_start('$BackendURL')
+"@
+    $StartupFile = Join-Path $TargetPath "_auto_start.py"
+    $StartupScript | Out-File -FilePath $StartupFile -Encoding UTF8 -Force
+    Write-Host "✅ Auto-startup configured" -ForegroundColor Green
+    
+    # Copy startup command to clipboard
+    $StartupCommand = "exec(open(r'$StartupFile').read())"
+    try {
+        Set-Clipboard -Value $StartupCommand
+        $ClipboardStatus = "✅ Copied to clipboard!"
+    } catch {
+        $ClipboardStatus = ""
+    }
+    
     Write-Host ""
     Write-Host "=" -NoNewline -ForegroundColor Green
     Write-Host "================================================" -ForegroundColor Green
@@ -74,9 +94,20 @@ try {
     Write-Host ""
     Write-Host "📋 Next Steps:" -ForegroundColor Cyan
     Write-Host "   1. Open Unreal Editor for this project" -ForegroundColor White
-    Write-Host "   2. Open Python Console: Tools → Plugins → Python Console" -ForegroundColor White
-    Write-Host "   3. Run: import AIAssistant.main" -ForegroundColor White
-    Write-Host "   4. Your project will auto-connect to the dashboard!" -ForegroundColor White
+    Write-Host "   2. Open Python Console (Tools → Plugins → Python Console)" -ForegroundColor White
+    Write-Host "   3. Paste and run this ONE-LINE command:" -ForegroundColor White
+    Write-Host ""
+    Write-Host "   $StartupCommand" -ForegroundColor Yellow
+    Write-Host ""
+    if ($ClipboardStatus) {
+        Write-Host "   $ClipboardStatus" -ForegroundColor Green
+        Write-Host "   Just Ctrl+V in the Python console!" -ForegroundColor Green
+        Write-Host ""
+    }
+    Write-Host "   This will:" -ForegroundColor Cyan
+    Write-Host "   • Configure backend URL automatically" -ForegroundColor White
+    Write-Host "   • Start the AI Assistant" -ForegroundColor White
+    Write-Host "   • Connect to the dashboard" -ForegroundColor White
     Write-Host ""
     Write-Host "🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard" -ForegroundColor Cyan
     Write-Host ""

@@ -135,6 +135,20 @@ The project follows a clean, organized structure:
 - **Replit**: Hosting platform for the FastAPI backend.
   - Base URL: `https://ue5-assistant-noahbutcher97.replit.app`
 
+### Installation & Startup
+- **One-Click Installer**: PowerShell script that downloads, installs, and configures the UE5 client
+  - Auto-generates startup script (`_auto_start.py`) with backend URL pre-configured
+  - Copies one-line `exec(open(...).read())` command to clipboard for easy paste into UE5 Python console
+  - Handles all configuration automatically (no manual setup needed)
+- **Auto-Startup System**: `startup.py` module provides automatic configuration and initialization
+  - Detects if backend URL matches known presets (production, dev, localhost)
+  - For custom URLs, persists to `api_base_url` with `active_server="custom"`
+  - Reloads all modules to pick up new configuration
+  - Initializes assistant automatically after configuration
+- **Update System**: Works even when breaking changes prevent "Update All Clients" button
+  - Installer can be re-run to apply updates that modify core initialization
+  - Preserves existing configuration while updating code
+
 ### Communication Protocol
 - **HTTP/HTTPS**: For REST API communication.
 - **JSON**: Data serialization format.
