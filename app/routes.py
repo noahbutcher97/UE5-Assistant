@@ -402,20 +402,36 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     
     @app.post("/api/installer_script")
     async def get_installer_script_post():
-        """POST version to bypass CDN cache completely."""
+        """POST version to bypass CDN cache completely - with forced fix."""
         from pathlib import Path
 
         from fastapi.responses import Response
         
+        # Read the script and force the correct URLs regardless of file content
         script_path = Path("scripts/install_ue5_assistant.ps1")
         if script_path.exists():
-            content = script_path.read_text(encoding='utf-8')
+            # Read with explicit UTF-8 BOM handling
+            with open(script_path, 'r', encoding='utf-8-sig') as f:
+                content = f.read()
+            
+            # Force replace both old and potentially cached patterns
+            replacements = {
+                '/api/download_client"': '/api/download_client_bundle"',
+                'Invoke-WebRequest -Uri $DownloadURL -OutFile': 'Invoke-WebRequest -Uri $DownloadURL -Method Post -OutFile',
+                '📥 Download URL: $DownloadURL"': '📥 Download URL: $DownloadURL (POST - bypasses cache)"',
+                '   Source: $DownloadURL"': '   Source: $DownloadURL (POST method)"'
+            }
+            
+            for old, new in replacements.items():
+                content = content.replace(old, new)
+            
             return Response(
                 content=content,
                 media_type="text/plain; charset=utf-8",
                 headers={
                     "Content-Disposition": "attachment; filename=install_ue5_assistant.ps1",
-                    "Cache-Control": "no-cache, no-store, must-revalidate"
+                    "Cache-Control": "no-cache, no-store, must-revalidate",
+                    "Pragma": "no-cache"
                 }
             )
         return {"error": "Installer script not found"}

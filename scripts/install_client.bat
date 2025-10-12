@@ -24,12 +24,23 @@ if "%PROJECT_PATH%"=="" (
 echo Selected: %PROJECT_PATH%
 echo.
 
-REM Download enhanced PowerShell installer
+REM Create fixed PowerShell installer directly (bypass server caching issues)
 set "PS_INSTALLER=%TEMP%\install_ue5_assistant.ps1"
 set "BACKEND_URL=https://ue5-assistant-noahbutcher97.replit.app"
 
-echo Downloading enhanced installer...
-powershell -Command "& {[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $response = Invoke-WebRequest -Uri '%BACKEND_URL%/api/installer_script' -Method POST -UseBasicParsing; [System.IO.File]::WriteAllText('%PS_INSTALLER%', $response.Content, [System.Text.Encoding]::UTF8)}"
+echo Creating installer...
+powershell -Command "& {$script = @'
+$TargetPath = Join-Path $args[0] 'Content\Python\AIAssistant'
+$DownloadURL = '$args[1]/api/download_client_bundle'
+$TempZip = Join-Path $env:TEMP 'ue5_assistant_client.zip'
+Write-Host 'Downloading from: $DownloadURL (POST method)...'
+Invoke-WebRequest -Uri $DownloadURL -Method Post -OutFile $TempZip -UseBasicParsing
+Write-Host 'Extracting...'
+if (Test-Path $TargetPath) { Remove-Item $TargetPath -Recurse -Force }
+Expand-Archive -Path $TempZip -DestinationPath (Join-Path $args[0] 'Content\Python') -Force
+Remove-Item $TempZip -Force
+Write-Host 'Installation complete!' -ForegroundColor Green
+'@; [System.IO.File]::WriteAllText('%PS_INSTALLER%', $script, [System.Text.Encoding]::UTF8)}"
 
 if not exist "%PS_INSTALLER%" (
     color 0C
