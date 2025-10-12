@@ -244,7 +244,16 @@
             
             <div class="input-group">
                 <label>Project Path</label>
-                <input type="text" id="manual-path" placeholder="D:/UnrealProjects/5.6/UE5_Assistant/">
+                <input type="text" id="manual-path" 
+                    placeholder="D:/UnrealProjects/5.6/UE5_Assistant/"
+                    list="recent-paths"
+                    autocomplete="off">
+                <datalist id="recent-paths">
+                    <!-- Recent paths populated by JavaScript -->
+                </datalist>
+                <small style="color: #8b95a5; margin-top: 5px; display: block;">
+                    💡 Tip: Path should end with forward slash (/)
+                </small>
             </div>
             
             <button onclick="registerManualProject()" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
@@ -252,7 +261,8 @@
             </button>
             
             <div style="margin-top: 15px; padding: 12px; background: rgba(0,217,255,0.1); border-radius: 8px; font-size: 14px; color: #8b95a5;">
-                💡 <strong>Tip:</strong> For automatic registration, deploy <code>attached_assets/AIAssistant/</code> to your UE5 project and run the Python client.
+                💡 <strong>Tip:</strong> For automatic registration, download and deploy the UE5 Python client:
+                <a href="/api/download_client" style="color: #00d9ff; text-decoration: underline; margin-left: 10px;">📦 Download UE5 Client</a>
             </div>
         </div>
         
@@ -433,6 +443,7 @@
         loadProjects();
         loadConversations();
         loadConfig();
+        loadRecentPaths();
 
         function showTab(tabName) {
             // Hide all tabs
@@ -476,13 +487,54 @@
             }
         }
         
+        function loadRecentPaths() {
+            try {
+                const recentPaths = JSON.parse(localStorage.getItem('ue5_recent_paths') || '[]');
+                const datalist = document.getElementById('recent-paths');
+                datalist.innerHTML = '';
+                
+                recentPaths.forEach(path => {
+                    const option = document.createElement('option');
+                    option.value = path;
+                    datalist.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Failed to load recent paths:', error);
+            }
+        }
+        
+        function saveRecentPath(path) {
+            try {
+                let recentPaths = JSON.parse(localStorage.getItem('ue5_recent_paths') || '[]');
+                
+                // Remove if already exists
+                recentPaths = recentPaths.filter(p => p !== path);
+                
+                // Add to beginning
+                recentPaths.unshift(path);
+                
+                // Keep only last 10
+                recentPaths = recentPaths.slice(0, 10);
+                
+                localStorage.setItem('ue5_recent_paths', JSON.stringify(recentPaths));
+                loadRecentPaths();
+            } catch (error) {
+                console.error('Failed to save recent path:', error);
+            }
+        }
+        
         async function registerManualProject() {
             const name = document.getElementById('manual-name').value;
-            const path = document.getElementById('manual-path').value;
+            let path = document.getElementById('manual-path').value;
             
             if (!name || !path) {
                 alert('Please enter both project name and path');
                 return;
+            }
+            
+            // Ensure path ends with /
+            if (!path.endsWith('/') && !path.endsWith('\\')) {
+                path = path + '/';
             }
             
             try {
@@ -503,6 +555,9 @@
                 const data = await response.json();
                 
                 if (data.success) {
+                    // Save to recent paths
+                    saveRecentPath(path);
+                    
                     alert(`✅ Project "${name}" registered successfully!`);
                     document.getElementById('manual-name').value = '';
                     document.getElementById('manual-path').value = '';
