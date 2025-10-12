@@ -261,14 +261,18 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             
             # Copy files
             copied_files = []
+            overwrote_count = 0
+            
             for file_path in source_base.rglob("*"):
                 if file_path.is_file():
                     rel_path = file_path.relative_to(source_base)
                     target_file = target_base / rel_path
                     
-                    # Check if file exists
-                    if target_file.exists() and not overwrite:
-                        continue
+                    # Track if overwriting
+                    if target_file.exists():
+                        if not overwrite:
+                            continue
+                        overwrote_count += 1
                     
                     # Create parent directory
                     target_file.parent.mkdir(parents=True, exist_ok=True)
@@ -279,14 +283,15 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             
             return {
                 "success": True,
-                "message": f"Deployed {len(copied_files)} files to {target_base}",
+                "message": f"Deployed {len(copied_files)} files",
                 "files_copied": copied_files,
+                "overwrote_existing": overwrote_count if overwrote_count > 0 else None,
                 "target_path": str(target_base),
                 "instructions": [
                     "1. Open Unreal Editor",
                     "2. Open Python Console (Tools → Python Console)",
                     "3. Run: import AIAssistant.main",
-                    "4. Project will auto-register!"
+                    "4. Check Output Log for '✅ Project registered' message"
                 ]
             }
         except PermissionError:
