@@ -956,78 +956,72 @@
             statusDiv.className = 'status-loading';
             
             const agentResponse = await fetch('http://localhost:7865/status', {
-                signal: AbortSignal.timeout(3000)  // 3 second timeout
+                signal: AbortSignal.timeout(5000)  // 5 second timeout (increased)
             });
             
-            if (agentResponse.ok) {
-                // Agent is running! Do frictionless deploy
-                statusDiv.innerHTML = '<span class="loading-spinner">⚡</span> Deploy Agent found! Starting instant deployment...';
-                statusDiv.className = 'status-loading';
+            if (!agentResponse.ok) {
+                throw new Error('Deploy Agent returned error status');
+            }
+            
+            // Agent is running! Do frictionless deploy
+            statusDiv.innerHTML = '<span class="loading-spinner">⚡</span> Deploy Agent found! Starting instant deployment...';
+            statusDiv.className = 'status-loading';
+            
+            const deployResponse = await fetch('http://localhost:7865/deploy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    project_path: projectPath,
+                    auto_import: true
+                }),
+                signal: AbortSignal.timeout(30000)  // 30 second timeout for deployment
+            });
+            
+            if (!deployResponse.ok) {
+                const errorText = await deployResponse.text();
+                throw new Error(`Deployment request failed: ${errorText}`);
+            }
+            
+            const result = await deployResponse.json();
+            
+            if (result.success) {
+                statusDiv.innerHTML = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 48px; margin: 20px 0;">🎉</div>
+                        <h3 style="color: #00ff88; margin: 10px 0;">Instant Deployment Complete!</h3>
+                        <p>✅ ${result.files_deployed} files deployed</p>
+                        <p>✅ AI Assistant auto-imported in UE5</p>
+                        <p style="font-size: 18px; color: #00d9ff; margin-top: 20px;">
+                            🚀 Your AI Assistant is ready to use in Unreal Engine!
+                        </p>
+                    </div>
+                `;
+                statusDiv.className = 'status-success';
                 
-                const deployResponse = await fetch('http://localhost:7865/deploy', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        project_path: projectPath,
-                        auto_import: true
-                    })
-                });
-                
-                const result = await deployResponse.json();
-                
-                if (result.success) {
-                    statusDiv.innerHTML = `
-                        <div style="text-align: center;">
-                            <div style="font-size: 48px; margin: 20px 0;">🎉</div>
-                            <h3 style="color: #00ff88; margin: 10px 0;">Instant Deployment Complete!</h3>
-                            <p>✅ ${result.files_deployed} files deployed</p>
-                            <p>✅ AI Assistant auto-imported in UE5</p>
-                            <p style="font-size: 18px; color: #00d9ff; margin-top: 20px;">
-                                🚀 Your AI Assistant is ready to use in Unreal Engine!
-                            </p>
-                        </div>
-                    `;
-                    statusDiv.className = 'status-success';
-                    
-                    // Auto-register the project too
-                    setTimeout(() => registerManualProject(), 2000);
-                } else {
-                    throw new Error(result.error || 'Deployment failed');
-                }
-                
+                // Auto-register the project too
+                setTimeout(() => registerManualProject(), 2000);
             } else {
-                throw new Error('Deploy Agent not running');
+                throw new Error(result.error || 'Deployment failed');
             }
             
         } catch (error) {
-            // Agent not running - show instructions to set it up
+            console.error('Deploy error details:', error);
+            
+            // Show actual error message for debugging
+            const errorMessage = error.message || 'Unknown error';
+            
             statusDiv.innerHTML = `
                 <div style="background: rgba(255, 107, 53, 0.1); padding: 20px; border-radius: 10px; border: 1px solid rgba(255, 107, 53, 0.3);">
-                    <h3 style="color: #ff6b35; margin-top: 0;">⚡ One-Time Setup Required</h3>
-                    <p style="color: #8b95a5;">To enable instant deployment, run the Deploy Agent on your PC:</p>
-                    
-                    <div style="background: #0a1628; padding: 15px; border-radius: 8px; margin: 15px 0;">
-                        <code style="color: #00d9ff;">
-                            <strong>Option A (Easiest):</strong><br>
-                            1. Download: <a href="/api/deploy_agent_installer" style="color: #ff6b35;">deploy_agent_installer.bat</a><br>
-                            2. Double-click the .bat file<br>
-                            3. Enter your project path when prompted<br>
-                            <br>
-                            <strong>Option B (Manual):</strong><br>
-                            1. Download: <a href="/api/deploy_agent" style="color: #ff6b35;">deploy_agent.py</a><br>
-                            2. Run: python deploy_agent.py --ue5-project "${projectPath}"
-                        </code>
-                    </div>
-                    
-                    <p style="color: #8b95a5; font-size: 14px;">
-                        The Deploy Agent runs locally and enables:<br>
-                        • Instant deployment from browser<br>
-                        • Auto-import in UE5<br>
-                        • Zero manual steps<br>
-                    </p>
-                    
-                    <button onclick="deployClient()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); width: 100%; padding: 12px; border: none; border-radius: 8px; color: white; cursor: pointer; margin-top: 10px;">
-                        Use Classic Deploy Instead
+                    <h3 style="color: #ff6b35; margin-top: 0;">❌ Deployment Error</h3>
+                    <p style="color: #ff6b35; font-family: monospace; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 5px;">${errorMessage}</p>
+                    <p style="color: #8b95a5; margin-top: 15px;">Troubleshooting:</p>
+                    <ul style="color: #8b95a5; margin: 10px 0;">
+                        <li>Make sure Deploy Agent is running (check the PowerShell window)</li>
+                        <li>Verify the agent shows "Listening on http://localhost:7865"</li>
+                        <li>Try clicking the button again</li>
+                    </ul>
+                    <button onclick="deployClient()" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); width: 100%; padding: 12px; border: none; border-radius: 8px; color: white; cursor: pointer; margin-top: 15px; font-size: 14px;">
+                        📦 Use Manual Download Instead
                     </button>
                 </div>
             `;

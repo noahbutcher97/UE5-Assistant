@@ -440,9 +440,24 @@ def get_assistant() -> AIAssistant:
 def _auto_init():
     """Auto-initialize assistant when module is imported."""
     try:
+        import unreal
+        unreal.log("=" * 60)
+        unreal.log("🤖 UE5 AI Assistant - Initializing...")
+        unreal.log("=" * 60)
+        
         get_assistant()
+        
+        unreal.log("=" * 60)
+        unreal.log("✅ AI Assistant initialized successfully!")
+        unreal.log("💡 Use: AIAssistant.main.send_command('your question here')")
+        unreal.log("=" * 60)
     except Exception as e:
-        print(f"⚠️ AI Assistant auto-init warning: {e}")
+        import unreal
+        unreal.log_error("=" * 60)
+        unreal.log_error(f"❌ AI Assistant initialization failed: {e}")
+        unreal.log_error("=" * 60)
+        import traceback
+        traceback.print_exc()
 
 # Run auto-init only if imported in UE5 environment
 try:
