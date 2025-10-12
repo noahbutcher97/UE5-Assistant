@@ -1,0 +1,74 @@
+LogPython: from AIAssistant.config import get_config
+config = get_config()
+config.set("active_server", "dev")  # Use dev server
+print(f"Backend URL: {config.api_url}")
+LogPython: Backend URL: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: import importlib, sys
+for mod in list(sys.modules.keys()):
+    if mod.startswith('AIAssistant'):
+        del sys.modules[mod]
+import AIAssistant.main
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: Warning: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 1/3)
+LogPython: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 2/3)
+LogPython: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: ❌ WebSocket error: fin=1 opcode=8 data=b'\x03\xf4'
+LogPython: ❌ WebSocket error: fin=1 opcode=8 data=b'\x03\xf4'
+LogPython: ❌ WebSocket error: fin=1 opcode=8 data=b'\x03\xf4'
+LogPython: 🔌 WebSocket closed: None
+LogPython: 🔌 WebSocket closed: None
+LogPython: 🔌 WebSocket closed: None
+LogPython: 🔄 Reconnecting in 2s (attempt 1/10)...
+LogPython: 🔄 Reconnecting in 2s (attempt 1/10)...
+LogPython: Warning: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 3/3)
+LogPython: [APIClient] ⚠️ Request failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project? (attempt 3/3)
+LogPython: 🔄 Reconnecting in 2s (attempt 1/10)...
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project?
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project?
+LogPython: Warning: ❌ Registration failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project?
+LogPython: Warning: ⚠️ Project auto-registration failed: Invalid URL '/api/register_project': No scheme supplied. Perhaps you meant https:///api/register_project?
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: ✅ websocket-client library detected
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: 🔌 Attempting WebSocket connection to: wss://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev/ws/ue5/189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 🔗 WebSocket opened for project: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: ✅ WebSocket connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 🌐 Real-time dashboard connection enabled
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: 🔗 WebSocket opened for project: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 🔗 WebSocket opened for project: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 🔗 WebSocket opened for project: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📢 Backend update detected! Running auto-update...
+LogPython: Error: Error checking version: Paths: Attempted to access Unreal API from outside the main game thread.
+LogPython: 💡 To update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: ============================================================
+LogPython: 🔄 UE5 AI Assistant Auto-Update
+LogPython: ============================================================
+LogPython: 📡 Backend: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev
+LogPython: ⬇️  Downloading latest client from: https://682ccad5-bbbd-4c0f-9115-453d448b7713-00-3n9ljd21d4w8o.janeway.replit.dev/api/download_client
+LogPython: ✅ Downloaded 167356 bytes
+LogPython: Error: ❌ Update failed: Paths: Attempted to access Unreal API from outside the main game thread.
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\auto_update.py", line 83, in check_and_update
+    project_dir = unreal.Paths.project_dir()
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^
+LogPython: Error: RuntimeError: Paths: Attempted to access Unreal API from outside the main game thread.
+LogPython: ℹ️ Auto-update failed or no updates available
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf

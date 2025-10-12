@@ -1131,6 +1131,25 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         
         registry = get_registry()
         return registry.set_active_project(project_id)
+    
+    @app.post("/api/set_connection_mode")
+    async def set_connection_mode(request: dict):
+        """Set connection mode preference for a project."""
+        from app.project_registry import get_registry
+        
+        project_id = request.get("project_id", "")
+        connection_mode = request.get("connection_mode", "http")
+        
+        if not project_id:
+            return {"success": False, "error": "No project_id provided"}
+        
+        if connection_mode not in ["http", "websocket"]:
+            return {"success": False, "error": "Invalid connection mode"}
+        
+        registry = get_registry()
+        result = registry.set_connection_mode(project_id, connection_mode)
+        
+        return result
 
     @app.get("/dashboard", response_class=HTMLResponse)
     async def dashboard():

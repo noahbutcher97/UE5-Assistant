@@ -153,6 +153,23 @@ except Exception as e:
         unreal.log("📋 Updated Files:")
         for f in updated_files:
             unreal.log(f"   - {f}")
+        # Auto-configure backend URL
+        unreal.log("🔧 Configuring backend connection...")
+        try:
+            from .config import get_config
+            config = get_config()
+            
+            # Ensure we're using the dev server (matches where this update came from)
+            if config.get("active_server") != "dev":
+                config.set("active_server", "dev")
+                unreal.log(f"✅ Backend configured: {config.api_url}")
+            else:
+                unreal.log(f"✅ Backend already configured: {config.api_url}")
+                
+        except Exception as e:
+            unreal.log_error(f"⚠️ Config auto-fix failed: {e}")
+            unreal.log("💡 Manually run: from AIAssistant.config import get_config; get_config().set('active_server', 'dev')")
+        
         unreal.log("=" * 60)
         unreal.log("✅ Update complete!")
         unreal.log("⚠️  IMPORTANT: Restart Unreal Editor for changes to take effect")

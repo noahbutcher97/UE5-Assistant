@@ -108,6 +108,34 @@ class ProjectRegistry:
         
         return {"success": True, "project_id": project_id}
     
+    def set_connection_mode(
+        self,
+        project_id: str,
+        connection_mode: str
+    ) -> Dict[str, Any]:
+        """Set connection mode preference for a project."""
+        if project_id not in self.projects:
+            return {
+                "success": False,
+                "error": f"Project not found: {project_id}"
+            }
+        
+        self.projects[project_id]["connection_mode"] = connection_mode
+        self.projects[project_id]["last_updated"] = datetime.now().isoformat()
+        self._save_registry()
+        
+        return {
+            "success": True,
+            "project_id": project_id,
+            "connection_mode": connection_mode
+        }
+    
+    def get_connection_mode(self, project_id: str) -> str:
+        """Get connection mode preference for a project (default: http)."""
+        if project_id in self.projects:
+            return self.projects[project_id].get("connection_mode", "http")
+        return "http"
+    
     def _save_registry(self):
         """Save registry to disk."""
         data = {
