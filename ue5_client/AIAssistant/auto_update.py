@@ -64,23 +64,75 @@ def check_and_update():
     """Check for updates and install if available."""
     import threading
     
-    # If not on main thread, schedule execution on main thread
+    # If not on main thread, run update without Unreal API calls
     if HAS_UNREAL and threading.current_thread() != threading.main_thread():
-        _safe_log("⚙️ Scheduling auto-update on main thread...")
-        # Use Python command execution to run on main thread
-        try:
-            import unreal
-            unreal.PythonScriptLibrary.execute_python_command(
-                "import AIAssistant.auto_update; AIAssistant.auto_update._do_update()"
-            )
-            return True
-        except Exception as e:
-            _safe_log(f"❌ Failed to schedule update: {e}", is_error=True)
-            _safe_log("💡 To update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()")
-            return False
+        print("📢 Auto-update triggered from background thread")
+        print("⬇️  Downloading and installing files...")
+        # Call background-safe version
+        return _do_background_update()
     
-    # If on main thread, run directly
+    # If on main thread, run full update with logging
     return _do_update()
+
+
+def _do_background_update():
+    """Update function that runs safely from background thread (no Unreal API calls)."""
+    backend_url = get_backend_url()
+    download_url = f"{backend_url}/api/download_client"
+    
+    print("=" * 60)
+    print("🔄 UE5 AI Assistant Auto-Update (Background)")
+    print("=" * 60)
+    print(f"📡 Backend: {backend_url}")
+    
+    try:
+        # Download ZIP from backend
+        print(f"⬇️  Downloading: {download_url}")
+        
+        with urllib.request.urlopen(download_url, timeout=30) as response:
+            zip_data = response.read()
+        
+        print(f"✅ Downloaded {len(zip_data)} bytes")
+        
+        # Extract ZIP (pure Python, no Unreal API)
+        # Get project dir without Unreal API
+        import sys
+        import pathlib
+        
+        # Find project dir from current module path
+        current_file = pathlib.Path(__file__).resolve()
+        # Go up from: Content/Python/AIAssistant/auto_update.py -> project root
+        project_dir = str(current_file.parent.parent.parent.parent)
+        target_base = os.path.join(project_dir, "Content", "Python")
+        
+        updated_files = []
+        
+        with zipfile.ZipFile(io.BytesIO(zip_data)) as zip_file:
+            for file_info in zip_file.filelist:
+                if file_info.filename.endswith('/'):
+                    continue
+                
+                target_path = os.path.join(target_base, file_info.filename)
+                os.makedirs(os.path.dirname(target_path), exist_ok=True)
+                
+                with open(target_path, 'wb') as target_file:
+                    target_file.write(zip_file.read(file_info.filename))
+                
+                updated_files.append(file_info.filename)
+        
+        print(f"✅ Updated {len(updated_files)} files")
+        print("=" * 60)
+        print("✅ Auto-update complete! Files downloaded and installed.")
+        print("🔄 Reloading modules...")
+        print("=" * 60)
+        
+        return True
+        
+    except Exception as e:
+        print(f"❌ Update failed: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
 
 
 def _do_update():
