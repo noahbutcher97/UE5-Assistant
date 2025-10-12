@@ -398,6 +398,45 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             )
         return {"error": "Installer script not found"}
     
+    @app.get("/api/download_client_v2")
+    async def download_client_v2():
+        """Generate downloadable client package - v2 endpoint to bypass CDN cache."""
+        import zipfile
+        import io
+        import time
+        from pathlib import Path
+        from fastapi.responses import StreamingResponse
+        
+        # Create in-memory zip
+        zip_buffer = io.BytesIO()
+        
+        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            # Add all AIAssistant files (fresh read from filesystem)
+            client_dir = Path("attached_assets/AIAssistant")
+            
+            if client_dir.exists():
+                for file_path in client_dir.rglob("*"):
+                    if file_path.is_file():
+                        arcname = str(file_path.relative_to("attached_assets"))
+                        zip_file.write(file_path, arcname)
+        
+        zip_buffer.seek(0)
+        
+        # Aggressive cache-busting headers
+        headers = {
+            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client_v2.zip",
+            "Cache-Control": "no-cache, no-store, must-revalidate, private",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "X-Content-Version": str(int(time.time()))
+        }
+        
+        return StreamingResponse(
+            zip_buffer,
+            media_type="application/zip",
+            headers=headers
+        )
+    
     @app.get("/api/download_client")
     async def download_client():
         """Generate downloadable client package with setup instructions."""
@@ -484,10 +523,20 @@ except Exception as e:
         
         zip_buffer.seek(0)
         
+        # Add cache-busting headers to prevent Replit CDN from serving stale ZIPs
+        import time
+        headers = {
+            "Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.zip",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+            "X-Content-Version": str(int(time.time()))
+        }
+        
         return StreamingResponse(
             zip_buffer,
             media_type="application/zip",
-            headers={"Content-Disposition": "attachment; filename=UE5_AIAssistant_Client.zip"}
+            headers=headers
         )
 
     @app.get("/health")
