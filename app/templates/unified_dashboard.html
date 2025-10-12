@@ -1060,6 +1060,80 @@
             status.style.color = '#00ff88';
         }
 
+        // WebSocket for real-time UE5 communication
+        let dashboardWs = null;
+        let wsConnected = false;
+        let ue5ProjectsConnected = [];
+
+        function initWebSocket() {
+            const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${wsProtocol}//${window.location.host}/ws/dashboard`;
+            
+            dashboardWs = new WebSocket(wsUrl);
+            
+            dashboardWs.onopen = () => {
+                console.log('✅ Dashboard WebSocket connected');
+                wsConnected = true;
+                updateConnectionIndicator();
+            };
+            
+            dashboardWs.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+            
+            dashboardWs.onerror = (error) => {
+                console.error('❌ WebSocket error:', error);
+                wsConnected = false;
+                updateConnectionIndicator();
+            };
+            
+            dashboardWs.onclose = () => {
+                console.log('🔌 WebSocket closed, reconnecting...');
+                wsConnected = false;
+                updateConnectionIndicator();
+                setTimeout(initWebSocket, 5000); // Reconnect after 5s
+            };
+        }
+
+        function handleWebSocketMessage(data) {
+            if (data.type === 'initial_status') {
+                ue5ProjectsConnected = data.connected_projects || [];
+                updateConnectionIndicator();
+            } else if (data.type === 'ue5_status') {
+                if (data.status === 'connected') {
+                    if (!ue5ProjectsConnected.includes(data.project_id)) {
+                        ue5ProjectsConnected.push(data.project_id);
+                    }
+                } else {
+                    ue5ProjectsConnected = ue5ProjectsConnected.filter(id => id !== data.project_id);
+                }
+                updateConnectionIndicator();
+            } else if (data.type === 'action_result') {
+                console.log('Action result:', data);
+            }
+        }
+
+        function updateConnectionIndicator() {
+            const status = document.getElementById('projectStatus');
+            if (wsConnected && ue5ProjectsConnected.length > 0) {
+                status.innerHTML = `🌐 Real-time: ${ue5ProjectsConnected.length} UE5 client(s) connected`;
+                status.style.background = 'rgba(0, 255, 136, 0.1)';
+                status.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+                status.style.color = '#00ff88';
+            } else if (wsConnected) {
+                status.innerHTML = '⚠️ WebSocket ready, no UE5 clients';
+                status.style.background = 'rgba(251, 191, 36, 0.1)';
+                status.style.borderColor = 'rgba(251, 191, 36, 0.3)';
+                status.style.color = '#fbbf24';
+            } else {
+                status.innerHTML = '❌ Not connected';
+                status.style.background = 'rgba(239, 68, 68, 0.1)';
+                status.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+                status.style.color = '#ef4444';
+            }
+        }
+
         async function queryProject() {
             const query = document.getElementById('projectQuery').value;
             const output = document.getElementById('queryOutput');
@@ -1071,6 +1145,7 @@
 
             output.textContent = 'Querying AI...';
 
+            // First, ask AI what to do
             try {
                 const response = await fetch('/api/project_query', {
                     method: 'POST',
@@ -1082,6 +1157,28 @@
                 
                 if (data.error) {
                     output.textContent = `Error: ${data.error}`;
+                    return;
+                }
+
+                // Check if AI wants to execute an action in UE5
+                if (data.ue_request && wsConnected && ue5ProjectsConnected.length > 0) {
+                    output.textContent = '🔄 Collecting live data from UE5...';
+                    
+                    // Get active project
+                    const projectId = document.getElementById('projectSelect').value;
+                    
+                    if (projectId && ue5ProjectsConnected.includes(projectId)) {
+                        // Execute action via WebSocket
+                        const actionResult = await executeUE5Action(projectId, data.ue_request, {});
+                        
+                        if (actionResult.success) {
+                            output.textContent = `✅ Live data retrieved:\n\n${JSON.stringify(actionResult.data, null, 2)}`;
+                        } else {
+                            output.textContent = `❌ Failed to collect data: ${actionResult.error}`;
+                        }
+                    } else {
+                        output.textContent = data.response;
+                    }
                 } else {
                     const context = data.project_context ? `[${data.project_context}]\n\n` : '';
                     output.textContent = context + data.response;
@@ -1089,6 +1186,42 @@
             } catch (error) {
                 output.textContent = `Error: ${error.message}`;
             }
+        }
+
+        function executeUE5Action(projectId, action, params) {
+            return new Promise((resolve, reject) => {
+                if (!dashboardWs || !wsConnected) {
+                    reject(new Error('WebSocket not connected'));
+                    return;
+                }
+
+                const requestId = `req_${Date.now()}`;
+                
+                // Send command
+                dashboardWs.send(JSON.stringify({
+                    type: 'execute_action',
+                    project_id: projectId,
+                    action: action,
+                    params: params
+                }));
+
+                // Listen for response
+                const messageHandler = (event) => {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'action_result' && data.action === action) {
+                        dashboardWs.removeEventListener('message', messageHandler);
+                        resolve(data.result);
+                    }
+                };
+
+                dashboardWs.addEventListener('message', messageHandler);
+
+                // Timeout after 30s
+                setTimeout(() => {
+                    dashboardWs.removeEventListener('message', messageHandler);
+                    reject(new Error('Action timeout'));
+                }, 30000);
+            });
         }
 
         async function generateUtility() {
@@ -1470,6 +1603,9 @@
                 document.getElementById('openai-status').innerHTML = '<span style="color: #ef4444;">❌ Error</span>';
             }
         }
+
+        // Initialize WebSocket on page load
+        initWebSocket();
 
         // Enter key support
         document.getElementById('projectQuery').addEventListener('keypress', (e) => {
