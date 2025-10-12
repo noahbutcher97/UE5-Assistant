@@ -954,7 +954,7 @@
         const statusDiv = document.getElementById('deploy-status');
         statusDiv.style.display = 'block';
         statusDiv.className = 'status-loading';
-        statusDiv.innerHTML = '<span class="loading-spinner">⚙️</span> Starting deployment process...';
+        statusDiv.innerHTML = '<span class="loading-spinner">⚙️</span> Starting instant deployment...';
         
         if (!projectPath) {
             statusDiv.className = 'status-error';
@@ -962,7 +962,61 @@
             return;
         }
         
-        // First, check if Deploy Agent is running
+        // STEP 1: Try direct POST /api/deploy_client first (bypasses CDN, always fresh!)
+        try {
+            statusDiv.innerHTML = '<span class="loading-spinner">⚡</span> Deploying fresh files (bypasses CDN cache)...';
+            statusDiv.className = 'status-loading';
+            
+            const response = await fetch('/api/deploy_client', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    project_path: projectPath,
+                    overwrite: true
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                const fileCount = result.files_copied?.length || 0;
+                statusDiv.innerHTML = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 48px; margin: 20px 0;">✅</div>
+                        <h3 style="color: #10b981; margin: 10px 0;">Deployment Successful!</h3>
+                        <p style="color: #8b95a5; font-size: 15px; margin: 15px 0;">
+                            Successfully deployed <strong>${fileCount} files</strong> including diagnostic tools!
+                        </p>
+                        <div style="background: rgba(0,0,0,0.4); padding: 15px; border-radius: 8px; margin: 20px 0;">
+                            <p style="color: #00d9ff; margin: 5px 0;">📁 Location: ${result.target_path}</p>
+                            <p style="color: #10b981; margin: 5px 0;">✨ Includes: diagnose.py, install_dependencies.py</p>
+                        </div>
+                        <div style="background: rgba(0, 217, 255, 0.1); padding: 15px; border-radius: 8px;">
+                            <h4 style="color: #00d9ff; margin: 0 0 10px 0;">📋 Next Steps:</h4>
+                            <ol style="color: #8b95a5; text-align: left; margin: 0; padding-left: 20px;">
+                                <li>Open Unreal Editor</li>
+                                <li>Open Python Console (Tools → Python Console)</li>
+                                <li>Run: <code style="background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 4px; color: #00d9ff;">import AIAssistant.install_dependencies</code></li>
+                                <li>Then run: <code style="background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 4px; color: #00d9ff;">import AIAssistant.main</code></li>
+                            </ol>
+                        </div>
+                    </div>
+                `;
+                statusDiv.className = 'status-success';
+                
+                // Auto-register the project
+                setTimeout(() => registerManualProject(), 1000);
+                return; // Success! Exit early
+            }
+            
+            // If POST returned error (likely permission denied), fall through to Deploy Agent method
+            console.log('Direct POST failed, trying Deploy Agent...', result.error);
+            
+        } catch (directError) {
+            console.log('Direct POST exception, trying Deploy Agent...', directError);
+        }
+        
+        // STEP 2: Fallback to Deploy Agent if direct POST failed
         try {
             statusDiv.innerHTML = '<span class="loading-spinner">🔍</span> Checking for Deploy Agent on your PC...';
             statusDiv.className = 'status-loading';

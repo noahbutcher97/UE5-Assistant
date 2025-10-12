@@ -186,11 +186,40 @@
             deployBtn.textContent = '⏳ Deploying...';
             
             try {
-                updateStatus('📥 Downloading client package...', '');
+                updateStatus('📥 Deploying fresh client files (bypasses CDN cache)...', '');
                 
-                // Fetch client ZIP from backend
-                const response = await fetch('/api/download_client');
-                const blob = await response.blob();
+                // Get full project path from selected folder
+                const projectPath = await getProjectPath(selectedHandle);
+                
+                // Use POST /api/deploy_client (bypasses CDN, always fresh!)
+                const response = await fetch('/api/deploy_client', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        project_path: projectPath,
+                        overwrite: true
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const fileCount = result.files_copied?.length || 0;
+                    updateStatus(`✅ Successfully deployed ${fileCount} files! Includes new diagnostic tools.`, 'success');
+                    deployBtn.textContent = '🎉 Deployment Complete!';
+                    
+                    setTimeout(() => {
+                        deployBtn.disabled = false;
+                        deployBtn.textContent = '🚀 Deploy Client to Selected Folder';
+                    }, 3000);
+                    return;
+                }
+                
+                // If POST fails due to browser security, fall back to ZIP method
+                updateStatus('📦 Using ZIP fallback method...', '');
+                
+                const zipResponse = await fetch('/api/download_client');
+                const blob = await zipResponse.blob();
                 
                 updateStatus('📦 Extracting and deploying files...', '');
                 
@@ -241,6 +270,25 @@
                 deployBtn.textContent = '🚀 Deploy Client to Selected Folder';
             }
         });
+        
+        async function getProjectPath(dirHandle) {
+            // Try to get full file system path (Chrome File System Access API Level 2)
+            if ('getFullPath' in dirHandle) {
+                return await dirHandle.getFullPath();
+            }
+            
+            // Fallback: construct path from parent traversal (may not work cross-platform)
+            let path = dirHandle.name;
+            let current = dirHandle;
+            
+            // Navigate up to find parent directories (limited support)
+            while (current.parent) {
+                current = await current.parent;
+                path = current.name + '/' + path;
+            }
+            
+            return path;
+        }
         
         function updateStatus(message, type) {
             const status = document.getElementById('status');
