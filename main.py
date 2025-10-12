@@ -53,7 +53,8 @@ async def startup_event():
     asyncio.create_task(trigger_auto_update_after_startup())
     
     # Start cleanup task for inactive HTTP polling clients
-    asyncio.create_task(cleanup_inactive_clients_loop())
+    # DISABLED: Cleanup task was too aggressive and removing active clients
+    # asyncio.create_task(cleanup_inactive_clients_loop())
 
 async def trigger_auto_update_after_startup():
     """Trigger auto-update for all connected UE5 clients after backend startup."""
