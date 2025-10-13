@@ -24,12 +24,19 @@ class ConnectionManager:
         
         # HTTP Polling clients (keyed by project_id)
         self.http_clients: Dict[str, dict] = {}
+        
+        # Persistent operation and event history (max 100 entries each)
+        self.operations_history: list = []
+        self.events_history: list = []
 
     async def connect_ue5(self, websocket: WebSocket, project_id: str):
         """Register UE5 client connection."""
         await websocket.accept()
         self.ue5_clients[project_id] = websocket
         print(f"✅ UE5 client connected: {project_id}")
+        
+        # Log connection event
+        self.log_event("connection", f"UE5 client {project_id[:16]}... connected via WebSocket", "info")
 
         # Notify dashboards
         await self.broadcast_to_dashboards({
@@ -67,6 +74,9 @@ class ConnectionManager:
         if project_id in self.ue5_clients:
             del self.ue5_clients[project_id]
             print(f"❌ UE5 client disconnected: {project_id}")
+            
+            # Log disconnection event
+            self.log_event("disconnection", f"UE5 client {project_id[:16]}... disconnected", "warning")
 
             # Notify all dashboards about disconnection
             await self.broadcast_to_dashboards({
@@ -83,9 +93,35 @@ class ConnectionManager:
     def disconnect_dashboard(self, websocket: WebSocket):
         """Unregister dashboard connection."""
         self.dashboard_clients.discard(websocket)
-        print(
-            f"❌ Dashboard disconnected (remaining: {len(self.dashboard_clients)})"
-        )
+    
+    def log_operation(self, project_id: str, operation_type: str, status: str = "completed", details: str = ""):
+        """Log an operation to the history."""
+        operation = {
+            "project_id": project_id,
+            "type": operation_type,
+            "status": status,
+            "details": details,
+            "timestamp": datetime.now().isoformat()
+        }
+        self.operations_history.append(operation)
+        
+        # Keep only last 100 operations
+        if len(self.operations_history) > 100:
+            self.operations_history = self.operations_history[-100:]
+    
+    def log_event(self, event_type: str, message: str, level: str = "info"):
+        """Log a system event to the history."""
+        event = {
+            "type": event_type,
+            "message": message,
+            "level": level,
+            "timestamp": datetime.now().isoformat()
+        }
+        self.events_history.append(event)
+        
+        # Keep only last 100 events
+        if len(self.events_history) > 100:
+            self.events_history = self.events_history[-100:]
 
     async def send_command_to_ue5(self, project_id: str,
                                   command: dict) -> dict:

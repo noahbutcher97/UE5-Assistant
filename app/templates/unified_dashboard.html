@@ -1685,15 +1685,52 @@
 
         // Operations Log
         async function loadOperations() {
-            // Placeholder - will be populated from WebSocket events
             const opsLog = document.getElementById('operations-log');
             const noOpsMsg = document.getElementById('no-operations-message');
             
-            if (state.operations && state.operations.length > 0) {
-                opsLog.style.display = 'flex';
-                noOpsMsg.style.display = 'none';
-                // Render operations
-            } else {
+            try {
+                const response = await fetch('/api/operations');
+                const data = await response.json();
+                
+                if (data.success && data.operations && data.operations.length > 0) {
+                    opsLog.style.display = 'flex';
+                    noOpsMsg.style.display = 'none';
+                    opsLog.innerHTML = '';
+                    
+                    data.operations.forEach(op => {
+                        const opCard = document.createElement('div');
+                        opCard.style.cssText = `
+                            background: rgba(0,0,0,0.3);
+                            border: 1px solid rgba(0,245,255,0.15);
+                            border-radius: 8px;
+                            padding: 12px 16px;
+                            display: flex;
+                            justify-content: space-between;
+                            align-items: center;
+                        `;
+                        
+                        const timestamp = new Date(op.timestamp).toLocaleTimeString();
+                        const typeColor = op.status === 'pending' ? 'var(--primary-cyan)' : 'var(--primary-green)';
+                        
+                        opCard.innerHTML = `
+                            <div style="flex: 1;">
+                                <span style="color: ${typeColor}; font-weight: 600; font-size: 13px;">${op.type}</span>
+                                <span style="color: var(--text-muted); font-size: 12px; margin-left: 12px;">${op.project_id.substring(0, 16)}...</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 11px; color: var(--text-secondary);">${timestamp}</span>
+                                <span style="padding: 4px 8px; background: rgba(0,245,255,0.1); border-radius: 4px; font-size: 10px; color: var(--primary-cyan);">${op.status}</span>
+                            </div>
+                        `;
+                        
+                        opsLog.appendChild(opCard);
+                    });
+                } else {
+                    opsLog.style.display = 'none';
+                    noOpsMsg.style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Failed to load operations:', error);
                 opsLog.style.display = 'none';
                 noOpsMsg.style.display = 'flex';
             }
@@ -1703,15 +1740,74 @@
         let currentEventFilter = 'all';
         
         async function loadSystemEvents() {
-            // Placeholder - will be populated from WebSocket events
             const eventsLog = document.getElementById('events-log');
             const noEventsMsg = document.getElementById('no-events-message');
             
-            if (state.systemEvents && state.systemEvents.length > 0) {
-                eventsLog.style.display = 'flex';
-                noEventsMsg.style.display = 'flex';
-                // Render filtered events
-            } else {
+            try {
+                const response = await fetch('/api/system_events');
+                const data = await response.json();
+                
+                if (data.success && data.events && data.events.length > 0) {
+                    // Filter events based on current filter
+                    let filteredEvents = data.events;
+                    if (currentEventFilter !== 'all') {
+                        filteredEvents = data.events.filter(e => e.level === currentEventFilter);
+                    }
+                    
+                    if (filteredEvents.length > 0) {
+                        eventsLog.style.display = 'flex';
+                        noEventsMsg.style.display = 'none';
+                        eventsLog.innerHTML = '';
+                        
+                        filteredEvents.forEach(event => {
+                            const eventCard = document.createElement('div');
+                            const levelColors = {
+                                'error': '#ef4444',
+                                'warning': '#f59e0b',
+                                'info': '#10b981'
+                            };
+                            const levelIcons = {
+                                'error': 'fa-exclamation-circle',
+                                'warning': 'fa-exclamation-triangle',
+                                'info': 'fa-info-circle'
+                            };
+                            const color = levelColors[event.level] || levelColors.info;
+                            const icon = levelIcons[event.level] || levelIcons.info;
+                            
+                            eventCard.style.cssText = `
+                                background: rgba(0,0,0,0.3);
+                                border-left: 3px solid ${color};
+                                border-radius: 6px;
+                                padding: 12px 16px;
+                            `;
+                            
+                            const timestamp = event.timestamp ? new Date(event.timestamp).toLocaleString() : 'Unknown time';
+                            
+                            eventCard.innerHTML = `
+                                <div style="display: flex; align-items: start; gap: 12px;">
+                                    <i class="fas ${icon}" style="color: ${color}; margin-top: 2px;"></i>
+                                    <div style="flex: 1;">
+                                        <p style="margin: 0 0 4px 0; color: var(--text-primary); font-size: 13px;">${event.message}</p>
+                                        <div style="display: flex; gap: 12px; font-size: 11px; color: var(--text-muted);">
+                                            <span><i class="fas fa-clock"></i> ${timestamp}</span>
+                                            <span style="text-transform: uppercase; color: ${color};">${event.level}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            eventsLog.appendChild(eventCard);
+                        });
+                    } else {
+                        eventsLog.style.display = 'none';
+                        noEventsMsg.style.display = 'flex';
+                    }
+                } else {
+                    eventsLog.style.display = 'none';
+                    noEventsMsg.style.display = 'flex';
+                }
+            } catch (error) {
+                console.error('Failed to load system events:', error);
                 eventsLog.style.display = 'none';
                 noEventsMsg.style.display = 'flex';
             }

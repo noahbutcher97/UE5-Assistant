@@ -1667,6 +1667,15 @@ Return ONLY the complete Python script, no explanations or markdown."""
             # Queue command for UE5 client to import/register the widget
             manager = get_manager()
             
+            # Log the operation to history
+            if hasattr(manager, 'log_operation'):
+                manager.log_operation(
+                    project_id, 
+                    f"widget_generated", 
+                    "completed",
+                    f"Generated '{class_name}' widget"
+                )
+            
             if hasattr(manager, 'http_clients') and project_id and project_id in manager.http_clients:
                 if "pending_commands" not in manager.http_clients[project_id]:
                     manager.http_clients[project_id]["pending_commands"] = []
@@ -2196,4 +2205,89 @@ except Exception as e:
         return {
             "success": False,
             "error": "Client not found or not connected"
+        }
+
+    @app.get("/api/operations")
+    async def get_operations():
+        """
+        Get recent operations/commands executed by UE5 clients.
+        Returns operations from WebSocket manager persistent history.
+        """
+        from app.websocket_manager import get_manager
+        
+        manager = get_manager()
+        operations = []
+        
+        # Get persistent operation history
+        if hasattr(manager, 'operations_history'):
+            operations.extend(manager.operations_history)
+        
+        # Also include currently pending commands
+        if hasattr(manager, 'http_clients'):
+            for project_id, client_data in manager.http_clients.items():
+                if "pending_commands" in client_data:
+                    for cmd in client_data["pending_commands"]:
+                        operations.append({
+                            "project_id": project_id,
+                            "type": cmd.get("type", "unknown"),
+                            "timestamp": cmd.get("timestamp", ""),
+                            "status": "pending",
+                            "details": ""
+                        })
+        
+        # Sort by timestamp (most recent first)
+        operations.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+        
+        return {
+            "success": True,
+            "operations": operations[:50]  # Limit to 50 most recent
+        }
+
+    @app.get("/api/system_events")
+    async def get_system_events():
+        """
+        Get system events, errors, and diagnostic information.
+        Returns events from WebSocket manager persistent history.
+        """
+        from datetime import datetime
+        from app.websocket_manager import get_manager
+        from app.services import conversation
+        
+        manager = get_manager()
+        events = []
+        
+        # Get persistent event history
+        if hasattr(manager, 'events_history'):
+            events.extend(manager.events_history)
+        
+        # Add current connection status events
+        if hasattr(manager, 'http_clients'):
+            for project_id in manager.http_clients.keys():
+                events.append({
+                    "type": "info",
+                    "message": f"Client {project_id[:16]}... currently connected via HTTP polling",
+                    "timestamp": datetime.now().isoformat(),
+                    "level": "info"
+                })
+        
+        # Add recent conversation errors
+        try:
+            recent_convos = conversation.get_history(limit=20)
+            for conv in recent_convos:
+                if "error" in conv.get("response", "").lower():
+                    events.append({
+                        "type": "error",
+                        "message": f"AI error: {conv.get('response', 'Unknown error')}",
+                        "timestamp": conv.get("timestamp", ""),
+                        "level": "error"
+                    })
+        except:
+            pass  # Conversation history may not be available
+        
+        # Sort by timestamp (most recent first)
+        events.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
+        
+        return {
+            "success": True,
+            "events": events[:50]  # Limit to 50 most recent
         }
