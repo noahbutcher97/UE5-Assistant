@@ -2202,3 +2202,61 @@ except Exception as e:
             "message": f"Recovery queued for {recovered_count} client(s)",
             "count": recovered_count
         }
+
+    @app.post("/api/switch_server")
+    async def switch_server(request: dict):
+        """
+        Switch the backend server endpoint for a specific UE5 client.
+        This syncs with the editor-side server configuration.
+        """
+        from app.websocket_manager import get_manager
+        
+        project_id = request.get("project_id")
+        server_type = request.get("server_type", "production")
+        
+        if not project_id:
+            return {"success": False, "error": "No project_id provided"}
+        
+        # Map server types to URLs
+        server_urls = {
+            "production": "https://ue5-assistant-noahbutcher97.replit.app",
+            "localhost": "http://localhost:5000",
+            "custom": request.get("custom_url", "")
+        }
+        
+        server_url = server_urls.get(server_type, server_urls["production"])
+        
+        manager = get_manager()
+        
+        # Queue server switch command for the client
+        if hasattr(manager, 'http_clients') and project_id in manager.http_clients:
+            if "pending_commands" not in manager.http_clients[project_id]:
+                manager.http_clients[project_id]["pending_commands"] = []
+            
+            manager.http_clients[project_id]["pending_commands"].append({
+                "type": "server_switch",
+                "server_url": server_url,
+                "server_type": server_type,
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            print(f"🔄 Server switch queued for {project_id[:16]}... → {server_type}")
+            
+            # Broadcast update to dashboards
+            await manager.broadcast_to_dashboards({
+                "type": "server_switched",
+                "project_id": project_id,
+                "server_type": server_type,
+                "server_url": server_url
+            })
+            
+            return {
+                "success": True,
+                "message": f"Server switched to {server_type}",
+                "server_url": server_url
+            }
+        
+        return {
+            "success": False,
+            "error": "Client not found or not connected"
+        }
