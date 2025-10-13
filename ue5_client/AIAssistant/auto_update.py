@@ -572,8 +572,9 @@ def force_restart_assistant() -> bool:
         cleared = clear_all_modules(preserve_queue=False)
         print(f"   - Cleared {cleared} modules")
 
-        # Step 3: Invalidate import caches
-        importlib.invalidate_caches()
+        # Step 3: Invalidate import caches (import locally to survive module clearing)
+        import importlib as _importlib
+        _importlib.invalidate_caches()
 
         # Step 4: Force reimport main module
         print("📦 Step 3: Re-importing main module with fresh code...")
