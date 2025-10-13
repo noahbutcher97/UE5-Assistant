@@ -2,7 +2,7 @@
 from typing import Any, Dict, List, Optional, cast
 
 from fastapi import HTTPException, Request, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
+from fastapi.responses import HTMLResponse, RedirectResponse
 
 from app.config import DEFAULT_CONFIG, RESPONSE_STYLES
 from app.models import (
@@ -180,7 +180,8 @@ class {name}(unreal.EditorUtilityWidget):
     return script
 
 
-# Session messages for execute_command context (global state for single-user UE integration)
+# Session messages for execute_command context
+# (global state for single-user UE integration)
 session_messages: List[Dict[str, str]] = []
 
 
@@ -191,33 +192,44 @@ def get_system_message(app_config: Dict[str, Any]) -> str:
                                        RESPONSE_STYLES["descriptive"])
     style_modifier = style_config["prompt_modifier"]
 
-    base_msg = (
-        "You are an AI assistant for Unreal Engine 5.6. "
-        "Generate structured prose describing editor state and scene contents. "
-        "Use terminology appropriate for UE5, include specific names and values. "
-        "\n\n"
-        "IMPORTANT CAPABILITIES:\n"
-        "When users ask about THEIR specific project/editor state, "
-        "you can trigger real-time data collection by responding with "
-        "[UE_REQUEST] tokens:\n"
-        "\n"
-        "VIEWPORT & SCENE:\n"
-        "- [UE_REQUEST] describe_viewport - When user asks 'describe my viewport', 'what's in my scene', 'describe what I see'\n"
-        "  Use this for 3D viewport scene description, actors, lighting, camera\n"
-        "\n"
-        "BLUEPRINTS:\n"
-        "- [UE_REQUEST] capture_blueprint - ONLY when user explicitly asks to 'capture blueprint' or 'screenshot blueprint'\n"
-        "  Requires Blueprint Editor to be open. NOT for viewport description!\n"
-        "- [UE_REQUEST] list_blueprints - List all Blueprint assets in project\n"
-        "\n"
-        "PROJECT INFO:\n"
-        "- [UE_REQUEST] get_project_info - Get project name, modules, blueprints count\n"
-        "- [UE_REQUEST] browse_files - Browse project file structure and count files\n"
-        "\n"
-        "CRITICAL: 'describe viewport' = describe_viewport, NOT capture_blueprint!\n"
-        "\n"
-        "For GENERAL advice (e.g., 'how do I create a C++ file'), provide "
-        "helpful guidance without tokens. ")
+    base_msg = ("You are an AI assistant for Unreal Engine 5.6. "
+                "Generate structured prose describing editor state and "
+                "scene contents. "
+                "Use terminology appropriate for UE5, include specific "
+                "names and values. "
+                "\n\n"
+                "IMPORTANT CAPABILITIES:\n"
+                "When users ask about THEIR specific project/editor state, "
+                "you can trigger real-time data collection by responding "
+                "with [UE_REQUEST] tokens:\n"
+                "\n"
+                "VIEWPORT & SCENE:\n"
+                "- [UE_REQUEST] describe_viewport - When user asks "
+                "'describe my viewport', 'what's in my scene', "
+                "'describe what I see'\n"
+                "  Use this for 3D viewport scene description, actors, "
+                "lighting, camera\n"
+                "\n"
+                "BLUEPRINTS:\n"
+                "- [UE_REQUEST] capture_blueprint - ONLY when user "
+                "explicitly asks to 'capture blueprint' or "
+                "'screenshot blueprint'\n"
+                "  Requires Blueprint Editor to be open. NOT for "
+                "viewport description!\n"
+                "- [UE_REQUEST] list_blueprints - List all Blueprint "
+                "assets in project\n"
+                "\n"
+                "PROJECT INFO:\n"
+                "- [UE_REQUEST] get_project_info - Get project name, "
+                "modules, blueprints count\n"
+                "- [UE_REQUEST] browse_files - Browse project file "
+                "structure and count files\n"
+                "\n"
+                "CRITICAL: 'describe viewport' = describe_viewport, "
+                "NOT capture_blueprint!\n"
+                "\n"
+                "For GENERAL advice (e.g., 'how do I create a C++ file'), "
+                "provide helpful guidance without tokens. ")
     return base_msg + style_modifier
 
 
@@ -302,28 +314,31 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                     "1. Open Unreal Editor",
                     "2. Open Python Console (Tools → Python Console)",
                     "3. Run: import AIAssistant.main",
-                    "4. Check Output Log for '✅ Project registered' message"
+                    ("4. Check Output Log for "
+                     "'✅ Project registered' message")
                 ]
             }
         except PermissionError:
             return {
                 "success":
                 False,
-                "error":
-                "Permission denied. The browser cannot write to your local file system. Please download the client ZIP and extract manually."
+                "error": ("Permission denied. The browser cannot write to "
+                          "your local file system. Please download the "
+                          "client ZIP and extract manually.")
             }
         except Exception as e:
             return {
                 "success":
                 False,
-                "error":
-                f"Deployment failed: {str(e)}. Browser cannot access local files - please use manual download."
+                "error": (f"Deployment failed: {str(e)}. Browser cannot "
+                          "access local files - please use manual download.")
             }
 
     @app.get("/deploy/modern")
     async def modern_deploy_page():
         """Serve the modern File System Access API deployment page."""
         from pathlib import Path
+
         template_path = Path("app/templates/file_system_access.html")
         if template_path.exists():
             content = template_path.read_text()
@@ -340,13 +355,13 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         installer_path = Path("scripts/deploy_agent_installer.bat")
         if installer_path.exists():
             content = installer_path.read_text()
-            return Response(
-                content=content,
-                media_type="text/plain",
-                headers={
-                    "Content-Disposition":
-                    "attachment; filename=deploy_agent_installer.bat"
-                })
+            return Response(content=content,
+                            media_type="text/plain",
+                            headers={
+                                "Content-Disposition":
+                                ("attachment; "
+                                 "filename=deploy_agent_installer.bat")
+                            })
         return {"error": "Installer not found"}
 
     @app.post("/api/deploy_agent_bootstrap")
@@ -363,7 +378,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                             media_type="text/plain",
                             headers={
                                 "Content-Disposition":
-                                "attachment; filename=deploy_agent.py",
+                                ("attachment; filename=deploy_agent.py"),
                                 "Cache-Control":
                                 "no-cache, no-store, must-revalidate"
                             })
@@ -383,28 +398,10 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                             media_type="application/octet-stream",
                             headers={
                                 "Content-Disposition":
-                                "attachment; filename=ue5_protocol_handler.reg"
+                                ("attachment; "
+                                 "filename=ue5_protocol_handler.reg")
                             })
         return {"error": "Protocol handler not found"}
-
-    @app.get("/api/get_latest_installer")
-    async def get_latest_installer():
-        """Provides the latest installer, bypassing CDN with cache-control headers."""
-        from pathlib import Path
-        script_path = Path("scripts/install_client.bat")
-        if script_path.exists():
-            content = script_path.read_text()
-            return Response(
-                content=content,
-                media_type="text/plain",
-                headers={
-                    "Content-Disposition":
-                    "attachment; filename=install_ue5_assistant.bat",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                })
-        return {"error": "Installer script not found"}
 
     @app.get("/api/get_installer_script")
     async def get_installer_script_new():
@@ -416,36 +413,112 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         script_path = Path("scripts/install_client.bat")
         if script_path.exists():
             content = script_path.read_text()
-            return Response(
-                content=content,
-                media_type="text/plain",
-                headers={
-                    "Content-Disposition":
-                    "attachment; filename=install_ue5_assistant.bat",
-                    "Cache-Control": "no-cache, no-store, must-revalidate",
-                    "Pragma": "no-cache",
-                    "Expires": "0"
-                })
+            return Response(content=content,
+                            media_type="text/plain",
+                            headers={
+                                "Content-Disposition":
+                                ("attachment; "
+                                 "filename=install_ue5_assistant.bat"),
+                                "Cache-Control":
+                                "no-cache, no-store, must-revalidate",
+                                "Pragma":
+                                "no-cache",
+                                "Expires":
+                                "0"
+                            })
         return {"error": "Installer script not found"}
 
     @app.post("/api/installer_script")
     async def get_installer_script_post():
-        """POST version to bypass CDN cache completely."""
+        """POST version to bypass CDN cache completely - with forced fix."""
         from pathlib import Path
 
         from fastapi.responses import Response
 
+        # Force read the actual file from disk, bypassing any caching
+        script_path = Path("scripts/install_ue5_assistant.ps1")
+        if script_path.exists():
+            # Direct file read with fresh handle
+            content = script_path.read_text(encoding='utf-8')
+
+            return Response(content=content,
+                            media_type="text/plain; charset=utf-8",
+                            headers={
+                                "Content-Disposition":
+                                ("attachment; "
+                                 "filename=install_ue5_assistant.ps1"),
+                                "Cache-Control":
+                                "no-cache, no-store, must-revalidate",
+                                "Pragma":
+                                "no-cache",
+                                "X-Timestamp":
+                                str(__import__('time').time())
+                            })
+        return {"error": "Installer script not found"}
+
+    @app.post("/api/get_installer_v3")
+    async def get_installer_script_v3():
+        """POST endpoint to bypass CDN cache.
+
+        Returns embedded PowerShell batch installer.
+        """
+        import hashlib
+        from pathlib import Path
+
+        from fastapi.responses import Response
+
+        script_path = Path("scripts/install_client.bat")
+        if script_path.exists():
+            content = script_path.read_text(encoding='utf-8')
+            content_hash = hashlib.md5(content.encode()).hexdigest()[:8]
+
+            return Response(content=content,
+                            media_type="text/plain; charset=utf-8",
+                            headers={
+                                "Content-Disposition":
+                                ("attachment; "
+                                 "filename=install_ue5_assistant.bat"),
+                                "Cache-Control":
+                                ("private, max-age=0, no-store, "
+                                 "no-cache, must-revalidate"),
+                                "CDN-Cache-Control":
+                                "no-store",
+                                "Surrogate-Control":
+                                "no-store",
+                                "Pragma":
+                                "no-cache",
+                                "Expires":
+                                "0",
+                                "X-Content-Hash":
+                                content_hash,
+                                "X-Timestamp":
+                                str(__import__('time').time())
+                            })
+        return {"error": "Installer script not found"}
+
+    @app.post("/api/installer_script_v2")
+    async def get_installer_script_fresh():
+        """Fresh endpoint to bypass all caching layers."""
+        from pathlib import Path
+
+        from fastapi.responses import Response
+
+        # Read the file directly
         script_path = Path("scripts/install_ue5_assistant.ps1")
         if script_path.exists():
             content = script_path.read_text(encoding='utf-8')
-            return Response(
-                content=content,
-                media_type="text/plain; charset=utf-8",
-                headers={
-                    "Content-Disposition":
-                    "attachment; filename=install_ue5_assistant.ps1",
-                    "Cache-Control": "no-cache, no-store, must-revalidate"
-                })
+
+            return Response(content=content,
+                            media_type="text/plain; charset=utf-8",
+                            headers={
+                                "Content-Disposition":
+                                ("attachment; "
+                                 "filename=install_ue5_assistant.ps1"),
+                                "Cache-Control":
+                                "no-cache, no-store, must-revalidate",
+                                "Pragma":
+                                "no-cache"
+                            })
         return {"error": "Installer script not found"}
 
     @app.post("/api/client_manifest")
@@ -515,14 +588,22 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                         arcname = str(file_path.relative_to("ue5_client"))
                         zip_file.write(file_path, arcname)
 
+            # Also include init_unreal.py and test_connection.py at root level
+            for extra_file in ["init_unreal.py", "test_connection.py"]:
+                extra_path = Path(f"ue5_client/{extra_file}")
+                if extra_path.exists():
+                    zip_file.write(extra_path, extra_file)
+
         zip_buffer.seek(0)
 
         # POST requests bypass CDN, but add headers anyway
         headers = {
-            "Content-Disposition":
-            "attachment; filename=UE5_AIAssistant_Client.zip",
-            "Cache-Control": "no-cache, no-store, must-revalidate",
-            "X-Content-Version": str(int(time.time()))
+            "Content-Disposition": ("attachment; "
+                                    "filename=UE5_AIAssistant_Client.zip"),
+            "Cache-Control":
+            "no-cache, no-store, must-revalidate",
+            "X-Content-Version":
+            str(int(time.time()))
         }
 
         return StreamingResponse(zip_buffer,
@@ -533,8 +614,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     async def download_client():
         """
         Download client bundle via GET (reliable Replit-compatible endpoint).
-        This is the primary download endpoint used by UE5 auto-update.
-        Returns a proper zip archive.
+        This is the primary download endpoint used by installers.
+        Returns ZIP for Windows compatibility (PowerShell Expand-Archive).
         """
         import io
         import time
@@ -543,7 +624,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
         from fastapi.responses import StreamingResponse
 
-        # Create in-memory zip
+        # Create in-memory ZIP for Windows native support
         zip_buffer = io.BytesIO()
 
         with zipfile.ZipFile(zip_buffer, 'w',
@@ -557,16 +638,26 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                         arcname = str(file_path.relative_to("ue5_client"))
                         zip_file.write(file_path, arcname)
 
+            # Also include init_unreal.py and test_connection.py at root level
+            for extra_file in ["init_unreal.py", "test_connection.py"]:
+                extra_path = Path(f"ue5_client/{extra_file}")
+                if extra_path.exists():
+                    zip_file.write(extra_path, extra_file)
+
         zip_buffer.seek(0)
 
         # Add cache-busting headers
         headers = {
-            "Content-Disposition":
-            "attachment; filename=ue5_assistant_client.zip",
-            "Cache-Control": "no-cache, no-store, must-revalidate",
-            "Pragma": "no-cache",
-            "Expires": "0",
-            "X-Content-Version": str(int(time.time()))
+            "Content-Disposition": ("attachment; "
+                                    "filename=UE5_AIAssistant_Client.zip"),
+            "Cache-Control":
+            "no-cache, no-store, must-revalidate",
+            "Pragma":
+            "no-cache",
+            "Expires":
+            "0",
+            "X-Content-Version":
+            str(int(time.time()))
         }
 
         return StreamingResponse(zip_buffer,
@@ -605,7 +696,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         Maintains short-term conversation context across turns.
         """
         import openai
-        # Accept both "prompt" (new) and "user_input" (legacy) for backwards compatibility
+
+        # Accept both "prompt" (new) and "user_input" (legacy)
+        # for backwards compatibility
         user_input = request.get("prompt") or request.get("user_input", "")
         if not user_input:
             return {"success": False, "error": "No prompt provided."}
@@ -730,6 +823,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         import json
 
         import openai
+
         user_question = request.get("question", "")
         context_data = request.get("context", {})
         context_type = request.get("context_type", "unknown")
@@ -781,6 +875,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         Takes a factual string from UE and converts it to structured technical prose.
         """
         import openai
+
         summary_text = request.get("summary", "")
         if not summary_text:
             return {"error": "No summary text provided."}
@@ -794,10 +889,13 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                         "role":
                         "system",
                         "content":
-                        ("Convert the following technical data into structured technical prose. "
-                         "Organize information into logical groups (spatial layout, actors by type, lighting setup). "
-                         "Use precise terminology and include specific names and values."
-                         ),
+                        ("Convert the following technical data into "
+                         "structured technical prose. "
+                         "Organize information into logical groups "
+                         "(spatial layout, actors by type, "
+                         "lighting setup). "
+                         "Use precise terminology and include "
+                         "specific names and values."),
                     },
                     {
                         "role": "user",
@@ -881,8 +979,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         # Log to conversation history
         user_prompt = "Describe viewport"
         actors_count = context.actors.get("total", 0) if context.actors else 0
-        has_selection = context.selection.get(
-            "count", 0) > 0 if context.selection else False
+        has_selection = (context.selection.get("count", 0) > 0
+                         if context.selection else False)
         metadata = {
             "actors_count": actors_count,
             "has_selection": has_selection
@@ -1170,6 +1268,15 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         result = registry.register_project(project_id, project_data)
         return result
 
+    @app.delete("/api/project/{project_id}")
+    async def delete_project(project_id: str):
+        """Delete a project from the registry."""
+        from app.project_registry import get_registry
+
+        registry = get_registry()
+        result = registry.delete_project(project_id)
+        return result
+
     @app.get("/api/projects")
     async def list_projects():
         """List all registered projects."""
@@ -1223,10 +1330,20 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
         return result
 
+    @app.delete("/api/projects")
+    async def clear_all_projects():
+        """Clear all projects from the registry."""
+        from app.project_registry import get_registry
+
+        registry = get_registry()
+        result = registry.clear_all_projects()
+        return result
+
     @app.get("/dashboard", response_class=HTMLResponse)
     async def dashboard():
         """Serve the unified dashboard with Project Hub."""
         from pathlib import Path
+
         dashboard_path = Path(
             __file__).parent / "templates" / "unified_dashboard.html"
         return HTMLResponse(content=dashboard_path.read_text())
@@ -1235,6 +1352,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     async def project_hub():
         """Serve the Project Hub HTML page."""
         from pathlib import Path
+
         hub_path = Path(
             __file__).parent / "templates" / "dashboard_project_hub.html"
         return HTMLResponse(content=hub_path.read_text())
@@ -1265,22 +1383,31 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 project_path = active_project.get('path', '')
                 project_metadata = active_project.get('metadata', {})
 
-                context = f"""You are an AI assistant for Unreal Engine 5 with LIVE project data access.
+                context = (f"""You are an AI assistant for Unreal Engine 5 "
+                    f"with LIVE project data access.
 
 Active Project: {project_name}
 Path: {project_path}
 Metadata: {project_metadata}
 
-IMPORTANT: You can collect REAL data from the running UE5 editor by using [UE_REQUEST] tokens:
+IMPORTANT: You can collect REAL data from the running UE5 "
+                    f"editor by using [UE_REQUEST] tokens:
 
 - [UE_REQUEST] get_project_info - Get actual project modules, blueprints count
-- [UE_REQUEST] browse_files - Browse and COUNT files in project (use for "how many files")
+- [UE_REQUEST] browse_files - Browse and COUNT files in "
+                    f"project (use for "how many files")
 - [UE_REQUEST] list_blueprints - List all Blueprint assets
 - [UE_REQUEST] describe_viewport - Describe 3D viewport scene
 
-When users ask about their project's actual data (file counts, blueprints, etc), ALWAYS use the appropriate [UE_REQUEST] to get real data instead of guessing. Respond ONLY with the [UE_REQUEST] token, nothing else."""
+When users ask about their project's actual data "
+                    f"(file counts, blueprints, etc), ALWAYS use the "
+                    f"appropriate [UE_REQUEST] to get real data instead "
+                    f"of guessing. Respond ONLY with the [UE_REQUEST] "
+                    f"token, nothing else.""")
             else:
-                context = "You are an AI assistant for Unreal Engine 5 development. No active project detected. Provide general technical guidance."
+                context = ("You are an AI assistant for Unreal Engine 5 "
+                           "development. No active project detected. "
+                           "Provide general technical guidance.")
 
             # Call OpenAI API to determine if UE_REQUEST is needed
             response = openai.chat.completions.create(
@@ -1333,12 +1460,15 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                                         "role":
                                         "system",
                                         "content":
-                                        f"You are an AI assistant. Format this UE5 data into a helpful response for: {query}"
+                                        (f"You are an AI assistant. Format this "
+                                         f"UE5 data into a helpful response for: "
+                                         f"{query}")
                                     }, {
                                         "role":
                                         "user",
                                         "content":
-                                        f"Raw data from UE5:\n{ue5_data}\n\nOriginal question: {query}"
+                                        (f"Raw data from UE5:\n{ue5_data}\n\n"
+                                         f"Original question: {query}")
                                     }],
                                     temperature=0.7,
                                     max_tokens=1500)
@@ -1351,8 +1481,8 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                                     "response":
                                     formatted_response,
                                     "project_context":
-                                    active_project["name"]
-                                    if active_project else None,
+                                    (active_project["name"]
+                                     if active_project else None),
                                     "ue5_data":
                                     ue5_data
                                 }
@@ -1363,19 +1493,27 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                                 ) if ue5_response else "Connection timeout"
                                 return {
                                     "response":
-                                    f"⚠️ UE5 client didn't respond to: {action}\n\nError: {error_msg}\n\nMake sure your UE5 project has the AI Assistant running (import AIAssistant.main in UE5 Python Console).",
+                                    (f"⚠️ UE5 client didn't respond to: "
+                                     f"{action}\n\nError: {error_msg}\n\n"
+                                     "Make sure your UE5 project has the AI "
+                                     "Assistant running (import AIAssistant.main "
+                                     "in UE5 Python Console)."),
                                     "project_context":
-                                    active_project["name"]
-                                    if active_project else None
+                                    (active_project["name"]
+                                     if active_project else None)
                                 }
                         except Exception as e:
                             # Connection failed - inform user
                             return {
                                 "response":
-                                f"🔄 This query requires live data from your UE5 editor.\n\nAction needed: {action}\n\nError connecting to UE5: {str(e)}\n\nTo enable automatic data collection, make sure your UE5 project has the AI Assistant client running.",
-                                "project_context":
-                                active_project["name"]
-                                if active_project else None,
+                                (f"🔄 This query requires live data from "
+                                 f"your UE5 editor.\n\nAction needed: {action}"
+                                 f"\n\nError connecting to UE5: {str(e)}\n\n"
+                                 "To enable automatic data collection, make "
+                                 "sure your UE5 project has the AI Assistant "
+                                 "client running."),
+                                "project_context": (active_project["name"] if
+                                                    active_project else None),
                                 "ue_request":
                                 action
                             }
@@ -1383,16 +1521,21 @@ When users ask about their project's actual data (file counts, blueprints, etc),
                     # No active project
                     return {
                         "response":
-                        f"🔄 This query requires live data from your UE5 editor.\n\nAction needed: {action}\n\nNo active project selected. Please select a project first.",
-                        "project_context": None,
-                        "ue_request": action
+                        (f"🔄 This query requires live data from "
+                         f"your UE5 editor.\n\nAction needed: {action}\n\n"
+                         "No active project selected. Please select a "
+                         "project first."),
+                        "project_context":
+                        None,
+                        "ue_request":
+                        action
                     }
 
             return {
                 "response":
                 ai_response,
                 "project_context":
-                active_project["name"] if active_project else None
+                (active_project["name"] if active_project else None)
             }
         except Exception as e:
             return {"error": str(e)}
@@ -1487,18 +1630,66 @@ When users ask about their project's actual data (file counts, blueprints, etc),
 
     @app.post("/api/trigger_auto_update")
     async def trigger_auto_update():
-        """Trigger auto-update for all connected UE5 clients (called on backend republish)."""
+        """
+        Trigger auto-update for all connected UE5 clients.
+
+        Called on backend republish.
+        """
+        import time
+
         from app.websocket_manager import get_manager
 
-        manager = get_manager()
-        result = await manager.broadcast_update_to_ue5_clients()
+        print("📢 Broadcasting auto-update to all UE5 clients...")
 
-        return result
+        try:
+            manager = get_manager()
+
+            # Send auto-update command to all UE5 clients via WebSocket
+            disconnected = []
+            for project_id, websocket in manager.ue5_clients.items():
+                try:
+                    await websocket.send_json({
+                        "type": "auto_update",
+                        "command": "trigger_update"
+                    })
+                except Exception as e:
+                    print(f"Failed to send auto-update to {project_id}: {e}")
+                    disconnected.append(project_id)
+
+            # Clean up disconnected clients
+            for project_id in disconnected:
+                await manager.disconnect_ue5(project_id)
+
+            # Also send to HTTP polling clients
+            if hasattr(manager, 'http_clients'):
+                for project_id in list(manager.http_clients.keys()):
+                    if "pending_commands" not in manager.http_clients[
+                            project_id]:
+                        manager.http_clients[project_id][
+                            "pending_commands"] = []
+                    manager.http_clients[project_id][
+                        "pending_commands"].append({
+                            "type": "auto_update",
+                            "command": "trigger_update",
+                            "timestamp": time.time()
+                        })
+
+            registered_count = len(
+                manager.ue5_clients) + (len(manager.http_clients) if hasattr(
+                    manager, 'http_clients') else 0)
+
+            return {
+                "success": True,
+                "message": "Auto-update triggered for all connected clients",
+                "projects_notified": registered_count
+            }
+        except Exception as e:
+            print(f"❌ Auto-update trigger failed: {e}")
+            return {"success": False, "error": str(e)}
 
     @app.post("/api/generate_utility")
     async def generate_utility(request: dict):
         """Generate UE 5.6 compliant editor utility widget."""
-
         from app.project_registry import get_registry
 
         name = request.get("name", "CustomTool")
@@ -1543,6 +1734,8 @@ When users ask about their project's actual data (file counts, blueprints, etc),
     @app.post("/api/generate_action_plan")
     async def generate_action_plan(request: dict):
         """Generate AI action plan for scene building."""
+        import json
+
         import openai
 
         description = request.get("description", "")
@@ -1554,7 +1747,8 @@ When users ask about their project's actual data (file counts, blueprints, etc),
             # Ask AI to create action plan
             model_name = app_config.get("model", "gpt-4o-mini")
 
-            prompt = f"""Create a detailed action plan for building this scene in Unreal Engine:
+            prompt = (f"""Create a detailed action plan for building this """
+                      f"""scene in Unreal Engine:
 
 {description}
 
@@ -1571,15 +1765,15 @@ Example:
   {{"type": "align", "axis": "z", "align_to": "min"}}
 ]
 
-Return ONLY the JSON array, no explanation."""
+Return ONLY the JSON array, no explanation.""")
 
             response = openai.chat.completions.create(
                 model=model_name,
                 messages=[{
                     "role":
                     "system",
-                    "content":
-                    "You are a UE5 scene planning AI. Generate precise action plans."
+                    "content": ("You are a UE5 scene planning AI. "
+                                "Generate precise action plans.")
                 }, {
                     "role": "user",
                     "content": prompt
@@ -1589,7 +1783,6 @@ Return ONLY the JSON array, no explanation."""
             plan_text = response.choices[0].message.content or ""
 
             # Try to parse JSON
-            import json
             start = plan_text.find('[')
             end = plan_text.rfind(']') + 1
 
@@ -1749,56 +1942,13 @@ Return ONLY the JSON array, no explanation."""
 
         return {"success": True}
 
-    @app.post("/api/trigger_auto_update")
-    async def trigger_auto_update():
-        """Trigger auto-update on all connected UE5 clients."""
-        import time
-
-        from app.websocket_manager import get_manager
-
-        print("📢 Broadcasting auto-update to all UE5 clients...")
-
-        try:
-            manager = get_manager()
-
-            # Send auto-update command to all UE5 clients via WebSocket
-            await manager.broadcast_to_ue5({
-                "type": "auto_update",
-                "command": "trigger_update"
-            })
-
-            # Also send to HTTP polling clients
-            if hasattr(manager, 'http_clients'):
-                for project_id in list(manager.http_clients.keys()):
-                    if "pending_commands" not in manager.http_clients[
-                            project_id]:
-                        manager.http_clients[project_id][
-                            "pending_commands"] = []
-                    manager.http_clients[project_id][
-                        "pending_commands"].append({
-                            "type": "auto_update",
-                            "command": "trigger_update",
-                            "timestamp": time.time()
-                        })
-
-            registered_count = len(manager.registered_projects) if hasattr(
-                manager, 'registered_projects') else 0
-
-            return {
-                "success": True,
-                "message": "Auto-update triggered for all connected clients",
-                "projects_notified": registered_count
-            }
-        except Exception as e:
-            print(f"❌ Auto-update trigger failed: {e}")
-            return {"success": False, "error": str(e)}
-
     @app.post("/api/emergency_update")
     async def emergency_update(request: Request):
         """
         Trigger emergency update (safe mode with no restart).
         This is for fixing thread safety crashes without triggering UE5 restart.
         """
+        import time
         from datetime import datetime
 
         from app.websocket_manager import get_manager
@@ -1813,9 +1963,8 @@ Return ONLY the JSON array, no explanation."""
                 # No body or invalid JSON - that's fine, use defaults
                 pass
 
-            print(
-                "🚨 Broadcasting EMERGENCY UPDATE (no-restart mode) to all UE5 clients..."
-            )
+            print("🚨 Broadcasting EMERGENCY UPDATE (no-restart mode) "
+                  "to all UE5 clients...")
 
             manager = get_manager()
 
@@ -1830,8 +1979,8 @@ Return ONLY the JSON array, no explanation."""
                 "trigger_update",
                 "mode":
                 "no_restart",  # Critical: tells client not to restart
-                "message":
-                "Emergency update - files will be updated but UE5 will NOT restart. Please restart manually."
+                "message": ("Emergency update - files will be updated but UE5 "
+                            "will NOT restart. Please restart manually.")
             }
 
             # Send to WebSocket clients
@@ -1881,22 +2030,19 @@ Return ONLY the JSON array, no explanation."""
 
             return {
                 "status":
-                "success",  # Changed from "success" to "status" to match JavaScript expectation
-                "message":
-                "Emergency update (no-restart mode) triggered for all connected clients",
+                "success",
+                "message": ("Emergency update (no-restart mode) triggered for "
+                            "all connected clients"),
                 "mode":
                 mode,
                 "projects_notified":
                 total_notified,
                 "instructions":
-                "Files will be updated. Users must manually restart UE5 after update completes."
+                ("Files will be updated. Users must manually restart "
+                 "UE5 after update completes.")
             }
         except Exception as e:
             print(f"❌ Emergency update trigger failed: {e}")
             import traceback
             traceback.print_exc()
-            return {
-                "status":
-                "error",  # Changed from "success": False to "status": "error" to match JavaScript expectation
-                "error": str(e)
-            }
+            return {"status": "error", "error": str(e)}

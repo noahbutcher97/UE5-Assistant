@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UE5 AI Assistant - Control Center</title>
+    <title>UE5 AI Assistant - Ultimate Control Center</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-        
+
         :root {
             --primary-cyan: #00f5ff;
             --primary-purple: #8b5cf6;
@@ -18,18 +19,20 @@
             --text-primary: #e0e6ed;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
+            --error-color: #ef4444;
+            --warning-color: #fbbf24;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-dark);
-            background-image: 
+            background-image:
                 radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(0, 245, 255, 0.1) 0px, transparent 50%),
                 linear-gradient(rgba(0, 245, 255, 0.02) 1px, transparent 1px),
@@ -39,12 +42,12 @@
             color: var(--text-primary);
             animation: bgPulse 20s ease-in-out infinite;
         }
-        
+
         @keyframes bgPulse {
             0%, 100% { background-position: 0% 0%, 100% 100%, 0 0, 0 0; }
             50% { background-position: 100% 100%, 0% 0%, 25px 25px, 25px 25px; }
         }
-        
+
         /* Header */
         .header {
             background: var(--bg-card);
@@ -56,7 +59,7 @@
             z-index: 100;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
         }
-        
+
         .header h1 {
             color: var(--primary-cyan);
             font-size: 2em;
@@ -66,19 +69,19 @@
             margin-bottom: 16px;
             animation: glow 3s ease-in-out infinite;
         }
-        
+
         @keyframes glow {
             0%, 100% { text-shadow: 0 0 30px rgba(0, 245, 255, 0.6); }
             50% { text-shadow: 0 0 50px rgba(0, 245, 255, 0.8), 0 0 80px rgba(139, 92, 246, 0.4); }
         }
-        
+
         .header-controls {
             display: flex;
             align-items: center;
             gap: 16px;
             flex-wrap: wrap;
         }
-        
+
         .project-selector {
             display: flex;
             align-items: center;
@@ -86,13 +89,13 @@
             flex: 1;
             min-width: 250px;
         }
-        
+
         .project-selector label {
             color: var(--text-secondary);
             font-weight: 500;
             font-size: 14px;
         }
-        
+
         .project-selector select {
             padding: 10px 16px;
             background: rgba(10, 14, 39, 0.9);
@@ -104,14 +107,14 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
         }
-        
+
         .project-selector select:hover,
         .project-selector select:focus {
             border-color: var(--primary-cyan);
             box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
             outline: none;
         }
-        
+
         .status-badge {
             padding: 8px 16px;
             background: rgba(0, 245, 255, 0.1);
@@ -125,7 +128,7 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .status-dot {
             width: 8px;
             height: 8px;
@@ -133,12 +136,12 @@
             background: var(--primary-cyan);
             animation: pulse 2s ease-in-out infinite;
         }
-        
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 1; }
             50% { transform: scale(1.2); opacity: 0.7; }
         }
-        
+
         .btn-update {
             padding: 10px 20px;
             background: linear-gradient(135deg, var(--primary-green) 0%, #059669 100%);
@@ -154,16 +157,21 @@
             gap: 8px;
             box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
         }
-        
+
         .btn-update:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(16, 185, 129, 0.5);
         }
-        
+
         .btn-update:active {
             transform: translateY(0);
         }
-        
+
+        .btn-update:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
         .btn-emergency {
             padding: 10px 20px;
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
@@ -180,7 +188,7 @@
             box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
             animation: emergencyPulse 2s ease-in-out infinite;
         }
-        
+
         @keyframes emergencyPulse {
             0%, 100% { 
                 box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
@@ -190,17 +198,17 @@
                 transform: translateY(-1px);
             }
         }
-        
+
         .btn-emergency:hover {
             transform: translateY(-2px);
             box-shadow: 0 12px 40px rgba(239, 68, 68, 0.7);
             animation: none;
         }
-        
+
         .btn-emergency:active {
             transform: translateY(0);
         }
-        
+
         /* Tabs */
         .tabs {
             display: flex;
@@ -212,7 +220,7 @@
             scrollbar-width: thin;
             scrollbar-color: var(--primary-cyan) transparent;
         }
-        
+
         .tab {
             padding: 16px 24px;
             background: transparent;
@@ -226,7 +234,7 @@
             position: relative;
             white-space: nowrap;
         }
-        
+
         .tab::before {
             content: '';
             position: absolute;
@@ -236,25 +244,25 @@
             transition: opacity 0.3s;
             border-radius: 8px 8px 0 0;
         }
-        
+
         .tab:hover::before {
             opacity: 0.1;
         }
-        
+
         .tab:hover {
             color: var(--primary-cyan);
         }
-        
+
         .tab.active {
             color: var(--primary-cyan);
             border-bottom-color: var(--primary-cyan);
             text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
         }
-        
+
         .tab.active::before {
             opacity: 0.15;
         }
-        
+
         /* Tab Content */
         .tab-content {
             display: none;
@@ -263,11 +271,11 @@
             margin: 0 auto;
             animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -278,7 +286,7 @@
                 transform: translateY(0);
             }
         }
-        
+
         /* Card Styles */
         .card {
             background: var(--bg-card);
@@ -291,7 +299,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .card::before {
             content: '';
             position: absolute;
@@ -303,50 +311,107 @@
             opacity: 0;
             transition: opacity 0.3s;
         }
-        
+
         .card:hover::before {
             opacity: 1;
         }
-        
+
         .card:hover {
             border-color: var(--primary-cyan);
             box-shadow: 0 0 40px rgba(0, 245, 255, 0.15);
             transform: translateY(-2px);
         }
-        
+
         .card h2 {
             color: var(--primary-cyan);
             margin-bottom: 16px;
             font-size: 24px;
             font-weight: 600;
         }
-        
+
         .card h3 {
             color: var(--primary-purple);
             margin-bottom: 12px;
             font-size: 18px;
             font-weight: 600;
         }
-        
+
         /* Grid Layouts */
         .grid {
             display: grid;
             gap: 20px;
         }
-        
+
         .grid-2 {
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         }
-        
+
         .grid-3 {
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         }
-        
+
+        /* Project Cards */
+        .project-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .project-card:hover::before {
+            opacity: 1;
+        }
+
+        .project-card:hover {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 40px rgba(0, 245, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .project-card.active {
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 30px rgba(0, 245, 255, 0.3);
+        }
+
+        .project-card .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .project-card .status-online {
+            background: var(--primary-green);
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+        }
+
+        .project-card .status-offline {
+            background: var(--error-color);
+        }
+
         /* Input Styles */
         .input-group {
             margin-bottom: 20px;
         }
-        
+
         .input-group label {
             display: block;
             margin-bottom: 8px;
@@ -354,7 +419,7 @@
             font-size: 14px;
             font-weight: 500;
         }
-        
+
         input[type="text"],
         input[type="number"],
         textarea,
@@ -369,7 +434,7 @@
             font-family: inherit;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         input:focus,
         textarea:focus,
         select:focus {
@@ -377,13 +442,13 @@
             border-color: var(--primary-cyan);
             box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
         }
-        
+
         textarea {
             min-height: 100px;
             resize: vertical;
             font-family: 'JetBrains Mono', monospace;
         }
-        
+
         /* Button Styles */
         .btn {
             padding: 12px 24px;
@@ -399,7 +464,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .btn::before {
             content: '';
             position: absolute;
@@ -412,45 +477,56 @@
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
-        
+
         .btn:hover::before {
             width: 300px;
             height: 300px;
         }
-        
+
         .btn-primary {
             background: linear-gradient(135deg, var(--primary-cyan) 0%, #0891b2 100%);
             color: var(--bg-dark);
             box-shadow: 0 4px 20px rgba(0, 245, 255, 0.3);
         }
-        
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(0, 245, 255, 0.5);
         }
-        
+
         .btn-secondary {
             background: linear-gradient(135deg, var(--primary-purple) 0%, #6d28d9 100%);
             color: white;
             box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3);
         }
-        
+
         .btn-secondary:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(139, 92, 246, 0.5);
         }
-        
+
         .btn-success {
             background: linear-gradient(135deg, var(--primary-green) 0%, #059669 100%);
             color: white;
             box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3);
         }
-        
+
         .btn-success:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 30px rgba(16, 185, 129, 0.5);
         }
-        
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--error-color) 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(239, 68, 68, 0.5);
+        }
+
         /* Output Box */
         .output-box {
             background: rgba(5, 8, 20, 0.9);
@@ -467,50 +543,49 @@
             word-wrap: break-word;
             color: var(--text-primary);
         }
-        
+
         /* Status Messages */
         .status-loading {
             background: rgba(0, 217, 255, 0.1);
             border: 1px solid rgba(0, 217, 255, 0.3);
             color: var(--primary-cyan);
-            animation: pulse 1.5s ease-in-out infinite;
         }
-        
+
         .status-success {
             background: rgba(16, 185, 129, 0.1);
             border: 1px solid rgba(16, 185, 129, 0.3);
             color: var(--primary-green);
         }
-        
+
         .status-error {
             background: rgba(239, 68, 68, 0.1);
             border: 1px solid rgba(239, 68, 68, 0.3);
             color: #ef4444;
         }
-        
+
         .status-warning {
-            background: rgba(255, 107, 53, 0.1);
-            border: 1px solid rgba(255, 107, 53, 0.3);
-            color: #ff6b35;
+            background: rgba(255, 191, 53, 0.1);
+            border: 1px solid rgba(255, 191, 53, 0.3);
+            color: #fbbf24;
         }
-        
+
         /* Loading Spinner */
         .spinner {
             display: inline-block;
             animation: spin 1s linear infinite;
         }
-        
+
         @keyframes spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
-        
+
         /* Tooltip */
         [data-tooltip] {
             position: relative;
             cursor: help;
         }
-        
+
         [data-tooltip]::after {
             content: attr(data-tooltip);
             position: absolute;
@@ -527,13 +602,14 @@
             pointer-events: none;
             transition: opacity 0.3s, transform 0.3s;
             border: 1px solid var(--border-glow);
+            z-index: 1000;
         }
-        
+
         [data-tooltip]:hover::after {
             opacity: 1;
             transform: translateX(-50%) translateY(-4px);
         }
-        
+
         /* Keyboard Shortcut Hint */
         .kbd {
             display: inline-block;
@@ -545,7 +621,7 @@
             font-size: 12px;
             color: var(--text-secondary);
         }
-        
+
         /* Copy Button */
         .copy-btn {
             padding: 4px 12px;
@@ -557,11 +633,11 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .copy-btn:hover {
             background: rgba(0, 245, 255, 0.2);
         }
-        
+
         /* Connection Mode Toggle */
         .mode-toggle {
             background: rgba(0, 0, 0, 0.3);
@@ -570,12 +646,12 @@
             border: 1px solid rgba(139, 92, 246, 0.3);
             margin: 24px 0;
         }
-        
+
         .mode-options {
             display: flex;
             gap: 12px;
         }
-        
+
         .mode-option {
             flex: 1;
             padding: 16px 24px;
@@ -585,75 +661,176 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-align: center;
         }
-        
+
         .mode-option.active {
             background: linear-gradient(135deg, var(--primary-green) 0%, #059669 100%);
             border-color: var(--primary-green);
             box-shadow: 0 8px 30px rgba(16, 185, 129, 0.4);
         }
-        
+
         .mode-option:not(.active) {
             background: rgba(139, 92, 246, 0.1);
             border-color: rgba(139, 92, 246, 0.3);
         }
-        
+
         .mode-option:not(.active):hover {
             border-color: rgba(139, 92, 246, 0.6);
             transform: translateY(-2px);
         }
-        
+
+        /* Conversation Entry */
+        .conversation-entry {
+            border-left: 3px solid var(--border-glow);
+            transition: border-color 0.3s;
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .conversation-entry:hover {
+            border-left: 3px solid var(--primary-cyan);
+        }
+
+        .command-tag {
+            background-color: rgba(0, 245, 255, 0.2);
+            color: var(--primary-cyan);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header {
                 padding: 16px 20px;
             }
-            
+
             .header h1 {
                 font-size: 1.5em;
             }
-            
+
             .header-controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .tab-content {
                 padding: 20px 16px;
             }
-            
+
             .tabs {
                 overflow-x: scroll;
             }
-            
+
             .mode-options {
                 flex-direction: column;
             }
+
+            .grid-2, .grid-3 {
+                grid-template-columns: 1fr;
+            }
         }
-        
+
         /* Scrollbar Styling */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
-        
+
         ::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.3);
         }
-        
+
         ::-webkit-scrollbar-thumb {
             background: var(--primary-cyan);
             border-radius: 4px;
         }
-        
+
         ::-webkit-scrollbar-thumb:hover {
             background: #00d9ff;
+        }
+
+        /* PI Chat */
+        .pi-chat-message {
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            max-width: 80%;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pi-chat-message.user {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            margin-left: auto;
+        }
+
+        .pi-chat-message.assistant {
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .pi-chat-message.thinking {
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            color: var(--primary-cyan);
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
-        <h1>🎮 UE5 AI Assistant - Control Center</h1>
+        <h1><i class="fas fa-robot"></i> UE5 AI Assistant - Ultimate Control Center</h1>
         <div class="header-controls">
             <div class="project-selector">
                 <label>Active Project:</label>
@@ -666,18 +843,17 @@
                 <span>Connecting...</span>
             </div>
             <button class="btn-update" onclick="updateAllClients()" id="updateClientsBtn" data-tooltip="Update client files on all connected UE5 projects">
-                <span style="font-size: 18px;" class="spinner" id="updateSpinner" style="display: none;">⚙️</span>
-                <span style="font-size: 18px;" id="updateIcon">🔄</span>
+                <span class="spinner" id="updateSpinner" style="display: none;">⚙️</span>
+                <span id="updateIcon">🔄</span>
                 <span id="updateText">Update All Clients</span>
             </button>
             <button class="btn-emergency" onclick="emergencyFixUpdate()" id="emergencyUpdateBtn" data-tooltip="Fix crash issues - Safe update mode that won't restart UE5 (you must restart manually)">
-                <span style="font-size: 18px;">🚨</span>
+                <span>🚨</span>
                 <span id="emergencyText">Fix Crash Issues</span>
             </button>
         </div>
     </div>
 
-    <!-- Connection Mode Toggle -->
     <div class="mode-toggle" style="margin: 24px 32px;">
         <div style="margin-bottom: 16px;">
             <h3 style="color: var(--primary-purple); margin: 0 0 8px 0; font-size: 16px; display: flex; align-items: center; gap: 8px;">
@@ -700,18 +876,18 @@
         </div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
-        <button class="tab active" onclick="showTab('project-hub')">🎮 Project Hub</button>
-        <button class="tab" onclick="showTab('conversations')">💬 Conversations</button>
-        <button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
-        <button class="tab" onclick="showTab('api')">🔧 API Info</button>
-        <button class="tab" onclick="showTab('about')">ℹ️ About</button>
+        <button class="tab active" onclick="showTab('project-hub')"><i class="fas fa-sitemap"></i> Project Hub</button>
+        <button class="tab" onclick="showTab('live-feed')"><i class="fas fa-satellite-dish"></i> Live Feed</button>
+        <button class="tab" onclick="showTab('project-intelligence')"><i class="fas fa-brain"></i> Project Intelligence</button>
+        <button class="tab" onclick="showTab('guidance')"><i class="fas fa-compass"></i> Guidance</button>
+        <button class="tab" onclick="showTab('settings')"><i class="fas fa-cog"></i> Settings</button>
+        <button class="tab" onclick="showTab('diagnostics')"><i class="fas fa-heart-pulse"></i> Diagnostics</button>
+        <button class="tab" onclick="showTab('about')"><i class="fas fa-info-circle"></i> About</button>
     </div>
 
     <!-- Project Hub Tab -->
     <div id="project-hub" class="tab-content active">
-        <!-- AI Query Section -->
         <div class="card" style="background: linear-gradient(135deg, rgba(0,217,255,0.08) 0%, rgba(139,92,246,0.08) 100%); border: 2px solid var(--border-glow);">
             <div style="text-align: center; margin-bottom: 24px;">
                 <h2 style="font-size: 28px; margin-bottom: 12px;">🤖 AI-Powered UE5 Intelligence</h2>
@@ -723,7 +899,7 @@
                     style="flex: 1; font-size: 16px; padding: 16px;"
                     onkeypress="if(event.key === 'Enter') queryProject()">
                 <button class="btn btn-primary" onclick="queryProject()" style="padding: 16px 32px; font-size: 16px;">
-                    🔍 Ask AI
+                    <i class="fas fa-search"></i> Ask AI
                 </button>
             </div>
             <div style="font-size: 13px; color: var(--text-muted); display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
@@ -736,65 +912,60 @@
             </div>
         </div>
 
-        <!-- Response Output -->
         <div class="card" id="responseCard" style="display: none;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <h3 style="margin: 0;">📝 AI Response</h3>
-                <button class="copy-btn" onclick="copyResponse()">📋 Copy</button>
+                <h3 style="margin: 0;"><i class="fas fa-file-alt"></i> AI Response</h3>
+                <button class="copy-btn" onclick="copyResponse()"><i class="fas fa-copy"></i> Copy</button>
             </div>
             <div id="projectQueryResult" class="output-box"></div>
         </div>
 
-        <!-- Project Management -->
         <div class="grid grid-2">
             <div class="card">
-                <h3>🚀 Deploy to New Project</h3>
+                <h3><i class="fas fa-rocket"></i> Deploy to New Project</h3>
                 <p style="color: var(--text-secondary); margin-bottom: 20px;">Install AI Assistant to a new UE5 project</p>
                 <button class="btn btn-success" onclick="downloadInstaller()" style="width: 100%; justify-content: center; padding: 16px;">
-                    <span style="font-size: 24px;">📥</span>
+                    <i class="fas fa-download" style="font-size: 20px;"></i>
                     <span>Download One-Click Installer</span>
                 </button>
                 <div style="margin-top: 16px; padding: 12px; background: rgba(251,191,36,0.1); border-radius: 8px; border: 1px solid rgba(251,191,36,0.3);">
-                    <p style="color: #fbbf24; margin: 0; font-size: 13px;">💡 Double-click .bat file, select your UE5 project folder - fully automated!</p>
+                    <p style="color: #fbbf24; margin: 0; font-size: 13px;"><i class="fas fa-lightbulb"></i> Double-click .bat file, select your UE5 project folder - fully automated!</p>
                 </div>
             </div>
 
             <div class="card">
-                <h3>➕ Register Existing Project</h3>
+                <h3><i class="fas fa-plus-circle"></i> Register Existing Project</h3>
                 <p style="color: var(--text-secondary); margin-bottom: 20px;">Track an already installed project</p>
                 <button class="btn btn-secondary" onclick="toggleProjectForm()" style="width: 100%; justify-content: center; padding: 16px;">
-                    <span style="font-size: 24px;">📋</span>
+                    <i class="fas fa-clipboard-list" style="font-size: 20px;"></i>
                     <span>Register Project</span>
                 </button>
             </div>
         </div>
 
-        <!-- Project Registration Form -->
         <div id="project-form" class="card" style="display: none; border: 2px solid rgba(139,92,246,0.5);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="margin: 0;">➕ Register Existing Project</h3>
+                <h3 style="margin: 0;"><i class="fas fa-plus-circle"></i> Register Existing Project</h3>
                 <button onclick="toggleProjectForm()" style="background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; transition: color 0.3s;" onmouseover="this.style.color='var(--primary-cyan)'" onmouseout="this.style.color='var(--text-muted)'">×</button>
             </div>
             <div class="grid grid-2">
                 <div class="input-group">
                     <label>Project Name</label>
-                    <input type="text" id="manual-name" placeholder="UE5_Assistant">
+                    <input type="text" id="manual-name" placeholder="MyUE5Project">
                 </div>
                 <div class="input-group">
                     <label>Project Path</label>
-                    <input type="text" id="manual-path" placeholder="D:/UnrealProjects/5.6/UE5_Assistant/" list="recent-paths">
-                    <datalist id="recent-paths"></datalist>
+                    <input type="text" id="manual-path" placeholder="D:/UnrealProjects/5.6/MyProject/">
                 </div>
             </div>
             <button class="btn btn-success" onclick="registerManualProject()" style="width: 100%; justify-content: center;">
-                ✅ Register Project
+                <i class="fas fa-check"></i> Register Project
             </button>
         </div>
 
-        <!-- Connected Projects Stats -->
         <div class="card">
-            <h3>📊 Project Statistics</h3>
-            <div class="grid grid-3" id="projectStats">
+            <h3><i class="fas fa-chart-bar"></i> Project Statistics</h3>
+            <div class="grid grid-3">
                 <div style="text-align: center; padding: 20px; background: rgba(0,245,255,0.05); border-radius: 12px; border: 1px solid rgba(0,245,255,0.2);">
                     <div style="font-size: 36px; font-weight: 700; color: var(--primary-cyan); margin-bottom: 8px;" id="totalProjects">0</div>
                     <div style="color: var(--text-secondary); font-size: 14px;">Total Projects</div>
@@ -809,27 +980,121 @@
                 </div>
             </div>
         </div>
+
+        <div class="card">
+            <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0;"><i class="fas fa-folder-open"></i> Registered Projects</h3>
+            </div>
+            <div id="projects-grid" class="grid grid-3">
+                <!-- Project cards will be dynamically inserted here -->
+            </div>
+            <div id="no-projects-message" class="empty-state" style="display: none;">
+                <i class="fas fa-folder-open"></i>
+                <h3 style="font-size: 24px; font-weight: 600; margin-bottom: 8px;">No Projects Registered</h3>
+                <p>Click "Register Project" or run the installer to get started.</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Conversations Tab -->
-    <div id="conversations" class="tab-content">
+    <!-- Live Feed Tab -->
+    <div id="live-feed" class="tab-content">
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0;">💬 Recent Conversations</h2>
-                <div style="display: flex; gap: 12px; align-items: center;">
-                    <label style="display: flex; align-items: center; gap: 8px; color: var(--text-secondary); font-size: 14px; cursor: pointer;">
-                        <input type="checkbox" id="auto-refresh" checked style="accent-color: var(--primary-cyan);">
-                        Auto-refresh (5s)
-                    </label>
-                    <button class="btn btn-primary" onclick="loadConversations()">
-                        <span>🔄</span> Refresh
-                    </button>
+            <div style="display: flex; justify-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;"><i class="fas fa-comments"></i> Recent Conversations</h2>
+                <button class="btn btn-danger" onclick="clearConversations()">
+                    <i class="fas fa-trash-alt"></i> Clear History
+                </button>
+            </div>
+            <div id="conversation-history">
+                <!-- Conversation entries will be dynamically inserted here -->
+            </div>
+            <div id="no-conversations-message" class="empty-state" style="display: none;">
+                <i class="fas fa-comments"></i>
+                <h3 style="font-size: 24px; font-weight: 600; margin-bottom: 8px;">No Conversations Yet</h3>
+                <p>Interact with the AI Assistant in UE5 to see the live feed.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Intelligence Tab -->
+    <div id="project-intelligence" class="tab-content">
+        <div class="card">
+            <h2><i class="fas fa-brain"></i> Project Intelligence</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Ask questions about your active project using AI</p>
+            
+            <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid var(--border-glow); margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-weight: 600; color: var(--primary-purple);">Active Project:</span>
+                    <span id="pi-active-project-name" style="color: var(--primary-cyan);">None</span>
                 </div>
             </div>
-            <div id="conversation-list" style="display: flex; flex-direction: column; gap: 16px;">
-                <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
-                    <div style="font-size: 64px; margin-bottom: 20px; opacity: 0.3;">💬</div>
-                    <p>No conversations yet. Start using the AI Assistant in UE5!</p>
+
+            <div style="background: rgba(5, 8, 20, 0.9); border: 1px solid var(--border-glow); border-radius: 12px; padding: 20px; min-height: 400px; max-height: 500px; overflow-y: auto; margin-bottom: 16px;" id="pi-chat-window">
+                <div class="empty-state">
+                    <i class="fas fa-brain"></i>
+                    <h3 style="font-size: 20px; font-weight: 600; margin-bottom: 8px;">Ready to Help</h3>
+                    <p>Ask me anything about your active project!</p>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 12px;">
+                <input type="text" id="pi-chat-input" placeholder="Ask about your active project..." style="flex: 1;" onkeypress="if(event.key === 'Enter') sendPiMessage()" disabled>
+                <button class="btn btn-primary" onclick="sendPiMessage()" id="pi-send-btn" disabled>
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guidance Tab -->
+    <div id="guidance" class="tab-content">
+        <div class="card">
+            <h2><i class="fas fa-compass"></i> AI Guidance</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Get strategic guidance and implementation advice</p>
+            
+            <div class="grid grid-2">
+                <div>
+                    <div class="input-group">
+                        <label>Your Goal or Question</label>
+                        <textarea id="guidance-query" rows="4" placeholder="e.g., How can I create a dynamic weather system?"></textarea>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Focus Area</label>
+                        <select id="guidance-focus">
+                            <option>General</option>
+                            <option>C++</option>
+                            <option>Blueprints</option>
+                            <option>Materials</option>
+                            <option>AI</option>
+                            <option>Performance</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Include Context:</label>
+                        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="guidance-viewport" style="accent-color: var(--primary-cyan);">
+                                <span>Current Viewport/Scene</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                                <input type="checkbox" id="guidance-project" style="accent-color: var(--primary-cyan);">
+                                <span>Active Project Profile</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="getGuidance()" style="width: 100%; justify-content: center; margin-top: 16px;">
+                        <i class="fas fa-lightbulb"></i> Generate Guidance
+                    </button>
+                </div>
+
+                <div>
+                    <h3><i class="fas fa-file-alt"></i> Generated Guidance</h3>
+                    <div id="guidance-response" class="output-box" style="min-height: 400px;">
+                        <p style="color: var(--text-muted);">Your generated guidance will appear here...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -838,13 +1103,13 @@
     <!-- Settings Tab -->
     <div id="settings" class="tab-content">
         <div class="card">
-            <h2>⚙️ Configuration Settings</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 24px;">Fine-tune AI behavior and response style in real-time</p>
-            
+            <h2><i class="fas fa-cog"></i> Configuration Settings</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Fine-tune AI behavior and response style</p>
+
             <div class="grid" style="gap: 24px;">
                 <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
                     <label style="display: block; margin-bottom: 12px;">
-                        <strong style="color: var(--primary-cyan);">🤖 AI Model</strong>
+                        <strong style="color: var(--primary-cyan);"><i class="fas fa-robot"></i> AI Model</strong>
                         <span style="display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Choose the GPT model for responses</span>
                     </label>
                     <select id="model" style="width: 100%;">
@@ -856,7 +1121,7 @@
 
                 <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
                     <label style="display: block; margin-bottom: 12px;">
-                        <strong style="color: var(--primary-cyan);">📝 Response Style</strong>
+                        <strong style="color: var(--primary-cyan);"><i class="fas fa-pen-fancy"></i> Response Style</strong>
                         <span style="display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Adjust how the AI communicates</span>
                     </label>
                     <select id="response_style" style="width: 100%;">
@@ -870,7 +1135,7 @@
 
                 <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
                     <label style="display: block; margin-bottom: 12px;">
-                        <strong style="color: var(--primary-cyan);">🌡️ Temperature: <span id="temp-value">0.7</span></strong>
+                        <strong style="color: var(--primary-cyan);"><i class="fas fa-temperature-half"></i> Temperature: <span id="temp-value">0.7</span></strong>
                         <span style="display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Higher = more creative, Lower = more focused</span>
                     </label>
                     <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7" 
@@ -880,7 +1145,7 @@
 
                 <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
                     <label style="display: block; margin-bottom: 12px;">
-                        <strong style="color: var(--primary-cyan);">💬 Max Context Turns: <span id="turns-value">6</span></strong>
+                        <strong style="color: var(--primary-cyan);"><i class="fas fa-layer-group"></i> Max Context Turns: <span id="turns-value">6</span></strong>
                         <span style="display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Conversation memory length</span>
                     </label>
                     <input type="range" id="max_context_turns" min="2" max="20" step="1" value="6"
@@ -891,10 +1156,10 @@
 
             <div style="display: flex; gap: 16px; margin-top: 32px;">
                 <button class="btn btn-success" onclick="saveSettings()" style="flex: 1; justify-content: center;">
-                    💾 Save Settings
+                    <i class="fas fa-save"></i> Save Settings
                 </button>
                 <button class="btn btn-secondary" onclick="resetSettings()" style="flex: 1; justify-content: center;">
-                    🔄 Reset to Defaults
+                    <i class="fas fa-undo"></i> Reset to Defaults
                 </button>
             </div>
 
@@ -902,41 +1167,51 @@
         </div>
     </div>
 
-    <!-- API Info Tab -->
-    <div id="api" class="tab-content">
+    <!-- Diagnostics Tab -->
+    <div id="diagnostics" class="tab-content">
         <div class="card">
-            <h2>🔧 API Endpoints</h2>
-            <p style="color: var(--text-secondary); margin-bottom: 24px;">Comprehensive API documentation for UE5 AI Assistant</p>
-            
-            <h3 style="color: var(--primary-purple); margin-top: 24px; margin-bottom: 16px;">Core Endpoints</h3>
-            <div class="grid" style="gap: 12px;">
-                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-cyan); padding: 16px; border-radius: 8px;">
-                    <code style="color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">POST /api/execute_command</code>
-                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">Execute AI commands with context</p>
+            <h2><i class="fas fa-heart-pulse"></i> System Diagnostics</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Monitor system health and perform diagnostics</p>
+
+            <div class="grid grid-2">
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
+                    <h3 style="margin-bottom: 16px;"><i class="fas fa-stethoscope"></i> System Checks</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 6px;">
+                            <span>Backend API</span>
+                            <span id="diag-backend" class="status-loading">Checking...</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 6px;">
+                            <span>OpenAI API</span>
+                            <span id="diag-openai" class="status-loading">Waiting...</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px; background: rgba(0,0,0,0.3); border-radius: 6px;">
+                            <span>WebSocket Dashboard</span>
+                            <span id="diag-websocket" class="status-loading">Waiting...</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="runDiagnostics()" style="width: 100%; justify-content: center; margin-top: 16px;">
+                        <i class="fas fa-play"></i> Run Checks
+                    </button>
                 </div>
-                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-cyan); padding: 16px; border-radius: 8px;">
-                    <code style="color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">GET /api/projects</code>
-                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">List all registered projects</p>
-                </div>
-                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-cyan); padding: 16px; border-radius: 8px;">
-                    <code style="color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">POST /api/register_project</code>
-                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">Register a new UE5 project</p>
-                </div>
-                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-cyan); padding: 16px; border-radius: 8px;">
-                    <code style="color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">GET /api/download_client</code>
-                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">Download client ZIP bundle</p>
+
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
+                    <h3 style="margin-bottom: 16px;"><i class="fas fa-tools"></i> Actions</h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button class="btn btn-update" onclick="updateAllClients()" style="width: 100%; justify-content: center;">
+                            <i class="fas fa-sync-alt"></i> Trigger Auto-Update on All Clients
+                        </button>
+                        <button class="btn-emergency" onclick="emergencyFixUpdate()" style="width: 100%; justify-content: center;">
+                            <i class="fas fa-biohazard"></i> Emergency Update (No Restart)
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <h3 style="color: var(--primary-purple); margin-top: 32px; margin-bottom: 16px;">WebSocket & Polling</h3>
-            <div class="grid" style="gap: 12px;">
-                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-green); padding: 16px; border-radius: 8px;">
-                    <code style="color: var(--primary-green); font-family: 'JetBrains Mono', monospace;">WS /ws/dashboard</code>
-                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">Real-time dashboard connection</p>
-                </div>
-                <div style="background: rgba(0,0,0,0.4); border-left: 3px solid var(--primary-green); padding: 16px; border-radius: 8px;">
-                    <code style="color: var(--primary-green); font-family: 'JetBrains Mono', monospace;">GET /api/ue5/poll</code>
-                    <p style="color: var(--text-secondary); margin-top: 8px; font-size: 14px;">HTTP Polling for commands (fallback)</p>
+            <div style="margin-top: 24px; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; border: 1px solid var(--border-glow);">
+                <h3 style="margin-bottom: 16px;"><i class="fas fa-terminal"></i> Live Log</h3>
+                <div id="log-container" class="output-box" style="max-height: 300px; font-size: 12px;">
+                    <span style="color: var(--text-muted);">System logs will appear here...</span>
                 </div>
             </div>
         </div>
@@ -945,37 +1220,37 @@
     <!-- About Tab -->
     <div id="about" class="tab-content">
         <div class="card">
-            <h2>ℹ️ About UE5 AI Assistant</h2>
+            <h2><i class="fas fa-info-circle"></i> About UE5 AI Assistant</h2>
             <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 16px;">FastAPI-powered AI assistant for Unreal Engine 5.6 with OpenAI integration</p>
-            
+
             <div class="grid grid-2" style="margin-bottom: 32px;">
                 <div>
-                    <h3 style="color: var(--primary-purple); margin-bottom: 16px;">✨ Key Features</h3>
+                    <h3 style="color: var(--primary-purple); margin-bottom: 16px;"><i class="fas fa-star"></i> Key Features</h3>
                     <ul style="list-style: none; padding: 0; color: var(--text-secondary); line-height: 2;">
-                        <li>✅ Multi-project management & auto-registration</li>
-                        <li>✅ Real-time WebSocket & HTTP Polling support</li>
-                        <li>✅ AI-powered viewport analysis & code generation</li>
-                        <li>✅ Blueprint capture & screenshot analysis</li>
-                        <li>✅ Automated client updates & deployment</li>
-                        <li>✅ Context-aware command routing</li>
+                        <li><i class="fas fa-check" style="color: var(--primary-green); margin-right: 8px;"></i> Multi-project management & auto-registration</li>
+                        <li><i class="fas fa-check" style="color: var(--primary-green); margin-right: 8px;"></i> Real-time WebSocket & HTTP Polling support</li>
+                        <li><i class="fas fa-check" style="color: var(--primary-green); margin-right: 8px;"></i> AI-powered viewport analysis & code generation</li>
+                        <li><i class="fas fa-check" style="color: var(--primary-green); margin-right: 8px;"></i> Blueprint capture & screenshot analysis</li>
+                        <li><i class="fas fa-check" style="color: var(--primary-green); margin-right: 8px;"></i> Automated client updates & deployment</li>
+                        <li><i class="fas fa-check" style="color: var(--primary-green); margin-right: 8px;"></i> Context-aware command routing</li>
                     </ul>
                 </div>
                 <div>
-                    <h3 style="color: var(--primary-purple); margin-bottom: 16px;">🛠️ Tech Stack</h3>
+                    <h3 style="color: var(--primary-purple); margin-bottom: 16px;"><i class="fas fa-code"></i> Tech Stack</h3>
                     <ul style="list-style: none; padding: 0; color: var(--text-secondary); line-height: 2;">
-                        <li>🔷 FastAPI (async Python backend)</li>
-                        <li>🔷 OpenAI GPT-4o & GPT-4o-mini</li>
-                        <li>🔷 WebSocket + HTTP Polling dual-mode</li>
-                        <li>🔷 UE5.6 Python API integration</li>
-                        <li>🔷 JSON-based configuration system</li>
-                        <li>🔷 Auto-update with CDN bypass</li>
+                        <li><i class="fas fa-chevron-right" style="color: var(--primary-cyan); margin-right: 8px;"></i> FastAPI (async Python backend)</li>
+                        <li><i class="fas fa-chevron-right" style="color: var(--primary-cyan); margin-right: 8px;"></i> OpenAI GPT-4o & GPT-4o-mini</li>
+                        <li><i class="fas fa-chevron-right" style="color: var(--primary-cyan); margin-right: 8px;"></i> WebSocket + HTTP Polling dual-mode</li>
+                        <li><i class="fas fa-chevron-right" style="color: var(--primary-cyan); margin-right: 8px;"></i> UE5.6 Python API integration</li>
+                        <li><i class="fas fa-chevron-right" style="color: var(--primary-cyan); margin-right: 8px;"></i> JSON-based configuration system</li>
+                        <li><i class="fas fa-chevron-right" style="color: var(--primary-cyan); margin-right: 8px;"></i> Auto-update with CDN bypass</li>
                     </ul>
                 </div>
             </div>
 
             <div style="background: linear-gradient(135deg, rgba(0,245,255,0.1) 0%, rgba(139,92,246,0.1) 100%); padding: 24px; border-radius: 12px; border: 1px solid var(--border-glow); text-align: center;">
-                <h3 style="color: var(--primary-cyan); margin-bottom: 12px;">🚀 Version 3.2.0</h3>
-                <p style="color: var(--text-secondary); margin-bottom: 16px;">Enhanced UI with animations, quality of life improvements, and architectural refinements</p>
+                <h3 style="color: var(--primary-cyan); margin-bottom: 12px;"><i class="fas fa-rocket"></i> Version 3.5.0 Ultimate</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 16px;">Enhanced UI with animations, comprehensive diagnostics, and unified feature set</p>
                 <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                     <span style="padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; font-size: 12px; color: var(--text-secondary);">FastAPI</span>
                     <span style="padding: 6px 12px; background: rgba(0,0,0,0.5); border-radius: 20px; font-size: 12px; color: var(--text-secondary);">UE 5.6</span>
@@ -986,7 +1261,34 @@
         </div>
     </div>
 
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="modal">
+        <div class="modal-content">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <i id="modal-icon" style="font-size: 48px; margin-bottom: 16px;"></i>
+                <h2 id="modal-title" style="margin-bottom: 12px;"></h2>
+                <p id="modal-message" style="color: var(--text-secondary);"></p>
+            </div>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button id="modal-cancel" class="btn btn-secondary" onclick="hideModal()">Cancel</button>
+                <button id="modal-confirm" class="btn btn-primary" onclick="confirmModal()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Global State
+        const state = {
+            projects: [],
+            activeProjectId: null,
+            conversations: [],
+            config: {},
+            wsConnected: false,
+            dashboardWs: null,
+            connectedClients: [],
+            confirmCallback: null
+        };
+
         // Keyboard shortcuts
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -995,16 +1297,20 @@
             }
         });
 
-        // Tab management
+        // Tab Management
         function showTab(tabName) {
             document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
+
             event.target.classList.add('active');
             document.getElementById(tabName).classList.add('active');
+
+            // Refresh data when switching to certain tabs
+            if (tabName === 'live-feed') loadConversations();
+            if (tabName === 'project-hub') loadProjects();
         }
 
-        // Project query helpers
+        // Project Query Helpers
         function setQuery(text) {
             document.getElementById('projectQuery').value = text;
             document.getElementById('projectQuery').focus();
@@ -1013,14 +1319,14 @@
         function copyResponse() {
             const text = document.getElementById('projectQueryResult').textContent;
             navigator.clipboard.writeText(text).then(() => {
-                const btn = event.target;
-                const originalText = btn.textContent;
-                btn.textContent = '✅ Copied!';
-                setTimeout(() => btn.textContent = originalText, 2000);
+                const btn = event.target.closest('button');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => btn.innerHTML = originalHTML, 2000);
             });
         }
 
-        // Query project
+        // Query Project
         async function queryProject() {
             const query = document.getElementById('projectQuery').value;
             if (!query) return;
@@ -1029,7 +1335,7 @@
             const card = document.getElementById('responseCard');
             card.style.display = 'block';
             resultDiv.className = 'output-box status-loading';
-            resultDiv.textContent = '⚙️ Processing your request...';
+            resultDiv.innerHTML = '<i class="fas fa-spinner spinner"></i> Processing your request...';
 
             try {
                 const response = await fetch('/execute_command', {
@@ -1037,70 +1343,60 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         user_input: query,
-                        project_id: document.getElementById('projectSelect').value
+                        project_id: state.activeProjectId
                     })
                 });
 
                 const data = await response.json();
-                
+
                 if (data.success) {
-                    const responseText = data.response || data.result || 'No response';
-                    
-                    // Check if response is a UE_REQUEST or UE_CONTEXT_REQUEST token
-                    if (responseText.startsWith('[UE_REQUEST]') || responseText.startsWith('[UE_CONTEXT_REQUEST]')) {
-                        const action = responseText.replace('[UE_REQUEST]', '').replace('[UE_CONTEXT_REQUEST]', '').trim().split('|')[0];
-                        
-                        // Send command to UE5 and wait for response
-                        resultDiv.textContent = '🔄 Collecting data from UE5...';
-                        
-                        const ue5Response = await fetch('/send_command_to_ue5', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                project_id: document.getElementById('projectSelect').value,
-                                command: {
-                                    type: 'execute_action',
-                                    action: action,
-                                    params: {}
-                                }
-                            })
-                        });
-                        
-                        const ue5Data = await ue5Response.json();
-                        
-                        if (ue5Data.success && ue5Data.data) {
-                            // Format the data with AI for a natural language response
-                            resultDiv.textContent = '🤖 Formatting response with AI...';
-                            
-                            const formatResponse = await fetch('/answer_with_context', {
+                    let responseText = data.response || data.result || 'No response';
+
+                    // Check for UE action tokens
+                    if (responseText.includes('[UE_REQUEST]') || responseText.includes('[UE_CONTEXT_REQUEST]')) {
+                        const match = responseText.match(/\[(UE_REQUEST|UE_CONTEXT_REQUEST)\]\s*([^\|]+)/);
+                        if (match) {
+                            const action = match[2].trim();
+                            resultDiv.innerHTML = '<i class="fas fa-spinner spinner"></i> Collecting data from UE5...';
+
+                            const ue5Response = await fetch('/send_command_to_ue5', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify({
-                                    question: query,
-                                    context: ue5Data.data,
-                                    context_type: action
+                                    project_id: state.activeProjectId,
+                                    command: {
+                                        type: 'execute_action',
+                                        action: action,
+                                        params: {}
+                                    }
                                 })
                             });
-                            
-                            const formattedData = await formatResponse.json();
-                            
-                            if (formattedData.response) {
-                                resultDiv.className = 'output-box';
-                                resultDiv.textContent = formattedData.response;
+
+                            const ue5Data = await ue5Response.json();
+
+                            if (ue5Data.success && ue5Data.data) {
+                                resultDiv.innerHTML = '<i class="fas fa-spinner spinner"></i> Formatting response with AI...';
+
+                                const formatResponse = await fetch('/answer_with_context', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        question: query,
+                                        context: ue5Data.data,
+                                        context_type: action
+                                    })
+                                });
+
+                                const formattedData = await formatResponse.json();
+                                responseText = formattedData.response || JSON.stringify(ue5Data.data, null, 2);
                             } else {
-                                // Fallback to raw data if formatting fails
-                                resultDiv.className = 'output-box';
-                                resultDiv.textContent = JSON.stringify(ue5Data.data, null, 2);
+                                responseText = `Error: ${ue5Data.error || 'Failed to get data from UE5'}`;
                             }
-                        } else {
-                            resultDiv.className = 'output-box status-error';
-                            resultDiv.textContent = `Error: ${ue5Data.error || 'Failed to get data from UE5'}`;
                         }
-                    } else {
-                        // Normal text response
-                        resultDiv.className = 'output-box';
-                        resultDiv.textContent = responseText;
                     }
+
+                    resultDiv.className = 'output-box';
+                    resultDiv.textContent = responseText;
                 } else {
                     resultDiv.className = 'output-box status-error';
                     resultDiv.textContent = `Error: ${data.error || 'Unknown error'}`;
@@ -1111,32 +1407,135 @@
             }
         }
 
-        // Project management
+        // Project Management
         async function loadProjects() {
             try {
                 const response = await fetch('/api/projects');
                 const data = await response.json();
-                
+
                 const select = document.getElementById('projectSelect');
+                const grid = document.getElementById('projects-grid');
+                const noProjectsMsg = document.getElementById('no-projects-message');
+
                 select.innerHTML = '<option value="">No project selected</option>';
-                
-                let totalCount = 0;
-                if (data.success && data.projects.length > 0) {
-                    totalCount = data.projects.length;
+                grid.innerHTML = '';
+
+                if (data.success && data.projects && data.projects.length > 0) {
+                    state.projects = data.projects;
+                    noProjectsMsg.style.display = 'none';
+
                     data.projects.forEach(project => {
+                        // Add to selector
                         const option = document.createElement('option');
                         option.value = project.project_id;
-                        option.textContent = `${project.name} (${project.version})`;
-                        if (project.is_active) option.selected = true;
+                        option.textContent = `${project.name}`;
+                        if (project.is_active) {
+                            option.selected = true;
+                            state.activeProjectId = project.project_id;
+                        }
                         select.appendChild(option);
+
+                        // Add to grid
+                        const card = document.createElement('div');
+                        card.className = `project-card ${project.is_active ? 'active' : ''}`;
+                        card.dataset.id = project.project_id;
+                        
+                        const isConnected = state.connectedClients.includes(project.project_id);
+                        const statusClass = isConnected ? 'status-online' : 'status-offline';
+                        const statusText = isConnected ? 'Connected' : 'Disconnected';
+
+                        card.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div style="flex: 1;">
+                                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">${project.name}</h3>
+                                    <p style="font-size: 12px; color: var(--text-muted);">${project.path}</p>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="copy-btn" onclick="deleteProject('${project.project_id}', event)">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-glow);">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="status-indicator ${statusClass}"></span>
+                                    <span style="font-size: 13px; color: var(--text-secondary);">${statusText}</span>
+                                </div>
+                                <span style="font-size: 11px; color: var(--text-muted);">${project.version || 'UE 5.6'}</span>
+                            </div>
+                        `;
+
+                        card.addEventListener('click', (e) => {
+                            if (!e.target.closest('button')) {
+                                selectProjectById(project.project_id);
+                            }
+                        });
+
+                        grid.appendChild(card);
                     });
+
+                    document.getElementById('totalProjects').textContent = data.projects.length;
+                } else {
+                    noProjectsMsg.style.display = 'block';
+                    document.getElementById('totalProjects').textContent = '0';
                 }
 
-                document.getElementById('totalProjects').textContent = totalCount;
+                updateActiveProjectDisplay();
                 updateConnectionIndicator();
             } catch (error) {
                 console.error('Failed to load projects:', error);
+                log('Failed to load projects: ' + error.message, 'error');
             }
+        }
+
+        async function selectProject() {
+            const projectId = document.getElementById('projectSelect').value;
+            if (projectId) {
+                await selectProjectById(projectId);
+            }
+        }
+
+        async function selectProjectById(projectId) {
+            try {
+                const response = await fetch('/api/set_active_project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ project_id: projectId })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    state.activeProjectId = projectId;
+                    await loadProjects();
+                    log(`Active project set to: ${projectId}`, 'success');
+                }
+            } catch (error) {
+                console.error('Failed to set active project:', error);
+                log('Failed to set active project: ' + error.message, 'error');
+            }
+        }
+
+        function deleteProject(projectId, event) {
+            event.stopPropagation();
+            showConfirmation(
+                'Delete Project?',
+                'This will unregister the project from the dashboard. It will not delete any files on your local disk.',
+                'error',
+                async () => {
+                    try {
+                        const response = await fetch(`/api/project/${projectId}`, {
+                            method: 'DELETE'
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            await loadProjects();
+                            log('Project deleted successfully', 'success');
+                        }
+                    } catch (error) {
+                        log('Failed to delete project: ' + error.message, 'error');
+                    }
+                }
+            );
         }
 
         function toggleProjectForm() {
@@ -1147,16 +1546,16 @@
         async function registerManualProject() {
             const name = document.getElementById('manual-name').value;
             let path = document.getElementById('manual-path').value;
-            
+
             if (!name || !path) {
                 alert('Please enter both project name and path');
                 return;
             }
-            
+
             if (!path.endsWith('/') && !path.endsWith('\\')) {
                 path = path + '/';
             }
-            
+
             try {
                 const response = await fetch('/api/register_project', {
                     method: 'POST',
@@ -1171,71 +1570,93 @@
                         }
                     })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (data.success) {
-                    alert(`✅ Project "${name}" registered successfully!`);
+                    showNotification('Success', `Project "${name}" registered successfully!`, 'success');
                     await loadProjects();
                     toggleProjectForm();
+                    document.getElementById('manual-name').value = '';
+                    document.getElementById('manual-path').value = '';
                 } else {
-                    alert(`❌ Registration failed: ${data.error || 'Unknown error'}`);
+                    showNotification('Error', `Registration failed: ${data.error || 'Unknown error'}`, 'error');
                 }
             } catch (error) {
-                alert(`❌ Error: ${error.message}`);
+                showNotification('Error', error.message, 'error');
             }
         }
 
-        async function selectProject() {
-            const projectId = document.getElementById('projectSelect').value;
-            
-            if (!projectId) {
-                document.getElementById('projectStatus').innerHTML = '<span class="status-dot"></span><span>Not connected</span>';
-                return;
-            }
-
-            try {
-                const response = await fetch('/api/set_active_project', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ project_id: projectId })
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    updateConnectionIndicator();
-                }
-            } catch (error) {
-                console.error('Failed to set active project:', error);
-            }
-        }
-
-        // Download installer
         function downloadInstaller() {
-            const timestamp = new Date().getTime();
-            window.location.href = `/api/get_installer_script?t=${timestamp}`;
+            // Use POST to bypass CDN cache completely
+            fetch('/api/get_installer_v3', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Download failed');
+                return response.blob();
+            })
+            .then(blob => {
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'install_ue5_assistant.bat';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                a.remove();
+                
+                log('Installer downloaded successfully (fresh version)', 'success');
+                showNotification('Download Started', 'The installer has been downloaded. Double-click it and select your UE5 project folder.', 'success');
+            })
+            .catch(error => {
+                log('Download failed: ' + error.message, 'error');
+                showNotification('Download Failed', 'Could not download installer: ' + error.message, 'error');
+            });
         }
 
-        // Update all clients
+        function updateActiveProjectDisplay() {
+            const activeProject = state.projects.find(p => p.project_id === state.activeProjectId);
+            const piNameEl = document.getElementById('pi-active-project-name');
+            const piInputEl = document.getElementById('pi-chat-input');
+            const piSendBtn = document.getElementById('pi-send-btn');
+
+            if (activeProject) {
+                piNameEl.textContent = activeProject.name;
+                piInputEl.disabled = false;
+                piSendBtn.disabled = false;
+                piInputEl.placeholder = `Ask about ${activeProject.name}...`;
+            } else {
+                piNameEl.textContent = 'None';
+                piInputEl.disabled = true;
+                piSendBtn.disabled = true;
+                piInputEl.placeholder = 'Select an active project in the Project Hub';
+            }
+        }
+
+        // Update All Clients
         async function updateAllClients() {
             const btn = document.getElementById('updateClientsBtn');
             const icon = document.getElementById('updateIcon');
             const text = document.getElementById('updateText');
             const spinner = document.getElementById('updateSpinner');
-            
+
             btn.disabled = true;
             icon.style.display = 'none';
             spinner.style.display = 'inline-block';
             text.textContent = 'Updating...';
-            
+
             try {
                 const response = await fetch('/api/trigger_auto_update', {
                     method: 'POST'
                 });
                 const data = await response.json();
-                
+
                 if (data.success) {
                     text.textContent = 'Updated!';
+                    log('Auto-update triggered successfully', 'success');
                     setTimeout(() => {
                         icon.style.display = 'inline-block';
                         spinner.style.display = 'none';
@@ -1247,7 +1668,7 @@
                 }
             } catch (error) {
                 text.textContent = 'Failed!';
-                alert('Update failed: ' + error.message);
+                log('Update failed: ' + error.message, 'error');
                 setTimeout(() => {
                     icon.style.display = 'inline-block';
                     spinner.style.display = 'none';
@@ -1257,122 +1678,129 @@
             }
         }
 
-        // Emergency fix update (safe mode - no restart)
+        // Emergency Fix Update
         async function emergencyFixUpdate() {
-            const btn = document.getElementById('emergencyUpdateBtn');
-            const text = document.getElementById('emergencyText');
-            
-            const confirmMsg = '⚠️ Emergency Fix Update:\n\n' +
-                '1. This will download and update client files WITHOUT restarting UE5\n' +
-                '2. After update completes, you must manually restart UE5\n' +
-                '3. Use this if normal updates cause crashes\n\n' +
-                'Continue with emergency update?';
-            
-            if (!confirm(confirmMsg)) {
-                return;
-            }
-            
-            btn.disabled = true;
-            text.textContent = 'Fixing...';
-            
-            try {
-                const response = await fetch('/api/emergency_update', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ mode: 'no_restart' })
-                });
-                const data = await response.json();
-                
-                if (data.success) {
-                    text.textContent = 'Fixed!';
-                    alert('✅ Emergency update complete!\n\nPlease restart Unreal Engine 5 manually to complete the fix.');
-                    setTimeout(() => {
-                        text.textContent = 'Fix Crash Issues';
-                        btn.disabled = false;
-                    }, 3000);
-                } else {
-                    throw new Error(data.error || 'Emergency update failed');
+            showConfirmation(
+                'Trigger Emergency Update?',
+                'This sends a "no-restart" update to all clients. This is for critical hotfixes to prevent editor crashes. Users must restart manually.',
+                'error',
+                async () => {
+                    try {
+                        const response = await fetch('/api/emergency_update', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ mode: 'no_restart' })
+                        });
+                        const data = await response.json();
+
+                        if (data.status === 'success') {
+                            showNotification('Success', 'Emergency update complete! Please restart Unreal Engine 5 manually.', 'success');
+                        } else {
+                            throw new Error(data.error || 'Emergency update failed');
+                        }
+                    } catch (error) {
+                        showNotification('Error', 'Emergency update failed: ' + error.message, 'error');
+                    }
                 }
-            } catch (error) {
-                text.textContent = 'Failed!';
-                alert('❌ Emergency update failed: ' + error.message + '\n\nPlease try manual installation.');
-                setTimeout(() => {
-                    text.textContent = 'Fix Crash Issues';
-                    btn.disabled = false;
-                }, 3000);
-            }
+            );
         }
 
-        // Connection mode toggle
+        // Connection Mode
         function setConnectionMode(mode) {
             document.getElementById('http-mode-btn').classList.toggle('active', mode === 'http');
             document.getElementById('websocket-mode-btn').classList.toggle('active', mode === 'websocket');
             localStorage.setItem('connectionMode', mode);
+            log(`Connection mode set to: ${mode.toUpperCase()}`, 'info');
         }
 
-        // WebSocket management
-        let dashboardWs = null;
-        let wsConnected = false;
-        let ue5ProjectsConnected = [];
-
+        // WebSocket Management
         function initWebSocket() {
             const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
             const wsUrl = `${wsProtocol}//${window.location.host}/ws/dashboard`;
-            
-            dashboardWs = new WebSocket(wsUrl);
-            
-            dashboardWs.onopen = () => {
+
+            state.dashboardWs = new WebSocket(wsUrl);
+
+            state.dashboardWs.onopen = () => {
                 console.log('✅ Dashboard WebSocket connected');
-                wsConnected = true;
+                state.wsConnected = true;
                 updateConnectionIndicator();
+                log('Dashboard WebSocket connected', 'success');
             };
-            
-            dashboardWs.onmessage = (event) => {
+
+            state.dashboardWs.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                if (data.type === 'initial_status') {
-                    ue5ProjectsConnected = data.connected_projects || [];
-                    updateConnectionIndicator();
-                } else if (data.type === 'ue5_status') {
-                    if (data.status === 'connected') {
-                        if (!ue5ProjectsConnected.includes(data.project_id)) {
-                            ue5ProjectsConnected.push(data.project_id);
-                        }
-                    } else {
-                        ue5ProjectsConnected = ue5ProjectsConnected.filter(id => id !== data.project_id);
-                    }
-                    updateConnectionIndicator();
-                }
+                handleWsMessage(data);
             };
-            
-            dashboardWs.onerror = () => {
-                wsConnected = false;
+
+            state.dashboardWs.onerror = () => {
+                state.wsConnected = false;
                 updateConnectionIndicator();
+                log('WebSocket error occurred', 'error');
             };
-            
-            dashboardWs.onclose = () => {
-                wsConnected = false;
+
+            state.dashboardWs.onclose = () => {
+                state.wsConnected = false;
                 updateConnectionIndicator();
+                log('Dashboard WebSocket disconnected', 'warn');
                 setTimeout(initWebSocket, 5000);
             };
         }
 
-        function updateConnectionIndicator() {
-            const status = document.getElementById('projectStatus');
-            const select = document.getElementById('projectSelect');
-            const registeredCount = select.options.length - 1;
-            
-            document.getElementById('connectedProjects').textContent = ue5ProjectsConnected.length;
-            
-            if (wsConnected && ue5ProjectsConnected.length > 0) {
-                status.innerHTML = `<span class="status-dot"></span><span>✅ ${ue5ProjectsConnected.length} of ${registeredCount} connected</span>`;
-            } else if (wsConnected && registeredCount > 0) {
-                status.innerHTML = `<span class="status-dot" style="background: #fbbf24;"></span><span>⚠️ ${registeredCount} registered, 0 connected</span>`;
-            } else {
-                status.innerHTML = `<span class="status-dot" style="background: #64748b;"></span><span>⚠️ No projects</span>`;
+        function handleWsMessage(data) {
+            if (data.type === 'ue5_status') {
+                if (data.status === 'connected') {
+                    if (!state.connectedClients.includes(data.project_id)) {
+                        state.connectedClients.push(data.project_id);
+                    }
+                    log(`UE5 client connected: ${data.project_id}`, 'success');
+                } else {
+                    state.connectedClients = state.connectedClients.filter(id => id !== data.project_id);
+                    log(`UE5 client disconnected: ${data.project_id}`, 'warn');
+                }
+                loadProjects();
+            } else if (data.type === 'ue5_client_list') {
+                state.connectedClients = Object.keys(data.clients || {});
+                loadProjects();
             }
         }
 
-        // Settings management
+        function updateConnectionIndicator() {
+            const status = document.getElementById('projectStatus');
+            const connectedCount = state.connectedClients.length;
+            const totalCount = state.projects.length;
+
+            document.getElementById('connectedProjects').textContent = connectedCount;
+
+            if (state.wsConnected && connectedCount > 0) {
+                status.innerHTML = `<span class="status-dot"></span><span>✅ ${connectedCount} of ${totalCount} connected</span>`;
+            } else if (state.wsConnected && totalCount > 0) {
+                status.innerHTML = `<span class="status-dot" style="background: var(--warning-color);"></span><span>⚠️ ${totalCount} registered, 0 connected</span>`;
+            } else {
+                status.innerHTML = `<span class="status-dot" style="background: var(--text-muted);"></span><span>⚠️ No projects</span>`;
+            }
+        }
+
+        // Settings Management
+        async function loadSettings() {
+            try {
+                const response = await fetch('/api/config');
+                const data = await response.json();
+                
+                if (data.success && data.config) {
+                    state.config = data.config;
+                    document.getElementById('model').value = data.config.model || 'gpt-4o-mini';
+                    document.getElementById('response_style').value = data.config.response_style || 'descriptive';
+                    document.getElementById('temperature').value = data.config.temperature || 0.7;
+                    document.getElementById('temp-value').textContent = data.config.temperature || 0.7;
+                    document.getElementById('max_context_turns').value = data.config.max_context_turns || 6;
+                    document.getElementById('turns-value').textContent = data.config.max_context_turns || 6;
+                }
+            } catch (error) {
+                console.error('Failed to load settings:', error);
+                log('Failed to load settings: ' + error.message, 'error');
+            }
+        }
+
         async function saveSettings() {
             const config = {
                 model: document.getElementById('model').value,
@@ -1384,7 +1812,7 @@
             const statusDiv = document.getElementById('save-status');
             statusDiv.style.display = 'block';
             statusDiv.className = 'status-loading';
-            statusDiv.textContent = '⚙️ Saving settings...';
+            statusDiv.innerHTML = '<i class="fas fa-spinner spinner"></i> Saving settings...';
 
             try {
                 const response = await fetch('/api/config', {
@@ -1394,16 +1822,18 @@
                 });
 
                 const data = await response.json();
-                
+
                 if (data.success) {
                     statusDiv.className = 'status-success';
-                    statusDiv.textContent = '✅ Settings saved successfully!';
+                    statusDiv.innerHTML = '<i class="fas fa-check"></i> Settings saved successfully!';
+                    log('Settings saved successfully', 'success');
                 } else {
                     throw new Error(data.error || 'Failed to save');
                 }
             } catch (error) {
                 statusDiv.className = 'status-error';
-                statusDiv.textContent = `❌ Error: ${error.message}`;
+                statusDiv.innerHTML = `<i class="fas fa-times"></i> Error: ${error.message}`;
+                log('Failed to save settings: ' + error.message, 'error');
             }
 
             setTimeout(() => statusDiv.style.display = 'none', 3000);
@@ -1421,17 +1851,303 @@
 
         // Conversations
         async function loadConversations() {
-            // Placeholder - implement if needed
+            try {
+                const response = await fetch('/api/conversations?limit=50');
+                const data = await response.json();
+
+                const historyDiv = document.getElementById('conversation-history');
+                const noConvMsg = document.getElementById('no-conversations-message');
+
+                if (data.success && data.conversations && data.conversations.length > 0) {
+                    state.conversations = data.conversations;
+                    noConvMsg.style.display = 'none';
+                    historyDiv.innerHTML = '';
+
+                    data.conversations.forEach(conv => {
+                        const entry = document.createElement('div');
+                        entry.className = 'conversation-entry';
+                        entry.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <span style="font-size: 12px; color: var(--text-muted);">${new Date(conv.timestamp).toLocaleString()}</span>
+                                <span class="command-tag">${conv.command_type || 'QUERY'}</span>
+                            </div>
+                            <div style="margin-bottom: 8px;"><strong style="color: var(--primary-cyan);">User:</strong> ${conv.user_input}</div>
+                            <div><strong style="color: var(--primary-purple);">Assistant:</strong> ${conv.assistant_response}</div>
+                        `;
+                        historyDiv.appendChild(entry);
+                    });
+
+                    document.getElementById('totalCommands').textContent = data.conversations.length;
+                } else {
+                    noConvMsg.style.display = 'block';
+                    historyDiv.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('Failed to load conversations:', error);
+                log('Failed to load conversations: ' + error.message, 'error');
+            }
+        }
+
+        async function clearConversations() {
+            showConfirmation(
+                'Clear History?',
+                'This will permanently delete all conversation history from the server. This action cannot be undone.',
+                'error',
+                async () => {
+                    try {
+                        const response = await fetch('/api/conversations', {
+                            method: 'DELETE'
+                        });
+                        const data = await response.json();
+                        if (data.success) {
+                            await loadConversations();
+                            log('Conversation history cleared', 'success');
+                        }
+                    } catch (error) {
+                        log('Failed to clear conversations: ' + error.message, 'error');
+                    }
+                }
+            );
+        }
+
+        // Project Intelligence
+        async function sendPiMessage() {
+            const input = document.getElementById('pi-chat-input');
+            const query = input.value.trim();
+            if (!query || !state.activeProjectId) return;
+
+            const chatWindow = document.getElementById('pi-chat-window');
+            
+            // Clear empty state if present
+            const emptyState = chatWindow.querySelector('.empty-state');
+            if (emptyState) emptyState.remove();
+
+            // Add user message
+            addPiMessage('user', query);
+            input.value = '';
+
+            // Add thinking indicator
+            addPiMessage('thinking', 'Processing your request...');
+
+            try {
+                const response = await fetch('/api/project_query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+
+                const data = await response.json();
+
+                // Remove thinking indicator
+                const thinkingMsg = chatWindow.querySelector('.pi-chat-message.thinking');
+                if (thinkingMsg) thinkingMsg.remove();
+
+                // Add assistant response
+                addPiMessage('assistant', data.response || data.error || 'No response');
+            } catch (error) {
+                const thinkingMsg = chatWindow.querySelector('.pi-chat-message.thinking');
+                if (thinkingMsg) thinkingMsg.remove();
+                addPiMessage('assistant', `Error: ${error.message}`);
+            }
+        }
+
+        function addPiMessage(role, text) {
+            const chatWindow = document.getElementById('pi-chat-window');
+            const message = document.createElement('div');
+            message.className = `pi-chat-message ${role}`;
+            message.textContent = text;
+            chatWindow.appendChild(message);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        // Guidance
+        async function getGuidance() {
+            const query = document.getElementById('guidance-query').value.trim();
+            if (!query) {
+                showNotification('Input Required', 'Please enter your goal or question.', 'warn');
+                return;
+            }
+
+            const responseDiv = document.getElementById('guidance-response');
+            responseDiv.className = 'output-box status-loading';
+            responseDiv.innerHTML = '<i class="fas fa-spinner spinner"></i> Generating guidance...';
+
+            const payload = {
+                query: query,
+                focus_area: document.getElementById('guidance-focus').value,
+                include_viewport_context: document.getElementById('guidance-viewport').checked,
+                include_project_profile: document.getElementById('guidance-project').checked
+            };
+
+            try {
+                const response = await fetch('/api/guidance', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    responseDiv.className = 'output-box';
+                    responseDiv.textContent = data.guidance || 'No guidance generated';
+                    log('Guidance generated successfully', 'success');
+                } else {
+                    throw new Error(data.error || 'Failed to generate guidance');
+                }
+            } catch (error) {
+                responseDiv.className = 'output-box status-error';
+                responseDiv.textContent = `Error: ${error.message}`;
+                log('Failed to generate guidance: ' + error.message, 'error');
+            }
+        }
+
+        // Diagnostics
+        async function runDiagnostics() {
+            log('Running diagnostics...', 'info');
+
+            // Backend check
+            document.getElementById('diag-backend').className = 'status-loading';
+            document.getElementById('diag-backend').textContent = 'Checking...';
+            
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+                document.getElementById('diag-backend').className = 'status-success';
+                document.getElementById('diag-backend').textContent = `✅ Online (v${data.version})`;
+                log('Backend health check: OK', 'success');
+            } catch (error) {
+                document.getElementById('diag-backend').className = 'status-error';
+                document.getElementById('diag-backend').textContent = '❌ Offline';
+                log('Backend health check: FAILED', 'error');
+            }
+
+            // OpenAI check
+            document.getElementById('diag-openai').className = 'status-loading';
+            document.getElementById('diag-openai').textContent = 'Pinging...';
+            
+            try {
+                const response = await fetch('/ping_openai');
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('diag-openai').className = 'status-success';
+                    document.getElementById('diag-openai').textContent = `✅ OK (${data.model})`;
+                    log('OpenAI ping: OK', 'success');
+                } else {
+                    throw new Error(data.error);
+                }
+            } catch (error) {
+                document.getElementById('diag-openai').className = 'status-error';
+                document.getElementById('diag-openai').textContent = '❌ Error';
+                log('OpenAI ping: FAILED', 'error');
+            }
+
+            // WebSocket check
+            const wsStatus = document.getElementById('diag-websocket');
+            if (state.wsConnected) {
+                wsStatus.className = 'status-success';
+                wsStatus.textContent = '✅ Connected';
+            } else {
+                wsStatus.className = 'status-error';
+                wsStatus.textContent = '❌ Disconnected';
+            }
+        }
+
+        // Logging
+        function log(message, level = 'info') {
+            const colors = {
+                info: 'color: var(--text-primary)',
+                success: 'color: var(--primary-green)',
+                warn: 'color: var(--warning-color)',
+                error: 'color: var(--error-color)',
+                ws: 'color: var(--primary-cyan)'
+            };
+
+            const logContainer = document.getElementById('log-container');
+            const entry = document.createElement('div');
+            entry.style.cssText = colors[level];
+            const timestamp = new Date().toLocaleTimeString();
+            entry.innerHTML = `<span style="color: var(--text-muted);">${timestamp}</span> ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        // Modal Functions
+        function showConfirmation(title, message, type, callback) {
+            const modal = document.getElementById('confirmation-modal');
+            const icon = document.getElementById('modal-icon');
+            const titleEl = document.getElementById('modal-title');
+            const messageEl = document.getElementById('modal-message');
+            const confirmBtn = document.getElementById('modal-confirm');
+            const cancelBtn = document.getElementById('modal-cancel');
+
+            const icons = {
+                info: 'fas fa-info-circle',
+                success: 'fas fa-check-circle',
+                warn: 'fas fa-exclamation-triangle',
+                error: 'fas fa-times-circle'
+            };
+
+            const colors = {
+                info: 'var(--primary-cyan)',
+                success: 'var(--primary-green)',
+                warn: 'var(--warning-color)',
+                error: 'var(--error-color)'
+            };
+
+            icon.className = icons[type] || icons.info;
+            icon.style.color = colors[type] || colors.info;
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            // Store callback
+            state.confirmCallback = callback;
+
+            // Show/hide cancel button based on whether this is a confirmation or notification
+            if (callback) {
+                cancelBtn.style.display = 'inline-flex';
+                confirmBtn.textContent = 'Confirm';
+                // Remove any old onclick and use the confirmModal function
+                confirmBtn.onclick = confirmModal;
+            } else {
+                cancelBtn.style.display = 'none';
+                confirmBtn.textContent = 'OK';
+                confirmBtn.onclick = hideModal;
+            }
+
+            modal.classList.add('show');
+        }
+
+        function hideModal() {
+            document.getElementById('confirmation-modal').classList.remove('show');
+            state.confirmCallback = null;
+        }
+
+        function confirmModal() {
+            if (state.confirmCallback) {
+                state.confirmCallback();
+            }
+            hideModal();
+        }
+
+        function showNotification(title, message, type) {
+            showConfirmation(title, message, type, null);
         }
 
         // Initialize
-        window.addEventListener('DOMContentLoaded', () => {
-            loadProjects();
-            initWebSocket();
+        window.addEventListener('DOMContentLoaded', async () => {
+            log('Initializing dashboard...', 'info');
             
             // Load saved connection mode
             const savedMode = localStorage.getItem('connectionMode') || 'http';
             setConnectionMode(savedMode);
+
+            // Initialize
+            await loadSettings();
+            await loadProjects();
+            initWebSocket();
+
+            log('Dashboard initialized successfully', 'success');
         });
     </script>
 </body>

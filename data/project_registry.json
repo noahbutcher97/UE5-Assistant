@@ -1,31 +1,13 @@
 {
-  "active_project_id": "189fb60ac15dee00c81189bbf2abcc6c",
+  "active_project_id": "e1e42c72c2f4",
   "projects": {
-    "189fb60ac15dee00c81189bbf2abcc6c": {
-      "project_id": "189fb60ac15dee00c81189bbf2abcc6c",
+    "e1e42c72c2f4": {
+      "project_id": "e1e42c72c2f4",
+      "last_seen": 1760295028.7167237,
       "name": "UE5_Assistant",
-      "path": "D:/UnrealProjects/5.6/UE5_Assistant/",
-      "version": "5.6.1-44394996+++UE5+Release-5.6",
-      "metadata": {
-        "blueprint_count": 42,
-        "cpp_class_count": 0,
-        "content_path": "D:/UnrealProjects/5.6/UE5_Assistant/Content/",
-        "plugins_enabled": true
-      },
-      "registered_at": "2025-10-12T15:16:17.066470",
-      "last_updated": "2025-10-12T15:16:17.066480"
-    },
-    "189fb60ac15d": {
-      "project_id": "189fb60ac15d",
-      "name": "UE5_Assistant",
-      "path": "D:/UnrealProjects/5.6/UE5_Assistant/",
+      "path": "\"D:/UnrealProjects/5.6/UE5_Assistant\"",
       "version": "5.6",
-      "metadata": {
-        "manually_registered": true,
-        "registration_time": "2025-10-12T17:14:02.493Z"
-      },
-      "registered_at": "2025-10-12T17:14:02.555285",
-      "last_updated": "2025-10-12T17:14:02.555294"
+      "metadata": {}
     }
   }
 }
