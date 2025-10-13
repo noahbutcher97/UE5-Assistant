@@ -1659,10 +1659,21 @@ Return ONLY the complete Python script, no explanations or markdown."""
             widget_folder.mkdir(parents=True, exist_ok=True)
             
             # Write the script to the project
-            with open(script_path, 'w', encoding='utf-8') as f:
-                f.write(generated_script)
-            
-            print(f"✅ Widget written to: {script_path}")
+            try:
+                with open(script_path, 'w', encoding='utf-8') as f:
+                    f.write(generated_script)
+                
+                # Verify file was written
+                if script_path.exists():
+                    file_size = script_path.stat().st_size
+                    print(f"✅ Widget successfully written to: {script_path}")
+                    print(f"   File size: {file_size} bytes")
+                    print(f"   Full path: {script_path.absolute()}")
+                else:
+                    print(f"⚠️ Warning: File write appeared to succeed but file not found at {script_path}")
+            except Exception as write_error:
+                print(f"❌ Failed to write widget file: {write_error}")
+                raise
             
             # Queue command for UE5 client to import/register the widget
             manager = get_manager()

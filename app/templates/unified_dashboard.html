@@ -2451,6 +2451,7 @@
                 console.log('✅ Received initial status:', state.connectedClients);
                 log(`Initial status: ${state.connectedClients.length} client(s) connected`, 'info');
                 loadProjects();
+                loadClientStatus();
                 updateConnectionIndicator();
             } else if (data.type === 'ue5_status') {
                 if (data.status === 'connected') {
@@ -2458,21 +2459,31 @@
                         state.connectedClients.push(data.project_id);
                     }
                     console.log('✅ UE5 client connected:', data.project_id);
-                    log(`UE5 client connected: ${data.project_id}`, 'success');
+                    log(`UE5 client connected: ${data.project_id.substring(0,16)}...`, 'success');
+                    showNotification('Client Connected', `UE5 client ${data.project_id.substring(0,16)}... is now online`, 'success');
                 } else {
                     state.connectedClients = state.connectedClients.filter(id => id !== data.project_id);
                     console.log('❌ UE5 client disconnected:', data.project_id);
-                    log(`UE5 client disconnected: ${data.project_id}`, 'warn');
+                    log(`UE5 client disconnected: ${data.project_id.substring(0,16)}...`, 'warn');
+                    showNotification('Client Disconnected', `UE5 client ${data.project_id.substring(0,16)}... went offline`, 'warn');
                 }
+                // Refresh ALL affected UI components
                 loadProjects();
+                loadClientStatus();
                 updateConnectionIndicator();
             } else if (data.type === 'ue5_client_list') {
                 state.connectedClients = Object.keys(data.clients || {});
                 loadProjects();
+                loadClientStatus();
                 updateConnectionIndicator();
-            } else if (data.type === 'server_switched' || data.type === 'widget_generated') {
-                // Refresh the UI when these events occur
+            } else if (data.type === 'server_switched') {
+                showNotification('Server Switched', 'UE5 client backend updated', 'info');
                 loadProjects();
+                loadClientStatus();
+            } else if (data.type === 'widget_generated') {
+                showNotification('Widget Generated', 'New Editor Utility Widget created', 'success');
+                loadProjects();
+                loadOperations();
             }
         }
 
