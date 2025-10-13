@@ -1114,6 +1114,93 @@
         </div>
     </div>
 
+    <!-- Tools Tab -->
+    <div id="tools" class="tab-content">
+        <div class="card">
+            <h2><i class="fas fa-tools"></i> UE5 Editor Tools</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">AI-powered tools for Unreal Engine development</p>
+        </div>
+
+        <div class="card">
+            <div style="margin-bottom: 24px;">
+                <h3><i class="fas fa-magic"></i> Editor Utility Widget Generator</h3>
+                <p style="color: var(--text-secondary);">Generate custom Editor Utility Widgets using AI - describe what you want and let AI create the widget code for your UE5 project</p>
+            </div>
+
+            <div class="grid grid-2" style="gap: 24px; margin-bottom: 24px;">
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: var(--primary-cyan);">
+                        <i class="fas fa-tag"></i> Widget Name
+                    </label>
+                    <input type="text" id="utilityName" placeholder="e.g., LightingTool, AssetOrganizer" 
+                           style="width: 100%; padding: 12px; font-size: 14px;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 8px; color: var(--primary-cyan);">
+                        <i class="fas fa-list-check"></i> Capabilities
+                    </label>
+                    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; border: 1px solid var(--border-glow);">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" value="access_viewport" checked style="accent-color: var(--primary-cyan);">
+                            <span style="font-size: 13px;">Access Viewport</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" value="spawn_assets" checked style="accent-color: var(--primary-cyan);">
+                            <span style="font-size: 13px;">Spawn Assets</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" value="modify_scene" checked style="accent-color: var(--primary-cyan);">
+                            <span style="font-size: 13px;">Modify Scene</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" value="query_project" style="accent-color: var(--primary-cyan);">
+                            <span style="font-size: 13px;">Query Project</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" value="execute_plans" checked style="accent-color: var(--primary-cyan);">
+                            <span style="font-size: 13px;">Execute AI Plans</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--primary-cyan);">
+                    <i class="fas fa-comment-dots"></i> Description
+                </label>
+                <textarea id="utilityDesc" 
+                          placeholder="Describe what this widget should do... e.g., 'A tool to batch rename selected assets with prefix/suffix options'"
+                          style="width: 100%; min-height: 100px; padding: 12px; font-size: 14px; font-family: inherit; resize: vertical;"></textarea>
+            </div>
+
+            <button class="btn btn-primary" onclick="generateUtility()" style="width: 100%; justify-content: center; padding: 16px;">
+                <i class="fas fa-wand-magic-sparkles"></i> Generate Widget
+            </button>
+
+            <div id="utilityLoading" style="display: none; margin-top: 16px; padding: 16px; background: rgba(251,191,36,0.1); border-radius: 8px; border: 1px solid rgba(251,191,36,0.3); text-align: center; color: var(--primary-cyan);">
+                <i class="fas fa-spinner fa-spin"></i> Generating utility widget...
+            </div>
+
+            <div id="utilityOutput" style="display: none; margin-top: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h4 style="margin: 0; color: var(--primary-green);"><i class="fas fa-check-circle"></i> Widget Generated!</h4>
+                    <button class="copy-btn" onclick="copyUtilityScript()"><i class="fas fa-copy"></i> Copy Script</button>
+                </div>
+                <div class="output-box" id="utilityScriptBox" style="max-height: 400px; overflow-y: auto;"></div>
+                <div style="margin-top: 16px; padding: 16px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                    <h4 style="margin: 0 0 12px 0; color: var(--primary-green);"><i class="fas fa-info-circle"></i> Installation Instructions</h4>
+                    <ol style="margin: 0; padding-left: 20px; color: var(--text-secondary); font-size: 13px; line-height: 1.8;">
+                        <li>Copy the generated script using the button above</li>
+                        <li>Save it to your project's <code style="background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px;">Content/Python/AIAgentUtilities/</code> folder</li>
+                        <li>Restart Unreal Editor to load the new utility</li>
+                        <li>Find it in Content Browser and right-click to execute</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Settings Tab -->
     <div id="settings" class="tab-content">
         <div class="card">
