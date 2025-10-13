@@ -1730,6 +1730,9 @@ Then the file writing system is working correctly!</textarea>
 
         async function switchServer(projectId, serverType) {
             try {
+                // Show loading notification
+                showNotification('Switching Server', `Requesting ${serverType} connection...`, 'info');
+                
                 const response = await fetch('/api/switch_server', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -1743,11 +1746,16 @@ Then the file writing system is working correctly!</textarea>
                 
                 if (data.success) {
                     console.log(`✅ Server switched to ${serverType} for project ${projectId}`);
+                    showNotification('Server Switch Queued', 'Waiting for client to reconnect...', 'info');
+                    // Reload client status after a delay to show updated connection
+                    setTimeout(() => loadClientStatus(), 3000);
                 } else {
                     console.error(`❌ Failed to switch server: ${data.error}`);
+                    showNotification('Switch Failed', data.error || 'Could not switch server', 'error');
                 }
             } catch (error) {
                 console.error(`❌ Error switching server: ${error.message}`);
+                showNotification('Switch Error', error.message, 'error');
             }
         }
 

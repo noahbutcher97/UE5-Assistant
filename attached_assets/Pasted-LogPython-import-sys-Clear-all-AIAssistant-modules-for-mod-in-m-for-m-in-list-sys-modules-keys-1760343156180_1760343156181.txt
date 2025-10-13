@@ -1,0 +1,54 @@
+LogPython: import sys
+# Clear all AIAssistant modules
+for mod in [m for m in list(sys.modules.keys()) if m.startswith('AIAssistant')]:
+    del sys.modules[mod]
+# Restart fresh
+import AIAssistant.main
+assistant = AIAssistant.main.get_assistant()
+print("✅ Assistant restarted!")
+LogPython: [ActionQueue] ✅ Main thread ticker started (ve82cf3f5)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant
+LogPython: 📋 Project ID: 6e6498da3aead6dd4465aaf5df7d0127
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 6e6498da3aead6dd4465aaf5df7d0127
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://ue5-assistant-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '6e6498da3aead6dd4465aaf5df7d0127', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 200
+LogPython: [HTTP] Registration response text: {"success":true,"message":"Registered via HTTP polling"}
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 6e6498da3aead6dd4465aaf5df7d0127
+LogPython: [HTTP] Connect result: True
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: ============================================================
+LogPython: ✅ Assistant restarted!
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: import AIAssistant.main
+assistant = AIAssistant.main.get_assistant()
+if assistant.http_client:
+    print(f"Polling URL: {assistant.http_client.base_url}")
+else:
+    print("No HTTP client active")
+LogPython: No HTTP client active
