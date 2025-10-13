@@ -18,7 +18,7 @@ A **Fully Automated Widget Generator** within the Tools tab provides AI-powered 
 
 **Real-Time Communication** uses a dual-mode system with WebSockets (preferred) and HTTP Polling fallback. A local **Deploy Agent** (localhost:7865) ensures frictionless deployment and auto-import into UE5. The system supports **Blueprint Screenshot Capture** for multi-modal vision analysis. An **Enhanced Action Executor** handles file operations, project info display, and blueprint management, controlled by a **Feature Flag System**. A **UE5 Mock Testing Environment** allows Replit-based testing without an active UE5 instance. The **Flexible Token Extraction System** uses regex patterns to extract action tokens from AI responses, allowing natural language alongside commands. **Production Server Auto-Selection** ensures the UE5 client connects to the production backend by default.
 
-The system incorporates a **Universal Bootstrap System** for seamless client updates, handling both ZIP and TAR.GZ formats. It also includes an **Emergency Fix Update System** with a GUI-based solution for non-technical users to resolve thread safety crashes without manual restarts. **Connection Troubleshooting Tools** are built-in, providing console-based utilities (e.g., reconnect, test server) for easy recovery. A **Dashboard Reconnect Button** offers a GUI-based recovery path for dropped connections.
+The system incorporates a **Universal Bootstrap System** for seamless client updates, handling both ZIP and TAR.GZ formats. It also includes an **Emergency Fix Update System** with a GUI-based solution for non-technical users to resolve thread safety crashes without manual restarts. **Connection Troubleshooting Tools** are built-in, providing console-based utilities (e.g., reconnect, test server) for easy recovery. A **Dashboard Reconnect Button** offers a GUI-based recovery path for dropped connections. A **UE5 Editor Toolbar Menu** provides easy access to troubleshooting tools directly from the editor without console interaction.
 
 ### System Design Choices
 The system uses a **RESTful API** with JSON payloads and enforces **Separation of Concerns** between UE viewport data collection and AI processing. **Environment-based Configuration** manages sensitive data. It includes robust **Error Handling** with structured logging and retry logic. A **Thread-Safe Action Queue** integrates with the Unreal Slate ticker for safe main thread execution. **Automatic Cache Management** is implemented via module version tracking. **Security Hardening** ensures path traversal protection and read-only file operations. All UE5 client code adheres to **UE5.6 API Compliance**.
@@ -43,3 +43,35 @@ The system uses a **RESTful API** with JSON payloads and enforces **Separation o
 
 ### Deployment Platform
 - **Replit**: Hosting platform for the FastAPI backend.
+
+## Connection Recovery & Troubleshooting
+
+### UE5 Editor Toolbar Menu
+The system includes a **UE5 Editor Toolbar dropdown menu** that provides easy access to troubleshooting tools directly from the editor without requiring console interaction:
+- **Location**: "AI Assistant" dropdown in the UE5 main menu bar (automatically added on startup)
+- **Menu Items**:
+  - **🔧 Launch Troubleshooter**: Imports troubleshooter module and displays available commands in Output Log
+  - **🔄 Restart Assistant**: Restarts the AI Assistant connection with fresh code (fixes most connection issues)
+- **Auto-Registration**: Toolbar menu is registered automatically when the assistant initializes and persists across restarts
+- **User Experience**: Non-technical users can access troubleshooting tools via familiar UI menus instead of Python console commands
+- **Implementation**: Uses UE5's ToolMenus API to register menu entries with Python command execution
+
+This toolbar dropdown eliminates the need for users to remember console commands or feel intimidated by Python scripting, providing a friendly GUI-based recovery path for connection issues.
+
+### Console-Based Troubleshooting Tools
+The system includes **built-in console-based troubleshooting tools** (`troubleshooter.py`) for advanced users:
+- **Simple Import**: `import AIAssistant.troubleshooter as ts` provides instant access to all tools
+- **Quick Reconnect**: `ts.reconnect()` restarts HTTP polling when connection drops
+- **Server Testing**: `ts.test_server()` verifies backend connectivity with detailed diagnostics
+- **Status Check**: `ts.status()` shows current connection state
+- **Connection Info**: `ts.info()` displays complete connection details (URL, project ID, poll settings)
+- **Dashboard Launcher**: `ts.dashboard()` opens web dashboard in browser
+- **Help System**: `ts.help()` shows all available commands and usage examples
+
+### Dashboard Force Re-register Button
+The dashboard includes a **GUI-based re-registration system** for clients that are still polling but need to refresh their backend registration:
+- **Auto-Detection**: Project cards automatically display a "Force Re-register" button when clients become inactive or disconnected
+- **Tooltip Guidance**: Button includes tooltip explaining it works only if client is still polling, directs users to toolbar menu for hard disconnects
+- **Thread-Safe Implementation**: Uses flag-based system that performs simple re-registration via POST on existing polling thread
+- **Limitations**: Only works when client is actively polling; for hard disconnects, users must use UE5 toolbar menu or console tools
+- **Backend Endpoint**: `/api/reconnect_client` queues a "reconnect" command for the specified UE5 client
