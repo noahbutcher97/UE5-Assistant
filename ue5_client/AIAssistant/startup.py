@@ -69,6 +69,12 @@ def configure_and_start(backend_url=None, force_production=True):
         print("💡 Usage: AIAssistant.main.send_command('your question')")
         print("🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard")
         print("")
+        print("🔧 Troubleshooting:")
+        print("   import AIAssistant.troubleshooter as ts")
+        print("   ts.reconnect()      # Restart connection")
+        print("   ts.test_server()    # Test connectivity")
+        print("   ts.help()           # Show all commands")
+        print("")
         
     except Exception as e:
         print(f"❌ Startup failed: {e}")
