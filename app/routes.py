@@ -1650,32 +1650,12 @@ Return ONLY the complete Python script, no explanations or markdown."""
                 lines = generated_script.split('\n')
                 generated_script = '\n'.join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:])
             
-            # Determine save path in UE5 project
-            widget_folder = Path(project_path) / "Content" / "Python" / "AIAgentUtilities"
-            script_filename = f"{class_name}.py"
-            script_path = widget_folder / script_filename
+            # NOTE: Backend (Replit) cannot write to client's local D:/ drive
+            # Send script content to UE5 client for local file writing
+            script_path_display = f"{project_path}/Content/Python/AIAgentUtilities/{class_name}.py"
+            print(f"📝 Script generated, will be written by UE5 client to: {script_path_display}")
             
-            # Create directory if it doesn't exist
-            widget_folder.mkdir(parents=True, exist_ok=True)
-            
-            # Write the script to the project
-            try:
-                with open(script_path, 'w', encoding='utf-8') as f:
-                    f.write(generated_script)
-                
-                # Verify file was written
-                if script_path.exists():
-                    file_size = script_path.stat().st_size
-                    print(f"✅ Widget successfully written to: {script_path}")
-                    print(f"   File size: {file_size} bytes")
-                    print(f"   Full path: {script_path.absolute()}")
-                else:
-                    print(f"⚠️ Warning: File write appeared to succeed but file not found at {script_path}")
-            except Exception as write_error:
-                print(f"❌ Failed to write widget file: {write_error}")
-                raise
-            
-            # Queue command for UE5 client to import/register the widget
+            # Queue command for UE5 client to write widget file locally
             manager = get_manager()
             
             # Log the operation to history
@@ -1691,32 +1671,33 @@ Return ONLY the complete Python script, no explanations or markdown."""
                 if "pending_commands" not in manager.http_clients[project_id]:
                     manager.http_clients[project_id]["pending_commands"] = []
                 
+                # Send script content to UE5 for local writing
                 manager.http_clients[project_id]["pending_commands"].append({
                     "type": "widget_generated",
                     "widget_name": class_name,
-                    "script_path": str(script_path),
+                    "script_content": generated_script,  # UE5 will write this locally
                     "timestamp": datetime.now().isoformat()
                 })
                 
-                print(f"📦 Widget deployment queued for {project_id[:16]}...")
+                print(f"📦 Widget '{class_name}' queued for UE5 client: {project_id[:16]}...")
             
             # Broadcast to dashboards
             await manager.broadcast_to_dashboards({
                 "type": "widget_generated",
                 "project_id": project_id,
                 "widget_name": class_name,
-                "script_path": str(script_path)
+                "script_path": script_path_display
             })
 
             return {
                 "success": True,
                 "widget_name": class_name,
-                "script_path": str(script_path),
+                "script_path": script_path_display,
                 "script_content": generated_script,  # Return the actual script for display
                 "message": f"✅ Widget '{class_name}' successfully created and deployed to your UE5 project!",
                 "instructions": [
-                    f"✅ Script automatically saved to: {script_path}",
-                    "✅ No manual steps required!",
+                    f"✅ Script will be written to: {script_path_display}",
+                    "✅ UE5 client handles file writing automatically!",
                     "🔄 Restart Unreal Editor to load the new widget",
                     f"📂 Find '{class_name}' in Content Browser under Python/AIAgentUtilities"
                 ]
@@ -1728,6 +1709,76 @@ Return ONLY the complete Python script, no explanations or markdown."""
             return {
                 "success": False,
                 "error": f"Widget generation failed: {str(e)}"
+            }
+
+    @app.post("/api/file_drop")
+    async def file_drop(request: dict):
+        """Send file content to UE5 client for local writing - File Drop tool."""
+        from datetime import datetime
+        
+        from app.project_registry import get_registry
+        from app.websocket_manager import get_manager
+        
+        filename = request.get("filename", "test_file.txt")
+        content = request.get("content", "")
+        
+        if not content:
+            return {"success": False, "error": "No content provided"}
+        
+        try:
+            # Get active project
+            registry = get_registry()
+            active_project = registry.get_active_project()
+            
+            if not active_project:
+                return {
+                    "success": False,
+                    "error": "No active UE5 project selected"
+                }
+            
+            project_id = active_project.get('id')
+            project_path = active_project.get('path', '')
+            
+            # Queue command for UE5 client to write file locally
+            manager = get_manager()
+            
+            if hasattr(manager, 'http_clients') and project_id and project_id in manager.http_clients:
+                if "pending_commands" not in manager.http_clients[project_id]:
+                    manager.http_clients[project_id]["pending_commands"] = []
+                
+                # Send file content to UE5 for local writing
+                manager.http_clients[project_id]["pending_commands"].append({
+                    "type": "file_drop",
+                    "filename": filename,
+                    "content": content,
+                    "timestamp": datetime.now().isoformat()
+                })
+                
+                print(f"📁 File Drop '{filename}' queued for: {project_id[:16]}...")
+                
+                file_path_display = f"{project_path}/Content/Python/AIAgentUtilities/{filename}"
+                content_size = len(content.encode('utf-8'))
+                
+                return {
+                    "success": True,
+                    "filename": filename,
+                    "path": file_path_display,
+                    "size": content_size,
+                    "message": f"File '{filename}' sent to UE5 project successfully!"
+                }
+            else:
+                return {
+                    "success": False,
+                    "error": "UE5 client not connected via HTTP polling"
+                }
+                
+        except Exception as e:
+            import traceback
+            error_details = traceback.format_exc()
+            print(f"❌ File Drop error: {error_details}")
+            return {
+                "success": False,
+                "error": f"File drop failed: {str(e)}"
             }
 
     @app.post("/api/generate_action_plan")

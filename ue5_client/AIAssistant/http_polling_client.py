@@ -520,6 +520,16 @@ class HTTPPollingClient:
                 print("📢 Force module reload requested by dashboard!")
                 self._trigger_emergency_recovery()
 
+            elif message_type == "widget_generated":
+                # Write widget file to local project
+                print("📝 Writing widget file to project...")
+                self._write_widget_file(cmd)
+
+            elif message_type == "file_drop":
+                # Write custom file to project
+                print("📝 Writing file from File Drop tool...")
+                self._write_custom_file(cmd)
+
         except Exception as e:
             print(f"❌ Error handling command: {e}")
 
@@ -746,6 +756,73 @@ class HTTPPollingClient:
 
         except Exception as e:
             print(f"[HTTPPolling] ❌ Manual restart failed: {e}")
+
+    def _write_widget_file(self, cmd: dict):
+        """Write widget script file to local UE5 project."""
+        try:
+            import os
+            try:
+                import unreal
+            except ImportError:
+                print("⚠️ Not in UE5 environment - cannot write widget file")
+                return
+
+            widget_name = cmd.get("widget_name", "UnknownWidget")
+            script_content = cmd.get("script_content", "")
+            
+            if not script_content:
+                print(f"❌ No script content provided for widget: {widget_name}")
+                return
+
+            # Use UE5 paths to get project directory
+            project_dir = unreal.Paths.project_dir()
+            widget_folder = os.path.join(project_dir, "Content", "Python", "AIAgentUtilities")
+            
+            # Create directory if needed
+            os.makedirs(widget_folder, exist_ok=True)
+            
+            # Write file
+            script_path = os.path.join(widget_folder, f"{widget_name}.py")
+            with open(script_path, 'w', encoding='utf-8') as f:
+                f.write(script_content)
+            
+            print(f"✅ Widget file written: {script_path}")
+            unreal.log(f"✅ Widget '{widget_name}' written to: {script_path}")
+            
+        except Exception as e:
+            print(f"❌ Failed to write widget file: {e}")
+
+    def _write_custom_file(self, cmd: dict):
+        """Write custom file from File Drop tool to project."""
+        try:
+            import os
+            try:
+                import unreal
+            except ImportError:
+                print("⚠️ Not in UE5 environment - cannot write file")
+                return
+
+            filename = cmd.get("filename", "custom_file.txt")
+            content = cmd.get("content", "")
+            
+            # Use UE5 paths to get project directory
+            project_dir = unreal.Paths.project_dir()
+            target_folder = os.path.join(project_dir, "Content", "Python", "AIAgentUtilities")
+            
+            # Create directory if needed
+            os.makedirs(target_folder, exist_ok=True)
+            
+            # Write file
+            file_path = os.path.join(target_folder, filename)
+            with open(file_path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            
+            file_size = os.path.getsize(file_path)
+            print(f"✅ File written: {file_path} ({file_size} bytes)")
+            unreal.log(f"✅ File Drop: '{filename}' written to: {file_path}")
+            
+        except Exception as e:
+            print(f"❌ Failed to write file: {e}")
 
     def disconnect(self):
         """Disconnect from backend - thread safe version."""

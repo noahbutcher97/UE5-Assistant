@@ -340,7 +340,7 @@
         /* Server Switcher Dropdown */
         .server-select {
             padding: 6px 12px;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(0, 245, 255, 0.3);
             border-radius: 6px;
             color: var(--text-primary);
@@ -352,13 +352,19 @@
 
         .server-select:hover {
             border-color: var(--primary-cyan);
-            background: rgba(0, 245, 255, 0.1);
+            background: rgba(0, 0, 0, 0.7);
         }
 
         .server-select:focus {
             outline: none;
             border-color: var(--primary-cyan);
             box-shadow: 0 0 0 2px rgba(0, 245, 255, 0.2);
+        }
+
+        .server-select option {
+            background: rgba(10, 14, 39, 0.95);
+            color: var(--text-primary);
+            padding: 8px;
         }
 
         /* Card Styles */
@@ -1355,6 +1361,41 @@
                 </div>
             </div>
         </div>
+
+        <!-- File Drop Tool -->
+        <div class="card">
+            <div style="margin-bottom: 24px;">
+                <h3><i class="fas fa-file-arrow-up"></i> File Drop Tester</h3>
+                <p style="color: var(--text-secondary);">Test file writing to your UE5 project folder - verifies the system can write files locally</p>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--primary-cyan);">
+                    <i class="fas fa-file-signature"></i> Filename
+                </label>
+                <input type="text" id="fileDropName" placeholder="e.g., test_file.txt" value="test_file.txt"
+                       style="width: 100%; padding: 12px; font-size: 14px;">
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; margin-bottom: 8px; color: var(--primary-cyan);">
+                    <i class="fas fa-file-lines"></i> File Content
+                </label>
+                <textarea id="fileDropContent" 
+                          placeholder="Type any content here to be written to the file..."
+                          style="width: 100%; min-height: 150px; padding: 12px; font-size: 14px; font-family: 'Courier New', monospace; resize: vertical;">This is a test file created by the File Drop tool.
+If you can see this file in your UE5 project at:
+Content/Python/AIAgentUtilities/
+
+Then the file writing system is working correctly!</textarea>
+            </div>
+
+            <button class="btn btn-primary" onclick="dropFile()" style="width: 100%; justify-content: center; padding: 16px;">
+                <i class="fas fa-paper-plane"></i> Send to UE5 Project
+            </button>
+
+            <div id="fileDropStatus" style="display: none; margin-top: 16px; padding: 16px; border-radius: 8px;"></div>
+        </div>
     </div>
 
     <!-- Settings Tab -->
@@ -2004,6 +2045,63 @@
                 btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
                 setTimeout(() => btn.innerHTML = originalHTML, 2000);
             });
+        }
+
+        // File Drop Tool
+        async function dropFile() {
+            const filename = document.getElementById('fileDropName').value;
+            const content = document.getElementById('fileDropContent').value;
+            const statusDiv = document.getElementById('fileDropStatus');
+
+            if (!filename || !content) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = 'rgba(239,68,68,0.1)';
+                statusDiv.style.borderColor = '#ef4444';
+                statusDiv.style.color = '#ef4444';
+                statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Please provide both filename and content';
+                return;
+            }
+
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = 'rgba(251,191,36,0.1)';
+            statusDiv.style.borderColor = 'rgba(251,191,36,0.3)';
+            statusDiv.style.color = 'var(--primary-cyan)';
+            statusDiv.innerHTML = '<i class="fas fa-spinner spinner"></i> Sending file to UE5 project...';
+
+            try {
+                const response = await fetch('/api/file_drop', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filename, content })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    statusDiv.style.background = 'rgba(16,185,129,0.1)';
+                    statusDiv.style.borderColor = 'var(--primary-green)';
+                    statusDiv.style.color = 'var(--primary-green)';
+                    statusDiv.innerHTML = `
+                        <div style="text-align: left;">
+                            <h4 style="margin: 0 0 8px 0;"><i class="fas fa-check-circle"></i> File Sent Successfully!</h4>
+                            <p style="margin: 4px 0; font-size: 13px;">✅ File: <strong>${data.filename}</strong></p>
+                            <p style="margin: 4px 0; font-size: 13px;">📁 Location: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${data.path}</code></p>
+                            <p style="margin: 4px 0; font-size: 13px;">📝 Size: ${data.size} bytes</p>
+                            <p style="margin: 4px 0; font-size: 13px; color: var(--text-secondary);">Check your UE5 project folder to verify the file was written!</p>
+                        </div>
+                    `;
+                } else {
+                    statusDiv.style.background = 'rgba(239,68,68,0.1)';
+                    statusDiv.style.borderColor = '#ef4444';
+                    statusDiv.style.color = '#ef4444';
+                    statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${data.error || 'Failed to send file'}`;
+                }
+            } catch (error) {
+                statusDiv.style.background = 'rgba(239,68,68,0.1)';
+                statusDiv.style.borderColor = '#ef4444';
+                statusDiv.style.color = '#ef4444';
+                statusDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error: ${error.message}`;
+            }
         }
 
         // Project Management
