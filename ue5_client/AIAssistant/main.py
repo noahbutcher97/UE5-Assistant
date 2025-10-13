@@ -445,9 +445,6 @@ class AIAssistant:
             # Get project info
             project_path = unreal.Paths.project_dir()
             project_name = unreal.Paths.get_project_file_path().split('/')[-1].replace('.uproject', '')
-            
-            # Normalize path: remove quotes and trailing slashes
-            project_path = project_path.strip().strip('"').strip("'").rstrip('/\\')
             project_id = hashlib.md5(project_path.encode()).hexdigest()
             
             unreal.log(f"📋 Project Path: {project_path}")

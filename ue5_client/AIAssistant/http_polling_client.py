@@ -57,6 +57,7 @@ class HTTPPollingClient:
         self.consecutive_failures = 0
         self.max_consecutive_failures = 3
         self.reconnect_delay = 5.0  # seconds
+        self._reconnect_requested = False  # Flag for dashboard-triggered reconnect
 
         # Version tracking for module reload
         self.last_module_version = None
@@ -208,6 +209,29 @@ class HTTPPollingClient:
                     # Process each command
                     for cmd in commands:
                         self._handle_command(cmd)
+
+                    # Check if reconnect was requested via dashboard
+                    if self._reconnect_requested:
+                        self._reconnect_requested = False  # Clear flag
+                        print("🔌 Executing dashboard-triggered reconnect...")
+                        # Simply re-register without spawning new threads
+                        try:
+                            re_reg_response = requests.post(
+                                f"{self.base_url}/api/ue5/register_http",
+                                json={
+                                    "project_id": self.project_id,
+                                    "project_name": self.project_name
+                                },
+                                timeout=5
+                            )
+                            if re_reg_response.status_code == 200:
+                                print("✅ Re-registered with backend successfully")
+                                self.connected = True
+                            else:
+                                print(f"⚠️ Re-registration failed: {re_reg_response.status_code}")
+                        except Exception as e:
+                            print(f"❌ Re-registration error: {e}")
+                        continue  # Go to next poll cycle
 
                     # Reset failure counter on success
                     self.consecutive_failures = 0
@@ -530,6 +554,11 @@ class HTTPPollingClient:
                 print("📝 Writing file from File Drop tool...")
                 self._write_custom_file(cmd)
 
+            elif message_type == "reconnect":
+                # Restart HTTP polling connection
+                print("🔌 Reconnect command received from dashboard...")
+                self._handle_reconnect_command()
+
         except Exception as e:
             print(f"❌ Error handling command: {e}")
 
@@ -823,6 +852,32 @@ class HTTPPollingClient:
             
         except Exception as e:
             print(f"❌ Failed to write file: {e}")
+
+    def _handle_reconnect_command(self):
+        """Handle reconnect command from dashboard - set flag to trigger reconnection."""
+        try:
+            try:
+                import unreal
+            except ImportError:
+                print("⚠️ Not in UE5 environment - cannot restart connection")
+                return
+            
+            unreal.log("🔌 Dashboard reconnect command received...")
+            print("🔌 Reconnect command received from dashboard...")
+            
+            # Set reconnect flag - poll loop will check this and trigger _attempt_reconnect()
+            self._reconnect_requested = True
+            
+            print("✅ Reconnection requested - will reconnect on next poll cycle")
+            unreal.log("✅ Reconnect flag set, will reconnect on next poll")
+            
+        except Exception as e:
+            print(f"❌ Reconnect command failed: {e}")
+            try:
+                import unreal
+                unreal.log_error(f"❌ Reconnect failed: {e}")
+            except:
+                pass
 
     def disconnect(self):
         """Disconnect from backend - thread safe version."""

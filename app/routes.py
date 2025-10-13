@@ -1781,6 +1781,49 @@ Return ONLY the complete Python script, no explanations or markdown."""
                 "error": f"File drop failed: {str(e)}"
             }
 
+    @app.post("/api/reconnect_client")
+    async def reconnect_client(request: dict):
+        """Send reconnect command to UE5 client to restart HTTP polling."""
+        from datetime import datetime
+        from app.websocket_manager import get_manager
+        
+        project_id = request.get("project_id")
+        
+        if not project_id:
+            return {"success": False, "error": "No project_id provided"}
+        
+        manager = get_manager()
+        
+        # Queue reconnect command for the UE5 client
+        if hasattr(manager, 'http_clients') and project_id in manager.http_clients:
+            if "pending_commands" not in manager.http_clients[project_id]:
+                manager.http_clients[project_id]["pending_commands"] = []
+            
+            manager.http_clients[project_id]["pending_commands"].append({
+                "type": "reconnect",
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            print(f"🔌 Reconnect command queued for: {project_id[:16]}...")
+            
+            # Broadcast to dashboards
+            await manager.broadcast_to_dashboards({
+                "type": "reconnect_command",
+                "project_id": project_id,
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            return {
+                "success": True,
+                "message": "Reconnect command sent to UE5 client"
+            }
+        else:
+            # Client not in http_clients - might be disconnected or using WebSocket
+            return {
+                "success": False,
+                "error": "Client not connected via HTTP polling"
+            }
+
     @app.post("/api/generate_action_plan")
     async def generate_action_plan(request: dict):
         """Generate AI action plan for scene building."""
