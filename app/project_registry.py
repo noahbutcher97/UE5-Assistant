@@ -23,6 +23,7 @@ class ProjectRegistry:
                          project_data: Dict[str, Any]) -> Dict[str, Any]:
         """
         Register or update a UE5 project.
+        Ensures only one entry per project path (deduplicates by path).
 
         Args:
             project_id: Unique project identifier (hash of project path)
@@ -31,6 +32,24 @@ class ProjectRegistry:
         Returns:
             Registration result
         """
+        project_path = project_data.get("path", "")
+        
+        # Check for existing entry with same path but different ID (deduplication)
+        existing_id_for_path = None
+        for pid, pdata in self.projects.items():
+            if pdata.get("path") == project_path and pid != project_id:
+                existing_id_for_path = pid
+                print(f"🔄 Deduplicating project: Found existing entry {pid[:16]}... for path {project_path}")
+                print(f"   Removing old entry and using new ID: {project_id[:16]}...")
+                break
+        
+        # Remove old duplicate entry if found
+        if existing_id_for_path:
+            del self.projects[existing_id_for_path]
+            # Update active project if the old one was active
+            if self.active_project_id == existing_id_for_path:
+                self.active_project_id = project_id
+        
         is_new = project_id not in self.projects
 
         # Preserve existing connection_mode if updating
