@@ -557,6 +557,13 @@ def force_restart_assistant() -> bool:
                 main_module = sys.modules['AIAssistant.main']
                 if hasattr(main_module, '_assistant_instance'):
                     assistant = main_module._assistant_instance
+                    
+                    # Stop ticker first (MUST be on main thread - we are on main thread here)
+                    if hasattr(assistant, 'action_queue') and assistant.action_queue:
+                        assistant.action_queue.stop_ticker()
+                        print("   - Stopped action queue ticker (main thread)")
+                    
+                    # Now safe to disconnect clients
                     if hasattr(assistant,
                                'http_client') and assistant.http_client:
                         assistant.http_client.disconnect()

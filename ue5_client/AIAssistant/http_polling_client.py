@@ -509,6 +509,12 @@ class HTTPPollingClient:
                 print("⚠️  Files will be updated WITHOUT restarting UE5")
                 self._handle_auto_update(mode="no_restart")
 
+            elif message_type == "emergency_recovery":
+                # Backend triggered emergency recovery (dashboard "Fix Crash Issues")
+                print("🚑 EMERGENCY RECOVERY REQUESTED from dashboard!")
+                print("[HTTPPolling] Triggering self-healing recovery...")
+                self._trigger_emergency_recovery()
+
             elif message_type == "force_reload":
                 # Backend triggered force module reload
                 print("📢 Force module reload requested by dashboard!")
@@ -742,14 +748,14 @@ class HTTPPollingClient:
             print(f"[HTTPPolling] ❌ Manual restart failed: {e}")
 
     def disconnect(self):
-        """Disconnect from backend."""
+        """Disconnect from backend - thread safe version."""
         self.running = False
         self.connected = False
 
-        # Stop action queue ticker if available
-        if self.action_queue:
-            self.action_queue.stop_ticker()
-
+        # NOTE: Do NOT call stop_ticker() here!
+        # stop_ticker() unregisters Slate callbacks which MUST be done on main thread
+        # The ticker will be stopped during restart which happens on main thread
+        
         print("🔌 HTTP polling disconnected")
 
     def is_connected(self) -> bool:
