@@ -1832,7 +1832,9 @@
         function handleWsMessage(data) {
             if (data.type === 'initial_status') {
                 // Handle initial connection status from server
-                state.connectedClients = data.connected_projects || [];
+                // Convert objects to IDs for consistent comparison
+                const connectedProjects = data.connected_projects || [];
+                state.connectedClients = connectedProjects.map(p => p.id || p.project_id || p);
                 log(`Initial status: ${state.connectedClients.length} client(s) connected`, 'info');
                 loadProjects();
             } else if (data.type === 'ue5_status') {

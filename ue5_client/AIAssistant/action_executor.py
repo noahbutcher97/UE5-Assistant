@@ -408,23 +408,18 @@ class ActionExecutor:
             # This method is called on the main thread via action queue
             self.logger.info("🔄 Executing manual restart on main thread...")
             
-            # Clear all AIAssistant modules except action_queue
-            import sys
-            modules_to_remove = [
-                key for key in list(sys.modules.keys()) 
-                if 'AIAssistant' in key and 'action_queue' not in key
-            ]
+            # Check if another restart is already in progress
+            import AIAssistant.auto_update as auto_update
+            if hasattr(auto_update, '_restart_in_progress') and auto_update._restart_in_progress:
+                return "⚠️ Restart already in progress - skipping duplicate request"
             
-            for module in modules_to_remove:
-                del sys.modules[module]
+            # Use the guarded restart function instead of manual logic
+            result = auto_update.force_restart_assistant()
             
-            self.logger.info(f"🗑️ Cleared {len(modules_to_remove)} cached modules")
-            
-            # Re-import main module
-            import AIAssistant.main as fresh_main
-            fresh_main.get_assistant()
-            
-            return "✅ Manual restart complete - assistant reloaded"
+            if result:
+                return "✅ Manual restart complete - assistant reloaded"
+            else:
+                return "[UE_ERROR] Manual restart failed - check logs"
             
         except Exception as e:
             return f"[UE_ERROR] manual_restart failed: {e}"
