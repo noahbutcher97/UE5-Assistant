@@ -1850,6 +1850,7 @@
             const capabilities = Array.from(capabilityCheckboxes).map(cb => cb.value);
 
             loadingDiv.style.display = 'block';
+            loadingDiv.innerHTML = '<i class="fas fa-spinner spinner"></i> Generating widget with AI...';
             outputDiv.style.display = 'none';
 
             try {
@@ -1862,16 +1863,33 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    scriptBox.textContent = data.script_content || 'Script generated successfully';
+                    scriptBox.innerHTML = `
+                        <div style="background: rgba(16,185,129,0.1); border: 1px solid var(--primary-green); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                            <h4 style="margin: 0 0 8px 0; color: var(--primary-green);"><i class="fas fa-check-circle"></i> ${data.message || 'Widget Generated Successfully'}</h4>
+                            ${data.instructions ? data.instructions.map(inst => `<p style="margin: 4px 0; font-size: 13px; color: var(--text-secondary);">${inst}</p>`).join('') : ''}
+                        </div>
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px; font-family: 'Courier New', monospace; font-size: 12px; color: var(--primary-cyan); max-height: 400px; overflow-y: auto;">
+                            ${data.script_path || 'Widget deployed to your UE5 project'}
+                        </div>
+                    `;
                     outputDiv.style.display = 'block';
-                    
-                    // Store script for copying
-                    window.generatedUtilityScript = data.script_content;
                 } else {
-                    alert(`Error: ${data.error || 'Failed to generate utility'}`);
+                    scriptBox.innerHTML = `
+                        <div style="background: rgba(239,68,68,0.1); border: 1px solid #ef4444; border-radius: 8px; padding: 16px;">
+                            <h4 style="margin: 0 0 8px 0; color: #ef4444;"><i class="fas fa-exclamation-triangle"></i> Generation Failed</h4>
+                            <p style="margin: 0; color: var(--text-secondary);">${data.error || 'Failed to generate utility'}</p>
+                        </div>
+                    `;
+                    outputDiv.style.display = 'block';
                 }
             } catch (error) {
-                alert(`Error: ${error.message}`);
+                scriptBox.innerHTML = `
+                    <div style="background: rgba(239,68,68,0.1); border: 1px solid #ef4444; border-radius: 8px; padding: 16px;">
+                        <h4 style="margin: 0 0 8px 0; color: #ef4444;"><i class="fas fa-exclamation-triangle"></i> Error</h4>
+                        <p style="margin: 0; color: var(--text-secondary);">${error.message}</p>
+                    </div>
+                `;
+                outputDiv.style.display = 'block';
             } finally {
                 loadingDiv.style.display = 'none';
             }
@@ -1936,12 +1954,26 @@
                                     </button>
                                 </div>
                             </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid var(--border-glow);">
-                                <div style="display: flex; align-items: center; gap: 8px;">
-                                    <span class="status-indicator ${statusClass}"></span>
-                                    <span style="font-size: 13px; color: var(--text-secondary);">${statusText}</span>
+                            <div style="padding-top: 12px; border-top: 1px solid var(--border-glow);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        <span class="status-indicator ${statusClass}"></span>
+                                        <span style="font-size: 13px; color: var(--text-secondary);">${statusText}</span>
+                                    </div>
+                                    <span style="font-size: 11px; color: var(--text-muted);">${project.version || 'UE 5.6'}</span>
                                 </div>
-                                <span style="font-size: 11px; color: var(--text-muted);">${project.version || 'UE 5.6'}</span>
+                                ${isConnected ? `
+                                <div>
+                                    <label style="font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 6px;">
+                                        <i class="fas fa-server"></i> Backend Server:
+                                    </label>
+                                    <select class="server-select" onchange="switchServer('${project.project_id}', this.value)" onclick="event.stopPropagation()">
+                                        <option value="production" selected>Production (Replit)</option>
+                                        <option value="localhost">Localhost</option>
+                                        <option value="custom">Custom URL</option>
+                                    </select>
+                                </div>
+                                ` : ''}
                             </div>
                         `;
 
