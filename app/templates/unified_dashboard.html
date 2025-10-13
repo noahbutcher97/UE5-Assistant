@@ -1747,7 +1747,12 @@
         }
 
         function handleWsMessage(data) {
-            if (data.type === 'ue5_status') {
+            if (data.type === 'initial_status') {
+                // Handle initial connection status from server
+                state.connectedClients = data.connected_projects || [];
+                log(`Initial status: ${state.connectedClients.length} client(s) connected`, 'info');
+                loadProjects();
+            } else if (data.type === 'ue5_status') {
                 if (data.status === 'connected') {
                     if (!state.connectedClients.includes(data.project_id)) {
                         state.connectedClients.push(data.project_id);
