@@ -523,11 +523,11 @@ class AIAssistant:
             print(f"[HTTP]   Project ID: {project_id}")
             print(f"[HTTP]   Project Name: {project_name}")
             
-            self.ws_client = HTTPPollingClient(base_url, project_id, project_name)
-            self.ws_client.set_action_handler(self._handle_websocket_action)
+            self.http_client = HTTPPollingClient(base_url, project_id, project_name)
+            self.http_client.set_action_handler(self._handle_websocket_action)
             
             print("[HTTP] Calling connect() on HTTP client...")
-            result = self.ws_client.connect()
+            result = self.http_client.connect()
             print(f"[HTTP] Connect result: {result}")
             
             if not result:
