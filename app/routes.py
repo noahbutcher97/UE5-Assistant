@@ -1731,8 +1731,15 @@ When users ask about their project's actual data "
 
     @app.post("/api/generate_utility")
     async def generate_utility(request: dict):
-        """Generate UE 5.6 compliant editor utility widget."""
+        """
+        Generate and deploy UE 5.6 compliant editor utility widget.
+        Fully automated - no copy/pasting required.
+        """
+        import os
+        from pathlib import Path
+        from datetime import datetime
         from app.project_registry import get_registry
+        from app.websocket_manager import get_manager
 
         name = request.get("name", "CustomTool")
         description = request.get("description", "")
@@ -1742,36 +1749,118 @@ When users ask about their project's actual data "
             # Get active project for correct path
             registry = get_registry()
             active_project = registry.get_active_project()
+            
+            if not active_project:
+                return {
+                    "success": False,
+                    "error": "No active UE5 project selected. Please select a project first."
+                }
 
-            # Generate UE 5.6 compliant Python script
-            script = generate_ue56_utility_script(name, description,
-                                                  capabilities)
+            project_id = active_project.get('id')
+            project_path = active_project.get('path', '')
+            
+            # Sanitize widget name for valid Python class
+            class_name = sanitize_class_name(name)
+            
+            # Use AI to generate the widget script
+            import openai
+            
+            model_name = app_config.get("model", "gpt-4o-mini")
+            
+            ai_prompt = f"""Generate a complete UE 5.6 compliant Editor Utility Widget Python script.
 
-            # Determine save path
-            if active_project:
-                project_path = active_project.get('path', '')
-                script_path = f"{project_path}Content/Python/AIAgentUtilities/{name}.py"
-            else:
-                script_path = f"Content/Python/AIAgentUtilities/{name}.py"
+Widget Name: {class_name}
+Description: {description}
+Capabilities: {', '.join(capabilities)}
+
+Requirements:
+1. Create a @unreal.uclass() decorated class that inherits from unreal.EditorUtilityWidget
+2. Include proper UE 5.6 API usage (no deprecated functions)
+3. Implement the requested capabilities with AI integration
+4. Add comprehensive error handling and logging
+5. Include docstrings and comments
+6. Use the AI Assistant client from AIAssistant.api_client for AI features
+7. Make it production-ready and user-friendly
+
+Return ONLY the complete Python script, no explanations or markdown."""
+
+            response = openai.chat.completions.create(
+                model=model_name,
+                messages=[{
+                    "role": "system",
+                    "content": "You are an expert Unreal Engine 5.6 Python developer. Generate clean, production-ready Editor Utility Widget scripts."
+                }, {
+                    "role": "user",
+                    "content": ai_prompt
+                }],
+                temperature=0.3
+            )
+
+            generated_script = response.choices[0].message.content.strip()
+            
+            # Remove markdown code blocks if present
+            if generated_script.startswith("```"):
+                lines = generated_script.split('\n')
+                generated_script = '\n'.join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:])
+            
+            # Determine save path in UE5 project
+            widget_folder = Path(project_path) / "Content" / "Python" / "AIAgentUtilities"
+            script_filename = f"{class_name}.py"
+            script_path = widget_folder / script_filename
+            
+            # Create directory if it doesn't exist
+            widget_folder.mkdir(parents=True, exist_ok=True)
+            
+            # Write the script to the project
+            with open(script_path, 'w', encoding='utf-8') as f:
+                f.write(generated_script)
+            
+            print(f"✅ Widget written to: {script_path}")
+            
+            # Queue command for UE5 client to import/register the widget
+            manager = get_manager()
+            
+            if hasattr(manager, 'http_clients') and project_id in manager.http_clients:
+                if "pending_commands" not in manager.http_clients[project_id]:
+                    manager.http_clients[project_id]["pending_commands"] = []
+                
+                manager.http_clients[project_id]["pending_commands"].append({
+                    "type": "widget_generated",
+                    "widget_name": class_name,
+                    "script_path": str(script_path),
+                    "timestamp": datetime.now().isoformat()
+                })
+                
+                print(f"📦 Widget deployment queued for {project_id[:16]}...")
+            
+            # Broadcast to dashboards
+            await manager.broadcast_to_dashboards({
+                "type": "widget_generated",
+                "project_id": project_id,
+                "widget_name": class_name,
+                "script_path": str(script_path)
+            })
 
             return {
-                "success":
-                True,
-                "widget_name":
-                name,
-                "script_path":
-                script_path,
-                "script_content":
-                script,
+                "success": True,
+                "widget_name": class_name,
+                "script_path": str(script_path),
+                "message": f"✅ Widget '{class_name}' successfully created and deployed to your UE5 project!",
                 "instructions": [
-                    "1. Copy the generated script to your project",
-                    "2. Restart Unreal Editor to load the utility",
-                    "3. Find in Content Browser under Python/AIAgentUtilities",
-                    "4. Right-click and execute"
+                    f"✅ Script automatically saved to: {script_path}",
+                    "✅ No manual steps required!",
+                    "🔄 Restart Unreal Editor to load the new widget",
+                    f"📂 Find '{class_name}' in Content Browser under Python/AIAgentUtilities"
                 ]
             }
         except Exception as e:
-            return {"error": str(e)}
+            import traceback
+            error_details = traceback.format_exc()
+            print(f"❌ Widget generation error: {error_details}")
+            return {
+                "success": False,
+                "error": f"Widget generation failed: {str(e)}"
+            }
 
     @app.post("/api/generate_action_plan")
     async def generate_action_plan(request: dict):
