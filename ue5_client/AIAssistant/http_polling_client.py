@@ -289,6 +289,13 @@ class HTTPPollingClient:
         print("[HTTPPolling] 🔄 Triggering automatic module reload...")
 
         try:
+            # CRITICAL: Preserve client references BEFORE clearing modules
+            if 'AIAssistant.main' in sys.modules:
+                main_module = sys.modules['AIAssistant.main']
+                if hasattr(main_module, '_preserve_clients'):
+                    main_module._preserve_clients()
+                    print("[HTTPPolling] ✅ Client references preserved for reload")
+            
             # Clear all AIAssistant modules except action_queue
             modules_to_remove = [
                 key for key in list(sys.modules.keys())
@@ -765,6 +772,13 @@ class HTTPPollingClient:
         # This should only be called from main thread via action queue
         try:
             print("[HTTPPolling] 🔄 Attempting manual restart (main thread)...")
+
+            # CRITICAL: Preserve client references BEFORE clearing modules
+            if 'AIAssistant.main' in sys.modules:
+                main_module = sys.modules['AIAssistant.main']
+                if hasattr(main_module, '_preserve_clients'):
+                    main_module._preserve_clients()
+                    print("[HTTPPolling] ✅ Client references preserved for manual restart")
 
             # Clear all AIAssistant modules except action_queue
             modules_to_remove = [

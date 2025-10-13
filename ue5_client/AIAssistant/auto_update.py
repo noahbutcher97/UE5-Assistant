@@ -85,6 +85,13 @@ def clear_all_modules(preserve_queue: bool = False) -> int:
     """
     print("[AutoUpdate] 🗑️ Clearing module cache...")
 
+    # CRITICAL: Preserve client references BEFORE clearing modules
+    if 'AIAssistant.main' in sys.modules:
+        main_module = sys.modules['AIAssistant.main']
+        if hasattr(main_module, '_preserve_clients'):
+            main_module._preserve_clients()
+            print("[AutoUpdate] ✅ Client references preserved before module clear")
+
     # Get list of ALL AIAssistant modules (including action_queue for complete reload)
     if preserve_queue:
         modules_to_remove = [

@@ -529,10 +529,17 @@ class AIAssistant:
             print("[HTTP] Calling connect() on HTTP client...")
             result = self.http_client.connect()
             print(f"[HTTP] Connect result: {result}")
+            print(f"[HTTP] About to check result and return...")
+            print(f"[HTTP] self.http_client = {self.http_client}")
+            print(f"[HTTP] self.http_client.connected = {self.http_client.connected if self.http_client else 'N/A'}")
             
             if not result:
+                print(f"[HTTP] Result is False, logging error...")
                 unreal.log_error("HTTP Polling connection failed - connect() returned False")
+            else:
+                print(f"[HTTP] Result is True, about to return True...")
             
+            print(f"[HTTP] Returning result: {result}")
             return result
         except Exception as e:
             import unreal
@@ -606,13 +613,38 @@ class AIAssistant:
 # Global assistant instance
 _assistant: Optional[AIAssistant] = None
 
+# Persistent client references that survive module reloads
+_persistent_http_client = None
+_persistent_ws_client = None
+
 
 def get_assistant() -> AIAssistant:
     """Get or create the global AI assistant."""
-    global _assistant
+    global _assistant, _persistent_http_client, _persistent_ws_client
+    
     if _assistant is None:
         _assistant = AIAssistant()
+        
+        # Restore persistent clients after module reload
+        if _persistent_http_client is not None:
+            print("[AIAssistant] 🔄 Restoring HTTP client after module reload...")
+            _assistant.http_client = _persistent_http_client
+        
+        if _persistent_ws_client is not None:
+            print("[AIAssistant] 🔄 Restoring WebSocket client after module reload...")
+            _assistant.ws_client = _persistent_ws_client
+    
     return _assistant
+
+
+def _preserve_clients():
+    """Save client references before module reload."""
+    global _assistant, _persistent_http_client, _persistent_ws_client
+    
+    if _assistant is not None:
+        _persistent_http_client = _assistant.http_client
+        _persistent_ws_client = _assistant.ws_client
+        print(f"[AIAssistant] 💾 Preserving clients: HTTP={_persistent_http_client is not None}, WS={_persistent_ws_client is not None}")
 
 
 # Auto-initialize on import to establish WebSocket connection immediately
