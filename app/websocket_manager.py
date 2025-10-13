@@ -68,6 +68,19 @@ class ConnectionManager:
             "connected_projects": connected_projects,
             "timestamp": datetime.now().isoformat()
         })
+        
+        # Send detailed server info for each HTTP client
+        if hasattr(self, 'http_clients'):
+            for project_id, client_data in self.http_clients.items():
+                await websocket.send_json({
+                    "type": "ue5_status",
+                    "project_id": project_id,
+                    "status": "connected",
+                    "connection_type": "http_polling",
+                    "server_url": client_data.get("server_url", "unknown"),
+                    "server_type": client_data.get("server_type", "unknown"),
+                    "timestamp": datetime.now().isoformat()
+                })
 
     async def disconnect_ue5(self, project_id: str):
         """Unregister UE5 client and notify dashboards."""

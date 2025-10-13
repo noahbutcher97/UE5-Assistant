@@ -1584,7 +1584,8 @@ Then the file writing system is working correctly!</textarea>
             wsConnected: false,
             dashboardWs: null,
             connectedClients: [],
-            confirmCallback: null
+            confirmCallback: null,
+            clientServerInfo: {}  // Track server URL/type for each client
         };
 
         // Keyboard shortcuts
@@ -1653,9 +1654,31 @@ Then the file writing system is working correctly!</textarea>
                     padding: 16px;
                 `;
 
-                const connectionMode = state.connectionMode || 'http';
+                // Get server info for this client
+                const serverInfo = state.clientServerInfo[clientId] || {};
+                const connectionType = serverInfo.connection_type || 'http_polling';
+                const serverType = serverInfo.server_type || 'unknown';
+                const serverUrl = serverInfo.server_url || 'Unknown';
+                
                 const statusColor = '#10b981';
-                const statusText = connectionMode === 'http' ? 'HTTP Polling' : 'WebSocket';
+                const statusText = connectionType === 'http_polling' ? 'HTTP Polling' : 'WebSocket';
+                
+                // Server type display with icons
+                let serverDisplay = '';
+                let serverColor = 'var(--text-secondary)';
+                if (serverType === 'localhost') {
+                    serverDisplay = '🏠 Localhost (Dev)';
+                    serverColor = '#f59e0b';  // Orange for localhost
+                } else if (serverType === 'production') {
+                    serverDisplay = '🌐 Production (Replit)';
+                    serverColor = '#10b981';  // Green for production
+                } else if (serverType === 'custom') {
+                    serverDisplay = '⚙️ Custom Server';
+                    serverColor = '#8b5cf6';  // Purple for custom
+                } else {
+                    serverDisplay = '❓ Unknown Server';
+                    serverColor = 'var(--text-muted)';
+                }
 
                 card.innerHTML = `
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
@@ -1675,6 +1698,10 @@ Then the file writing system is working correctly!</textarea>
                             <span style="color: var(--primary-cyan);">${statusText}</span>
                         </div>
                         <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                            <span style="color: var(--text-secondary);">Server:</span>
+                            <span style="color: ${serverColor}; font-weight: 500;">${serverDisplay}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px;">
                             <span style="color: var(--text-secondary);">Last Poll:</span>
                             <span style="color: var(--primary-green);">Just now</span>
                         </div>
@@ -1682,18 +1709,18 @@ Then the file writing system is working correctly!</textarea>
 
                     <div style="margin-bottom: 8px;">
                         <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">
-                            <i class="fas fa-server"></i> Connected Server
+                            <i class="fas fa-server"></i> Switch Server
                         </label>
                         <select class="server-select" onchange="switchServer('${clientId}', this.value)">
-                            <option value="production" selected>Production (Replit)</option>
-                            <option value="localhost">Localhost (Dev)</option>
-                            <option value="custom">Custom Server</option>
+                            <option value="production" ${serverType === 'production' ? 'selected' : ''}>Production (Replit)</option>
+                            <option value="localhost" ${serverType === 'localhost' ? 'selected' : ''}>Localhost (Dev)</option>
+                            <option value="custom" ${serverType === 'custom' ? 'selected' : ''}>Custom Server</option>
                         </select>
                     </div>
 
                     <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Server changes sync with UE5 editor</span>
+                        <i class="fas fa-link"></i>
+                        <span style="font-family: monospace;">${serverUrl.length > 35 ? serverUrl.substring(0, 35) + '...' : serverUrl}</span>
                     </div>
                 `;
                 
@@ -2624,7 +2651,13 @@ Then the file writing system is working correctly!</textarea>
                     if (!state.connectedClients.includes(data.project_id)) {
                         state.connectedClients.push(data.project_id);
                     }
-                    console.log('✅ UE5 client connected:', data.project_id);
+                    // Track server info for this client
+                    state.clientServerInfo[data.project_id] = {
+                        server_url: data.server_url || 'unknown',
+                        server_type: data.server_type || 'unknown',
+                        connection_type: data.connection_type || 'http_polling'
+                    };
+                    console.log('✅ UE5 client connected:', data.project_id, 'to', data.server_type || 'unknown', 'server');
                     log(`UE5 client connected: ${data.project_id.substring(0,16)}...`, 'success');
                     showNotification('Client Connected', `UE5 client ${data.project_id.substring(0,16)}... is now online`, 'success');
                 } else {

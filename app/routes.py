@@ -1894,7 +1894,7 @@ Return ONLY the JSON array, no explanation.""")
     # ========================================================================
 
     @app.post("/api/ue5/register_http")
-    async def register_ue5_http(request: dict):
+    async def register_ue5_http(request: dict, req: Request):
         """Register UE5 client via HTTP polling (WebSocket fallback)."""
         from datetime import datetime
 
@@ -1906,6 +1906,17 @@ Return ONLY the JSON array, no explanation.""")
         if not project_id:
             return {"success": False, "error": "project_id required"}
 
+        # Detect server URL from request
+        server_url = f"{req.url.scheme}://{req.url.netloc}"
+        
+        # Categorize server type
+        if "localhost" in server_url or "127.0.0.1" in server_url:
+            server_type = "localhost"
+        elif "replit.app" in server_url or "repl.co" in server_url:
+            server_type = "production"
+        else:
+            server_type = "custom"
+
         manager = get_manager()
         # Store as HTTP client instead of WebSocket
         if not hasattr(manager, 'http_clients'):
@@ -1914,10 +1925,13 @@ Return ONLY the JSON array, no explanation.""")
         manager.http_clients[project_id] = {
             "name": project_name,
             "last_poll": datetime.now(),
-            "pending_commands": []
+            "pending_commands": [],
+            "server_url": server_url,
+            "server_type": server_type
         }
 
         print(f"✅ UE5 HTTP client registered: {project_id[:16]}... ({project_name})")
+        print(f"   Server: {server_url} ({server_type})")
         print(f"   Total HTTP clients: {len(manager.http_clients)}")
 
         # Notify dashboards
@@ -1930,6 +1944,10 @@ Return ONLY the JSON array, no explanation.""")
             "connected",
             "connection_type":
             "http_polling",
+            "server_url":
+            server_url,
+            "server_type":
+            server_type,
             "timestamp":
             datetime.now().isoformat()
         })
@@ -1937,7 +1955,7 @@ Return ONLY the JSON array, no explanation.""")
         return {"success": True, "message": "Registered via HTTP polling"}
 
     @app.post("/api/ue5/poll")
-    async def poll_for_commands(request: dict):
+    async def poll_for_commands(request: dict, req: Request):
         """UE5 client polls for pending commands."""
         from datetime import datetime
 
@@ -1954,12 +1972,27 @@ Return ONLY the JSON array, no explanation.""")
         # Auto-register if not registered (handles server restarts gracefully)
         if project_id not in manager.http_clients:
             project_name = request.get("project_name", "Unknown")
+            
+            # Detect server URL from request
+            server_url = f"{req.url.scheme}://{req.url.netloc}"
+            
+            # Categorize server type
+            if "localhost" in server_url or "127.0.0.1" in server_url:
+                server_type = "localhost"
+            elif "replit.app" in server_url or "repl.co" in server_url:
+                server_type = "production"
+            else:
+                server_type = "custom"
+            
             manager.http_clients[project_id] = {
                 "name": project_name,
                 "last_poll": datetime.now(),
-                "pending_commands": []
+                "pending_commands": [],
+                "server_url": server_url,
+                "server_type": server_type
             }
             print(f"🔄 Auto-registered HTTP client on poll: {project_id}")
+            print(f"   Server: {server_url} ({server_type})")
 
             # Notify dashboards
             await manager.broadcast_to_dashboards({
@@ -1971,6 +2004,10 @@ Return ONLY the JSON array, no explanation.""")
                 "connected",
                 "connection_type":
                 "http_polling",
+                "server_url":
+                server_url,
+                "server_type":
+                server_type,
                 "timestamp":
                 datetime.now().isoformat()
             })
