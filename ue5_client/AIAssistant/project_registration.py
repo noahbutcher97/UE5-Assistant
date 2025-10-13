@@ -26,6 +26,9 @@ class ProjectRegistration:
             project_name = unreal.SystemLibrary.get_game_name()
             engine_version = unreal.SystemLibrary.get_engine_version()
             
+            # Normalize path: remove quotes and trailing slashes
+            project_path = project_path.strip().strip('"').strip("'").rstrip('/\\')
+            
             # Generate unique project ID from path
             project_id = hashlib.md5(project_path.encode()).hexdigest()
             

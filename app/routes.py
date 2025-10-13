@@ -1228,6 +1228,16 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         }
 
     # Project Registry Endpoints
+    def normalize_project_path(path: str) -> str:
+        """Normalize project path by removing quotes and trailing slashes."""
+        if not path:
+            return path
+        # Strip surrounding quotes
+        path = path.strip().strip('"').strip("'")
+        # Remove trailing slashes/backslashes
+        path = path.rstrip('/\\')
+        return path
+
     @app.post("/api/register_project")
     async def register_project(request: dict):
         """Register a UE5 project from the client or browser."""
@@ -1240,6 +1250,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             # Format from UE5 client
             project_id = request.get("project_id", "")
             project_data = request.get("project_data", {})
+            # Normalize path if present
+            if "path" in project_data:
+                project_data["path"] = normalize_project_path(project_data["path"])
         else:
             # Format from browser manual registration
             name = request.get("name", "")
@@ -1249,6 +1262,9 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
             if not path:
                 return {"success": False, "error": "No project path provided"}
+
+            # Normalize path before hashing
+            path = normalize_project_path(path)
 
             # Generate project_id from path hash
             project_id = hashlib.md5(path.encode()).hexdigest()[:12]
