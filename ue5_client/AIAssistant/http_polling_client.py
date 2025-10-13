@@ -568,18 +568,11 @@ class HTTPPollingClient:
                 else:
                     print(
                         "[HTTPPolling] ✅ Auto-update downloaded successfully")
-                    
-                    print("[HTTPPolling] 🔄 Force reloading ALL AIAssistant modules...")
-                    
-                    # Force clear ALL AIAssistant modules from cache (same as WebSocket client)
-                    modules_to_remove = [key for key in sys.modules.keys() if 'AIAssistant' in key]
-                    for module in modules_to_remove:
-                        del sys.modules[module]
-                    print(f"[HTTPPolling] 🗑️ Cleared {len(modules_to_remove)} cached modules")
-                    
                     print("[HTTPPolling] ⏳ Queueing restart on main thread...")
+                    print("[HTTPPolling] ℹ️ Module reload will happen safely on main thread")
 
                     # Queue restart action to main thread instead of direct call
+                    # The restart action handles module clearing safely on the main thread
                     if self.action_queue:
                         success, restart_result = self.action_queue.queue_action(
                             'restart_assistant', {
