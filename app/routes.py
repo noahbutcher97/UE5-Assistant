@@ -1796,7 +1796,11 @@ Return ONLY the complete Python script, no explanations or markdown."""
                 temperature=0.3
             )
 
-            generated_script = response.choices[0].message.content.strip()
+            generated_script = response.choices[0].message.content
+            if generated_script:
+                generated_script = generated_script.strip()
+            else:
+                generated_script = ""
             
             # Remove markdown code blocks if present
             if generated_script.startswith("```"):
@@ -1820,7 +1824,7 @@ Return ONLY the complete Python script, no explanations or markdown."""
             # Queue command for UE5 client to import/register the widget
             manager = get_manager()
             
-            if hasattr(manager, 'http_clients') and project_id in manager.http_clients:
+            if hasattr(manager, 'http_clients') and project_id and project_id in manager.http_clients:
                 if "pending_commands" not in manager.http_clients[project_id]:
                     manager.http_clients[project_id]["pending_commands"] = []
                 
