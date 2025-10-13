@@ -114,3 +114,15 @@ The system includes a **GUI-based Emergency Fix Update** mechanism designed for 
 - **One-Click Solution**: Average users can fix crash issues without Python knowledge or console access
 
 This emergency system prevents the "Assertion failed: IsInGameThread() || IsInSlateThread()" crashes that occur when auto-update attempts to restart from background threads.
+
+### Connection Troubleshooting Tools
+The system includes **built-in console-based troubleshooting tools** (`troubleshooter.py`) for easy connection recovery:
+- **Simple Import**: `import AIAssistant.troubleshooter as ts` provides instant access to all tools
+- **Quick Reconnect**: `ts.reconnect()` restarts HTTP polling when connection drops
+- **Server Testing**: `ts.test_server()` verifies backend connectivity with detailed diagnostics
+- **Status Check**: `ts.status()` shows current connection state
+- **Connection Info**: `ts.info()` displays complete connection details (URL, project ID, poll settings)
+- **Dashboard Launcher**: `ts.dashboard()` opens web dashboard in browser
+- **Help System**: `ts.help()` shows all available commands and usage examples
+
+These tools automatically show on startup in the Output Log, enabling non-technical users to fix connection issues (common after several hours of polling) without Python expertise. The troubleshooter leverages existing `restart_assistant()` functionality and provides clear console feedback. See `ue5_client/AIAssistant/TROUBLESHOOTING.md` for complete usage guide.
