@@ -293,6 +293,74 @@
             }
         }
 
+        /* Sub-tabs (nested tabs within Live Feed) */
+        .sub-tab {
+            padding: 10px 16px;
+            background: transparent;
+            border: 1px solid rgba(0, 245, 255, 0.2);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .sub-tab:hover {
+            background: rgba(0, 245, 255, 0.1);
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+
+        .sub-tab.active {
+            background: rgba(0, 245, 255, 0.15);
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+            box-shadow: 0 0 12px rgba(0, 245, 255, 0.3);
+        }
+
+        .sub-tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .sub-tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Server Switcher Dropdown */
+        .server-select {
+            padding: 6px 12px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .server-select:hover {
+            border-color: var(--primary-cyan);
+            background: rgba(0, 245, 255, 0.1);
+        }
+
+        .server-select:focus {
+            outline: none;
+            border-color: var(--primary-cyan);
+            box-shadow: 0 0 0 2px rgba(0, 245, 255, 0.2);
+        }
+
         /* Card Styles */
         .card {
             background: var(--bg-card);
@@ -1013,19 +1081,107 @@
     <!-- Live Feed Tab -->
     <div id="live-feed" class="tab-content">
         <div class="card">
-            <div style="display: flex; justify-between; align-items: center; margin-bottom: 20px;">
-                <h2 style="margin: 0;"><i class="fas fa-comments"></i> Recent Conversations</h2>
-                <button class="btn btn-danger" onclick="clearConversations()">
-                    <i class="fas fa-trash-alt"></i> Clear History
+            <h2><i class="fas fa-satellite-dish"></i> Live Monitoring & Activity Feed</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 24px;">Real-time client status, conversations, operations, and system events</p>
+            
+            <!-- Sub-navigation for Live Feed categories -->
+            <div style="display: flex; gap: 8px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 8px; margin-bottom: 24px; flex-wrap: wrap;">
+                <button class="sub-tab active" onclick="showSubTab('client-status')" style="flex: 1; min-width: 140px;">
+                    <i class="fas fa-signal"></i> Client Status
+                </button>
+                <button class="sub-tab" onclick="showSubTab('conversations')" style="flex: 1; min-width: 140px;">
+                    <i class="fas fa-comments"></i> Conversations
+                </button>
+                <button class="sub-tab" onclick="showSubTab('operations')" style="flex: 1; min-width: 140px;">
+                    <i class="fas fa-tasks"></i> Operations
+                </button>
+                <button class="sub-tab" onclick="showSubTab('system-events')" style="flex: 1; min-width: 140px;">
+                    <i class="fas fa-exclamation-triangle"></i> Events & Logs
                 </button>
             </div>
-            <div id="conversation-history">
-                <!-- Conversation entries will be dynamically inserted here -->
+
+            <!-- Client Status Sub-tab -->
+            <div id="client-status" class="sub-tab-content active">
+                <div style="margin-bottom: 16px;">
+                    <h3 style="margin: 0 0 8px 0;"><i class="fas fa-network-wired"></i> Connected Clients</h3>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin: 0;">Monitor connection health, server endpoints, and polling status</p>
+                </div>
+                
+                <div id="client-status-grid" class="grid grid-2" style="gap: 16px;">
+                    <!-- Client status cards will be inserted here -->
+                </div>
+                
+                <div id="no-clients-message" class="empty-state">
+                    <i class="fas fa-plug"></i>
+                    <h3>No Clients Connected</h3>
+                    <p>Start the AI Assistant in your UE5 projects to see them here</p>
+                </div>
             </div>
-            <div id="no-conversations-message" class="empty-state" style="display: none;">
-                <i class="fas fa-comments"></i>
-                <h3 style="font-size: 24px; font-weight: 600; margin-bottom: 8px;">No Conversations Yet</h3>
-                <p>Interact with the AI Assistant in UE5 to see the live feed.</p>
+
+            <!-- Conversations Sub-tab -->
+            <div id="conversations" class="sub-tab-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div>
+                        <h3 style="margin: 0 0 8px 0;"><i class="fas fa-message"></i> AI Conversations</h3>
+                        <p style="color: var(--text-secondary); font-size: 13px; margin: 0;">Chat history from Project Hub and Project Intelligence</p>
+                    </div>
+                    <button class="btn btn-danger" onclick="clearConversations()" style="padding: 8px 16px;">
+                        <i class="fas fa-trash-alt"></i> Clear History
+                    </button>
+                </div>
+                
+                <div id="conversation-history" style="display: flex; flex-direction: column; gap: 12px;">
+                    <!-- Conversation entries will be dynamically inserted here -->
+                </div>
+                
+                <div id="no-conversations-message" class="empty-state" style="display: none;">
+                    <i class="fas fa-comments"></i>
+                    <h3>No Conversations Yet</h3>
+                    <p>Interact with the AI Assistant in UE5 to see the conversation history</p>
+                </div>
+            </div>
+
+            <!-- Operations Sub-tab -->
+            <div id="operations" class="sub-tab-content">
+                <div style="margin-bottom: 16px;">
+                    <h3 style="margin: 0 0 8px 0;"><i class="fas fa-cogs"></i> Recent Operations</h3>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin: 0;">Commands, actions, and operations executed by clients</p>
+                </div>
+                
+                <div id="operations-log" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Operations will be inserted here -->
+                </div>
+                
+                <div id="no-operations-message" class="empty-state">
+                    <i class="fas fa-tasks"></i>
+                    <h3>No Operations Logged</h3>
+                    <p>Execute commands from UE5 to see operation history</p>
+                </div>
+            </div>
+
+            <!-- System Events Sub-tab -->
+            <div id="system-events" class="sub-tab-content">
+                <div style="margin-bottom: 16px;">
+                    <h3 style="margin: 0 0 8px 0;"><i class="fas fa-server"></i> System Events & Diagnostics</h3>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin: 0;">Crashes, errors, warnings, and system-level events</p>
+                </div>
+                
+                <div style="display: flex; gap: 12px; margin-bottom: 16px;">
+                    <button class="copy-btn" onclick="filterEvents('all')" id="filter-all">All Events</button>
+                    <button class="copy-btn" onclick="filterEvents('error')" id="filter-error">Errors</button>
+                    <button class="copy-btn" onclick="filterEvents('warning')" id="filter-warning">Warnings</button>
+                    <button class="copy-btn" onclick="filterEvents('crash')" id="filter-crash">Crashes</button>
+                </div>
+                
+                <div id="events-log" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Events will be inserted here -->
+                </div>
+                
+                <div id="no-events-message" class="empty-state">
+                    <i class="fas fa-clipboard-check"></i>
+                    <h3>No System Events</h3>
+                    <p>System events and diagnostics will appear here</p>
+                </div>
             </div>
         </div>
     </div>
@@ -1407,8 +1563,176 @@
             document.getElementById(tabName).classList.add('active');
 
             // Refresh data when switching to certain tabs
-            if (tabName === 'live-feed') loadConversations();
+            if (tabName === 'live-feed') {
+                loadConversations();
+                loadClientStatus();
+            }
             if (tabName === 'project-hub') loadProjects();
+        }
+
+        // Sub-tab Management (for Live Feed nested tabs)
+        function showSubTab(subTabName) {
+            document.querySelectorAll('.sub-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.sub-tab-content').forEach(content => content.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(subTabName).classList.add('active');
+
+            // Load data based on sub-tab
+            if (subTabName === 'client-status') loadClientStatus();
+            if (subTabName === 'conversations') loadConversations();
+            if (subTabName === 'operations') loadOperations();
+            if (subTabName === 'system-events') loadSystemEvents();
+        }
+
+        // Client Status Management
+        async function loadClientStatus() {
+            const grid = document.getElementById('client-status-grid');
+            const noClientsMsg = document.getElementById('no-clients-message');
+            
+            if (state.connectedClients.length === 0) {
+                grid.style.display = 'none';
+                noClientsMsg.style.display = 'flex';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noClientsMsg.style.display = 'none';
+            grid.innerHTML = '';
+
+            for (const clientId of state.connectedClients) {
+                const project = state.projects.find(p => p.project_id === clientId);
+                if (!project) continue;
+
+                const card = document.createElement('div');
+                card.style.cssText = `
+                    background: rgba(0,0,0,0.4);
+                    border: 1px solid rgba(0,245,255,0.2);
+                    border-radius: 12px;
+                    padding: 16px;
+                `;
+
+                const connectionMode = state.connectionMode || 'http';
+                const statusColor = '#10b981';
+                const statusText = connectionMode === 'http' ? 'HTTP Polling' : 'WebSocket';
+
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                        <div>
+                            <h4 style="margin: 0 0 4px 0; color: var(--primary-cyan);">${project.name}</h4>
+                            <p style="margin: 0; font-size: 11px; color: var(--text-muted);">${project.project_id.substring(0, 16)}...</p>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor};"></div>
+                            <span style="font-size: 11px; color: ${statusColor};">Connected</span>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; gap: 8px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                            <span style="color: var(--text-secondary);">Protocol:</span>
+                            <span style="color: var(--primary-cyan);">${statusText}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+                            <span style="color: var(--text-secondary);">Last Poll:</span>
+                            <span style="color: var(--primary-green);">Just now</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <label style="display: block; font-size: 11px; color: var(--text-secondary); margin-bottom: 4px;">
+                            <i class="fas fa-server"></i> Connected Server
+                        </label>
+                        <select class="server-select" onchange="switchServer('${clientId}', this.value)">
+                            <option value="production" selected>Production (Replit)</option>
+                            <option value="localhost">Localhost (Dev)</option>
+                            <option value="custom">Custom Server</option>
+                        </select>
+                    </div>
+
+                    <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Server changes sync with UE5 editor</span>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            }
+        }
+
+        async function switchServer(projectId, serverType) {
+            try {
+                const response = await fetch('/api/switch_server', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        project_id: projectId,
+                        server_type: serverType
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log(`✅ Server switched to ${serverType} for project ${projectId}`);
+                } else {
+                    console.error(`❌ Failed to switch server: ${data.error}`);
+                }
+            } catch (error) {
+                console.error(`❌ Error switching server: ${error.message}`);
+            }
+        }
+
+        // Operations Log
+        async function loadOperations() {
+            // Placeholder - will be populated from WebSocket events
+            const opsLog = document.getElementById('operations-log');
+            const noOpsMsg = document.getElementById('no-operations-message');
+            
+            if (state.operations && state.operations.length > 0) {
+                opsLog.style.display = 'flex';
+                noOpsMsg.style.display = 'none';
+                // Render operations
+            } else {
+                opsLog.style.display = 'none';
+                noOpsMsg.style.display = 'flex';
+            }
+        }
+
+        // System Events Log
+        let currentEventFilter = 'all';
+        
+        async function loadSystemEvents() {
+            // Placeholder - will be populated from WebSocket events
+            const eventsLog = document.getElementById('events-log');
+            const noEventsMsg = document.getElementById('no-events-message');
+            
+            if (state.systemEvents && state.systemEvents.length > 0) {
+                eventsLog.style.display = 'flex';
+                noEventsMsg.style.display = 'flex';
+                // Render filtered events
+            } else {
+                eventsLog.style.display = 'none';
+                noEventsMsg.style.display = 'flex';
+            }
+        }
+
+        function filterEvents(filterType) {
+            currentEventFilter = filterType;
+            
+            // Update filter button states
+            document.querySelectorAll('[id^="filter-"]').forEach(btn => {
+                btn.style.background = '';
+                btn.style.borderColor = '';
+            });
+            
+            const activeBtn = document.getElementById(`filter-${filterType}`);
+            if (activeBtn) {
+                activeBtn.style.background = 'rgba(0, 245, 255, 0.15)';
+                activeBtn.style.borderColor = 'var(--primary-cyan)';
+            }
+            
+            loadSystemEvents();
         }
 
         // Project Query Helpers
