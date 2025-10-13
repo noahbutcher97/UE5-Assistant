@@ -107,16 +107,19 @@ def clear_all_modules(preserve_queue: bool = False) -> int:
 
     print(f"[AutoUpdate] ✅ Cleared {len(modules_to_remove)} cached modules")
 
+    # Import critical modules locally (after clearing, module globals may be invalidated)
+    import importlib as _importlib
+    import gc as _gc
+    
     # Also clear importlib caches
     try:
-        importlib.invalidate_caches()
+        _importlib.invalidate_caches()
         print("[AutoUpdate] ✅ Invalidated import caches")
     except (ImportError, AttributeError):
         pass
 
     # Trigger garbage collection
-    import gc
-    gc.collect()
+    _gc.collect()
 
     return len(modules_to_remove)
 
