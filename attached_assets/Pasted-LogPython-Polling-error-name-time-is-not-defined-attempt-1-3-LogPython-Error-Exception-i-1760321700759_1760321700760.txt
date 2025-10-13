@@ -1,0 +1,34 @@
+LogPython: ⚠️ Polling error: name 'time' is not defined (attempt 1/3)
+LogPython: Error: Exception in thread Thread-2 (_poll_loop):
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\http_polling_client.py", line 161, in _poll_loop
+LogPython: Error:     current_time = time.time()
+LogPython: Error:                    ^^^^
+LogPython: Error: NameError: name 'time' is not defined
+LogPython: Error: During handling of the above exception, another exception occurred:
+LogPython: Error: Traceback (most recent call last):
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\threading.py", line 1045, in _bootstrap_inner
+LogPython: Error:     self.run()
+LogPython: Error:   File "C:\Program Files\Epic Games\UE_5.6\Engine\Binaries\ThirdParty\Python3\Win64\Lib\threading.py", line 982, in run
+LogPython: Error:     self._target(*self._args, **self._kwargs)
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\http_polling_client.py", line 217, in _poll_loop
+LogPython: Error:     time.sleep(self.poll_interval * 2)  # Wait longer on error
+LogPython: Error:     ^^^^
+LogPython: Error: NameError: name 'time' is not defined
+LogPython: [HTTPPolling] 📥 Received action: describe_viewport (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [HTTPPolling] ✅ Action executed on main thread: describe_viewport
+LogPython: ⚠️ Heartbeat failed: HTTPSConnectionPool(host='ue5-assistant-noahbutcher97.replit.app', port=443): Read timed out. (read timeout=5)
+LogPython: ⚠️ Polling error: HTTPSConnectionPool(host='ue5-assistant-noahbutcher97.replit.app', port=443): Read timed out. (read timeout=5) (attempt 1/3)
+LogPython: ⚠️ Polling error: HTTPSConnectionPool(host='ue5-assistant-noahbutcher97.replit.app', port=443): Read timed out. (read timeout=5) (attempt 2/3)
+LogPython: ⚠️ Polling error: HTTPSConnectionPool(host='ue5-assistant-noahbutcher97.replit.app', port=443): Read timed out. (read timeout=5) (attempt 1/3)
+LogPython: ⚠️ Heartbeat failed: HTTPSConnectionPool(host='ue5-assistant-noahbutcher97.replit.app', port=443): Read timed out. (read timeout=5)
+LogPython: ⚠️ Polling error: HTTPSConnectionPool(host='ue5-assistant-noahbutcher97.replit.app', port=443): Read timed out. (read timeout=5) (attempt 1/3)
