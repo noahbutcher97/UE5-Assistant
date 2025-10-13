@@ -2209,6 +2209,7 @@ except Exception as e:
         Switch the backend server endpoint for a specific UE5 client.
         This syncs with the editor-side server configuration.
         """
+        from datetime import datetime
         from app.websocket_manager import get_manager
         
         project_id = request.get("project_id")
