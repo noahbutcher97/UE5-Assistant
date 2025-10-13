@@ -538,12 +538,28 @@ except Exception as e:
         return False
 
 
+# Global flag to prevent concurrent restarts
+_restart_in_progress = False
+
 def force_restart_assistant() -> bool:
     """
     Force restart the AI Assistant with completely fresh code.
     This is called automatically after updates and can also be triggered
     manually.
+    
+    Thread-safe: Uses global flag to prevent concurrent restarts.
     """
+    global _restart_in_progress
+    
+    # Check if restart already in progress
+    if _restart_in_progress:
+        print("⚠️  Restart already in progress - skipping duplicate request")
+        print("   This prevents threading violations from concurrent restarts")
+        return False
+    
+    # Set flag to block concurrent restarts
+    _restart_in_progress = True
+    
     print("=" * 60)
     print("🚀 Force Restarting AI Assistant with Fresh Code")
     print("=" * 60)
@@ -603,6 +619,9 @@ def force_restart_assistant() -> bool:
         return False
 
     finally:
+        # Always clear the restart flag so future restarts can proceed
+        global _restart_in_progress
+        _restart_in_progress = False
         print("=" * 60)
 
 
