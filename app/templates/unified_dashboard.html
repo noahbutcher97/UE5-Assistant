@@ -1959,13 +1959,18 @@
                 const data = await response.json();
 
                 if (data.success) {
+                    // Store script for copying
+                    window.generatedUtilityScript = data.script_content || '';
+                    
                     scriptBox.innerHTML = `
-                        <div style="background: rgba(16,185,129,0.1); border: 1px solid var(--primary-green); border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-                            <h4 style="margin: 0 0 8px 0; color: var(--primary-green);"><i class="fas fa-check-circle"></i> ${data.message || 'Widget Generated Successfully'}</h4>
-                            ${data.instructions ? data.instructions.map(inst => `<p style="margin: 4px 0; font-size: 13px; color: var(--text-secondary);">${inst}</p>`).join('') : ''}
+                        <div style="background: rgba(16,185,129,0.1); border: 1px solid var(--primary-green); border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+                            <h4 style="margin: 0 0 8px 0; color: var(--primary-green);"><i class="fas fa-check-circle"></i> Widget Deployed Automatically!</h4>
+                            <p style="margin: 4px 0; font-size: 13px; color: var(--text-secondary);">✅ Script written to: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 4px;">${data.script_path}</code></p>
+                            <p style="margin: 4px 0; font-size: 13px; color: var(--text-secondary);">✅ Widget automatically deployed to your UE5 project</p>
+                            <p style="margin: 4px 0; font-size: 13px; color: var(--text-secondary);">🔄 Restart Unreal Editor to see <strong>${data.widget_name}</strong> in Content Browser</p>
                         </div>
-                        <div style="background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px; font-family: 'Courier New', monospace; font-size: 12px; color: var(--primary-cyan); max-height: 400px; overflow-y: auto;">
-                            ${data.script_path || 'Widget deployed to your UE5 project'}
+                        <div style="background: rgba(0,0,0,0.4); border: 1px solid rgba(0,245,255,0.2); border-radius: 8px; padding: 12px; max-height: 400px; overflow-y: auto;">
+                            <pre style="margin: 0; font-family: 'Courier New', monospace; font-size: 11px; color: var(--primary-cyan); white-space: pre-wrap; word-wrap: break-word;">${data.script_content || 'Script content not available'}</pre>
                         </div>
                     `;
                     outputDiv.style.display = 'block';
@@ -2440,24 +2445,33 @@
         function handleWsMessage(data) {
             if (data.type === 'initial_status') {
                 // Handle initial connection status from server
-                // Convert objects to IDs for consistent comparison
+                // connected_projects is already a list of project_id strings
                 const connectedProjects = data.connected_projects || [];
-                state.connectedClients = connectedProjects.map(p => p.id || p.project_id || p);
+                state.connectedClients = connectedProjects;
+                console.log('✅ Received initial status:', state.connectedClients);
                 log(`Initial status: ${state.connectedClients.length} client(s) connected`, 'info');
                 loadProjects();
+                updateConnectionIndicator();
             } else if (data.type === 'ue5_status') {
                 if (data.status === 'connected') {
                     if (!state.connectedClients.includes(data.project_id)) {
                         state.connectedClients.push(data.project_id);
                     }
+                    console.log('✅ UE5 client connected:', data.project_id);
                     log(`UE5 client connected: ${data.project_id}`, 'success');
                 } else {
                     state.connectedClients = state.connectedClients.filter(id => id !== data.project_id);
+                    console.log('❌ UE5 client disconnected:', data.project_id);
                     log(`UE5 client disconnected: ${data.project_id}`, 'warn');
                 }
                 loadProjects();
+                updateConnectionIndicator();
             } else if (data.type === 'ue5_client_list') {
                 state.connectedClients = Object.keys(data.clients || {});
+                loadProjects();
+                updateConnectionIndicator();
+            } else if (data.type === 'server_switched' || data.type === 'widget_generated') {
+                // Refresh the UI when these events occur
                 loadProjects();
             }
         }

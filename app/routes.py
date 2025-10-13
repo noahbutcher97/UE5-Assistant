@@ -1668,7 +1668,7 @@ Return ONLY the complete Python script, no explanations or markdown."""
             manager = get_manager()
             
             # Log the operation to history
-            if hasattr(manager, 'log_operation'):
+            if hasattr(manager, 'log_operation') and project_id:
                 manager.log_operation(
                     project_id, 
                     f"widget_generated", 
@@ -1701,6 +1701,7 @@ Return ONLY the complete Python script, no explanations or markdown."""
                 "success": True,
                 "widget_name": class_name,
                 "script_path": str(script_path),
+                "script_content": generated_script,  # Return the actual script for display
                 "message": f"✅ Widget '{class_name}' successfully created and deployed to your UE5 project!",
                 "instructions": [
                     f"✅ Script automatically saved to: {script_path}",
