@@ -121,8 +121,9 @@ def test_openai_connection(model: str) -> Dict[str, Any]:
             messages=[{"role": "user", "content": "Say 'pong'"}]
         )
         return {
-            "openai_status": "connected",
+            "success": True,
+            "model": model,
             "response": response.choices[0].message.content or "pong"
         }
     except Exception as e:
-        return {"openai_status": "error", "details": str(e)}
+        return {"success": False, "error": str(e)}

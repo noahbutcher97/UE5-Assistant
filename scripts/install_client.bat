@@ -29,7 +29,7 @@ set "BACKEND_URL=https://ue5-assistant-noahbutcher97.replit.app"
 
 echo Creating installer script...
 
-REM Create PowerShell script using simple redirect
+REM Create PowerShell script - init_unreal content with NO EMOJIS
 (
 echo param^(
 echo     [string]$ProjectPath = "",
@@ -63,7 +63,6 @@ echo         Remove-Item $TempZip -Force
 echo     }
 echo.
 echo     Write-Host "Downloading client files..." -ForegroundColor Yellow
-echo     Write-Host "Source: $DownloadURL" -ForegroundColor Gray
 echo.
 echo     $DownloadStartTime = Get-Date
 echo.
@@ -80,64 +79,46 @@ echo.
 echo     $DownloadDuration = ^(Get-Date^) - $DownloadStartTime
 echo.
 echo     if ^(-not ^(Test-Path $TempZip^)^) {
-echo         throw "Download failed - file not created"
+echo         throw "Download failed"
 echo     }
 echo.
 echo     $FileSize = ^(Get-Item $TempZip^).Length
 echo     $FileSizeMB = [math]::Round^($FileSize / 1MB, 2^)
 echo.
 echo     if ^($FileSize -lt 10000^) {
-echo         $content = Get-Content $TempZip -Raw -ErrorAction SilentlyContinue
-echo         Write-Host "Downloaded file too small: $FileSize bytes" -ForegroundColor Red
-echo         if ^($content^) {
-echo             $preview = $content.Substring^(0, [Math]::Min^(200, $content.Length^)^)
-echo             Write-Host "Content: $preview" -ForegroundColor Yellow
-echo         }
 echo         throw "Downloaded file too small"
 echo     }
 echo.
-echo     Write-Host "Downloaded: $FileSizeMB MB in $^($DownloadDuration.TotalSeconds.ToString^('0.0'^)^)s" -ForegroundColor Green
-echo     Write-Host "File size: $FileSize bytes" -ForegroundColor Gray
+echo     Write-Host "Downloaded: $FileSizeMB MB" -ForegroundColor Green
 echo.
-echo     Write-Host ""
-echo     Write-Host "Validating ZIP file..." -ForegroundColor Yellow
+echo     Write-Host "Validating ZIP..." -ForegroundColor Yellow
 echo     $bytes = [System.IO.File]::ReadAllBytes^($TempZip^)
 echo     $zipHeader = [System.Text.Encoding]::ASCII.GetString^($bytes[0..1]^)
 echo.
 echo     if ^($zipHeader -ne "PK"^) {
-echo         Write-Host "File is not a valid ZIP archive!" -ForegroundColor Red
-echo         Write-Host "Expected PK, got: $zipHeader" -ForegroundColor Yellow
 echo         throw "Not a valid ZIP"
 echo     }
 echo.
-echo     Write-Host "Valid ZIP header detected" -ForegroundColor Green
+echo     Write-Host "Valid ZIP detected" -ForegroundColor Green
 echo.
 echo     Add-Type -AssemblyName System.IO.Compression.FileSystem
 echo     $zip = [System.IO.Compression.ZipFile]::OpenRead^($TempZip^)
 echo     $entryCount = $zip.Entries.Count
 echo     $zip.Dispose^(^)
 echo.
-echo     Write-Host "ZIP contains $entryCount entries" -ForegroundColor Green
-echo.
 echo     if ^($entryCount -eq 0^) {
 echo         throw "ZIP file is empty"
 echo     }
 echo.
-echo     Write-Host ""
-echo     Write-Host "Extracting files..." -ForegroundColor Yellow
+echo     Write-Host "Extracting $entryCount files..." -ForegroundColor Yellow
 echo.
 echo     if ^(Test-Path $TargetPath^) {
-echo         Write-Host "Existing installation found" -ForegroundColor Yellow
 echo         $BackupPath = "$TargetPath.backup_$^(Get-Date -Format 'yyyyMMdd_HHmmss'^)"
-echo         Write-Host "Creating backup at: $BackupPath" -ForegroundColor Yellow
 echo         Move-Item $TargetPath $BackupPath -Force
 echo         Write-Host "Backup created" -ForegroundColor Cyan
-echo     } else {
-echo         Write-Host "Fresh installation" -ForegroundColor Gray
 echo     }
 echo.
 echo     $ExtractDestination = Join-Path $ProjectPath "Content\Python"
-echo     Write-Host "Extracting to: $ExtractDestination" -ForegroundColor Gray
 echo.
 echo     if ^(-not ^(Test-Path $ExtractDestination^)^) {
 echo         New-Item -ItemType Directory -Path $ExtractDestination -Force ^| Out-Null
@@ -146,7 +127,6 @@ echo.
 echo     try {
 echo         Expand-Archive -Path $TempZip -DestinationPath $ExtractDestination -Force -ErrorAction Stop
 echo     } catch {
-echo         Write-Host "Trying alternative extraction..." -ForegroundColor Yellow
 echo         [System.IO.Compression.ZipFile]::ExtractToDirectory^($TempZip, $ExtractDestination, $true^)
 echo     }
 echo.
@@ -158,20 +138,47 @@ echo     $AllFiles = Get-ChildItem -Path $TargetPath -Recurse -File
 echo     $FileCount = $AllFiles.Count
 echo.
 echo     if ^($FileCount -eq 0^) {
-echo         throw "No files found after extraction"
+echo         throw "No files found"
 echo     }
 echo.
-echo     Write-Host "Extracted $FileCount files successfully" -ForegroundColor Green
+echo     Write-Host "Extracted $FileCount files" -ForegroundColor Green
 echo.
-echo     Write-Host ""
-echo     Write-Host "Cleaning up..." -ForegroundColor Yellow
 echo     Remove-Item $TempZip -Force
 echo.
-echo     Write-Host "Creating auto-startup configuration..." -ForegroundColor Yellow
+echo     Write-Host "Creating init_unreal.py..." -ForegroundColor Yellow
 echo     $PythonDir = Join-Path $ProjectPath "Content\Python"
 echo     $InitUnrealFile = Join-Path $PythonDir "init_unreal.py"
 echo.
-echo     $InitUnrealScript = "# init_unreal.py - UE5 AI Assistant Auto-Startup`nimport unreal`ntry:`n    unreal.log^('=' * 60^)`n    unreal.log^('UE5 AI Assistant - Auto-initializing...'^)`n    unreal.log^('=' * 60^)`n    import AIAssistant.startup`n    AIAssistant.startup.configure_and_start^('$BackendURL'^)`nexcept Exception as e:`n    unreal.log_error^(f'AI Assistant startup failed: {e}'^)`n    unreal.log^('Manual start: import AIAssistant.main'^)"
+echo     $InitUnrealScript = @'
+echo """
+echo UE5 AI Assistant - Auto-Initialization Script
+echo This script is automatically run by Unreal Engine on startup.
+echo Place this file in: YourProject/Content/Python/init_unreal.py
+echo """
+echo print^(""^)
+echo print^("=" * 60^)
+echo print^("UE5 AI Assistant - Auto-initializing..."^)
+echo print^("=" * 60^)
+echo # Force production server by default for stability
+echo FORCE_PRODUCTION = True
+echo try:
+echo     # Import and run the startup configuration
+echo     from AIAssistant.startup import configure_and_start
+echo.    
+echo     # Use production server by default
+echo     configure_and_start^(force_production=FORCE_PRODUCTION^)
+echo.    
+echo except ImportError as e:
+echo     print^(f"Failed to load AI Assistant: {e}"^)
+echo     print^(""^)
+echo     print^("Make sure AIAssistant is installed in Content/Python/"^)
+echo     print^("   Run the bootstrap script to install it automatically"^)
+echo     print^(""^)
+echo except Exception as e:
+echo     print^(f"AI Assistant initialization error: {e}"^)
+echo     import traceback
+echo     traceback.print_exc^(^)
+echo '@
 echo.
 echo     $InitUnrealScript ^| Out-File -FilePath $InitUnrealFile -Encoding UTF8 -Force
 echo.
@@ -184,18 +191,13 @@ echo     Write-Host "================================================" -Foregrou
 echo     Write-Host "INSTALLATION COMPLETE!" -ForegroundColor Green
 echo     Write-Host "================================================" -ForegroundColor Green
 echo     Write-Host ""
-echo     Write-Host "Summary:" -ForegroundColor Cyan
 echo     Write-Host "Files installed: $FileCount" -ForegroundColor White
 echo     Write-Host "Location: $TargetPath" -ForegroundColor White
-echo     Write-Host "Backend: $BackendURL" -ForegroundColor White
 echo     Write-Host "Auto-startup: ENABLED" -ForegroundColor Green
 echo     Write-Host ""
 echo     Write-Host "Next Steps:" -ForegroundColor Cyan
 echo     Write-Host "1. Launch/Restart UE5 Editor" -ForegroundColor White
-echo     Write-Host "2. Check Output Log for auto-startup message" -ForegroundColor White
-echo     Write-Host "3. AI Assistant will connect automatically" -ForegroundColor White
-echo     Write-Host ""
-echo     Write-Host "Dashboard: $BackendURL/dashboard" -ForegroundColor Cyan
+echo     Write-Host "2. Check Output Log for auto-startup" -ForegroundColor White
 echo     Write-Host ""
 echo     Write-Host "Press any key to exit..." -ForegroundColor Gray
 echo     $null = $Host.UI.RawUI.ReadKey^("NoEcho,IncludeKeyDown"^)
@@ -207,17 +209,6 @@ echo     Write-Host "INSTALLATION FAILED" -ForegroundColor Red
 echo     Write-Host "================================================" -ForegroundColor Red
 echo     Write-Host ""
 echo     Write-Host "Error: $^($_.Exception.Message^)" -ForegroundColor Yellow
-echo     Write-Host ""
-echo     Write-Host "Debug Info:" -ForegroundColor Cyan
-echo     Write-Host "Download URL: $DownloadURL" -ForegroundColor Gray
-echo     Write-Host "Temp ZIP: $TempZip" -ForegroundColor Gray
-echo     Write-Host "Target: $TargetPath" -ForegroundColor Gray
-echo.
-echo     if ^(Test-Path $TempZip^) {
-echo         $zipSize = ^(Get-Item $TempZip^).Length
-echo         Write-Host "Downloaded file size: $zipSize bytes" -ForegroundColor Gray
-echo     }
-echo.
 echo     Write-Host ""
 echo     Write-Host "Press any key to exit..." -ForegroundColor Gray
 echo     $null = $Host.UI.RawUI.ReadKey^("NoEcho,IncludeKeyDown"^)
@@ -234,10 +225,6 @@ if not exist "%PS_INSTALLER%" (
 
 echo Done.
 echo.
-echo ================================================
-echo   Running Installer...
-echo ================================================
-echo.
 
 REM Execute PowerShell installer
 powershell -ExecutionPolicy Bypass -File "%PS_INSTALLER%" -ProjectPath "%PROJECT_PATH%" -BackendURL "%BACKEND_URL%"
@@ -249,9 +236,7 @@ del "%PS_INSTALLER%" >nul 2>&1
 
 if %INSTALL_RESULT% NEQ 0 (
     color 0C
-    echo.
-    echo Installation failed with error code: %INSTALL_RESULT%
-    echo.
+    echo Installation failed
 )
 
 pause

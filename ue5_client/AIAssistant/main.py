@@ -14,7 +14,7 @@ from .utils import Logger
 # Check for websocket-client dependency
 try:
     from .websocket_client import WebSocketClient
-except ImportError as e:
+except ImportError:
     # Missing websocket-client library
     try:
         import unreal
@@ -438,8 +438,9 @@ class AIAssistant:
     def _init_websocket(self):
         """Initialize connection for real-time communication (supports both WebSocket and HTTP Polling)."""
         try:
-            import unreal
             import hashlib
+
+            import unreal
             
             # Get project info
             project_path = unreal.Paths.project_dir()
@@ -498,6 +499,7 @@ class AIAssistant:
         """Try to establish WebSocket connection."""
         try:
             import unreal
+
             from .websocket_client import WebSocketClient
             
             self.ws_client = WebSocketClient(base_url, project_id)
@@ -513,9 +515,10 @@ class AIAssistant:
         """Try to establish HTTP Polling connection."""
         try:
             import unreal
+
             from .http_polling_client import HTTPPollingClient
             
-            print(f"[HTTP] Creating HTTP client with:")
+            print("[HTTP] Creating HTTP client with:")
             print(f"[HTTP]   Base URL: {base_url}")
             print(f"[HTTP]   Project ID: {project_id}")
             print(f"[HTTP]   Project Name: {project_name}")
@@ -523,7 +526,7 @@ class AIAssistant:
             self.ws_client = HTTPPollingClient(base_url, project_id, project_name)
             self.ws_client.set_action_handler(self._handle_websocket_action)
             
-            print(f"[HTTP] Calling connect() on HTTP client...")
+            print("[HTTP] Calling connect() on HTTP client...")
             result = self.ws_client.connect()
             print(f"[HTTP] Connect result: {result}")
             
