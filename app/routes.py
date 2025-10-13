@@ -23,9 +23,35 @@ from app.services.openai_client import (
 )
 
 
+def sanitize_class_name(name: str) -> str:
+    """Convert user input to valid Python class name."""
+    import re
+    
+    # Remove any characters that aren't alphanumeric or underscores
+    clean_name = re.sub(r'[^a-zA-Z0-9_]', '_', name)
+    
+    # Convert to PascalCase for class naming convention
+    parts = clean_name.split('_')
+    # Capitalize first letter while preserving rest of the case
+    pascal_name = ''.join(word[:1].upper() + word[1:] for word in parts if word)
+    
+    # Ensure it starts with a letter
+    if pascal_name and not pascal_name[0].isalpha():
+        pascal_name = 'Widget' + pascal_name
+    
+    # Fallback if empty
+    if not pascal_name:
+        pascal_name = 'CustomWidget'
+    
+    return pascal_name
+
+
 def generate_ue56_utility_script(name: str, desc: str,
                                  capabilities: list) -> str:
     """Generate UE 5.6 compliant utility script."""
+    # Sanitize the class name to ensure valid Python identifier
+    class_name = sanitize_class_name(name)
+    
     script = f'''"""
 {name} - {desc}
 AI-Powered Editor Utility Widget
@@ -35,7 +61,7 @@ import unreal
 
 
 @unreal.uclass()
-class {name}(unreal.EditorUtilityWidget):
+class {class_name}(unreal.EditorUtilityWidget):
     """
     {desc}
 
