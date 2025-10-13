@@ -626,9 +626,17 @@ def _auto_init():
         
         get_assistant()
         
+        # Register toolbar menu for easy access to troubleshooting tools
+        try:
+            from .toolbar_menu import register_toolbar_menu
+            register_toolbar_menu()
+        except Exception as e:
+            unreal.log_warning(f"⚠️ Could not register toolbar menu: {e}")
+        
         unreal.log("=" * 60)
         unreal.log("✅ AI Assistant initialized successfully!")
         unreal.log("💡 Use: AIAssistant.main.send_command('your question here')")
+        unreal.log("💡 Or use toolbar: AI Assistant > Launch Troubleshooter")
         unreal.log("=" * 60)
     except Exception as e:
         import unreal

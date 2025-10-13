@@ -2237,8 +2237,8 @@ Then the file writing system is working correctly!</textarea>
                                     </select>
                                 </div>
                                 ` : `
-                                <button class="copy-btn" onclick="reconnectClient('${project.project_id}', event)" style="width: 100%; padding: 10px; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); color: var(--primary-yellow);">
-                                    <i class="fas fa-plug"></i> Reconnect Client
+                                <button class="copy-btn" onclick="reconnectClient('${project.project_id}', event)" style="width: 100%; padding: 10px; background: rgba(251, 191, 36, 0.1); border: 1px solid rgba(251, 191, 36, 0.3); color: var(--primary-yellow);" title="Forces re-registration if client is still polling. For hard disconnects, use UE5 toolbar: AI Assistant > Restart Assistant">
+                                    <i class="fas fa-sync"></i> Force Re-register
                                 </button>
                                 `}
                             </div>
