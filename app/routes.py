@@ -2063,3 +2063,116 @@ Return ONLY the JSON array, no explanation.""")
             import traceback
             traceback.print_exc()
             return {"status": "error", "error": str(e)}
+
+    @app.get("/api/ue5/recovery_script/{project_id}")
+    async def get_recovery_script(project_id: str):
+        """
+        Provides emergency recovery Python script for crashed/broken UE5 clients.
+        Client can GET this endpoint even when main polling is broken.
+        """
+        recovery_script = '''# UE5 AI Assistant - Emergency Recovery Script
+# This script fixes module corruption and restarts the assistant cleanly
+
+import sys
+import importlib
+import gc
+
+print("=" * 60)
+print("🚨 EMERGENCY RECOVERY - Fixing corrupted modules")
+print("=" * 60)
+
+# Step 1: Force stop any broken polling threads
+try:
+    if 'AIAssistant.main' in sys.modules:
+        main = sys.modules['AIAssistant.main']
+        if hasattr(main, '_assistant') and main._assistant:
+            # Stop HTTP client if exists
+            if hasattr(main._assistant, 'http_client') and main._assistant.http_client:
+                main._assistant.http_client.running = False
+                main._assistant.http_client.connected = False
+                print("🛑 Stopped broken HTTP polling thread")
+            # Stop WebSocket client if exists  
+            if hasattr(main._assistant, 'ws_client') and main._assistant.ws_client:
+                main._assistant.ws_client.running = False
+                print("🛑 Stopped broken WebSocket client")
+except Exception as e:
+    print(f"⚠️  Error stopping connections: {e}")
+
+# Step 2: Clear ALL corrupted modules
+print("🗑️  Clearing all corrupted AIAssistant modules...")
+to_remove = [k for k in list(sys.modules.keys()) if 'AIAssistant' in k]
+for mod in to_remove:
+    try:
+        del sys.modules[mod]
+    except:
+        pass
+print(f"✅ Cleared {len(to_remove)} modules")
+
+# Step 3: Clear import caches
+importlib.invalidate_caches()
+gc.collect()
+print("✅ Cleared import caches and garbage collected")
+
+# Step 4: Load fresh code from disk
+print("📦 Loading fresh code from disk...")
+try:
+    import AIAssistant.main
+    AIAssistant.main.get_assistant()
+    print("=" * 60)
+    print("✅ RECOVERY COMPLETE!")
+    print("🔄 AI Assistant restarted with fresh code")
+    print("=" * 60)
+except Exception as e:
+    print("=" * 60)
+    print(f"❌ Recovery failed: {e}")
+    print("=" * 60)
+    import traceback
+    traceback.print_exc()
+'''
+        
+        print(f"📋 Recovery script requested for project: {project_id[:16]}...")
+        
+        return {
+            "success": True,
+            "project_id": project_id,
+            "script": recovery_script,
+            "instructions": [
+                "1. Copy the entire script below",
+                "2. Paste it into UE5's Output Log Python console",
+                "3. Press Enter to execute",
+                "4. Wait for 'RECOVERY COMPLETE' message"
+            ]
+        }
+
+    @app.post("/api/ue5/request_recovery")
+    async def request_recovery(request: dict):
+        """
+        Trigger automatic recovery for all connected HTTP polling clients.
+        Queues a recovery command that survives broken polling threads.
+        """
+        from datetime import datetime
+        from app.websocket_manager import get_manager
+        
+        manager = get_manager()
+        recovered_count = 0
+        
+        # Send recovery command to HTTP clients
+        if hasattr(manager, 'http_clients'):
+            for project_id in list(manager.http_clients.keys()):
+                if "pending_commands" not in manager.http_clients[project_id]:
+                    manager.http_clients[project_id]["pending_commands"] = []
+                
+                # Add recovery command
+                manager.http_clients[project_id]["pending_commands"].append({
+                    "type": "emergency_recovery",
+                    "command": "self_heal",
+                    "timestamp": datetime.now().isoformat()
+                })
+                recovered_count += 1
+                print(f"🚑 Queued recovery for: {project_id[:16]}...")
+        
+        return {
+            "success": True,
+            "message": f"Recovery queued for {recovered_count} client(s)",
+            "count": recovered_count
+        }
