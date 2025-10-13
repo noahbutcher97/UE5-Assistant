@@ -1508,6 +1508,61 @@
             }
         }
 
+        // Editor Utility Widget Generator
+        async function generateUtility() {
+            const name = document.getElementById('utilityName').value;
+            const desc = document.getElementById('utilityDesc').value;
+            const outputDiv = document.getElementById('utilityOutput');
+            const loadingDiv = document.getElementById('utilityLoading');
+            const scriptBox = document.getElementById('utilityScriptBox');
+
+            if (!name || !desc) {
+                alert('Please provide both a widget name and description');
+                return;
+            }
+
+            // Get selected capabilities
+            const capabilityCheckboxes = document.querySelectorAll('#tools input[type="checkbox"]:checked');
+            const capabilities = Array.from(capabilityCheckboxes).map(cb => cb.value);
+
+            loadingDiv.style.display = 'block';
+            outputDiv.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/generate_utility', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, description: desc, capabilities })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    scriptBox.textContent = data.script_content || 'Script generated successfully';
+                    outputDiv.style.display = 'block';
+                    
+                    // Store script for copying
+                    window.generatedUtilityScript = data.script_content;
+                } else {
+                    alert(`Error: ${data.error || 'Failed to generate utility'}`);
+                }
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function copyUtilityScript() {
+            const script = window.generatedUtilityScript || document.getElementById('utilityScriptBox').textContent;
+            navigator.clipboard.writeText(script).then(() => {
+                const btn = event.target.closest('button');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => btn.innerHTML = originalHTML, 2000);
+            });
+        }
+
         // Project Management
         async function loadProjects() {
             try {
