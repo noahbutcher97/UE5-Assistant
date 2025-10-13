@@ -1840,7 +1840,8 @@ Return ONLY the JSON array, no explanation.""")
             "pending_commands": []
         }
 
-        print(f"✅ UE5 HTTP client registered: {project_id} ({project_name})")
+        print(f"✅ UE5 HTTP client registered: {project_id[:16]}... ({project_name})")
+        print(f"   Total HTTP clients: {len(manager.http_clients)}")
 
         # Notify dashboards
         await manager.broadcast_to_dashboards({
