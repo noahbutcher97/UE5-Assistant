@@ -33,7 +33,7 @@ try:
     
     # Try a simple command
     print("\n5️⃣ Testing command execution...")
-    response = assistant.send_command("test connection")
+    response = AIAssistant.main.send_command("test connection")
     if response:
         print("✅ Command executed successfully!")
     
