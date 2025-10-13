@@ -57,6 +57,34 @@ def register_toolbar_menu():
         )
         ai_menu.add_menu_entry("AIAssistantCommands", restart_entry)
         
+        # Add Test Connection menu item
+        test_entry = unreal.ToolMenuEntry(
+            name="TestConnection",
+            type=unreal.MultiBlockType.MENU_ENTRY
+        )
+        test_entry.set_label(unreal.Text("🔍 Test Connection"))
+        test_entry.set_tool_tip(unreal.Text("Run diagnostics to check connection status"))
+        test_entry.set_string_command(
+            type=unreal.ToolMenuStringCommandType.PYTHON,
+            custom_type=unreal.Name(""),
+            string="import unreal; py_cmd = 'py \"' + unreal.Paths.project_content_dir() + 'Python/diagnose_connection.py\"'; unreal.SystemLibrary.execute_console_command(None, py_cmd)"
+        )
+        ai_menu.add_menu_entry("AIAssistantCommands", test_entry)
+        
+        # Add Open Dashboard menu item
+        dashboard_entry = unreal.ToolMenuEntry(
+            name="OpenDashboard",
+            type=unreal.MultiBlockType.MENU_ENTRY
+        )
+        dashboard_entry.set_label(unreal.Text("🌐 Open Dashboard"))
+        dashboard_entry.set_tool_tip(unreal.Text("Open the web dashboard in browser"))
+        dashboard_entry.set_string_command(
+            type=unreal.ToolMenuStringCommandType.PYTHON,
+            custom_type=unreal.Name(""),
+            string="import webbrowser; webbrowser.open('https://ue5-assistant-noahbutcher97.replit.app/dashboard'); print('\\n✅ Dashboard opened in browser!')"
+        )
+        ai_menu.add_menu_entry("AIAssistantCommands", dashboard_entry)
+        
         # Refresh menus to show changes
         menus.refresh_all_widgets()
         

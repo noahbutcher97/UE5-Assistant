@@ -620,7 +620,6 @@ def force_restart_assistant() -> bool:
 
     finally:
         # Always clear the restart flag so future restarts can proceed
-        global _restart_in_progress
         _restart_in_progress = False
         print("=" * 60)
 
