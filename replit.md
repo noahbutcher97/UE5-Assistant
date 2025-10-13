@@ -1,7 +1,7 @@
 # Unreal Engine AI Viewport Assistant
 
 ## Overview
-This project provides a FastAPI backend service for generating AI-powered technical documentation of Unreal Engine 5 editor viewport contexts. It processes structured viewport data from Unreal Engine's Python environment to produce precise, factual descriptions of 3D scenes and level designs using OpenAI's GPT models. The system aims to enhance UE5 developers' workflows by offering advanced insights and implementation guidance. Key capabilities include multi-project management, context-aware AI responses, UE 5.6 compliant utility generation, comprehensive editor orchestration (scene building, camera control, actor manipulation), and a unified control dashboard. The project seeks to bridge Unreal Engine's scripting capabilities with cloud-based AI services, ultimately enhancing developer productivity and fostering innovative game development.
+This project delivers a FastAPI-based backend service designed to generate AI-powered technical documentation for Unreal Engine 5 editor viewport contexts. It processes structured viewport data from Unreal Engine's Python environment to create accurate, factual descriptions of 3D scenes and level designs using OpenAI's GPT models. The primary goal is to enhance UE5 developers' workflows by providing advanced insights and implementation guidance. Key features include multi-project management, context-aware AI responses, UE 5.6 compliant utility generation, comprehensive editor orchestration (scene building, camera control, actor manipulation), and a unified control dashboard. The project aims to bridge Unreal Engine's scripting capabilities with cloud-based AI, thereby boosting developer productivity and fostering innovative game development.
 
 ## User Preferences
 Preferred communication style: Simple, everyday language.
@@ -9,28 +9,24 @@ Preferred communication style: Simple, everyday language.
 ## System Architecture
 
 ### UI/UX Decisions
-The system features a **Unified Control Center** (`/dashboard`) with Project Hub, Live Feed, Project Intelligence, Guidance, **Tools**, Settings, Diagnostics, and About sections. It employs a **Modern Design System** with an Inter font, refined spacing system (max-width 1400px dashboard container), and professional aesthetics with subtle animations and softer shadows. The **Tools Tab** provides AI-powered widget generation with automated class name sanitization. Key UI/UX elements include a browser-based **Project Selector** with real-time connection status, enhanced visuals (glowing text, micro-interactions), and quality-of-life features like keyboard shortcuts, tooltips, one-click copy buttons, and visual feedback. The architecture is **Responsive**, providing mobile-friendly layouts and touch-optimized controls.
+The system features a **Unified Control Center** (`/dashboard`) with a Project Hub, Live Feed, Project Intelligence, Guidance, Tools, Settings, Diagnostics, and About sections. It employs a **Modern Design System** characterized by the Inter font, a refined spacing system (max-width 1400px dashboard container), professional aesthetics, subtle animations, and softer shadows. The **Tools Tab** provides AI-powered widget generation with automated class name sanitization. Key UI/UX elements include a browser-based **Project Selector** with real-time connection status, enhanced visuals (glowing text, micro-interactions), and quality-of-life features such as keyboard shortcuts, tooltips, one-click copy buttons, and visual feedback. The architecture is **Responsive**, offering mobile-friendly layouts and touch-optimized controls.
 
 ### Technical Implementations
-The backend is built with **FastAPI** for async capabilities and Pydantic-based validation. **AI Integration** leverages OpenAI GPT models (default: gpt-4o-mini) for technical prose generation and multi-modal vision analysis. It features a **Multi-Project Registry** for managing UE5 projects, enabling browser-based selection and **Auto-Registration** of projects. **Context-Aware Queries** enhance AI responses with active project data. **Editor Orchestration Systems** (SceneOrchestrator, ViewportController, ActorManipulator) provide scene building, camera control, and actor manipulation. 
+The backend is built with **FastAPI** for async capabilities and Pydantic-based validation. **AI Integration** leverages OpenAI GPT models (default: gpt-4o-mini) for technical prose generation and multi-modal vision analysis. It includes a **Multi-Project Registry** for managing UE5 projects, enabling browser-based selection and **Auto-Registration**. **Context-Aware Queries** enhance AI responses using active project data. **Editor Orchestration Systems** (SceneOrchestrator, ViewportController, ActorManipulator) facilitate scene building, camera control, and actor manipulation.
 
-**Fully Automated Widget Generator**: The Tools tab provides AI-powered Editor Utility Widget generation with **zero manual steps**. Users input widget name, description, and capabilities; OpenAI generates a complete UE 5.6 Python script; the backend queues the script content in a `widget_generated` command; the UE5 client receives the command and writes the file locally to `{project_path}/Content/Python/AIAgentUtilities/{ClassName}.py` using `unreal.Paths.project_dir()` and standard Python file I/O. The widget is deployed to the UE5 project with no copy-pasting required. The generated script is displayed in the dashboard for reference and can be copied with one click. **Critical Architecture**: Backend (Replit) cannot write to client's local drive; all file operations execute on UE5 client using HTTPPollingClient._write_widget_file() method.
+A **Fully Automated Widget Generator** within the Tools tab provides AI-powered Editor Utility Widget generation. Users input widget details, and OpenAI generates a complete UE 5.6 Python script, which the backend queues for the UE5 client to write locally. A **File Drop Tool** allows developers to test end-to-end file writing capabilities. **Persistent Operation & Event History** is maintained via bounded FIFO lists (max 100 entries) for operations and system events, displayed in the Live Feed. A **Server Switching System** allows granular control over backend endpoints for connected clients.
 
-**File Drop Tool**: The Tools tab includes a **File Drop testing utility** allowing developers to verify end-to-end file writing capability. Users input a filename and content; backend queues a `file_drop` command; UE5 client writes the file locally using HTTPPollingClient._write_custom_file() method. This provides a practical verification path for local file I/O operations and confirms the widget generation pipeline works correctly.
+**Real-Time Communication** uses a dual-mode system with WebSockets (preferred) and HTTP Polling fallback. A local **Deploy Agent** (localhost:7865) ensures frictionless deployment and auto-import into UE5. The system supports **Blueprint Screenshot Capture** for multi-modal vision analysis. An **Enhanced Action Executor** handles file operations, project info display, and blueprint management, controlled by a **Feature Flag System**. A **UE5 Mock Testing Environment** allows Replit-based testing without an active UE5 instance. The **Flexible Token Extraction System** uses regex patterns to extract action tokens from AI responses, allowing natural language alongside commands. **Production Server Auto-Selection** ensures the UE5 client connects to the production backend by default.
 
-**Persistent Operation & Event History**: The WebSocket manager maintains bounded FIFO lists (max 100 entries each) for operations and system events. All widget generations, server switches, and connection events are automatically logged. The Live Feed tab displays both completed operations and pending commands via `/api/operations` and `/api/system_events` endpoints, ensuring data persists across page refreshes and command queue clears.
-
-**Server Switching System**: Project cards in the Project Hub include server selection dropdowns (Production/Localhost/Custom) for connected clients. The `/api/switch_server` endpoint queues server switch commands for UE5 clients and broadcasts changes to all dashboards via WebSocket, providing granular control over backend endpoints.
-
-**Real-Time Communication** is handled via a dual-mode system using WebSockets (preferred) with an HTTP Polling fallback. A local **Deploy Agent** (localhost:7865) facilitates frictionless deployment and auto-import into UE5. The system supports **Blueprint Screenshot Capture**, uploading base64 images to OpenAI Vision API (gpt-4o). An **Enhanced Action Executor** provides file operations, project info display, and blueprint management, controlled by a **Feature Flag System**. A **UE5 Mock Testing Environment** (`mock_unreal.py`) allows Replit-based testing without an active UE5 instance. The **Flexible Token Extraction System** uses regex patterns to extract action tokens from anywhere in AI responses, supporting natural explanations alongside commands for improved UX. **Production Server Auto-Selection** ensures the UE5 client always connects to the production backend by default via the `force_production=True` parameter in `startup.py`, preventing accidental connections to dev/test servers and ensuring stable operation.
+The system incorporates a **Universal Bootstrap System** for seamless client updates, handling both ZIP and TAR.GZ formats. It also includes an **Emergency Fix Update System** with a GUI-based solution for non-technical users to resolve thread safety crashes without manual restarts. **Connection Troubleshooting Tools** are built-in, providing console-based utilities (e.g., reconnect, test server) for easy recovery. A **Dashboard Reconnect Button** offers a GUI-based recovery path for dropped connections.
 
 ### System Design Choices
-The system uses a **RESTful API** with JSON payloads and enforces **Separation of Concerns** between UE viewport data collection and AI processing. **Environment-based Configuration** manages sensitive data. It includes robust **Error Handling** with structured logging and retry logic. A **Thread-Safe Action Queue** integrates with Unreal Slate ticker for safe main thread execution. **Automatic Cache Management** is implemented via module version tracking. **Security Hardening** ensures path traversal protection and read-only file operations. All UE5 client code adheres to **UE5.6 API Compliance**.
+The system uses a **RESTful API** with JSON payloads and enforces **Separation of Concerns** between UE viewport data collection and AI processing. **Environment-based Configuration** manages sensitive data. It includes robust **Error Handling** with structured logging and retry logic. A **Thread-Safe Action Queue** integrates with the Unreal Slate ticker for safe main thread execution. **Automatic Cache Management** is implemented via module version tracking. **Security Hardening** ensures path traversal protection and read-only file operations. All UE5 client code adheres to **UE5.6 API Compliance**.
 
 ## External Dependencies
 
 ### AI Services
-- **OpenAI API** (v1.57.0): For GPT model access (e.g., gpt-4o-mini, gpt-4o) for technical prose generation and multi-modal vision analysis. Requires `OPENAI_API_KEY`.
+- **OpenAI API** (v1.57.0): For GPT model access (e.g., gpt-4o-mini, gpt-4o) for technical prose generation and multi-modal vision analysis.
 
 ### Python Packages (Backend)
 - **fastapi** (0.112.x): Core web framework.
@@ -46,83 +42,4 @@ The system uses a **RESTful API** with JSON payloads and enforces **Separation o
 - **websocket-client**: Python WebSocket client library for UE5.
 
 ### Deployment Platform
-- **Replit**: Hosting platform for the FastAPI backend, with a base URL `https://ue5-assistant-noahbutcher97.replit.app`.
-
-## Testing Infrastructure
-
-### Production-Ready Test Suite
-The project features a comprehensive **production-ready test suite** with 22 deterministic tests validating complete token routing flow without external dependencies. Tests use mocked OpenAI responses for 100% predictable behavior, enabling reliable CI/CD integration.
-
-### Test Categories
-- **Unit Tests (8)**: Keyword-based token routing logic with exact JSON validation
-- **Integration Tests (4)**: Mocked OpenAI flows with deterministic responses  
-- **Round-Trip Tests (2)**: Complete dashboard → backend → UE5 → backend flow simulation
-- **Contract Validation (3)**: Strict API response structure verification
-- **Token Format Tests (2)**: UE5 client token format compliance
-- **Error Handling (3)**: Deterministic error response validation
-
-### Test Execution
-- **Primary Suite**: `test_token_routing_production.py` (22 tests, ~2.5s, CI/CD-ready)
-- **Integration Suite**: `test_token_routing_enhanced.py` (16 tests, real OpenAI, manual testing)
-- **Original Suite**: `test_token_routing.py` (16 tests, real OpenAI, development)
-
-### Key Features
-- ✅ **Mocked OpenAI**: All external API calls stubbed via @patch decorator
-- ✅ **Strict Assertions**: Exact JSON equality matching (no substring checks)
-- ✅ **Deterministic**: 100% predictable responses using fixture data
-- ✅ **Fast Execution**: ~2.5 seconds (vs ~19s with real OpenAI)
-- ✅ **No Rate Limits**: Independent of external API quotas
-- ✅ **CI/CD Safe**: Reliable automated testing without authentication
-
-### Mock Implementation
-Tests use `mock_openai_responses.py` fixtures providing deterministic response generators based on input context. Responses mirror actual OpenAI behavior while remaining 100% predictable for test reliability.
-
-### Test Documentation
-- `PRODUCTION_TEST_SUMMARY.md`: Complete production test suite documentation
-- `ENHANCED_TOKEN_ROUTING_SUMMARY.md`: Enhanced test suite overview (32 tests total)
-- `TOKEN_ROUTING_SUMMARY.md`: Original token routing tests (16 tests)
-- `TEST_SUMMARY.md`: OpenAI integration tests (28 tests)
-- `FLEXIBLE_TOKEN_EXTRACTION.md`: Documentation of flexible token extraction system with regex patterns and examples
-
-### Flexible Token Extraction
-The UE5 client uses **regex-based token extraction** to detect action tokens anywhere in AI responses, not just at the start. This enables natural AI explanations before commands (e.g., "Let me help you. [UE_REQUEST] describe_viewport"). The system preserves explanatory text and prepends it to action results, creating a more user-friendly experience. Both `[UE_REQUEST]` and `[UE_CONTEXT_REQUEST]` patterns are supported with comprehensive test coverage in `test_token_extraction_standalone.py`.
-
-### Universal Bootstrap System
-The system features a **Universal Bootstrap Script** that handles both ZIP and TAR.GZ formats automatically, ensuring compatibility regardless of CDN caching or server format changes. The bootstrap process:
-1. Downloads the latest client from the server
-2. Auto-detects archive format (ZIP or TAR.GZ)
-3. Extracts and installs to the correct UE5 project path
-4. Initializes the assistant with auto-updates enabled
-5. Registers with the server automatically
-
-This one-time bootstrap enables seamless auto-updates thereafter, with HTTP polling registration that actually works and proper connection tracking in the dashboard.
-
-### Connection Initialization Fix
-The UE5 client connection issue was resolved by fixing the startup sequence:
-- **Root Cause**: startup.py configured the backend URL but never imported AIAssistant.main to establish connection
-- **Solution**: Added proper initialization that imports and instantiates the assistant, triggering auto-registration and HTTP polling
-- **Entry Points**: init_unreal.py (auto-runs on UE5 startup) → startup.py → AIAssistant.main.get_assistant()
-- **Verification**: test_connection.py diagnostic script confirms connection status
-
-### Emergency Fix Update System
-The system includes a **GUI-based Emergency Fix Update** mechanism designed for non-technical users experiencing thread safety crashes:
-- **Dashboard Button**: Prominent red "Fix Crash Issues" button in the control center
-- **No-Restart Mode**: Downloads and installs updates WITHOUT automatic restart to prevent crashes
-- **Universal Format Support**: Automatically detects and handles both ZIP and TAR.GZ archives using magic byte detection
-- **Thread Safety**: All update operations execute safely on background threads, avoiding Slate/UI thread violations
-- **User Instructions**: Clear messaging guides users to manually restart UE5 after emergency updates
-- **One-Click Solution**: Average users can fix crash issues without Python knowledge or console access
-
-This emergency system prevents the "Assertion failed: IsInGameThread() || IsInSlateThread()" crashes that occur when auto-update attempts to restart from background threads.
-
-### Connection Troubleshooting Tools
-The system includes **built-in console-based troubleshooting tools** (`troubleshooter.py`) for easy connection recovery:
-- **Simple Import**: `import AIAssistant.troubleshooter as ts` provides instant access to all tools
-- **Quick Reconnect**: `ts.reconnect()` restarts HTTP polling when connection drops
-- **Server Testing**: `ts.test_server()` verifies backend connectivity with detailed diagnostics
-- **Status Check**: `ts.status()` shows current connection state
-- **Connection Info**: `ts.info()` displays complete connection details (URL, project ID, poll settings)
-- **Dashboard Launcher**: `ts.dashboard()` opens web dashboard in browser
-- **Help System**: `ts.help()` shows all available commands and usage examples
-
-These tools automatically show on startup in the Output Log, enabling non-technical users to fix connection issues (common after several hours of polling) without Python expertise. The troubleshooter leverages existing `restart_assistant()` functionality and provides clear console feedback. See `ue5_client/AIAssistant/TROUBLESHOOTING.md` for complete usage guide.
+- **Replit**: Hosting platform for the FastAPI backend.
