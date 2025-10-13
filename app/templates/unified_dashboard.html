@@ -1678,31 +1678,114 @@
             }
         }
 
-        // Emergency Fix Update
+        // Emergency Fix Update - Recovery System
         async function emergencyFixUpdate() {
-            showConfirmation(
-                'Trigger Emergency Update?',
-                'This sends a "no-restart" update to all clients. This is for critical hotfixes to prevent editor crashes. Users must restart manually.',
-                'error',
-                async () => {
-                    try {
-                        const response = await fetch('/api/emergency_update', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ mode: 'no_restart' })
-                        });
-                        const data = await response.json();
-
-                        if (data.status === 'success') {
-                            showNotification('Success', 'Emergency update complete! Please restart Unreal Engine 5 manually.', 'success');
-                        } else {
-                            throw new Error(data.error || 'Emergency update failed');
-                        }
-                    } catch (error) {
-                        showNotification('Error', 'Emergency update failed: ' + error.message, 'error');
-                    }
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:10000;display:flex;align-items:center;justify-content:center;';
+            
+            const content = document.createElement('div');
+            content.style.cssText = 'background:#1e1e1e;border:2px solid #ff4444;border-radius:8px;padding:24px;max-width:600px;color:#fff;';
+            
+            content.innerHTML = `
+                <h2 style="color:#ff4444;margin:0 0 16px 0;">🚑 Emergency Recovery</h2>
+                <p style="margin:0 0 20px 0;">Choose recovery method:</p>
+                
+                <button onclick="attemptAutoRecovery()" style="width:100%;padding:12px;margin-bottom:12px;background:#4CAF50;color:white;border:none;border-radius:4px;cursor:pointer;font-size:16px;">
+                    🔄 Automatic Recovery (Try First)
+                </button>
+                
+                <button onclick="showRecoveryScript()" style="width:100%;padding:12px;margin-bottom:12px;background:#2196F3;color:white;border:none;border-radius:4px;cursor:pointer;font-size:16px;">
+                    📋 Get Recovery Script (Manual)
+                </button>
+                
+                <button onclick="this.closest('div').remove()" style="width:100%;padding:12px;background:#666;color:white;border:none;border-radius:4px;cursor:pointer;font-size:16px;">
+                    Cancel
+                </button>
+            `;
+            
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+            modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+        }
+        
+        async function attemptAutoRecovery() {
+            document.querySelectorAll('[onclick*="attemptAutoRecovery"]')[0].closest('div').remove();
+            
+            try {
+                const response = await fetch('/api/ue5/request_recovery', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({})
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    showNotification('Recovery Queued', 
+                        `Recovery commands sent to ${data.count} client(s). Check UE5 Output Log.`, 
+                        'success');
+                } else {
+                    throw new Error(data.error || 'Recovery failed');
                 }
-            );
+            } catch (error) {
+                showNotification('Auto-Recovery Failed', 
+                    'Automatic recovery failed. Try "Get Recovery Script" instead.', 
+                    'error');
+            }
+        }
+        
+        async function showRecoveryScript() {
+            const activeProject = state.connectedClients[0];
+            if (!activeProject) {
+                showNotification('No Project', 'No UE5 project connected', 'error');
+                return;
+            }
+            
+            document.querySelectorAll('[onclick*="showRecoveryScript"]')[0].closest('div').remove();
+            
+            try {
+                const response = await fetch(`/api/ue5/recovery_script/${activeProject.id}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const modal = document.createElement('div');
+                    modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;';
+                    
+                    const content = document.createElement('div');
+                    content.style.cssText = 'background:#1e1e1e;border:2px solid #4CAF50;border-radius:8px;padding:24px;max-width:800px;max-height:80vh;overflow-y:auto;color:#fff;';
+                    
+                    content.innerHTML = `
+                        <h2 style="color:#4CAF50;margin:0 0 16px 0;">📋 Emergency Recovery Script</h2>
+                        <ol style="margin:0 0 16px 0;padding-left:20px;">
+                            ${data.instructions.map(i => `<li>${i}</li>`).join('')}
+                        </ol>
+                        <textarea readonly style="width:100%;height:300px;background:#000;color:#0f0;border:1px solid #4CAF50;padding:12px;font-family:monospace;font-size:12px;margin-bottom:12px;">${data.script}</textarea>
+                        <div style="display:flex;gap:12px;">
+                            <button onclick="copyRecoveryScript(this)" style="flex:1;padding:12px;background:#4CAF50;color:white;border:none;border-radius:4px;cursor:pointer;">
+                                📋 Copy Script
+                            </button>
+                            <button onclick="this.closest('div').remove()" style="flex:1;padding:12px;background:#666;color:white;border:none;border-radius:4px;cursor:pointer;">
+                                Close
+                            </button>
+                        </div>
+                    `;
+                    
+                    modal.appendChild(content);
+                    document.body.appendChild(modal);
+                } else {
+                    throw new Error(data.error || 'Failed to get script');
+                }
+            } catch (error) {
+                showNotification('Error', 'Failed to get recovery script: ' + error.message, 'error');
+            }
+        }
+        
+        function copyRecoveryScript(btn) {
+            const textarea = btn.closest('div').previousElementSibling;
+            textarea.select();
+            document.execCommand('copy');
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Copied!';
+            setTimeout(() => btn.textContent = originalText, 2000);
         }
 
         // Connection Mode
