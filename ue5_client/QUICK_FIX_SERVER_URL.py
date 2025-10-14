@@ -10,7 +10,6 @@ Current Production Server: https://workspace-noahbutcher97.replit.app
 def fix_server_connection():
     """Switch client to production server and reconnect."""
     try:
-        import unreal
         
         print("=" * 60)
         print("🔧 Fixing Server Connection...")
