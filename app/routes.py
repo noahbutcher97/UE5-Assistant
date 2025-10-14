@@ -463,6 +463,12 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             if client_dir.exists():
                 for file_path in client_dir.rglob("*"):
                     if file_path.is_file():
+                        # Skip cache files and unwanted artifacts
+                        if any(part in file_path.parts for part in ['__pycache__', '.pyc', '.pyo', '.pyd', '__pycache']):
+                            continue
+                        if file_path.suffix in ['.pyc', '.pyo', '.pyd']:
+                            continue
+                        
                         arcname = str(file_path.relative_to("ue5_client"))
                         zip_file.write(file_path, arcname)
 
@@ -513,6 +519,12 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             if client_dir.exists():
                 for file_path in client_dir.rglob("*"):
                     if file_path.is_file():
+                        # Skip cache files and unwanted artifacts
+                        if any(part in file_path.parts for part in ['__pycache__', '.pyc', '.pyo', '.pyd', '__pycache']):
+                            continue
+                        if file_path.suffix in ['.pyc', '.pyo', '.pyd']:
+                            continue
+                        
                         arcname = str(file_path.relative_to("ue5_client"))
                         zip_file.write(file_path, arcname)
 
