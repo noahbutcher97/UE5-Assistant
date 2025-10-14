@@ -1173,11 +1173,46 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
     @app.get("/api/projects")
     async def list_projects():
-        """List all registered projects."""
+        """List all registered projects (includes HTTP polling clients)."""
+        from datetime import datetime, timedelta
+        
         from app.project_registry import get_registry
+        from app.websocket_manager import get_manager
 
         registry = get_registry()
-        return {"success": True, "projects": registry.list_projects()}
+        manager = get_manager()
+        
+        # Get projects from registry
+        projects = registry.list_projects()
+        
+        # Add HTTP polling clients (if not already in registry)
+        if hasattr(manager, 'http_clients'):
+            for project_id, client_data in manager.http_clients.items():
+                # Check if this project is already in the registry
+                existing = next((p for p in projects if p.get('project_id', '').startswith(project_id[:12])), None)
+                
+                if not existing:
+                    # Add HTTP client as a project
+                    last_poll = client_data.get('last_poll', datetime.now())
+                    is_active = (datetime.now() - last_poll) < timedelta(seconds=30)
+                    
+                    projects.append({
+                        'project_id': project_id[:12],
+                        'name': client_data.get('name', 'Unknown'),
+                        'path': f"HTTP Client ({client_data.get('server_type', 'unknown')})",
+                        'version': 'HTTP Polling',
+                        'metadata': {
+                            'connection_type': 'http_polling',
+                            'server_url': client_data.get('server_url', ''),
+                            'server_type': client_data.get('server_type', 'unknown'),
+                            'last_poll': last_poll.isoformat()
+                        },
+                        'registered_at': client_data.get('last_poll', datetime.now()).isoformat(),
+                        'last_updated': client_data.get('last_poll', datetime.now()).isoformat(),
+                        'is_active': is_active
+                    })
+        
+        return {"success": True, "projects": projects}
 
     @app.get("/api/active_project")
     async def get_active_project():
