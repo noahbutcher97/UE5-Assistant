@@ -1,0 +1,239 @@
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: f1545989
+LogPython: ============================================================
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: 8fae3c12
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 30 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 30 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (vfa70d5af)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://ue5-assistant-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 200
+LogPython: [HTTP] Registration response text: {"success":true,"message":"Registered via HTTP polling","persistent":true}
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP] Connect result: True
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001BAB6D85290>
+LogPython: [HTTP] self.http_client.connected = True
+LogPython: [HTTP] Result is True, about to return True...
+LogPython: [HTTP] Returning result: True
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: 8fae3c12
+LogPython: ============================================================
+LogPython: ✅ Assistant restarted! Connection re-established.
+LogPython: [HTTPPolling] 📥 Received action: describe_viewport (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [HTTPPolling] ✅ Action executed on main thread: describe_viewport
+LogPython: [HTTPPolling] 📥 Received action: get_project_info (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: get_project_info
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: get_project_info
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: get_project_info
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: get_project_info
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: get_project_info
+LogPython: [HTTPPolling] ✅ Action executed on main thread: get_project_info
+LogPython: [HTTPPolling] 📥 Received action: browse_files (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: browse_files
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: browse_files
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: browse_files
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: browse_files
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: browse_files
+LogPython: [HTTPPolling] ✅ Action executed on main thread: browse_files
+LogPython: [HTTPPolling] 📥 Received action: describe_viewport (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [HTTPPolling] ✅ Action executed on main thread: describe_viewport
+LogPython: [HTTPPolling] 📥 Received action: describe_viewport (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [HTTPPolling] ✅ Action executed on main thread: describe_viewport
+LogPython: [HTTPPolling] 📥 Received action: describe_viewport (from background thread)
+LogPython: [HTTPPolling] 🎯 Queueing action for main thread: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [HTTPPolling] ✅ Action executed on main thread: describe_viewport
+LogPython: ✅ Switched to localhost server: http://localhost:5000
+LogPython: ✅ Switched to localhost server
+LogPython: 🔄 Restarting assistant...
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: adae2047
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 30 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 30 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v66542516)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: Warning: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83302A50>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83302A50>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83303ED0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83303ED0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83311D10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83311D10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83311D10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83311D10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: Warning: ❌ Registration failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83311D10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: Warning: ⚠️ Project auto-registration failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA83311D10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: http://localhost:5000
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: http://localhost:5000
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: http://localhost:5000
+LogPython: [HTTP] Making registration POST request to: http://localhost:5000/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] ❌ Connection error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA8331F0D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ❌ HTTP polling connection error (network): HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001BA8331F0D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: [HTTP] Connect result: False
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001BA83300E90>
+LogPython: [HTTP] self.http_client.connected = False
+LogPython: [HTTP] Result is False, logging error...
+LogPython: Error: HTTP Polling connection failed - connect() returned False
+LogPython: [HTTP] Returning result: False
+LogPython: Error: ❌ All connection methods failed
+LogPython: Error:    Real-time dashboard features disabled
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: adae2047
+LogPython: ============================================================
