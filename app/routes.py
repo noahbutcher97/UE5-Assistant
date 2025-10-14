@@ -191,7 +191,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                 "instructions": [
                     "1. Open Unreal Editor",
                     "2. Open Python Console (Tools → Python Console)",
-                    "3. Run: import AIAssistant.main",
+                    "3. Run: from AIAssistant.core import main",
                     ("4. Check Output Log for "
                      "'✅ Project registered' message")
                 ]
@@ -1593,7 +1593,7 @@ When users ask about their project's actual data "
                                     (f"⚠️ UE5 client didn't respond to: "
                                      f"{action}\n\nError: {error_msg}\n\n"
                                      "Make sure your UE5 project has the AI "
-                                     "Assistant running (import AIAssistant.main "
+                                     "Assistant running (run: from AIAssistant.core import main "
                                      "in UE5 Python Console)."),
                                     "project_context":
                                     (active_project["name"]
@@ -2453,8 +2453,8 @@ print("=" * 60)
 
 # Step 1: Force stop any broken polling threads
 try:
-    if 'AIAssistant.main' in sys.modules:
-        main = sys.modules['AIAssistant.main']
+    if 'AIAssistant.core.main' in sys.modules:
+        main = sys.modules['AIAssistant.core.main']
         if hasattr(main, '_assistant') and main._assistant:
             # Stop HTTP client if exists
             if hasattr(main._assistant, 'http_client') and main._assistant.http_client:
@@ -2486,8 +2486,8 @@ print("✅ Cleared import caches and garbage collected")
 # Step 4: Load fresh code from disk
 print("📦 Loading fresh code from disk...")
 try:
-    import AIAssistant.main
-    AIAssistant.main.get_assistant()
+    from AIAssistant.core import main
+    main.get_assistant()
     print("=" * 60)
     print("✅ RECOVERY COMPLETE!")
     print("🔄 AI Assistant restarted with fresh code")
