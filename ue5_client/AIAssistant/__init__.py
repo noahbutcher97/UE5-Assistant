@@ -45,3 +45,20 @@ __all__ = [
     "ui_manager",
     "main",
 ]
+
+# AUTO-INITIALIZE: Connect to backend when module is imported
+# This is CRITICAL - without this, the client never connects!
+try:
+    import unreal
+    # Trigger auto-initialization from main.py
+    from .core.main import _auto_init
+    _auto_init()
+except ImportError:
+    # Not in UE5 environment - skip auto-init
+    pass
+except Exception as e:
+    try:
+        import unreal
+        unreal.log_error(f"❌ Failed to auto-initialize AI Assistant: {e}")
+    except:
+        print(f"❌ Failed to auto-initialize AI Assistant: {e}")
