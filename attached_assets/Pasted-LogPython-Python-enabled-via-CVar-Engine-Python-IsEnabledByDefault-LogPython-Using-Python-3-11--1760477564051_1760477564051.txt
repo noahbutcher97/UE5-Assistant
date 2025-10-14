@@ -1,0 +1,165 @@
+LogPython: Python enabled via CVar 'Engine.Python.IsEnabledByDefault'
+LogPython: Using Python 3.11.8
+LogPython: Display: No pip-enabled plugins with python dependencies found, skipping
+LogPython: Display: Running start-up script D:/UnrealProjects/5.6/UE5_Assistant/Content/Python/init_unreal.py... started...
+LogPython: ============================================================
+LogPython: UE5 AI Assistant - Auto-initializing...
+LogPython: ============================================================
+LogPython: [ActionQueue] ✅ Main thread ticker started (v6762568e)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: Warning: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCB1F68C90>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCB1F68C90>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCEF3AC6D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCEF3AC6D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCDDF18510>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCDDF18510>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCDDF18510>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCDDF18510>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: Warning: ❌ Registration failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCDDF18510>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: Warning: ⚠️ Project auto-registration failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCDDF18510>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: http://localhost:5000
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: http://localhost:5000
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: http://localhost:5000
+LogPython: [HTTP] Making registration POST request to: http://localhost:5000/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] ❌ Connection error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCEF3C4450>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ❌ HTTP polling connection error (network): HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCEF3C4450>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: [HTTP] Connect result: False
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001CCDDF4F310>
+LogPython: [HTTP] self.http_client.connected = False
+LogPython: [HTTP] Result is False, logging error...
+LogPython: Error: HTTP Polling connection failed - connect() returned False
+LogPython: [HTTP] Returning result: False
+LogPython: Error: ❌ All connection methods failed
+LogPython: Error:    Real-time dashboard features disabled
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: Failed to load AI Assistant: No module named 'AIAssistant.startup'
+LogPython: Make sure AIAssistant is installed in Content/Python/
+LogPython:    Run the bootstrap script to install it automatically
+LogPython: Display: Running start-up script D:/UnrealProjects/5.6/UE5_Assistant/Content/Python/init_unreal.py... took 26.1 sec
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Importers/USDImporter/Content/Python/init_unreal.py... started...
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Importers/USDImporter/Content/Python/init_unreal.py... took 259 us (total: 26.1 sec)
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... started...
+LogPython: registering <class 'ControlRigWorkflows.workflow_deformation_rig_preset.provider'>
+LogPython: Display: Running start-up script C:/Program Files/Epic Games/UE_5.6/Engine/Plugins/Animation/ControlRig/Content/Python/init_unreal.py... took 22.751 ms (total: 26.1 sec)
+LogPython: Display: Generating Python API stub file...
+LogPython: Display:   ...generating Python API: glue code (types)
+LogPython: Display:   ...generating Python API: glue code (methods)
+LogPython: Display:   ...generating Python API: additional code
+LogPython: Display:   ...generated: D:/UnrealProjects/5.6/UE5_Assistant/Intermediate/PythonStub/unreal.py
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: 1bac3b9b
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🔄 UE5 AI Assistant Auto-Update (Main Thread)
+LogPython: ============================================================
+LogPython: 📡 Backend: http://localhost:5000
+LogPython: 📦 Current Version: 2966a900
+LogPython: ⬇️  Downloading latest client from: http://localhost:5000/api/download_client
+LogPython: Error: ❌ Network error: <urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>
+LogPython: Error:    Check your internet connection and backend URL
+LogPython: [AutoUpdate] 🔓 Update lock released
+LogPython: ✅ Update complete! Restarting assistant...
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 30 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 30 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v536a8e2a)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: Warning: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14D3ED0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14D3ED0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14E25D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14E25D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14D2150>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: [APIClient] ⚠️ Request failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14D2150>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14D2150>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14D2150>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: Warning: ❌ Registration failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14D2150>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: Warning: ⚠️ Project auto-registration failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/register_project (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14D2150>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: http://localhost:5000
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: http://localhost:5000
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: http://localhost:5000
+LogPython: [HTTP] Making registration POST request to: http://localhost:5000/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] ❌ Connection error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14E9E50>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ❌ HTTP polling connection error (network): HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF14E9E50>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: [HTTP] Connect result: False
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001CCF14E3950>
+LogPython: [HTTP] self.http_client.connected = False
+LogPython: [HTTP] Result is False, logging error...
+LogPython: Error: HTTP Polling connection failed - connect() returned False
+LogPython: [HTTP] Returning result: False
+LogPython: Error: ❌ All connection methods failed
+LogPython: Error:    Real-time dashboard features disabled
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: 2966a900
+LogPython: ============================================================
