@@ -28,6 +28,7 @@ class OpsManager:
         """Run a standard operation by name."""
         operations_map = {
             'test': lambda **kw: self.testing.run_all_tests(**kw),
+            'test_backend': lambda **kw: self.testing.run_backend_tests(**kw),
             'test_unit': lambda **kw: self.testing.run_unit_tests(**kw),
             'test_integration': lambda **kw: self.testing.run_integration_tests(**kw),
             'deploy_prepare': lambda **kw: self.deployment.prepare_deployment(**kw),
@@ -53,7 +54,12 @@ class OpsManager:
         return [
             {
                 'name': 'test',
-                'description': 'Run all tests',
+                'description': 'Run all tests (may timeout on large suites)',
+                'category': 'testing'
+            },
+            {
+                'name': 'test_backend',
+                'description': 'Run backend API tests (30 tests, fast & reliable)',
                 'category': 'testing'
             },
             {

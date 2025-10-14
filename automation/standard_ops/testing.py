@@ -54,7 +54,35 @@ class TestingOps:
                 'error': str(e)
             }
     
-    def run_unit_tests(self, verbose: bool = False) -> Dict:
+    def run_backend_tests(self, verbose: bool = False, **kwargs) -> Dict:
+        """Run backend API tests only (fast, reliable subset)."""
+        print("🧪 Running backend tests...")
+        
+        try:
+            cmd = ['python', '-m', 'pytest', 'tests/backend/', '-v' if verbose else '-q']
+            
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                cwd=self.root_path,
+                timeout=60
+            )
+            
+            return {
+                'success': result.returncode == 0,
+                'exit_code': result.returncode,
+                'stdout': result.stdout,
+                'test_count': '30 backend API tests'
+            }
+            
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
+    
+    def run_unit_tests(self, verbose: bool = False, **kwargs) -> Dict:
         """Run unit tests only."""
         print("🧪 Running unit tests...")
         

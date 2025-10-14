@@ -33,7 +33,7 @@ def main():
     
     ops_parser = subparsers.add_parser('ops', help='Run standard operations')
     ops_parser.add_argument('operation', choices=[
-        'test', 'test_unit', 'test_integration',
+        'test', 'test_backend', 'test_unit', 'test_integration',
         'deploy_prepare', 'deploy_validate',
         'health_check', 'update_dependencies', 'validate_structure'
     ], help='Operation to run')
