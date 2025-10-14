@@ -97,12 +97,12 @@ def register_toolbar_menu():
             name="UpdateToCurrentServer",
             type=unreal.MultiBlockType.MENU_ENTRY
         )
-        update_server_entry.set_label(unreal.Text("🔄 Update to Current Server"))
-        update_server_entry.set_tool_tip(unreal.Text("Fix connection to current production server (workspace-noahbutcher97.replit.app)"))
+        update_server_entry.set_label(unreal.Text("🔄 Update to Production Server"))
+        update_server_entry.set_tool_tip(unreal.Text("Fix connection to production server (ue5-assistant-noahbutcher97.replit.app)"))
         update_server_entry.set_string_command(
             type=unreal.ToolMenuStringCommandType.PYTHON,
             custom_type=unreal.Name(""),
-            string="from AIAssistant.core.config import get_config; config = get_config(); config.SERVER_PRESETS['production'] = 'https://workspace-noahbutcher97.replit.app'; config.set('api_base_url', 'https://workspace-noahbutcher97.replit.app'); config.set('active_server', 'production'); config.save(); print('\\n' + '='*70); print('✅ Updated to CURRENT production server!'); print('   URL: https://workspace-noahbutcher97.replit.app'); print('='*70); print('\\n🔄 Restarting assistant...'); from AIAssistant.system.auto_update import force_restart_assistant; force_restart_assistant()"
+            string="from AIAssistant.core.config import get_config; config = get_config(); config.SERVER_PRESETS['production'] = 'https://ue5-assistant-noahbutcher97.replit.app'; config.set('api_base_url', 'https://ue5-assistant-noahbutcher97.replit.app'); config.set('active_server', 'production'); config.save(); print('\\n' + '='*70); print('✅ Updated to production server!'); print('   URL: https://ue5-assistant-noahbutcher97.replit.app'); print('='*70); print('\\n🔄 Restarting assistant...'); from AIAssistant.system.auto_update import force_restart_assistant; force_restart_assistant()"
         )
         ai_menu.add_menu_entry("AIAssistantServer", update_server_entry)
         

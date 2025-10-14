@@ -82,15 +82,15 @@ class Config:
 
     # Server presets for easy switching
     SERVER_PRESETS = {
-        "production": "https://workspace-noahbutcher97.replit.app",
-        "dev": "https://workspace-noahbutcher97.replit.dev",
+        "production": "https://ue5-assistant-noahbutcher97.replit.app",
+        "dev": "https://ue5-assistant-noahbutcher97.replit.dev",
         "localhost": "http://localhost:5000"
     }
 
     DEFAULT_CONFIG = {
         "active_server": "production",  # Default to production
         "api_base_url": (
-            "https://workspace-noahbutcher97.replit.app"),
+            "https://ue5-assistant-noahbutcher97.replit.app"),
         "model": "gpt-4o-mini",
         "temperature": 0.7,
         "response_style": "descriptive",

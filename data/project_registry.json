@@ -28,6 +28,22 @@
       "registered_at": "2025-10-14T21:29:14.932485",
       "last_updated": "2025-10-14T21:29:14.932486",
       "is_active": true
+    },
+    "test": {
+      "project_id": "test",
+      "name": "Test",
+      "path": "HTTP_Client_test_localhost",
+      "version": "HTTP Polling",
+      "metadata": {
+        "connection_type": "http_polling",
+        "server_url": "http://localhost:5000",
+        "server_type": "localhost",
+        "last_seen": "2025-10-14T21:53:07.652359",
+        "auto_registered": true
+      },
+      "registered_at": "2025-10-14T21:53:07.652377",
+      "last_updated": "2025-10-14T21:53:07.652380",
+      "is_active": true
     }
   }
 }
