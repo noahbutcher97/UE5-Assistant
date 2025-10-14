@@ -20,6 +20,8 @@ A **Fully Automated Widget Generator** creates AI-powered Editor Utility Widgets
 
 The system features **Multi-Server Detection and Display** to show which server (localhost, production, or custom) each UE5 client is connected to, with color-coded indicators on the dashboard. It incorporates a **Universal Bootstrap System** for seamless client updates (ZIP and TAR.GZ formats) and an **Emergency Fix Update System** with a GUI for non-technical users. **Connection Troubleshooting Tools** are built-in, including console utilities and a **Dashboard Reconnect Button**. A **UE5 Editor Toolbar Menu** provides easy access to troubleshooting tools directly from the editor.
 
+**Cross-Server Federation Monitoring (October 2025):** A new federation mode allows the development dashboard to monitor production server connections in real-time. When enabled via toggle in the Settings tab, the dashboard queries both local and production endpoints, merging project lists with visual server source indicators (purple "Production" badges). The implementation uses a hardcoded production server URL to prevent SSRF attacks, employs async httpx client for non-blocking I/O with 5-second timeout, and persists toggle state in localStorage. This enables developers to work on code locally while monitoring live production connections without switching environments.
+
 ### System Design Choices
 The system uses a **RESTful API** with JSON payloads, enforcing **Separation of Concerns** between UE viewport data collection and AI processing. It includes **Environment-based Configuration**, robust **Error Handling** with structured logging, and retry logic. A **Thread-Safe Action Queue** integrates with the Unreal Slate ticker. **Automatic Cache Management** is implemented via module version tracking with a **Persistent Client Reference System** that preserves HTTP/WebSocket clients across module reloads. **Security Hardening** ensures path traversal protection and read-only file operations. All UE5 client code adheres to **UE5.6 API Compliance**.
 
@@ -41,6 +43,7 @@ The UE5 client uses a **Modular Client Architecture** with a reorganized folder 
 - **pydantic**: Data validation and settings management.
 - **openai**: Official OpenAI Python client.
 - **requests**: HTTP library.
+- **httpx**: Async HTTP client for federation queries.
 - **jinja2**: Template engine.
 
 ### Unreal Engine Integration
