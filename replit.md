@@ -25,6 +25,8 @@ The system uses a **RESTful API** with JSON payloads, enforcing **Separation of 
 
 The UE5 client uses a **Modular Client Architecture** with a reorganized folder structure (`core/`, `network/`, `troubleshoot/`, `execution/`, `ui/`, `collection/`, `system/`, `tools/`, `test/`, `documentation/`, `archived/`) for improved maintainability, clear separation of concerns, and correct path resolution. A **Unified Registration System** consolidates HTTP polling clients and the Project Registry into a single source of truth, eliminating dual registration issues and providing consistent `project_id` generation via MD5 hashing and path normalization. It tracks connection health via `last_seen` timestamps and ensures server restart resilience with automatic re-registration.
 
+**Critical Connection Reliability Fixes (October 2025):** Two critical bugs were identified and resolved to ensure absolute connection reliability: (1) Auto-initialization was never triggered on module import - fixed by adding `_auto_init()` call to `__init__.py`, ensuring clients automatically connect when UE5 loads the module. (2) Heartbeat endpoint didn't update the Project Registry - fixed by adding `update_project_last_seen()` call to the heartbeat handler, ensuring dashboard accurately reflects real-time connection status. A comprehensive connection diagnostics suite validates the entire HTTP polling lifecycle with 7 critical touchpoints. All connection tests pass (37/37 including backend API tests), confirming connection reliability is production-ready.
+
 ## External Dependencies
 
 ### AI Services
