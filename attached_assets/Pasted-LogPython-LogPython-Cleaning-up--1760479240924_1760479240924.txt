@@ -1,0 +1,217 @@
+LogPython: ============================================================
+LogPython: 🧹 Cleaning up __pycache__ directories...
+LogPython: ============================================================
+LogPython: ✅ Removed: __pycache__
+LogPython: ✅ Removed: collection\__pycache__
+LogPython: ✅ Removed: core\__pycache__
+LogPython: ✅ Removed: execution\__pycache__
+LogPython: ✅ Removed: network\__pycache__
+LogPython: ✅ Removed: system\__pycache__
+LogPython: ✅ Removed: tools\__pycache__
+LogPython: ✅ Removed: troubleshoot\__pycache__
+LogPython: ✅ Removed: ui\__pycache__
+LogPython: ============================================================
+LogPython: ✅ Removed 9 __pycache__ director(ies)
+LogPython: ============================================================
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: fbc61144
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🔄 UE5 AI Assistant Auto-Update (Main Thread)
+LogPython: ============================================================
+LogPython: 📡 Backend: https://workspace-noahbutcher97.replit.app
+LogPython: 📦 Current Version: 0a3bf505
+LogPython: ⬇️  Downloading latest client from: https://workspace-noahbutcher97.replit.app/api/download_client
+LogPython: Error: ❌ Network error: HTTP Error 404: Not Found
+LogPython: Error:    Check your internet connection and backend URL
+LogPython: [AutoUpdate] 🔓 Update lock released
+LogPython: ✅ Update complete! Restarting assistant...
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 31 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 31 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v9b1348d9)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: Warning: ❌ Registration failed: HTTP 404: Not Found
+LogPython: Warning: ⚠️ Project auto-registration failed: HTTP 404: Not Found
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://workspace-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://workspace-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 404
+LogPython: [HTTP] Registration response text: Not Found
+LogPython: ❌ HTTP polling registration failed: 404 - Not Found
+LogPython: [HTTP] Connect result: False
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001BA830F4B90>
+LogPython: [HTTP] self.http_client.connected = False
+LogPython: [HTTP] Result is False, logging error...
+LogPython: Error: HTTP Polling connection failed - connect() returned False
+LogPython: [HTTP] Returning result: False
+LogPython: Error: ❌ All connection methods failed
+LogPython: Error:    Real-time dashboard features disabled
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: 0a3bf505
+LogPython: ============================================================
+LogPython: ======================================================================
+LogPython: ✅ Updated to CURRENT production server!
+LogPython:    URL: https://workspace-noahbutcher97.replit.app
+LogPython: ======================================================================
+LogPython: 🔄 Restarting assistant...
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: aa2b232c
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 30 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 30 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v0861a06b)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: Warning: ❌ Registration failed: HTTP 404: Not Found
+LogPython: Warning: ⚠️ Project auto-registration failed: HTTP 404: Not Found
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://workspace-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://workspace-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 404
+LogPython: [HTTP] Registration response text: Not Found
+LogPython: ❌ HTTP polling registration failed: 404 - Not Found
+LogPython: [HTTP] Connect result: False
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001BA90760990>
+LogPython: [HTTP] self.http_client.connected = False
+LogPython: [HTTP] Result is False, logging error...
+LogPython: Error: HTTP Polling connection failed - connect() returned False
+LogPython: [HTTP] Returning result: False
+LogPython: Error: ❌ All connection methods failed
+LogPython: Error:    Real-time dashboard features disabled
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: aa2b232c
+LogPython: ============================================================
+LogPython: ======================================================================
+LogPython: 📡 CURRENT SERVER CONNECTION
+LogPython: ======================================================================
+LogPython: Active Server: production
+LogPython: Backend URL: https://workspace-noahbutcher97.replit.app
+LogPython: ======================================================================
+LogPython: 💡 Use "Update to Current Server" if dashboard shows disconnected
