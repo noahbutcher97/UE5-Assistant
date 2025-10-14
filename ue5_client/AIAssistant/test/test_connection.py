@@ -10,10 +10,10 @@ print("=" * 60)
 try:
     # Import and initialize
     print("\n1️⃣ Importing AIAssistant...")
-    import AIAssistant.main
+    from AIAssistant.core import main
     
     print("2️⃣ Getting assistant instance...")
-    assistant = AIAssistant.main.get_assistant()
+    assistant = main.get_assistant()
     
     print("3️⃣ Checking connection status...")
     
@@ -33,7 +33,7 @@ try:
     
     # Try a simple command
     print("\n5️⃣ Testing command execution...")
-    response = AIAssistant.main.send_command("test connection")
+    response = main.send_command("test connection")
     if response:
         print("✅ Command executed successfully!")
     

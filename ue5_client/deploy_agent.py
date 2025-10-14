@@ -152,11 +152,11 @@ import unreal
 
 try:
     # Import and initialize the AI Assistant
-    import AIAssistant.main
+    from AIAssistant.core import main
     unreal.log("✅ AI Assistant auto-initialized successfully!")
 except Exception as e:
     unreal.log_error(f"❌ Failed to auto-initialize AI Assistant: {e}")
-    unreal.log("💡 You can manually initialize by running: import AIAssistant.main")
+    unreal.log("💡 You can manually initialize by running: from AIAssistant.core import main")
 """
             auto_start_path.write_text(auto_start_content)
             print("✅ Created auto_start.py for automatic initialization")
@@ -167,7 +167,7 @@ except Exception as e:
             
             if auto_import:
                 print("🚀 Auto-importing in UE5...")
-                import_result = self.execute_ue5_command("import AIAssistant.main")
+                import_result = self.execute_ue5_command("from AIAssistant.core import main")
             
             return {
                 'success': True,

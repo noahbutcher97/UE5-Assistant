@@ -8,8 +8,8 @@ def test_registration():
     """Test project registration with detailed logging."""
     try:
         # Import and get client
-        from AIAssistant.api_client import get_client
-        from AIAssistant.project_registration import ProjectRegistration
+        from AIAssistant.network.api_client import get_client
+        from AIAssistant.system.project_registration import ProjectRegistration
         
         print("=" * 60)
         print("🔧 Testing Project Registration")

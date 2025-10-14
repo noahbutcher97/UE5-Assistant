@@ -114,7 +114,7 @@ def bootstrap_assistant():
             if python_dir not in sys.path:
                 sys.path.append(python_dir)
 
-            import AIAssistant.startup as startup
+            from AIAssistant.system import startup
             startup.configure_and_start()
             print("=" * 60)
             print("✅ AI ASSISTANT READY WITH AUTO-UPDATES ENABLED!")
