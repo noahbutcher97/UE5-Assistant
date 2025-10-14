@@ -156,7 +156,8 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                     target_file = target_base / rel_path
 
                     # Track if overwriting
-                    if target_file.exists():
+                    file_exists = target_file.exists()
+                    if file_exists:
                         if not overwrite:
                             continue
                         overwrote_count += 1
@@ -164,8 +165,16 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                     # Create parent directory
                     target_file.parent.mkdir(parents=True, exist_ok=True)
 
-                    # Copy file
-                    shutil.copy2(file_path, target_file)
+                    # Use atomic replacement for existing files (works even if file is in use)
+                    if file_exists:
+                        temp_file = target_file.with_suffix(target_file.suffix + '.tmp')
+                        shutil.copy2(file_path, temp_file)
+                        temp_file.replace(target_file)  # Atomic operation
+                        print(f"   ✅ Overwrote: {rel_path}")
+                    else:
+                        shutil.copy2(file_path, target_file)
+                        print(f"   ✅ Created: {rel_path}")
+                    
                     copied_files.append(str(rel_path))
 
             return {
