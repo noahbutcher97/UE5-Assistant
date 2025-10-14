@@ -19,6 +19,19 @@ class ProjectRegistry:
         self.registry_file.parent.mkdir(parents=True, exist_ok=True)
         self._load_registry()
 
+    def _normalize_path(self, path: str) -> str:
+        """Normalize path for consistent comparison (prevents duplicates)."""
+        if not path:
+            return ""
+        # Resolve to absolute path and normalize separators
+        try:
+            from pathlib import Path
+            normalized = str(Path(path).resolve())
+            return normalized
+        except Exception:
+            # Fallback: just normalize separators and remove trailing slash
+            return path.replace('\\', '/').rstrip('/')
+    
     def register_project(self, project_id: str,
                          project_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -33,13 +46,15 @@ class ProjectRegistry:
             Registration result
         """
         project_path = project_data.get("path", "")
+        normalized_path = self._normalize_path(project_path)
         
         # Check for existing entry with same path but different ID (deduplication)
         existing_id_for_path = None
         for pid, pdata in self.projects.items():
-            if pdata.get("path") == project_path and pid != project_id:
+            existing_path = self._normalize_path(pdata.get("path", ""))
+            if existing_path == normalized_path and pid != project_id:
                 existing_id_for_path = pid
-                print(f"🔄 Deduplicating project: Found existing entry {pid[:16]}... for path {project_path}")
+                print(f"🔄 Deduplicating project: Found existing entry {pid[:16]}... for path {normalized_path}")
                 print(f"   Removing old entry and using new ID: {project_id[:16]}...")
                 break
         
@@ -65,6 +80,11 @@ class ProjectRegistry:
                                           {}).get("registered_at",
                                                   datetime.now().isoformat())
 
+        # Preserve existing session_messages if updating
+        existing_session = None
+        if not is_new and 'session_messages' in self.projects[project_id]:
+            existing_session = self.projects[project_id]['session_messages']
+        
         # Build project record
         self.projects[project_id] = {
             "project_id": project_id,
@@ -74,6 +94,7 @@ class ProjectRegistry:
             "metadata": project_data.get("metadata", {}),
             "registered_at": registered_at,
             "last_updated": datetime.now().isoformat(),
+            "session_messages": existing_session or []  # Per-project conversation history
         }
 
         # Add any additional fields from project_data
@@ -220,6 +241,28 @@ class ProjectRegistry:
         if project_id in self.projects:
             return self.projects[project_id].get("connection_mode", "http")
         return "http"
+    
+    def get_session_messages(self, project_id: str) -> List[Dict[str, str]]:
+        """Get conversation history for a project."""
+        if project_id in self.projects:
+            return self.projects[project_id].get("session_messages", [])
+        return []
+    
+    def set_session_messages(self, project_id: str, messages: List[Dict[str, str]]) -> None:
+        """Set conversation history for a project."""
+        if project_id in self.projects:
+            self.projects[project_id]["session_messages"] = messages
+            self.projects[project_id]["last_updated"] = datetime.now().isoformat()
+            self._save_registry()
+    
+    def update_project_last_seen(self, project_id: str) -> None:
+        """Update the last_seen timestamp for a project (heartbeat tracking)."""
+        if project_id in self.projects:
+            metadata = self.projects[project_id].get("metadata", {})
+            metadata["last_seen"] = datetime.now().isoformat()
+            self.projects[project_id]["metadata"] = metadata
+            # Don't save on every heartbeat to reduce I/O
+            # The in-memory update is sufficient for health checks
 
     def clear_all_projects(self) -> Dict[str, Any]:
         """

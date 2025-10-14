@@ -311,6 +311,69 @@ Or:
 
 ---
 
+### Project Management Routes
+
+#### `GET /api/projects`
+**Purpose**: List all registered UE5 projects with connection health status
+
+**Response**:
+```json
+{
+  "success": true,
+  "projects": [
+    {
+      "project_id": "abc123...",
+      "name": "MyGame",
+      "path": "/path/to/project",
+      "version": "5.6",
+      "is_active": true,
+      "connection_health": {
+        "status": "active",
+        "last_seen": "2025-10-14T12:30:45.123Z",
+        "seconds_since_last_seen": 5
+      }
+    }
+  ]
+}
+```
+
+---
+
+#### `GET /api/projects_federated`
+**Purpose**: List projects from both local and remote (production) servers for cross-server monitoring
+
+**Response**:
+```json
+{
+  "success": true,
+  "projects": [
+    {
+      "project_id": "abc123...",
+      "name": "MyGame",
+      "server_source": "local",
+      "server_url": "localhost",
+      ...
+    },
+    {
+      "project_id": "def456...",
+      "name": "ProductionProject",
+      "server_source": "remote",
+      "server_url": "https://ue5-assistant-noahbutcher97.replit.app",
+      ...
+    }
+  ],
+  "sources": {
+    "local": 1,
+    "remote": 1,
+    "remote_server": "https://ue5-assistant-noahbutcher97.replit.app"
+  }
+}
+```
+
+**Security**: Uses hardcoded production server URL to prevent SSRF attacks. Async implementation with 5-second timeout.
+
+---
+
 ## Error Handling
 
 All routes return errors in consistent format:

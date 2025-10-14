@@ -49,11 +49,6 @@ def sanitize_class_name(name: str) -> str:
 # Template function removed - widget generation now uses OpenAI API for dynamic, AI-generated scripts
 
 
-# Session messages for execute_command context
-# (global state for single-user UE integration)
-session_messages: List[Dict[str, str]] = []
-
-
 def get_system_message(app_config: Dict[str, Any]) -> str:
     """Generate system message with current response style."""
     current_style = app_config.get("response_style", "descriptive")
@@ -102,20 +97,35 @@ def get_system_message(app_config: Dict[str, Any]) -> str:
     return base_msg + style_modifier
 
 
-def init_session_messages(app_config: Dict[str, Any]) -> None:
-    """Initialize session messages with system message."""
-    global session_messages
-    session_messages = [{
-        "role": "system",
-        "content": get_system_message(app_config)
-    }]
+def get_project_session_messages(project_id: str, app_config: Dict[str, Any]) -> List[Dict[str, str]]:
+    """Get or initialize session messages for a project."""
+    from app.project_registry import get_registry
+    
+    registry = get_registry()
+    messages = registry.get_session_messages(project_id)
+    
+    # Initialize with system message if empty
+    if not messages:
+        messages = [{
+            "role": "system",
+            "content": get_system_message(app_config)
+        }]
+        registry.set_session_messages(project_id, messages)
+    
+    # Update system message if it's outdated (check first message)
+    elif messages and messages[0].get("role") == "system":
+        current_system_msg = get_system_message(app_config)
+        if messages[0].get("content") != current_system_msg:
+            messages[0]["content"] = current_system_msg
+            registry.set_session_messages(project_id, messages)
+    
+    return messages
 
 
 def register_routes(app, app_config: Dict[str, Any], save_config_func):
     """Register all routes with the FastAPI app."""
 
-    # Initialize session messages
-    init_session_messages(app_config)
+    # Session messages are now per-project, initialized on-demand
 
     @app.get("/")
     async def home():
@@ -127,6 +137,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         """Deploy client files directly to UE5 project path."""
         import shutil
         from pathlib import Path
+        import os
 
         project_path = request.get("project_path", "")
         overwrite = request.get("overwrite", True)
@@ -135,9 +146,21 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             return {"success": False, "error": "No project path provided"}
 
         try:
+            # Security: Validate and normalize the project path
+            try:
+                normalized_project_path = Path(project_path).resolve()
+            except Exception as e:
+                return {"success": False, "error": f"Invalid project path: {e}"}
+            
+            # Security: Ensure path exists and is a directory
+            if not normalized_project_path.exists():
+                return {"success": False, "error": "Project path does not exist"}
+            
+            if not normalized_project_path.is_dir():
+                return {"success": False, "error": "Project path must be a directory"}
+            
             # Construct target path
-            target_base = Path(
-                project_path) / "Content" / "Python" / "AIAssistant"
+            target_base = normalized_project_path / "Content" / "Python" / "AIAssistant"
             source_base = Path("ue5_client/AIAssistant")
 
             if not source_base.exists():
@@ -583,15 +606,25 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
     async def execute_command(request: dict):
         """
         Handles user prompts from Unreal's AI Command Console.
-        Maintains short-term conversation context across turns.
+        Maintains short-term conversation context across turns (per-project).
         """
         import openai
+        from app.project_registry import get_registry
 
         # Accept both "prompt" (new) and "user_input" (legacy)
         # for backwards compatibility
         user_input = request.get("prompt") or request.get("user_input", "")
         if not user_input:
             return {"success": False, "error": "No prompt provided."}
+        
+        # Get project_id from request or use active project
+        project_id = request.get("project_id")
+        if not project_id:
+            registry = get_registry()
+            active_project = registry.get_active_project()
+            if not active_project:
+                return {"success": False, "error": "No active project. Please register a project first."}
+            project_id = active_project["project_id"]
 
         try:
             lower = user_input.lower()
@@ -664,6 +697,10 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
                     "response": "[UE_REQUEST] list_blueprints"
                 }
 
+            # Get per-project conversation history
+            registry = get_registry()
+            session_messages = get_project_session_messages(project_id, app_config)
+            
             # Update memory
             session_messages.append({"role": "user", "content": user_input})
             max_context_turns = app_config.get("max_context_turns", 6)
@@ -693,6 +730,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
             # Append reply to memory
             session_messages.append({"role": "assistant", "content": reply})
+            registry.set_session_messages(project_id, session_messages)
             conversation.add_to_history(user_input, reply, "execute_command")
 
             return {"success": True, "response": reply}
@@ -916,9 +954,18 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         for key, value in update_dict.items():
             app_config[key] = value
 
-        # Update system message if response_style changed
+        # Update system message for all projects if response_style changed
         if "response_style" in update_dict:
-            session_messages[0]["content"] = get_system_message(app_config)
+            from app.project_registry import get_registry
+            registry = get_registry()
+            new_system_msg = get_system_message(app_config)
+            
+            # Update system message for all projects
+            for project_id in registry.projects.keys():
+                messages = registry.get_session_messages(project_id)
+                if messages and messages[0].get("role") == "system":
+                    messages[0]["content"] = new_system_msg
+                    registry.set_session_messages(project_id, messages)
 
         save_config_func(app_config)
 
@@ -2117,7 +2164,7 @@ Return ONLY the complete Python script, no explanations or markdown."""
         
         manager = get_manager()
         
-        # Queue reconnect command for the UE5 client
+        # Try HTTP polling reconnect first
         if hasattr(manager, 'http_clients') and project_id in manager.http_clients:
             if "pending_commands" not in manager.http_clients[project_id]:
                 manager.http_clients[project_id]["pending_commands"] = []
@@ -2127,24 +2174,56 @@ Return ONLY the complete Python script, no explanations or markdown."""
                 "timestamp": datetime.now().isoformat()
             })
             
-            print(f"🔌 Reconnect command queued for: {project_id[:16]}...")
+            print(f"🔌 HTTP Polling reconnect queued for: {project_id[:16]}...")
             
             # Broadcast to dashboards
             await manager.broadcast_to_dashboards({
                 "type": "reconnect_command",
                 "project_id": project_id,
+                "connection_mode": "http",
                 "timestamp": datetime.now().isoformat()
             })
             
             return {
                 "success": True,
-                "message": "Reconnect command sent to UE5 client"
+                "message": "Reconnect command queued (HTTP polling)",
+                "connection_mode": "http"
             }
+        
+        # Try WebSocket reconnect
+        elif hasattr(manager, 'ue5_connections') and project_id in manager.ue5_connections:
+            # For WebSocket, send reconnect command directly
+            try:
+                await manager.send_to_ue5(project_id, {
+                    "type": "reconnect",
+                    "timestamp": datetime.now().isoformat()
+                })
+                
+                print(f"🔌 WebSocket reconnect sent to: {project_id[:16]}...")
+                
+                await manager.broadcast_to_dashboards({
+                    "type": "reconnect_command",
+                    "project_id": project_id,
+                    "connection_mode": "websocket",
+                    "timestamp": datetime.now().isoformat()
+                })
+                
+                return {
+                    "success": True,
+                    "message": "Reconnect command sent (WebSocket)",
+                    "connection_mode": "websocket"
+                }
+            except Exception as e:
+                print(f"❌ WebSocket reconnect failed: {e}")
+                return {
+                    "success": False,
+                    "error": f"WebSocket reconnect failed: {str(e)}"
+                }
         else:
-            # Client not in http_clients - might be disconnected or using WebSocket
+            # Client not connected via any method
             return {
                 "success": False,
-                "error": "Client not connected via HTTP polling"
+                "error": "Client not currently connected (no active connection found)"
             }
 
     @app.post("/api/generate_action_plan")

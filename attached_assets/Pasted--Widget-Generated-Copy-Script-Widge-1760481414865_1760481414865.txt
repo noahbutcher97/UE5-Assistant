@@ -1,0 +1,112 @@
+ Widget Generated!
+ Copy Script
+
+                        
+
+                            
+ Widget Deployed Automatically!
+
+                            
+✅ Script written to: HTTP_Client_189fb60ac15dee00_production/Content/Python/AIAgentUtilities/SceneEditor.py
+
+
+                            
+✅ Widget automatically deployed to your UE5 project
+
+
+                            
+🔄 Restart Unreal Editor to see SceneEditor in Content Browser
+
+
+                        
+
+                        
+
+                            
+import unreal
+from AIAssistant.api_client import AIClient
+
+@unreal.uclass()
+class SceneEditor(unreal.EditorUtilityWidget):
+    """
+    SceneEditor is an Editor Utility Widget that allows users to spawn a 3D sphere
+    in front of the camera on the ground plane in the main viewport.
+    """
+
+    def __init__(self):
+        super(SceneEditor, self).__init__()
+        self.ai_client = AIClient()
+
+    @unreal.ufunction(override=True)
+    def on_construct(self):
+        """
+        Called when the widget is constructed.
+        """
+        unreal.log("SceneEditor widget constructed.")
+
+    @unreal.ufunction()
+    def spawn_sphere(self):
+        """
+        Spawns a 3D sphere in front of the camera on the ground plane.
+        """
+        try:
+            viewport = unreal.EditorLevelLibrary.get_editor_viewport()
+            if not viewport:
+                unreal.log_error("No active viewport found.")
+                return
+            
+            camera_location = viewport.get_camera_location()
+            camera_rotation = viewport.get_camera_rotation()
+
+            # Calculate spawn location in front of the camera
+            spawn_location = camera_location + unreal.Vector(0, 0, -100)  # Adjust height as needed
+            spawn_location.z = 0  # Ensure it spawns on the ground plane
+
+            # Load the sphere asset
+            sphere_asset_path = "/Game/Geometry/Sphere"  # Update with your actual sphere asset path
+            sphere_asset = unreal.EditorAssetLibrary.load_asset(sphere_asset_path)
+            if not sphere_asset:
+                unreal.log_error(f"Failed to load asset from path: {sphere_asset_path}")
+                return
+
+            # Spawn the sphere actor
+            sphere_actor = unreal.EditorLevelLibrary.spawn_actor_from_object(sphere_asset, spawn_location, camera_rotation)
+            if sphere_actor:
+                unreal.log(f"Spawned sphere at {spawn_location}")
+            else:
+                unreal.log_error("Failed to spawn sphere actor.")
+        
+        except Exception as e:
+            unreal.log_error(f"An error occurred while spawning the sphere: {str(e)}")
+
+    @unreal.ufunction()
+    def query_project_info(self):
+        """
+        Queries project information using AI integration.
+        """
+        try:
+            project_info = self.ai_client.get_project_info()
+            unreal.log(f"Project Info: {project_info}")
+        except Exception as e:
+            unreal.log_error(f"An error occurred while querying project info: {str(e)}")
+
+    @unreal.ufunction()
+    def execute_ai_plan(self, plan_name):
+        """
+        Executes a plan using AI integration.
+        :param plan_name: The name of the plan to execute.
+        """
+        try:
+            result = self.ai_client.execute_plan(plan_name)
+            unreal.log(f"Executed AI plan '{plan_name}': {result}")
+        except Exception as e:
+            unreal.log_error(f"An error occurred while executing AI plan '{plan_name}': {str(e)}")
+
+                        
+
+                    
+ Installation Instructions
+Copy the generated script using the button above
+Save it to your project's Content/Python/AIAgentUtilities/ folder
+Restart Unreal Editor to load the new utility
+Find it in Content Browser and right-click to execute
