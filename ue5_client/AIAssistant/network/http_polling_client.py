@@ -566,6 +566,13 @@ class HTTPPollingClient:
                 print("🔌 Reconnect command received from dashboard...")
                 self._handle_reconnect_command()
 
+            elif message_type == "server_switch":
+                # Switch backend server endpoint
+                server_type = cmd.get("server_type", "production")
+                server_url = cmd.get("server_url", "")
+                print(f"🔄 Server switch command received: {server_type} → {server_url}")
+                self._handle_server_switch(server_type, server_url)
+
         except Exception as e:
             print(f"❌ Error handling command: {e}")
 
@@ -890,6 +897,46 @@ class HTTPPollingClient:
             try:
                 import unreal
                 unreal.log_error(f"❌ Reconnect failed: {e}")
+            except:
+                pass
+
+    def _handle_server_switch(self, server_type: str, server_url: str):
+        """Handle server switch command from dashboard."""
+        try:
+            try:
+                import unreal
+            except ImportError:
+                print("⚠️ Not in UE5 environment - cannot switch server")
+                return
+            
+            # Import config locally to survive module reloads
+            from ..core import config
+            
+            print(f"🔄 Switching to {server_type} server: {server_url}")
+            unreal.log(f"🔄 Server switch: {server_type} → {server_url}")
+            
+            # Update config to use new server
+            cfg = config.get_config()
+            success = cfg.switch_server(server_type)
+            
+            if success:
+                # Update our base_url
+                self.base_url = server_url
+                print(f"✅ Base URL updated to: {self.base_url}")
+                
+                # Trigger reconnection to new server
+                self._reconnect_requested = True
+                print(f"✅ Server switched to {server_type}, reconnecting...")
+                unreal.log(f"✅ Switched to {server_type}, reconnecting to {server_url}")
+            else:
+                print(f"❌ Failed to switch server: invalid server type '{server_type}'")
+                unreal.log_error(f"❌ Server switch failed: invalid type '{server_type}'")
+            
+        except Exception as e:
+            print(f"❌ Server switch error: {e}")
+            try:
+                import unreal
+                unreal.log_error(f"❌ Server switch error: {e}")
             except:
                 pass
 
