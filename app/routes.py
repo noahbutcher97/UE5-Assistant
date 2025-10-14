@@ -1151,7 +1151,7 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         server_url: str = "",
         server_type: str = "unknown",
         connection_type: str = "http_polling",
-        additional_metadata: dict = None
+        additional_metadata: dict | None = None
     ) -> dict:
         """
         Unified registration for UE5 clients into Project Registry.
@@ -2307,7 +2307,10 @@ Return ONLY the JSON array, no explanation.""")
             manager.http_clients = {}
 
         if project_id in manager.http_clients:
+            # CRITICAL: Update both in-memory and persistent registry
             manager.http_clients[project_id]["last_poll"] = datetime.now()
+            # Update Project Registry so dashboard shows accurate connection status
+            update_project_last_seen(project_id)
             return {"success": True, "status": "alive"}
 
         return {"success": False, "error": "Not registered"}

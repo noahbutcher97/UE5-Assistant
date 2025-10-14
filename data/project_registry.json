@@ -12,6 +12,22 @@
       },
       "registered_at": "2025-10-14T21:09:36.126051",
       "last_updated": "2025-10-14T21:09:36.126061"
+    },
+    "test_project_12345": {
+      "project_id": "test_project_12345",
+      "name": "DiagnosticTestProject",
+      "path": "HTTP_Client_test_project_123_localhost",
+      "version": "HTTP Polling",
+      "metadata": {
+        "connection_type": "http_polling",
+        "server_url": "http://localhost:5000",
+        "server_type": "localhost",
+        "last_seen": "2025-10-14T21:29:14.932474",
+        "auto_registered": true
+      },
+      "registered_at": "2025-10-14T21:29:14.932485",
+      "last_updated": "2025-10-14T21:29:14.932486",
+      "is_active": true
     }
   }
 }
