@@ -1,7 +1,10 @@
 """
-QUICK FIX: Switch UE5 Client to Production Server
+QUICK FIX: Switch UE5 Client to CURRENT Production Server
 
-Run this in UE5's Python console to connect to the correct backend server.
+This fixes the issue where your client connects to an old server deployment.
+Run this in UE5's Python console to connect to the CORRECT backend server.
+
+Current Production Server: https://workspace-noahbutcher97.replit.app
 """
 
 def fix_server_connection():
