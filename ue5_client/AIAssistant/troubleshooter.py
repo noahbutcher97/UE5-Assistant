@@ -20,10 +20,26 @@ def reconnect():
         unreal.log("🔄 Restarting AI Assistant connection...")
         
         import AIAssistant.main as assistant_main
-        assistant_main.restart_assistant()
+        assistant = assistant_main.get_assistant()
         
-        unreal.log("✅ Connection restart initiated!")
-        print("\n✅ Reconnection in progress - check Output Log for status\n")
+        if not hasattr(assistant, 'http_client') or not assistant.http_client:
+            print("❌ HTTP client not available")
+            return
+        
+        # Disconnect then reconnect
+        assistant.http_client.disconnect()
+        unreal.log("🔌 Disconnected...")
+        
+        import time
+        time.sleep(1)
+        
+        result = assistant.http_client.connect()
+        if result:
+            unreal.log("✅ Reconnected successfully!")
+            print("\n✅ Reconnection successful! Check Output Log for details\n")
+        else:
+            unreal.log_warning("⚠️ Reconnection failed - check network/server")
+            print("\n⚠️ Reconnection failed - check Output Log for errors\n")
         
     except Exception as e:
         print(f"❌ Reconnect failed: {e}")
