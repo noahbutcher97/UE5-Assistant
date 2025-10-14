@@ -28,6 +28,30 @@ The system uses a **RESTful API** with JSON payloads and enforces **Separation o
 #### Persistent Client Reference System (CRITICAL BUG FIX)
 The system implements a **client persistence mechanism** to prevent connection loss during automatic module reloads. When the module version tracking system detects code updates, it triggers a complete Python module cache clear. Previously, this caused `assistant.http_client` to become `None` even after successful connection, breaking real-time communication with the dashboard. The fix uses global persistent variables (`_persistent_http_client`, `_persistent_ws_client`) that survive module reloads and automatically restore client references when the assistant is re-initialized. The `_preserve_clients()` function is called before any module clearing operation (`clear_all_modules()`, `_trigger_module_reload()`, `_manual_restart_assistant()`) to ensure seamless connection continuity across code updates.
 
+#### Unified Registration System
+The system implements a **unified registration architecture** that consolidates HTTP polling clients and Project Registry into a single source of truth, eliminating the dual registration problem that previously caused dashboard inconsistencies and connection loss after server restarts.
+
+**Architecture:**
+- **Single Source of Truth**: All UE5 clients (HTTP polling and WebSocket) register in the persistent Project Registry (`data/project_registry.json`)
+- **Path Normalization**: Consistent MD5 hashing ensures stable project_id across sessions by normalizing paths (removing quotes, trailing slashes)
+- **Path Preservation**: Auto-registration after server restart preserves existing project paths from registry, preventing placeholder overwrites
+- **Connection Health Tracking**: Tracks `last_seen` timestamp updated on each poll/heartbeat with 60-second timeout for active status determination
+- **Unique Identifiers**: HTTP-only clients without path metadata use `HTTP_Client_{project_id[:16]}_{server_type}` format to prevent collision
+
+**Implementation Details:**
+- `unified_register_ue5_client()`: Core registration helper with comprehensive validation, logging, and guards
+- `/api/ue5/register_http`: Initial registration persists to Project Registry with connection metadata
+- `/api/ue5/poll`: Updates `last_seen` on every poll and auto-registers if not in memory (server restart recovery)
+- `/api/projects`: Calculates connection health based on `last_seen` timestamp, marks projects inactive after 60s timeout
+- **Backwards Compatibility**: Maintains in-memory HTTP clients dict for command queuing alongside persistent registry
+
+**Safeguards:**
+- Project ID verification with path-based MD5 hash validation
+- Duplicate prevention via registry deduplication logic
+- Existing path preservation when poll doesn't include `project_path`
+- Comprehensive error handling and structured logging
+- Server restart resilience with automatic re-registration
+
 ## External Dependencies
 
 ### AI Services

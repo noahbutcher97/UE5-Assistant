@@ -1105,16 +1105,162 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
             len(blueprint_capture_cache)
         }
 
-    # Project Registry Endpoints
+    # ========================================================================
+    # Unified Project Registration System
+    # Consolidates HTTP polling clients and Project Registry into single source
+    # ========================================================================
+    
     def normalize_project_path(path: str) -> str:
-        """Normalize project path by removing quotes and trailing slashes."""
+        """
+        Normalize project path to ensure consistent hashing.
+        
+        Removes:
+        - Surrounding whitespace and quotes
+        - Trailing slashes/backslashes
+        
+        Args:
+            path: Raw project path from client
+            
+        Returns:
+            Normalized path string
+        """
         if not path:
             return path
-        # Strip surrounding quotes
+        # Strip surrounding quotes and whitespace
         path = path.strip().strip('"').strip("'")
-        # Remove trailing slashes/backslashes
+        # Remove trailing slashes/backslashes for consistent hashing
         path = path.rstrip('/\\')
         return path
+    
+    def unified_register_ue5_client(
+        project_id: str,
+        project_name: str,
+        project_path: str = "",
+        server_url: str = "",
+        server_type: str = "unknown",
+        connection_type: str = "http_polling",
+        additional_metadata: dict = None
+    ) -> dict:
+        """
+        Unified registration for UE5 clients into Project Registry.
+        
+        This function ensures:
+        - Path normalization before storage
+        - Consistent project_id generation
+        - Connection metadata tracking
+        - Persistence across server restarts
+        - Single source of truth for all projects
+        
+        Args:
+            project_id: MD5 hash of normalized project path
+            project_name: Human-readable project name
+            project_path: Full path to UE5 project (optional for HTTP-only clients)
+            server_url: Backend URL client is connected to
+            server_type: Type of server (localhost/production/custom)
+            connection_type: Connection method (http_polling/websocket)
+            additional_metadata: Extra metadata to store
+            
+        Returns:
+            Registration result with success status
+        """
+        import hashlib
+        from datetime import datetime
+        
+        from app.project_registry import get_registry
+        
+        try:
+            # Log registration attempt
+            print(f"📝 Unified registration: {project_name}")
+            print(f"   Project ID: {project_id[:16]}...")
+            print(f"   Connection: {connection_type} via {server_type}")
+            
+            # Normalize path if provided
+            if project_path:
+                normalized_path = normalize_project_path(project_path)
+                
+                # Verify project_id matches normalized path
+                expected_id = hashlib.md5(normalized_path.encode()).hexdigest()
+                if project_id != expected_id:
+                    print(f"⚠️ Project ID mismatch detected!")
+                    print(f"   Provided: {project_id[:16]}...")
+                    print(f"   Expected: {expected_id[:16]}...")
+                    print(f"   Using normalized path to generate correct ID")
+                    project_id = expected_id
+            else:
+                # HTTP-only client without path metadata
+                # Use project_id + server_type to create unique identifier
+                # This prevents multiple clients from colliding on same placeholder path
+                normalized_path = f"HTTP_Client_{project_id[:16]}_{server_type}"
+                print(f"   No path provided - using unique identifier: {normalized_path}")
+            
+            # Build project data
+            project_data = {
+                "name": project_name,
+                "path": normalized_path,
+                "version": "HTTP Polling" if not project_path else "5.6",
+                "metadata": {
+                    "connection_type": connection_type,
+                    "server_url": server_url,
+                    "server_type": server_type,
+                    "last_seen": datetime.now().isoformat(),
+                    "auto_registered": True,
+                    **(additional_metadata or {})
+                },
+                "is_active": True  # Mark as active on registration
+            }
+            
+            # Register with Project Registry (persistent)
+            registry = get_registry()
+            result = registry.register_project(project_id, project_data)
+            
+            print(f"✅ Registered in Project Registry: {project_id[:16]}...")
+            print(f"   Status: {'NEW' if result.get('is_new') else 'UPDATED'}")
+            
+            return {
+                "success": True,
+                "project_id": project_id,
+                "registered": True,
+                "is_new": result.get("is_new", False)
+            }
+            
+        except Exception as e:
+            print(f"❌ Unified registration failed: {e}")
+            import traceback
+            traceback.print_exc()
+            return {
+                "success": False,
+                "error": str(e),
+                "registered": False
+            }
+    
+    def update_project_last_seen(project_id: str) -> None:
+        """
+        Update project's last_seen timestamp to track connection health.
+        
+        Args:
+            project_id: Project to update
+        """
+        from datetime import datetime
+        
+        from app.project_registry import get_registry
+        
+        try:
+            registry = get_registry()
+            
+            if project_id in registry.projects:
+                # Update last_seen in metadata
+                if "metadata" not in registry.projects[project_id]:
+                    registry.projects[project_id]["metadata"] = {}
+                
+                registry.projects[project_id]["metadata"]["last_seen"] = datetime.now().isoformat()
+                registry.projects[project_id]["last_updated"] = datetime.now().isoformat()
+                registry.projects[project_id]["is_active"] = True
+                
+                # Save to disk
+                registry._save_registry()
+                
+        except Exception as e:
+            print(f"⚠️ Failed to update last_seen for {project_id[:16]}...: {e}")
 
     @app.post("/api/register_project")
     async def register_project(request: dict):
@@ -1173,44 +1319,66 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
 
     @app.get("/api/projects")
     async def list_projects():
-        """List all registered projects (includes HTTP polling clients)."""
+        """
+        List all registered projects with unified connection health monitoring.
+        
+        Features:
+        - Shows projects from persistent Project Registry
+        - Calculates connection health based on last_seen timestamp
+        - Marks projects inactive if no activity for 60 seconds
+        - Single source of truth (no duplicate HTTP client merging needed)
+        """
         from datetime import datetime, timedelta
         
         from app.project_registry import get_registry
-        from app.websocket_manager import get_manager
 
         registry = get_registry()
-        manager = get_manager()
         
-        # Get projects from registry
+        # Get all projects from registry
         projects = registry.list_projects()
         
-        # Add HTTP polling clients (if not already in registry)
-        if hasattr(manager, 'http_clients'):
-            for project_id, client_data in manager.http_clients.items():
-                # Check if this project is already in the registry
-                existing = next((p for p in projects if p.get('project_id', '').startswith(project_id[:12])), None)
-                
-                if not existing:
-                    # Add HTTP client as a project
-                    last_poll = client_data.get('last_poll', datetime.now())
-                    is_active = (datetime.now() - last_poll) < timedelta(seconds=30)
+        # CONNECTION HEALTH MONITORING: Update is_active based on last_seen
+        current_time = datetime.now()
+        connection_timeout = timedelta(seconds=60)  # 60 seconds timeout
+        
+        for project in projects:
+            metadata = project.get('metadata', {})
+            last_seen_str = metadata.get('last_seen')
+            
+            if last_seen_str:
+                try:
+                    # Parse last_seen timestamp
+                    last_seen = datetime.fromisoformat(last_seen_str)
+                    time_since_last_seen = current_time - last_seen
                     
-                    projects.append({
-                        'project_id': project_id[:12],
-                        'name': client_data.get('name', 'Unknown'),
-                        'path': f"HTTP Client ({client_data.get('server_type', 'unknown')})",
-                        'version': 'HTTP Polling',
-                        'metadata': {
-                            'connection_type': 'http_polling',
-                            'server_url': client_data.get('server_url', ''),
-                            'server_type': client_data.get('server_type', 'unknown'),
-                            'last_poll': last_poll.isoformat()
-                        },
-                        'registered_at': client_data.get('last_poll', datetime.now()).isoformat(),
-                        'last_updated': client_data.get('last_poll', datetime.now()).isoformat(),
-                        'is_active': is_active
-                    })
+                    # Mark as active if seen within timeout period
+                    is_active = time_since_last_seen < connection_timeout
+                    project['is_active'] = is_active
+                    
+                    # Add connection health metadata
+                    project['connection_health'] = {
+                        'last_seen': last_seen_str,
+                        'seconds_since_last_seen': int(time_since_last_seen.total_seconds()),
+                        'status': 'active' if is_active else 'inactive'
+                    }
+                    
+                except (ValueError, AttributeError) as e:
+                    # Invalid timestamp format - mark as inactive
+                    project['is_active'] = False
+                    project['connection_health'] = {
+                        'status': 'unknown',
+                        'error': str(e)
+                    }
+            else:
+                # No last_seen timestamp - assume manually registered project
+                # Keep existing is_active status
+                if 'is_active' not in project:
+                    project['is_active'] = False
+                
+                project['connection_health'] = {
+                    'status': 'manual_registration',
+                    'last_seen': None
+                }
         
         return {"success": True, "projects": projects}
 
@@ -1939,21 +2107,30 @@ Return ONLY the JSON array, no explanation.""")
 
     @app.post("/api/ue5/register_http")
     async def register_ue5_http(request: dict, req: Request):
-        """Register UE5 client via HTTP polling (WebSocket fallback)."""
+        """
+        Register UE5 client via HTTP polling.
+        
+        Uses unified registration system to persist client data in Project Registry.
+        This ensures:
+        - Clients survive server restarts
+        - Dashboard shows accurate connection status
+        - Single source of truth for all projects
+        """
         from datetime import datetime
 
         from app.websocket_manager import get_manager
 
         project_id = request.get("project_id")
         project_name = request.get("project_name", "Unknown")
+        project_path = request.get("project_path", "")  # Optional path metadata
 
         if not project_id:
             return {"success": False, "error": "project_id required"}
 
-        # Detect server URL from request
+        # Detect server URL from request headers
         server_url = f"{req.url.scheme}://{req.url.netloc}"
         
-        # Categorize server type
+        # Categorize server type for display purposes
         if "localhost" in server_url or "127.0.0.1" in server_url:
             server_type = "localhost"
         elif "replit.app" in server_url or "repl.co" in server_url:
@@ -1961,8 +2138,18 @@ Return ONLY the JSON array, no explanation.""")
         else:
             server_type = "custom"
 
+        # UNIFIED REGISTRATION: Register in Project Registry (persistent)
+        registration_result = unified_register_ue5_client(
+            project_id=project_id,
+            project_name=project_name,
+            project_path=project_path,
+            server_url=server_url,
+            server_type=server_type,
+            connection_type="http_polling"
+        )
+
+        # Also maintain HTTP clients dict for backwards compatibility and pending commands
         manager = get_manager()
-        # Store as HTTP client instead of WebSocket
         if not hasattr(manager, 'http_clients'):
             manager.http_clients = {}
 
@@ -1976,36 +2163,44 @@ Return ONLY the JSON array, no explanation.""")
 
         print(f"✅ UE5 HTTP client registered: {project_id[:16]}... ({project_name})")
         print(f"   Server: {server_url} ({server_type})")
+        print(f"   Persistent: {'YES' if registration_result.get('success') else 'NO'}")
         print(f"   Total HTTP clients: {len(manager.http_clients)}")
 
-        # Notify dashboards
+        # Notify dashboards of connection status
         await manager.broadcast_to_dashboards({
-            "type":
-            "ue5_status",
-            "project_id":
-            project_id,
-            "status":
-            "connected",
-            "connection_type":
-            "http_polling",
-            "server_url":
-            server_url,
-            "server_type":
-            server_type,
-            "timestamp":
-            datetime.now().isoformat()
+            "type": "ue5_status",
+            "project_id": project_id,
+            "status": "connected",
+            "connection_type": "http_polling",
+            "server_url": server_url,
+            "server_type": server_type,
+            "timestamp": datetime.now().isoformat()
         })
 
-        return {"success": True, "message": "Registered via HTTP polling"}
+        return {
+            "success": True,
+            "message": "Registered via HTTP polling",
+            "persistent": registration_result.get("success", False)
+        }
 
     @app.post("/api/ue5/poll")
     async def poll_for_commands(request: dict, req: Request):
-        """UE5 client polls for pending commands."""
+        """
+        UE5 client polls for pending commands.
+        
+        Maintains connection health by:
+        - Auto-registering clients after server restart
+        - Updating last_seen timestamp in Project Registry
+        - Keeping both in-memory and persistent registrations in sync
+        """
         from datetime import datetime
 
         from app.websocket_manager import get_manager
 
         project_id = request.get("project_id")
+        project_name = request.get("project_name", "Unknown")
+        project_path = request.get("project_path", "")
+        
         if not project_id:
             return {"commands": [], "registered": False}
 
@@ -2013,21 +2208,42 @@ Return ONLY the JSON array, no explanation.""")
         if not hasattr(manager, 'http_clients'):
             manager.http_clients = {}
 
-        # Auto-register if not registered (handles server restarts gracefully)
+        # Detect server URL from request headers
+        server_url = f"{req.url.scheme}://{req.url.netloc}"
+        
+        # Categorize server type
+        if "localhost" in server_url or "127.0.0.1" in server_url:
+            server_type = "localhost"
+        elif "replit.app" in server_url or "repl.co" in server_url:
+            server_type = "production"
+        else:
+            server_type = "custom"
+
+        # Auto-register if not in HTTP clients dict (server restart recovery)
         if project_id not in manager.http_clients:
-            project_name = request.get("project_name", "Unknown")
+            # Check if project already exists in registry (preserve existing path)
+            from app.project_registry import get_registry
+            registry = get_registry()
+            existing_project = registry.projects.get(project_id)
             
-            # Detect server URL from request
-            server_url = f"{req.url.scheme}://{req.url.netloc}"
-            
-            # Categorize server type
-            if "localhost" in server_url or "127.0.0.1" in server_url:
-                server_type = "localhost"
-            elif "replit.app" in server_url or "repl.co" in server_url:
-                server_type = "production"
+            # Use existing path if available, otherwise use provided path or placeholder
+            if existing_project and existing_project.get('path'):
+                actual_path = existing_project['path']
+                print(f"🔄 Auto-registering with preserved path: {actual_path}")
             else:
-                server_type = "custom"
+                actual_path = project_path if project_path else ""
             
+            # UNIFIED REGISTRATION: Persist to Project Registry
+            unified_register_ue5_client(
+                project_id=project_id,
+                project_name=project_name,
+                project_path=actual_path,
+                server_url=server_url,
+                server_type=server_type,
+                connection_type="http_polling"
+            )
+            
+            # Also add to in-memory dict for command queuing
             manager.http_clients[project_id] = {
                 "name": project_name,
                 "last_poll": datetime.now(),
@@ -2035,28 +2251,24 @@ Return ONLY the JSON array, no explanation.""")
                 "server_url": server_url,
                 "server_type": server_type
             }
-            print(f"🔄 Auto-registered HTTP client on poll: {project_id}")
+            print(f"🔄 Auto-registered HTTP client on poll: {project_id[:16]}...")
             print(f"   Server: {server_url} ({server_type})")
 
             # Notify dashboards
             await manager.broadcast_to_dashboards({
-                "type":
-                "ue5_status",
-                "project_id":
-                project_id,
-                "status":
-                "connected",
-                "connection_type":
-                "http_polling",
-                "server_url":
-                server_url,
-                "server_type":
-                server_type,
-                "timestamp":
-                datetime.now().isoformat()
+                "type": "ue5_status",
+                "project_id": project_id,
+                "status": "connected",
+                "connection_type": "http_polling",
+                "server_url": server_url,
+                "server_type": server_type,
+                "timestamp": datetime.now().isoformat()
             })
 
-        # Update last poll time
+        # UPDATE CONNECTION HEALTH: Update last_seen in Project Registry
+        update_project_last_seen(project_id)
+        
+        # Update in-memory last poll time
         manager.http_clients[project_id]["last_poll"] = datetime.now()
 
         # Get pending commands
