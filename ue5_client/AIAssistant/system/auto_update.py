@@ -149,58 +149,64 @@ def check_and_update(mode: str = "auto") -> bool:
 
     # Set update lock to prevent mid-extraction restart
     _update_in_progress = True
+    
+    try:
+        # Update version marker for this run
+        _version_marker = str(uuid.uuid4())[:8]
 
-    # Update version marker for this run
-    _version_marker = str(uuid.uuid4())[:8]
+        # Check if on background thread
+        is_background_thread = HAS_UNREAL and threading.current_thread(
+        ) != threading.main_thread()
 
-    # Check if on background thread
-    is_background_thread = HAS_UNREAL and threading.current_thread(
-    ) != threading.main_thread()
-
-    if mode == "no_restart":
-        print("=" * 60)
-        print("🚨 EMERGENCY UPDATE MODE (No Auto-Restart)")
-        print("=" * 60)
-        print("⚠️  Files will be updated WITHOUT restarting UE5")
-        print("⚠️  You MUST manually restart UE5 after update completes")
-        print("=" * 60)
-
-        # Always use background-safe update for emergency mode
-        result = _do_background_update(skip_restart=True)
-
-        if result:
+        if mode == "no_restart":
             print("=" * 60)
-            print("✅ EMERGENCY UPDATE COMPLETE!")
-            print("🔄 Please restart Unreal Engine 5 manually now")
+            print("🚨 EMERGENCY UPDATE MODE (No Auto-Restart)")
+            print("=" * 60)
+            print("⚠️  Files will be updated WITHOUT restarting UE5")
+            print("⚠️  You MUST manually restart UE5 after update completes")
             print("=" * 60)
 
-            # Show notification in UE5 if possible
-            if HAS_UNREAL and threading.current_thread(
-            ) == threading.main_thread():
-                # Try to show dialog, but don't fail if it doesn't work
-                pass  # Dialog disabled in emergency mode
+            # Always use background-safe update for emergency mode
+            result = _do_background_update(skip_restart=True)
+
+            if result:
+                print("=" * 60)
+                print("✅ EMERGENCY UPDATE COMPLETE!")
+                print("🔄 Please restart Unreal Engine 5 manually now")
+                print("=" * 60)
+
+                # Show notification in UE5 if possible
+                if HAS_UNREAL and threading.current_thread(
+                ) == threading.main_thread():
+                    # Try to show dialog, but don't fail if it doesn't work
+                    pass  # Dialog disabled in emergency mode
+            return result
+
+        # Normal auto mode
+        if is_background_thread:
+            print("📢 Auto-update triggered from background thread")
+            print("⬇️  Downloading and installing files...")
+            # Call background-safe version
+            result = _do_background_update()
+        else:
+            # On main thread, run full update with logging
+            result = _do_update()
+
+        # If update successful, version marker changed
+        # Ticker will detect version change and trigger restart on main thread
+        if result and mode == "auto":
+            print("[AutoUpdate] 📦 Files updated successfully!")
+            print(f"[AutoUpdate] ✅ Version marker updated: {_version_marker}")
+            print(
+                "[AutoUpdate] ⏳ Ticker will detect version change and restart on main thread..."
+            )
+
         return result
-
-    # Normal auto mode
-    if is_background_thread:
-        print("📢 Auto-update triggered from background thread")
-        print("⬇️  Downloading and installing files...")
-        # Call background-safe version
-        result = _do_background_update()
-    else:
-        # On main thread, run full update with logging
-        result = _do_update()
-
-    # If update successful, version marker changed
-    # Ticker will detect version change and trigger restart on main thread
-    if result and mode == "auto":
-        print("[AutoUpdate] 📦 Files updated successfully!")
-        print(f"[AutoUpdate] ✅ Version marker updated: {_version_marker}")
-        print(
-            "[AutoUpdate] ⏳ Ticker will detect version change and restart on main thread..."
-        )
-
-    return result
+    
+    finally:
+        # ALWAYS release update lock, even on errors
+        _update_in_progress = False
+        print("[AutoUpdate] 🔓 Update lock released")
 
 
 def _do_background_update(skip_restart: bool = False) -> bool:
@@ -381,17 +387,12 @@ def _do_background_update(skip_restart: bool = False) -> bool:
             print("🔄 Module cache will be cleared automatically...")
         print("=" * 60)
 
-        # Release update lock AFTER all files are extracted
-        _update_in_progress = False
-        
         return True
 
     except Exception as e:
         print(f"❌ Update failed: {e}")
         import traceback
         traceback.print_exc()
-        # Release lock on error
-        _update_in_progress = False
         return False
 
 
