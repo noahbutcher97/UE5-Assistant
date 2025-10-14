@@ -1969,7 +1969,7 @@ When users ask about their project's actual data "
                     "error": "No active UE5 project selected. Please select a project first."
                 }
 
-            project_id = active_project.get('id')
+            project_id = active_project.get('project_id')
             project_path = active_project.get('path', '')
             
             # Sanitize widget name for valid Python class
@@ -1992,8 +1992,13 @@ Requirements:
 3. Implement the requested capabilities with AI integration
 4. Add comprehensive error handling and logging
 5. Include docstrings and comments
-6. Use the AI Assistant client from AIAssistant.api_client for AI features
+6. For AI features, use: from AIAssistant.network.api_client import APIClient (then instantiate as self.api_client = APIClient())
 7. Make it production-ready and user-friendly
+
+IMPORTANT: The correct import for AI features is:
+from AIAssistant.network.api_client import APIClient
+
+NOT "from AIAssistant.api_client import AIClient"
 
 Return ONLY the complete Python script, no explanations or markdown."""
 
@@ -2106,7 +2111,7 @@ Return ONLY the complete Python script, no explanations or markdown."""
                     "error": "No active UE5 project selected"
                 }
             
-            project_id = active_project.get('id')
+            project_id = active_project.get('project_id')
             project_path = active_project.get('path', '')
             
             # Queue command for UE5 client to write file locally
