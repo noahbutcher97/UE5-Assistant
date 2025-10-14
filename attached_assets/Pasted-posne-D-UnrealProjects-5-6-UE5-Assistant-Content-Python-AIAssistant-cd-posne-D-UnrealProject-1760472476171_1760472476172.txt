@@ -1,0 +1,321 @@
+posne D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant > cd ..
+posne D:\UnrealProjects\5.6\UE5_Assistant\Content\Python > ls -r
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/12/2025 11:23 PM                AIAgentUtilities
+d----          10/14/2025  4:01 PM                AIAssistant
+-a---          10/14/2025  4:01 PM            946 init_unreal.py
+-a---          10/14/2025  3:50 PM           1520 test_connection.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+d----          10/14/2025  4:01 PM                archived
+d----          10/14/2025  4:01 PM                collection
+d----          10/14/2025  4:01 PM                core
+d----          10/14/2025  4:01 PM                Documentation
+d----          10/14/2025  4:01 PM                execution
+d----          10/14/2025  4:01 PM                network
+d----          10/14/2025  4:01 PM                system
+d----          10/14/2025  4:01 PM                test
+d----          10/14/2025  4:01 PM                tools
+d----          10/14/2025  4:01 PM                troubleshoot
+d----          10/14/2025  4:01 PM                ui
+-a---          10/14/2025  4:01 PM           1126 __init__.py
+-a---          10/14/2025  3:50 PM            462 _DEPRECATED_widget_files.txt
+-a---          10/14/2025  3:50 PM           5729 action_executor_extensions.py
+-a---          10/14/2025  3:50 PM          20100 action_executor.py
+-a---          10/14/2025  3:50 PM          13851 action_queue.py
+-a---          10/14/2025  3:50 PM          12444 actor_manipulator.py
+-a---          10/14/2025  3:50 PM           8537 ai_agent_utility_generator.py
+-a---          10/14/2025  3:50 PM           6939 api_client.py
+-a---          10/14/2025  3:50 PM           4807 async_client.py
+-a---          10/14/2025  3:50 PM          28441 auto_update.py
+-a---          10/14/2025  3:50 PM          14950 blueprint_capture.py
+-a---          10/14/2025  3:50 PM           6990 blueprint_helpers.py
+-a---          10/14/2025  3:50 PM           1215 clear_and_reload.py
+-a---          10/14/2025  3:50 PM           8421 config.py
+-a---          10/14/2025  3:50 PM           9390 connection_troubleshooter.py
+-a---          10/14/2025  3:50 PM          14522 context_collector.py
+-a---          10/14/2025  3:50 PM           1660 diagnose.py
+-a---          10/14/2025  3:50 PM          10618 editor_utility_generator.py
+-a---          10/14/2025  3:50 PM           9285 file_collector.py
+-a---          10/14/2025  3:50 PM          37859 http_polling_client.py
+-a---          10/14/2025  3:50 PM           1858 install_dependencies.py
+-a---          10/14/2025  3:50 PM           2479 launch_troubleshooter.py
+-a---          10/14/2025  3:50 PM           5216 local_server.py
+-a---          10/14/2025  3:50 PM          27270 main.py
+-a---          10/14/2025  3:50 PM          13849 project_metadata_collector.py
+-a---          10/14/2025  3:50 PM           3579 project_registration.py
+-a---          10/14/2025  3:50 PM           3720 README.md
+-a---          10/14/2025  3:50 PM          15420 scene_orchestrator.py
+-a---          10/14/2025  3:50 PM           3504 startup.py
+-a---          10/14/2025  3:50 PM           1820 test_registration.py
+-a---          10/14/2025  3:50 PM           4822 toolbar_menu.py
+-a---          10/14/2025  3:50 PM           6516 troubleshooter.py
+-a---          10/14/2025  3:50 PM           3411 TROUBLESHOOTING.md
+-a---          10/14/2025  3:50 PM           2038 ui_manager.py
+-a---          10/14/2025  3:50 PM           3381 utils.py
+-a---          10/14/2025  3:50 PM          13226 viewport_controller.py
+-a---          10/14/2025  3:50 PM          10446 websocket_client.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\archived
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM            462 _DEPRECATED_widget_files.txt
+-a---          10/14/2025  4:01 PM           5258 fix_imports_oct2025.py
+-a---          10/14/2025  4:01 PM           3720 README.md
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\archived\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            131 __init__.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\collection
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM          14528 context_collector.py
+-a---          10/14/2025  4:01 PM           9285 file_collector.py
+-a---          10/14/2025  4:01 PM          13849 project_metadata_collector.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\collection\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            194 __init__.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          17261 context_collector.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          11610 file_collector.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          18276 project_metadata_collector.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\core
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM           8421 config.py
+-a---          10/14/2025  4:01 PM          27371 main.py
+-a---          10/14/2025  4:01 PM           3381 utils.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\core\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            188 __init__.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          10671 config.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          31827 main.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           6621 utils.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\Documentation
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM          18429 BLUEPRINT_INTEGRATION.md
+-a---          10/14/2025  4:01 PM           6183 BUGFIX_DATA_STRUCTURE.md
+-a---          10/14/2025  4:01 PM           3607 HOTFIX_THREAD_SAFETY.md
+-a---          10/14/2025  4:01 PM           7414 INSTALLATION.md
+-a---          10/14/2025  4:01 PM          11159 INTELLIGENT_RESPONSE_SYSTEM.md
+-a---          10/14/2025  4:01 PM           4630 LINTING_FIXES.md
+-a---          10/14/2025  4:01 PM          13414 README.md
+-a---          10/14/2025  4:01 PM           6708 THREAD_SAFE_SOLUTION.md
+-a---          10/14/2025  4:01 PM           4443 THREAD_SAFETY.md
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\Documentation\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            136 __init__.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\execution
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM           5799 action_executor_extensions.py
+-a---          10/14/2025  4:01 PM          20214 action_executor.py
+-a---          10/14/2025  4:01 PM          13861 action_queue.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\execution\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            193 __init__.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           7217 action_executor_extensions.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          26294 action_executor.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          16467 action_queue.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\network
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM           6951 api_client.py
+-a---          10/14/2025  4:01 PM           4819 async_client.py
+-a---          10/14/2025  4:01 PM          37872 http_polling_client.py
+-a---          10/14/2025  4:01 PM          10457 websocket_client.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\network\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            191 __init__.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           9814 api_client.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           6676 async_client.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          39381 http_polling_client.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          13319 websocket_client.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\system
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:05 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM          28483 auto_update.py
+-a---          10/14/2025  4:01 PM           1216 clear_and_reload.py
+-a---          10/14/2025  4:01 PM           1868 install_dependencies.py
+-a---          10/14/2025  4:01 PM           5239 local_server.py
+-a---          10/14/2025  4:01 PM           3579 project_registration.py
+-a---          10/14/2025  4:01 PM           3532 startup.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\system\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            190 __init__.cpython-311.pyc
+-a---          10/14/2025  4:05 PM          36316 auto_update.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           2387 clear_and_reload.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           2714 install_dependencies.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           8332 local_server.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           4816 project_registration.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           4639 startup.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\test
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM           1506 test_connection.py
+-a---          10/14/2025  4:01 PM           1835 test_registration.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\test\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            127 __init__.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           2582 test_connection.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           2987 test_registration.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\tools
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM          12444 actor_manipulator.py
+-a---          10/14/2025  4:01 PM           8537 ai_agent_utility_generator.py
+-a---          10/14/2025  4:01 PM          14950 blueprint_capture.py
+-a---          10/14/2025  4:01 PM           6990 blueprint_helpers.py
+-a---          10/14/2025  4:01 PM          10618 editor_utility_generator.py
+-a---          10/14/2025  4:01 PM          15420 scene_orchestrator.py
+-a---          10/14/2025  4:01 PM          13226 viewport_controller.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\tools\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            189 __init__.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          16968 actor_manipulator.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          10061 ai_agent_utility_generator.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          15353 blueprint_capture.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           5883 blueprint_helpers.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          13268 editor_utility_generator.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          16449 scene_orchestrator.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          15594 viewport_controller.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\troubleshoot
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM           9410 connection_troubleshooter.py
+-a---          10/14/2025  4:01 PM           3746 diagnose_connection.py
+-a---          10/14/2025  4:01 PM           1660 diagnose.py
+-a---          10/14/2025  4:01 PM           2479 launch_troubleshooter.py
+-a---          10/14/2025  4:01 PM           6584 troubleshooter.py
+-a---          10/14/2025  4:01 PM           3452 TROUBLESHOOTING.md
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\troubleshoot\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            135 __init__.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          13773 connection_troubleshooter.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           5780 diagnose_connection.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           3210 diagnose.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           3721 launch_troubleshooter.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          10289 troubleshooter.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\ui
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d----          10/14/2025  4:01 PM                __pycache__
+-a---          10/14/2025  4:01 PM              0 __init__.py
+-a---          10/14/2025  4:01 PM           4816 toolbar_menu.py
+-a---          10/14/2025  4:01 PM           2044 ui_manager.py
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\ui\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM            186 __init__.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           6358 toolbar_menu.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           3978 ui_manager.cpython-311.pyc
+
+    Directory: D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\__pycache__
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a---          10/14/2025  4:01 PM           1358 __init__.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           7189 action_executor_extensions.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          26146 action_executor.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          16425 action_queue.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          16962 actor_manipulator.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           9793 api_client.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           6655 async_client.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          36279 auto_update.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          15347 blueprint_capture.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          10666 config.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          17245 context_collector.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          13262 editor_utility_generator.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          11599 file_collector.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          39320 http_polling_client.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          31702 main.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          18265 project_metadata_collector.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           4809 project_registration.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          16443 scene_orchestrator.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           6357 toolbar_menu.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           3970 ui_manager.cpython-311.pyc
+-a---          10/14/2025  4:01 PM           6616 utils.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          15588 viewport_controller.cpython-311.pyc
+-a---          10/14/2025  4:01 PM          13292 websocket_client.cpython-311.pyc
+
+posne D:\UnrealProjects\5.6\UE5_Assistant\Content\Python >
