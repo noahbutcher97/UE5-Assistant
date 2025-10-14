@@ -2,8 +2,8 @@
 Force clear all AIAssistant modules and reload with fresh code.
 Run this in UE5 Python console to get the latest updates.
 """
-import sys
 import gc
+import sys
 
 print("=" * 60)
 print("🧹 FORCE CLEARING ALL AIASSISTANT MODULES...")
@@ -25,6 +25,7 @@ for module in ai_modules:
 
 # Also clear any cached imports
 import importlib
+
 importlib.invalidate_caches()
 
 # Force garbage collection

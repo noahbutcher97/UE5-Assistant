@@ -1,7 +1,7 @@
 """
 UE5 AI Assistant - Modular Architecture
 Author: Noah Butcher
-Version: 2.0 (October 2025)
+Version: 3.0 (October 2025)
 
 A modular AI assistant system for Unreal Engine 5.6+ that provides:
 - Smart viewport and scene analysis
@@ -14,25 +14,20 @@ Quick Start:
     response = send_command("what do I see?")
 """
 
-__version__ = "2.0.0"
+__version__ = "3.0.0"
 __author__ = "Noah Butcher"
 
-# Core components
-from . import (
-    action_executor,
-    api_client,
-    async_client,
-    config,
-    context_collector,
-    main,
-    ui_manager,
-    utils,
-)
-from .action_executor import get_executor
-from .config import get_config
+# Core components (new folder structure)
+from .core import main, config, utils
+from .network import api_client, async_client
+from .collection import context_collector
+from .execution import action_executor
+from .ui import ui_manager
 
 # Main entry points for convenience
-from .main import get_assistant, send_command
+from .core.main import get_assistant, send_command
+from .core.config import get_config
+from .execution.action_executor import get_executor
 
 __all__ = [
     # Main functions
