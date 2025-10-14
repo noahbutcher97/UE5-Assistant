@@ -1,0 +1,132 @@
+===============================================================================
+UE5 AI ASSISTANT - CLIENT UPDATE PACKAGE
+Bug Fix: HTTP Client Reference Loss (Persistent Client System)
+===============================================================================
+
+WHAT THIS FIXES:
+✅ Prevents "NOT CONNECTED" status after successful connection
+✅ Preserves client references across module reloads
+✅ Maintains stable dashboard connection
+✅ Enables reliable real-time features
+
+FILES INCLUDED:
+- main.py (Updated with persistent client globals)
+- http_polling_client.py (Updated with client preservation)
+- auto_update.py (Updated with preservation before module clear)
+
+===============================================================================
+INSTALLATION STEPS (2 MINUTES)
+===============================================================================
+
+STEP 1: CLOSE UNREAL EDITOR
+----------------------------
+⚠️ IMPORTANT: Close UE5 completely before updating files!
+
+
+STEP 2: BACKUP YOUR CURRENT FILES (Optional but Recommended)
+-------------------------------------------------------------
+Navigate to:
+  D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\
+
+Rename these files (add .backup extension):
+  - main.py → main.py.backup
+  - http_polling_client.py → http_polling_client.py.backup
+  - auto_update.py → auto_update.py.backup
+
+
+STEP 3: COPY NEW FILES
+----------------------
+Copy the 3 files from this package's AIAssistant folder to:
+  D:\UnrealProjects\5.6\UE5_Assistant\Content\Python\AIAssistant\
+
+Files to copy:
+  ✅ main.py
+  ✅ http_polling_client.py
+  ✅ auto_update.py
+
+
+STEP 4: RESTART UNREAL EDITOR
+------------------------------
+Launch your UE5 project normally.
+
+
+STEP 5: VERIFY THE FIX IS WORKING
+----------------------------------
+After UE5 starts, look in the Output Log for NEW debug messages:
+
+  [HTTP] About to check result and return...
+  [HTTP] self.http_client = <HTTPPollingClient object at 0x...>
+  [HTTP] Result is True, about to return True...
+  [HTTP] Returning result: True
+  ✅ Real-time connection enabled (HTTP Polling)
+
+If you see these messages, the fix is installed! ✅
+
+
+STEP 6: CONFIRM CONNECTION (In Python Console)
+-----------------------------------------------
+Open the Output Log and run:
+
+  import AIAssistant.main
+  assistant = AIAssistant.main.get_assistant()
+  print(f"HTTP Client: {assistant.http_client}")
+  print(f"Connected: {assistant.http_client.connected}")
+
+EXPECTED OUTPUT:
+  HTTP Client: <HTTPPollingClient object at 0x...>
+  Connected: True
+
+If you see this, you're all set! 🎉
+
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+Dashboard Still Shows "Not Connected"?
+----------------------------------------
+1. Verify UE5 was closed when you copied the files
+2. Check for the new debug messages in Output Log
+3. Restart via toolbar: AI Assistant → Restart Assistant
+
+Still Having Issues?
+--------------------
+1. Make sure all 3 files were copied correctly
+2. Check file timestamps match today's date
+3. Try manual restart: import AIAssistant.troubleshooter as ts; ts.reconnect()
+
+No New Debug Messages?
+----------------------
+The files weren't updated. Re-copy with UE5 closed and make sure you're
+overwriting the files in the correct location.
+
+
+===============================================================================
+WHAT CHANGED (Technical Details)
+===============================================================================
+
+MAIN.PY:
+  - Added global persistent client variables (_persistent_http_client, etc.)
+  - Added _preserve_clients() function to save references before reload
+  - Updated get_assistant() to restore clients after module reload
+
+HTTP_POLLING_CLIENT.PY:
+  - Added client preservation before _trigger_module_reload()
+  - Added client preservation before _manual_restart_assistant()
+
+AUTO_UPDATE.PY:
+  - Added client preservation before clear_all_modules()
+
+These changes ensure HTTP/WebSocket clients survive Python module cache
+clearing, maintaining stable connections during automatic code updates.
+
+
+===============================================================================
+SUPPORT
+===============================================================================
+
+Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard
+Date: October 14, 2025
+Version: Persistent Client Fix v1.0
+
+===============================================================================
