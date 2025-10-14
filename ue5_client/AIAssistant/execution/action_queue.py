@@ -314,7 +314,7 @@ class ActionQueue:
             
             # Step 5: Re-import and reinitialize main module
             try:
-                import AIAssistant.main
+                from AIAssistant.core import main
                 # Force creation of new assistant instance
                 new_assistant = AIAssistant.main.get_assistant()
                 print("[ActionQueue] ✅ Assistant restarted successfully!")

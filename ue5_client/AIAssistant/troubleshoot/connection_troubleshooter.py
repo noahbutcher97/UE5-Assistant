@@ -25,7 +25,7 @@ class ConnectionTroubleshooter(unreal.EditorUtilityWidget):
         """Get the AI Assistant instance."""
         try:
             if not self.assistant_instance:
-                import AIAssistant.main as assistant_main
+                from AIAssistant.core import main as assistant_main
                 self.assistant_instance = assistant_main.get_assistant()
                 if hasattr(self.assistant_instance, 'http_client'):
                     self.http_client = self.assistant_instance.http_client
@@ -68,7 +68,7 @@ class ConnectionTroubleshooter(unreal.EditorUtilityWidget):
             assistant = self._get_assistant()
             if assistant:
                 # Call restart method
-                import AIAssistant.main as assistant_main
+                from AIAssistant.core import main as assistant_main
                 assistant_main.restart_assistant()
                 
                 # Update display

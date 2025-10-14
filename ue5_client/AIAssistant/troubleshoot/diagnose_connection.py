@@ -10,7 +10,7 @@ print("=" * 60)
 try:
     # Step 1: Check if assistant exists
     print("\n1️⃣ Checking if assistant is initialized...")
-    import AIAssistant.main
+    from AIAssistant.core import main
     assistant = AIAssistant.main.get_assistant()
     print("   ✅ Assistant instance exists")
     

@@ -531,11 +531,11 @@ import unreal
 
 try:
     # Import and initialize the AI Assistant
-    import AIAssistant.main
+    from AIAssistant.core import main
     unreal.log("✅ AI Assistant auto-initialized successfully!")
 except Exception as e:
     unreal.log_error(f"❌ Failed to auto-initialize AI Assistant: {e}")
-    unreal.log("💡 You can manually initialize by running: import AIAssistant.main")
+    unreal.log("💡 You can manually initialize by running: from AIAssistant.core import main")
 """
         try:
             with open(auto_start_path, 'w') as f:
@@ -653,7 +653,7 @@ def force_restart_assistant() -> bool:
 
         # Step 4: Force reimport main module
         print("📦 Step 3: Re-importing main module with fresh code...")
-        import AIAssistant.main as fresh_main
+        from AIAssistant.core import main as fresh_main
 
         # Step 5: Re-initialize the assistant with fresh code
         print("📦 Step 4: Re-initializing assistant...")

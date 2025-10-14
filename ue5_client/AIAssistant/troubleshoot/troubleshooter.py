@@ -3,7 +3,7 @@ UE5 AI Assistant - Connection Troubleshooting Tools
 Simple Python-based troubleshooting utilities accessible from console.
 
 Usage:
-    import AIAssistant.troubleshooter as ts
+    from AIAssistant.troubleshoot import troubleshooter as ts
     ts.reconnect()              # Quick reconnect
     ts.test_server()            # Test server connectivity
     ts.status()                 # Show connection status
@@ -19,7 +19,7 @@ def reconnect():
         import unreal
         unreal.log("🔄 Restarting AI Assistant connection...")
         
-        import AIAssistant.main as assistant_main
+        from AIAssistant.core import main as assistant_main
         assistant = assistant_main.get_assistant()
         
         if not hasattr(assistant, 'http_client') or not assistant.http_client:
@@ -54,7 +54,7 @@ def test_server():
         unreal.log("🧪 Testing server connection...")
         
         # Get the assistant instance to access http_client
-        import AIAssistant.main as assistant_main
+        from AIAssistant.core import main as assistant_main
         assistant = assistant_main.get_assistant()
         
         if not hasattr(assistant, 'http_client') or not assistant.http_client:
@@ -84,7 +84,7 @@ def status():
     """Show current connection status."""
     try:
         import unreal
-        import AIAssistant.main as assistant_main
+        from AIAssistant.core import main as assistant_main
         assistant = assistant_main.get_assistant()
         
         if not hasattr(assistant, 'http_client') or not assistant.http_client:
@@ -106,7 +106,7 @@ def status():
 def info():
     """Display detailed connection information."""
     try:
-        import AIAssistant.main as assistant_main
+        from AIAssistant.core import main as assistant_main
         assistant = assistant_main.get_assistant()
         
         if not hasattr(assistant, 'http_client') or not assistant.http_client:
@@ -138,7 +138,7 @@ def info():
 def dashboard():
     """Open the web dashboard in default browser."""
     try:
-        import AIAssistant.main as assistant_main
+        from AIAssistant.core import main as assistant_main
         assistant = assistant_main.get_assistant()
         
         if not hasattr(assistant, 'http_client') or not assistant.http_client:

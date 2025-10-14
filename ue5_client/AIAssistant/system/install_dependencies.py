@@ -35,7 +35,7 @@ def install_websocket_client():
             if result.returncode == 0:
                 unreal.log("✅ websocket-client installed successfully!")
                 unreal.log("=" * 60)
-                unreal.log("💡 Next step: import AIAssistant.main")
+                unreal.log("💡 Next step: from AIAssistant.core import main")
                 unreal.log("=" * 60)
                 return True
             else:

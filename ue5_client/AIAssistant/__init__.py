@@ -18,16 +18,16 @@ __version__ = "3.0.0"
 __author__ = "Noah Butcher"
 
 # Core components (new folder structure)
-from .core import main, config, utils
-from .network import api_client, async_client
 from .collection import context_collector
-from .execution import action_executor
-from .ui import ui_manager
+from .core import config, main, utils
+from .core.config import get_config
 
 # Main entry points for convenience
 from .core.main import get_assistant, send_command
-from .core.config import get_config
+from .execution import action_executor
 from .execution.action_executor import get_executor
+from .network import api_client, async_client
+from .ui import ui_manager
 
 __all__ = [
     # Main functions
