@@ -7,7 +7,6 @@ Usage in UE5 Python Console:
     import AIAssistant.auto_update
     # Shows current version and checks for updates
 """
-import importlib
 import io
 import os
 import sys
@@ -93,7 +92,9 @@ def clear_all_modules(preserve_queue: bool = False) -> int:
         main_module = sys.modules['AIAssistant.main']
         if hasattr(main_module, '_preserve_clients'):
             main_module._preserve_clients()
-            print("[AutoUpdate] ✅ Client references preserved before module clear")
+            print(
+                "[AutoUpdate] ✅ Client references preserved before module clear"
+            )
 
     # Get list of ALL AIAssistant modules (including action_queue for complete reload)
     if preserve_queue:
@@ -118,9 +119,9 @@ def clear_all_modules(preserve_queue: bool = False) -> int:
     print(f"[AutoUpdate] ✅ Cleared {len(modules_to_remove)} cached modules")
 
     # Import critical modules locally (after clearing, module globals may be invalidated)
-    import importlib as _importlib
     import gc as _gc
-    
+    import importlib as _importlib
+
     # Also clear importlib caches
     try:
         _importlib.invalidate_caches()
@@ -149,7 +150,7 @@ def check_and_update(mode: str = "auto") -> bool:
 
     # Set update lock to prevent mid-extraction restart
     _update_in_progress = True
-    
+
     try:
         # Update version marker for this run
         _version_marker = str(uuid.uuid4())[:8]
@@ -202,7 +203,7 @@ def check_and_update(mode: str = "auto") -> bool:
             )
 
         return result
-    
+
     finally:
         # ALWAYS release update lock, even on errors
         _update_in_progress = False
@@ -295,16 +296,21 @@ def _do_background_update(skip_restart: bool = False) -> bool:
                             try:
                                 with open(temp_path, 'wb') as temp_file:
                                     temp_file.write(file_content)
-                                
+
                                 # Atomic replace (works even if file is in use)
                                 if os.path.exists(target_path):
                                     os.replace(temp_path, target_path)
-                                    print(f"   ✅ Overwrote: {file_info.filename}")
+                                    print(
+                                        f"   ✅ Overwrote: {file_info.filename}"
+                                    )
                                 else:
                                     os.rename(temp_path, target_path)
-                                    print(f"   ✅ Created: {file_info.filename}")
+                                    print(
+                                        f"   ✅ Created: {file_info.filename}")
                             except Exception as e:
-                                print(f"   ⚠️ Could not update {file_info.filename}: {e}")
+                                print(
+                                    f"   ⚠️ Could not update {file_info.filename}: {e}"
+                                )
                                 if os.path.exists(temp_path):
                                     os.remove(temp_path)
 
@@ -336,7 +342,7 @@ def _do_background_update(skip_restart: bool = False) -> bool:
                             try:
                                 with open(temp_path, 'wb') as temp_file:
                                     temp_file.write(file_content)
-                                
+
                                 # Atomic replace (works even if file is in use)
                                 if os.path.exists(target_path):
                                     os.replace(temp_path, target_path)
@@ -345,7 +351,9 @@ def _do_background_update(skip_restart: bool = False) -> bool:
                                     os.rename(temp_path, target_path)
                                     print(f"   ✅ Created: {member.name}")
                             except Exception as e:
-                                print(f"   ⚠️ Could not update {member.name}: {e}")
+                                print(
+                                    f"   ⚠️ Could not update {member.name}: {e}"
+                                )
                                 if os.path.exists(temp_path):
                                     os.remove(temp_path)
 
@@ -467,16 +475,21 @@ def _do_update() -> bool:
                             try:
                                 with open(temp_path, 'wb') as temp_file:
                                     temp_file.write(file_content)
-                                
+
                                 # Atomic replace (works even if file is in use)
                                 if os.path.exists(target_path):
                                     os.replace(temp_path, target_path)
-                                    print(f"   ✅ Overwrote: {file_info.filename}")
+                                    print(
+                                        f"   ✅ Overwrote: {file_info.filename}"
+                                    )
                                 else:
                                     os.rename(temp_path, target_path)
-                                    print(f"   ✅ Created: {file_info.filename}")
+                                    print(
+                                        f"   ✅ Created: {file_info.filename}")
                             except Exception as e:
-                                print(f"   ⚠️ Could not update {file_info.filename}: {e}")
+                                print(
+                                    f"   ⚠️ Could not update {file_info.filename}: {e}"
+                                )
                                 if os.path.exists(temp_path):
                                     os.remove(temp_path)
 
@@ -605,6 +618,7 @@ except Exception as e:
 # Global flag to prevent concurrent restarts
 _restart_in_progress = False
 
+
 def force_restart_assistant() -> bool:
     """
     Force restart the AI Assistant with completely fresh code.
@@ -614,16 +628,16 @@ def force_restart_assistant() -> bool:
     Thread-safe: Uses global flag to prevent concurrent restarts.
     """
     global _restart_in_progress
-    
+
     # Check if restart already in progress
     if _restart_in_progress:
         print("⚠️  Restart already in progress - skipping duplicate request")
         print("   This prevents threading violations from concurrent restarts")
         return False
-    
+
     # Set flag to block concurrent restarts
     _restart_in_progress = True
-    
+
     print("=" * 60)
     print("🚀 Force Restarting AI Assistant with Fresh Code")
     print("=" * 60)
@@ -637,12 +651,13 @@ def force_restart_assistant() -> bool:
                 main_module = sys.modules['AIAssistant.main']
                 if hasattr(main_module, '_assistant_instance'):
                     assistant = main_module._assistant_instance
-                    
+
                     # Stop ticker first (MUST be on main thread - we are on main thread here)
-                    if hasattr(assistant, 'action_queue') and assistant.action_queue:
+                    if hasattr(assistant,
+                               'action_queue') and assistant.action_queue:
                         assistant.action_queue.stop_ticker()
                         print("   - Stopped action queue ticker (main thread)")
-                    
+
                     # Now safe to disconnect clients
                     if hasattr(assistant,
                                'http_client') and assistant.http_client:

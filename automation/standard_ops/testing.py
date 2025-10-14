@@ -5,6 +5,7 @@ Testing operations automation.
 from pathlib import Path
 from typing import Dict, List
 import subprocess
+import os
 
 
 class TestingOps:
@@ -15,7 +16,7 @@ class TestingOps:
         self.root_path = root_path
         self.tests_dir = root_path / "tests"
     
-    def run_all_tests(self, verbose: bool = False) -> Dict:
+    def run_all_tests(self, verbose: bool = False, **kwargs) -> Dict:
         """Run all tests in the project."""
         print("🧪 Running all tests...")
         
@@ -26,14 +27,24 @@ class TestingOps:
             }
         
         try:
-            cmd = ['python', '-m', 'pytest', 'tests/', '-v' if verbose else '-q']
+            cmd = [
+                'python', '-m', 'pytest', 
+                'tests/', 
+                '-q', '--tb=no',
+                '--color=no'
+            ]
+            
+            # Prepare environment with unbuffered output
+            env = os.environ.copy()
+            env['PYTHONUNBUFFERED'] = '1'
             
             result = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
-                cwd=self.root_path,
-                timeout=300
+                cwd=str(self.root_path),
+                timeout=120,  # Reduced from 300s
+                env=env
             )
             
             return {
@@ -43,10 +54,12 @@ class TestingOps:
                 'stderr': result.stderr
             }
             
-        except subprocess.TimeoutExpired:
+        except subprocess.TimeoutExpired as e:
             return {
                 'success': False,
-                'error': 'Tests timed out after 5 minutes'
+                'error': 'Tests timed out after 2 minutes',
+                'stdout': e.stdout if e.stdout else '',
+                'stderr': e.stderr if e.stderr else ''
             }
         except Exception as e:
             return {
@@ -59,23 +72,41 @@ class TestingOps:
         print("🧪 Running backend tests...")
         
         try:
-            cmd = ['python', '-m', 'pytest', 'tests/backend/', '-v' if verbose else '-q']
+            cmd = [
+                'python', '-m', 'pytest', 
+                'tests/backend/', 
+                '-q', '--tb=no',  # Quiet mode, no traceback to reduce output
+                '--color=no'  # Disable color codes
+            ]
+            
+            # Prepare environment with unbuffered output
+            env = os.environ.copy()
+            env['PYTHONUNBUFFERED'] = '1'
             
             result = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=True,
-                cwd=self.root_path,
-                timeout=60
+                cwd=str(self.root_path),
+                timeout=30,
+                env=env
             )
             
             return {
                 'success': result.returncode == 0,
                 'exit_code': result.returncode,
                 'stdout': result.stdout,
+                'stderr': result.stderr,
                 'test_count': '30 backend API tests'
             }
             
+        except subprocess.TimeoutExpired as e:
+            return {
+                'success': False,
+                'error': f'Tests timed out after 30s',
+                'stdout': e.stdout if e.stdout else '',
+                'stderr': e.stderr if e.stderr else ''
+            }
         except Exception as e:
             return {
                 'success': False,
