@@ -85,6 +85,76 @@ def register_toolbar_menu():
         )
         ai_menu.add_menu_entry("AIAssistantCommands", dashboard_entry)
         
+        # Add separator
+        separator1 = unreal.ToolMenuEntry(
+            name="Separator1",
+            type=unreal.MultiBlockType.SEPARATOR
+        )
+        ai_menu.add_menu_entry("AIAssistantMaintenance", separator1)
+        
+        # Add Clean Duplicate Files menu item
+        cleanup_entry = unreal.ToolMenuEntry(
+            name="CleanupLegacy",
+            type=unreal.MultiBlockType.MENU_ENTRY
+        )
+        cleanup_entry.set_label(unreal.Text("🧹 Clean Duplicate Files"))
+        cleanup_entry.set_tool_tip(unreal.Text("Remove legacy duplicate files from old installations"))
+        cleanup_entry.set_string_command(
+            type=unreal.ToolMenuStringCommandType.PYTHON,
+            custom_type=unreal.Name(""),
+            string="from AIAssistant.system.cleanup_legacy import cleanup_legacy_files; cleanup_legacy_files()"
+        )
+        ai_menu.add_menu_entry("AIAssistantMaintenance", cleanup_entry)
+        
+        # Add Clean Cache menu item
+        cache_entry = unreal.ToolMenuEntry(
+            name="CleanCache",
+            type=unreal.MultiBlockType.MENU_ENTRY
+        )
+        cache_entry.set_label(unreal.Text("🗑️ Clean __pycache__"))
+        cache_entry.set_tool_tip(unreal.Text("Remove all Python cache directories"))
+        cache_entry.set_string_command(
+            type=unreal.ToolMenuStringCommandType.PYTHON,
+            custom_type=unreal.Name(""),
+            string="from AIAssistant.system.cleanup_legacy import cleanup_pycache_recursive; cleanup_pycache_recursive()"
+        )
+        ai_menu.add_menu_entry("AIAssistantMaintenance", cache_entry)
+        
+        # Add Verify Installation menu item
+        verify_entry = unreal.ToolMenuEntry(
+            name="VerifyInstallation",
+            type=unreal.MultiBlockType.MENU_ENTRY
+        )
+        verify_entry.set_label(unreal.Text("✅ Verify Installation"))
+        verify_entry.set_tool_tip(unreal.Text("Check directory structure and file consistency"))
+        verify_entry.set_string_command(
+            type=unreal.ToolMenuStringCommandType.PYTHON,
+            custom_type=unreal.Name(""),
+            string="from AIAssistant.system.cleanup_legacy import get_legacy_files; from pathlib import Path; import unreal; ai_root = Path(unreal.Paths.project_dir()) / 'Content' / 'Python' / 'AIAssistant'; legacy = [f for f in get_legacy_files() if (ai_root / f).exists()]; print('\\n' + '='*60); print('📊 Installation Verification'); print('='*60); print(f'Legacy duplicates found: {len(legacy)}'); [print(f'  ⚠️  {f}') for f in legacy[:5]]; print('\\n✅ Run \"Clean Duplicate Files\" to remove them' if legacy else '\\n✅ Installation is clean!'); print('='*60)"
+        )
+        ai_menu.add_menu_entry("AIAssistantMaintenance", verify_entry)
+        
+        # Add separator
+        separator2 = unreal.ToolMenuEntry(
+            name="Separator2",
+            type=unreal.MultiBlockType.SEPARATOR
+        )
+        ai_menu.add_menu_entry("AIAssistantUpdates", separator2)
+        
+        # Add Force Update menu item
+        update_entry = unreal.ToolMenuEntry(
+            name="ForceUpdate",
+            type=unreal.MultiBlockType.MENU_ENTRY
+        )
+        update_entry.set_label(unreal.Text("⬇️ Force Update"))
+        update_entry.set_tool_tip(unreal.Text("Download and install latest version from backend"))
+        update_entry.set_string_command(
+            type=unreal.ToolMenuStringCommandType.PYTHON,
+            custom_type=unreal.Name(""),
+            string="from AIAssistant.system.auto_update import check_and_update; check_and_update(); print('\\n✅ Update complete! Restarting assistant...'); from AIAssistant.system.auto_update import force_restart_assistant; force_restart_assistant()"
+        )
+        ai_menu.add_menu_entry("AIAssistantUpdates", update_entry)
+        
         # Refresh menus to show changes
         menus.refresh_all_widgets()
         

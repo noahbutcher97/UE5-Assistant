@@ -229,6 +229,11 @@ class ActionQueue:
             import sys
             if 'AIAssistant.auto_update' in sys.modules:
                 auto_update = sys.modules['AIAssistant.auto_update']
+                
+                # Skip version check if update is in progress (prevents mid-extraction restart)
+                if hasattr(auto_update, '_update_in_progress') and auto_update._update_in_progress:
+                    return
+                
                 if hasattr(auto_update, '_version_marker'):
                     new_version = auto_update._version_marker
                     if new_version != self.current_version:

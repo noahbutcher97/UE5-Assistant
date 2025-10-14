@@ -20,6 +20,9 @@ import uuid
 # Version marker for tracking module updates (changes with each update)
 _version_marker = str(uuid.uuid4())[:8]
 
+# Update lock - prevents restart during file extraction
+_update_in_progress = False
+
 # Optional unreal import for testing outside UE5
 try:
     import unreal  # type: ignore
@@ -142,7 +145,10 @@ def check_and_update(mode: str = "auto") -> bool:
     Returns:
         True if update was successful, False otherwise
     """
-    global _version_marker
+    global _version_marker, _update_in_progress
+
+    # Set update lock to prevent mid-extraction restart
+    _update_in_progress = True
 
     # Update version marker for this run
     _version_marker = str(uuid.uuid4())[:8]
@@ -375,12 +381,17 @@ def _do_background_update(skip_restart: bool = False) -> bool:
             print("🔄 Module cache will be cleared automatically...")
         print("=" * 60)
 
+        # Release update lock AFTER all files are extracted
+        _update_in_progress = False
+        
         return True
 
     except Exception as e:
         print(f"❌ Update failed: {e}")
         import traceback
         traceback.print_exc()
+        # Release lock on error
+        _update_in_progress = False
         return False
 
 
