@@ -98,7 +98,7 @@ Event Construct
 
 **Python Command (copy-paste into Execute Python Script):**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.get_active_server()
 ```
 
@@ -138,7 +138,7 @@ blueprint_helpers.get_active_server()
 
 **Python Command (copy-paste into Execute Python Script):**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.switch_server('{0}')
 ```
 
@@ -153,7 +153,7 @@ blueprint_helpers.switch_server('{0}')
 
 **Python Command:**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.get_server_display()
 ```
 
@@ -194,7 +194,7 @@ blueprint_helpers.get_server_display()
 
 **Python Command:**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.execute_ai_command('{0}')
 ```
 
@@ -204,7 +204,7 @@ blueprint_helpers.execute_ai_command('{0}')
 
 **Python Command (with viewport context):**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.describe_viewport_with_context('{0}')
 ```
 
@@ -244,7 +244,7 @@ blueprint_helpers.describe_viewport_with_context('{0}')
 
 **Python Command:**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.list_files('{0}')
 ```
 
@@ -281,7 +281,7 @@ blueprint_helpers.list_files('{0}')
 
 **Python Command:**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.read_file('{0}')
 ```
 
@@ -312,7 +312,7 @@ blueprint_helpers.read_file('{0}')
 
 **Python Command:**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.search_files('{0}')
 ```
 
@@ -352,7 +352,7 @@ blueprint_helpers.search_files('{0}')
 
 **Python Command:**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.get_project_info()
 ```
 
@@ -389,7 +389,7 @@ blueprint_helpers.get_project_info()
 
 **Python Command:**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.request_guidance('{0}')
 ```
 
@@ -425,7 +425,7 @@ blueprint_helpers.request_guidance('{0}')
 
 **Python Command:**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.capture_blueprint()
 ```
 
@@ -442,7 +442,7 @@ D:/UnrealProjects/5.6/UE5_Assistant/Saved/Screenshots/AIAssistant/
 
 **Python Command:**
 ```python
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.list_blueprints()
 ```
 
@@ -484,7 +484,7 @@ Event Construct
   ↓
 [Execute Python Script]
 ────────────────────────────────────────────────
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.get_active_server()
 ────────────────────────────────────────────────
   ↓
@@ -506,7 +506,7 @@ blueprint_helpers.get_active_server()
   ↓
 [Execute Python Script]
 ────────────────────────────────────────────────
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.switch_server('{0}')
 ────────────────────────────────────────────────
   ↓
@@ -534,7 +534,7 @@ blueprint_helpers.switch_server('{0}')
   ↓
 [Execute Python Script]
 ────────────────────────────────────────────────
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.execute_ai_command('{0}')
 ────────────────────────────────────────────────
   ↓
@@ -569,7 +569,7 @@ blueprint_helpers.execute_ai_command('{0}')
   ↓
 [Execute Python Script]
 ────────────────────────────────────────────────
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.list_files('{0}')
 ────────────────────────────────────────────────
   ↓
@@ -601,7 +601,7 @@ blueprint_helpers.list_files('{0}')
   ↓
 [Execute Python Script]
 ────────────────────────────────────────────────
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.capture_blueprint()
 ────────────────────────────────────────────────
   ↓
@@ -684,7 +684,7 @@ Edit: `D:\UnrealProjects\5.6\UE5_Assistant\Config\AIAssistant_config.json`
 
 ```python
 # Server Management
-from AIAssistant import blueprint_helpers
+from AIAssistant.tools import blueprint_helpers
 blueprint_helpers.get_active_server()
 blueprint_helpers.switch_server('{0}')
 blueprint_helpers.get_server_display()

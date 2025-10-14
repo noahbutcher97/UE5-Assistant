@@ -7,7 +7,7 @@ The easiest way to troubleshoot connection issues:
 
 ```python
 # In UE5 Python Console:
-import AIAssistant.troubleshooter as ts
+import AIAssistant.troubleshoot.troubleshooter as ts
 
 # Available commands:
 ts.reconnect()      # Restart HTTP polling connection
@@ -23,7 +23,7 @@ Quick one-liner to restart the connection:
 
 ```python
 # In UE5 Python Console:
-import AIAssistant.main as assistant
+import AIAssistant.core.main as assistant
 assistant.restart_assistant()
 ```
 
@@ -39,7 +39,7 @@ if 'AIAssistant' in sys.modules:
     del sys.modules['AIAssistant']
 
 # Reimport and restart
-import AIAssistant.main as assistant
+import AIAssistant.core.main as assistant
 assistant.get_assistant()
 ```
 
@@ -54,7 +54,7 @@ assistant.get_assistant()
 
 **Solution:**
 1. Open UE5 Python Console
-2. Run: `import AIAssistant.troubleshooter as ts`
+2. Run: `import AIAssistant.troubleshoot.troubleshooter as ts`
 3. Run: `ts.test_server()`
 4. If server is reachable, run: `ts.reconnect()`
 
@@ -64,7 +64,7 @@ assistant.get_assistant()
 
 **Solution:**
 ```python
-import AIAssistant.main as assistant
+import AIAssistant.core.main as assistant
 assistant.restart_assistant()
 ```
 

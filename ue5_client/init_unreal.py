@@ -14,7 +14,7 @@ FORCE_PRODUCTION = True
 
 try:
     # Import and run the startup configuration
-    from AIAssistant.startup import configure_and_start
+    from AIAssistant.system.startup import configure_and_start
     
     # Use production server by default
     configure_and_start(force_production=FORCE_PRODUCTION)

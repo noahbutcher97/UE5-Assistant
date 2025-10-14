@@ -123,7 +123,7 @@ The system provides several commands for troubleshooting:
 
 ```python
 # Force reload all modules
-import AIAssistant.auto_update
+import AIAssistant.system.auto_update
 AIAssistant.auto_update.force_reload_all()
 
 # Clear module cache only

@@ -25,17 +25,41 @@ Your folder structure should be:
 ```
 Content/Python/AIAssistant/
 ├── __init__.py
-├── main.py
-├── config.py
-├── api_client.py
-├── async_client.py
-├── context_collector.py
-├── action_executor.py
-├── ui_manager.py
-├── utils.py
-├── README.md
-├── BLUEPRINT_INTEGRATION.md
-└── INSTALLATION.md (this file)
+├── core/              # Central entry points
+│   ├── main.py
+│   ├── config.py
+│   └── utils.py
+├── network/           # Communication modules
+│   ├── http_polling_client.py
+│   ├── websocket_client.py
+│   ├── api_client.py
+│   └── async_client.py
+├── execution/         # Action system
+│   ├── action_executor.py
+│   ├── action_queue.py
+│   └── action_executor_extensions.py
+├── ui/                # Editor UI extensions
+│   ├── toolbar_menu.py
+│   └── ui_manager.py
+├── collection/        # Metadata collectors
+│   ├── context_collector.py
+│   ├── file_collector.py
+│   └── project_metadata_collector.py
+├── system/            # System management
+│   ├── auto_update.py
+│   ├── startup.py
+│   └── project_registration.py
+├── tools/             # AI-assisted tools
+│   ├── scene_orchestrator.py
+│   ├── viewport_controller.py
+│   ├── actor_manipulator.py
+│   └── blueprint_capture.py
+├── troubleshoot/      # Diagnostics tools
+│   └── troubleshooter.py
+└── documentation/     # Guides and docs
+    ├── README.md
+    ├── INSTALLATION.md (this file)
+    └── ...
 ```
 
 ### Step 2: Update Your Blueprint

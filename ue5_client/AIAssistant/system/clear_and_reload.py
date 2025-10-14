@@ -36,7 +36,7 @@ print("=" * 60)
 
 # Now reload everything fresh
 try:
-    import AIAssistant.startup as startup
+    from AIAssistant.system import startup
     startup.configure_and_start(force_production=True)
     print("\n✅ AIAssistant reloaded successfully with latest code!")
 except Exception as e:
