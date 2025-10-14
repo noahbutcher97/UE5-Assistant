@@ -67,7 +67,7 @@ def register_toolbar_menu():
         test_entry.set_string_command(
             type=unreal.ToolMenuStringCommandType.PYTHON,
             custom_type=unreal.Name(""),
-            string="import unreal; py_cmd = 'py \"' + unreal.Paths.project_content_dir() + 'Python/diagnose_connection.py\"'; unreal.SystemLibrary.execute_console_command(None, py_cmd)"
+            string="import AIAssistant.troubleshooter as ts; ts.status(); ts.info(); print('\\n💡 Use ts.reconnect() to fix connection issues')"
         )
         ai_menu.add_menu_entry("AIAssistantCommands", test_entry)
         
