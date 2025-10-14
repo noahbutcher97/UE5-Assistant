@@ -278,8 +278,23 @@ def _do_background_update(skip_restart: bool = False) -> bool:
                             os.makedirs(os.path.dirname(target_path),
                                         exist_ok=True)
 
-                            with open(target_path, 'wb') as target_file:
-                                target_file.write(file_content)
+                            # Use atomic replacement for existing files
+                            temp_path = target_path + '.tmp'
+                            try:
+                                with open(temp_path, 'wb') as temp_file:
+                                    temp_file.write(file_content)
+                                
+                                # Atomic replace (works even if file is in use)
+                                if os.path.exists(target_path):
+                                    os.replace(temp_path, target_path)
+                                    print(f"   ✅ Overwrote: {file_info.filename}")
+                                else:
+                                    os.rename(temp_path, target_path)
+                                    print(f"   ✅ Created: {file_info.filename}")
+                            except Exception as e:
+                                print(f"   ⚠️ Could not update {file_info.filename}: {e}")
+                                if os.path.exists(temp_path):
+                                    os.remove(temp_path)
 
                             updated_files.append(file_info.filename)
             except zipfile.BadZipFile as e:
@@ -304,8 +319,23 @@ def _do_background_update(skip_restart: bool = False) -> bool:
                             os.makedirs(os.path.dirname(target_path),
                                         exist_ok=True)
 
-                            with open(target_path, 'wb') as target_file:
-                                target_file.write(file_content)
+                            # Use atomic replacement for existing files
+                            temp_path = target_path + '.tmp'
+                            try:
+                                with open(temp_path, 'wb') as temp_file:
+                                    temp_file.write(file_content)
+                                
+                                # Atomic replace (works even if file is in use)
+                                if os.path.exists(target_path):
+                                    os.replace(temp_path, target_path)
+                                    print(f"   ✅ Overwrote: {member.name}")
+                                else:
+                                    os.rename(temp_path, target_path)
+                                    print(f"   ✅ Created: {member.name}")
+                            except Exception as e:
+                                print(f"   ⚠️ Could not update {member.name}: {e}")
+                                if os.path.exists(temp_path):
+                                    os.remove(temp_path)
 
                             updated_files.append(member.name)
             except tarfile.TarError as e:
@@ -420,8 +450,23 @@ def _do_update() -> bool:
                             os.makedirs(os.path.dirname(target_path),
                                         exist_ok=True)
 
-                            with open(target_path, 'wb') as target_file:
-                                target_file.write(file_content)
+                            # Use atomic replacement for existing files
+                            temp_path = target_path + '.tmp'
+                            try:
+                                with open(temp_path, 'wb') as temp_file:
+                                    temp_file.write(file_content)
+                                
+                                # Atomic replace (works even if file is in use)
+                                if os.path.exists(target_path):
+                                    os.replace(temp_path, target_path)
+                                    print(f"   ✅ Overwrote: {file_info.filename}")
+                                else:
+                                    os.rename(temp_path, target_path)
+                                    print(f"   ✅ Created: {file_info.filename}")
+                            except Exception as e:
+                                print(f"   ⚠️ Could not update {file_info.filename}: {e}")
+                                if os.path.exists(temp_path):
+                                    os.remove(temp_path)
 
                             updated_files.append(file_info.filename)
             except zipfile.BadZipFile as e:
