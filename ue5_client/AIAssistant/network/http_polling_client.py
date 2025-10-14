@@ -12,7 +12,7 @@ import requests
 
 # Import action queue for thread-safe execution
 try:
-    from .action_queue import get_action_queue
+    from ..execution.action_queue import get_action_queue
     HAS_ACTION_QUEUE = True
 except ImportError:
     HAS_ACTION_QUEUE = False
@@ -601,7 +601,7 @@ class HTTPPollingClient:
 
             # Import fresh auto_update module
             # Add version marker for tracking
-            from AIAssistant import auto_update
+            from ..system import auto_update
             version_marker = str(uuid.uuid4())[:8]
             auto_update._version_marker = version_marker
 
@@ -793,7 +793,7 @@ class HTTPPollingClient:
             )
 
             # Re-import main module
-            import AIAssistant.main as fresh_main
+            import AIAssistant.core.main as fresh_main
             fresh_main.get_assistant()
             print("[HTTPPolling] ✅ Manual restart complete")
 

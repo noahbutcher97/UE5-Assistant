@@ -14,8 +14,8 @@ except ImportError:
     requests = None  # type: ignore  # Optional dependency
     HAS_REQUESTS = False
 
-from .config import get_config
-from .utils import Logger
+from ..core.config import get_config
+from ..core.utils import Logger
 
 
 class AsyncAPIClient:

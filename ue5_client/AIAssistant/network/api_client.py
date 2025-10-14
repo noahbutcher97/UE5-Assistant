@@ -11,8 +11,8 @@ try:
 except ImportError:
     requests = None  # type: ignore
 
-from .config import get_config
-from .utils import Logger
+from ..core.config import get_config
+from ..core.utils import Logger
 
 
 class APIClient:

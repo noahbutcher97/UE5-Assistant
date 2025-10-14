@@ -13,17 +13,17 @@ except ImportError:
     HAS_UNREAL = False
     unreal = None  # type: ignore  # Only available in UE environment
 
-from .api_client import get_client
-from .blueprint_capture import BlueprintCapture
-from .config import get_config
-from .context_collector import get_collector
-from .file_collector import FileCollector
-from .project_metadata_collector import get_collector as get_metadata_collector
-from .utils import Logger
+from ..network.api_client import get_client
+from ..tools.blueprint_capture import BlueprintCapture
+from ..core.config import get_config
+from ..collection.context_collector import get_collector
+from ..collection.file_collector import FileCollector
+from ..collection.project_metadata_collector import get_collector as get_metadata_collector
+from ..core.utils import Logger
 
 # Import action queue for thread-safe execution
 try:
-    from .action_queue import get_action_queue
+    from ..execution.action_queue import get_action_queue
     HAS_ACTION_QUEUE = True
 except ImportError:
     HAS_ACTION_QUEUE = False
@@ -31,10 +31,10 @@ except ImportError:
 
 # Import new orchestration systems
 try:
-    from .actor_manipulator import get_manipulator
-    from .editor_utility_generator import get_utility_generator
-    from .scene_orchestrator import get_orchestrator
-    from .viewport_controller import get_viewport_controller
+    from ..tools.actor_manipulator import get_manipulator
+    from ..tools.editor_utility_generator import get_utility_generator
+    from ..tools.scene_orchestrator import get_orchestrator
+    from ..tools.viewport_controller import get_viewport_controller
     HAS_ORCHESTRATION = True
 except ImportError:
     HAS_ORCHESTRATION = False
@@ -72,7 +72,7 @@ class ActionExecutor:
 
         # Add orchestration action implementations
         if HAS_ORCHESTRATION:
-            from .action_executor_extensions import add_orchestration_actions
+            from ..execution.action_executor_extensions import add_orchestration_actions
             add_orchestration_actions(self)
 
     def _register_default_actions(self) -> None:

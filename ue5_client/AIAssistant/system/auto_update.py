@@ -67,7 +67,7 @@ def _safe_log(message, is_error=False):
 def get_backend_url():
     """Get backend URL from config."""
     try:
-        from .config import get_config
+        from ..core.config import get_config
         config = get_config()
         return config.api_url
     except (ImportError, AttributeError):
@@ -554,7 +554,7 @@ except Exception as e:
         # Auto-configure backend URL
         unreal.log("🔧 Configuring backend connection...")
         try:
-            from .config import get_config
+            from ..core.config import get_config
             config = get_config()
 
             # Ensure we're using the correct server

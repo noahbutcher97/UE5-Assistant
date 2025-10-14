@@ -13,7 +13,7 @@ def configure_and_start(backend_url=None, force_production=True):
     import sys
     
     try:
-        from AIAssistant.config import get_config
+        from AIAssistant.core.config import get_config
         config = get_config()
         
         # Step 1: Determine which server to use
@@ -59,8 +59,8 @@ def configure_and_start(backend_url=None, force_production=True):
         print("🚀 Initializing AI Assistant...")
         
         # ACTUALLY IMPORT AND INITIALIZE THE ASSISTANT!
-        import AIAssistant.main
-        assistant = AIAssistant.main.get_assistant()
+        import AIAssistant.core.main
+        assistant = AIAssistant.core.main.get_assistant()
         
         print("")
         print("=" * 60)
@@ -70,7 +70,7 @@ def configure_and_start(backend_url=None, force_production=True):
         print("🌐 Dashboard: https://ue5-assistant-noahbutcher97.replit.app/dashboard")
         print("")
         print("🔧 Troubleshooting:")
-        print("   import AIAssistant.troubleshooter as ts")
+        print("   import AIAssistant.troubleshoot.troubleshooter as ts")
         print("   ts.reconnect()      # Restart connection")
         print("   ts.test_server()    # Test connectivity")
         print("   ts.help()           # Show all commands")

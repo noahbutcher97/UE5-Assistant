@@ -50,7 +50,7 @@ class UE5CommandHandler(BaseHTTPRequestHandler):
             if command == 'execute':
                 # Execute AI command
                 user_input = data.get('command', '')
-                from .main import send_command
+                from ..core.main import send_command
                 response = send_command(user_input)
                 
                 self.send_response(200)
@@ -63,8 +63,8 @@ class UE5CommandHandler(BaseHTTPRequestHandler):
                 
             elif command == 'register':
                 # Register project
-                from .api_client import get_client
-                from .project_registration import auto_register_project
+                from ..network.api_client import get_client
+                from ..system.project_registration import auto_register_project
                 
                 result = auto_register_project(get_client())
                 

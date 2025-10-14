@@ -8,7 +8,7 @@ def add_orchestration_actions(executor):
     # Scene Building Actions
     def _spawn_actor():
         """Spawn an actor (primitive, mesh, blueprint)."""
-        from .scene_orchestrator import get_orchestrator
+        from ..tools.scene_orchestrator import get_orchestrator
         
         get_orchestrator()
         # This would be called with parameters from AI plan
@@ -20,7 +20,7 @@ def add_orchestration_actions(executor):
     
     def _spawn_primitive():
         """Spawn a primitive shape."""
-        from .scene_orchestrator import get_orchestrator
+        from ..tools.scene_orchestrator import get_orchestrator
         
         orchestrator = get_orchestrator()
         result = orchestrator.spawn_primitive(
@@ -43,7 +43,7 @@ def add_orchestration_actions(executor):
     # Viewport Control Actions
     def _focus_camera():
         """Focus camera on selected actors."""
-        from .viewport_controller import get_viewport_controller
+        from ..tools.viewport_controller import get_viewport_controller
         
         controller = get_viewport_controller()
         result = controller.focus_on_selected()
@@ -64,7 +64,7 @@ def add_orchestration_actions(executor):
         """Orbit camera around selection."""
         import unreal
 
-        from .viewport_controller import get_viewport_controller
+        from ..tools.viewport_controller import get_viewport_controller
         
         actor_subsystem = unreal.get_editor_subsystem(
             unreal.EditorActorSubsystem
@@ -83,7 +83,7 @@ def add_orchestration_actions(executor):
     
     def _top_down_view():
         """Set top-down camera view."""
-        from .viewport_controller import get_viewport_controller
+        from ..tools.viewport_controller import get_viewport_controller
         
         controller = get_viewport_controller()
         result = controller.top_down_view()
@@ -95,7 +95,7 @@ def add_orchestration_actions(executor):
     # Actor Manipulation Actions
     def _align_actors():
         """Align selected actors."""
-        from .actor_manipulator import get_manipulator
+        from ..tools.actor_manipulator import get_manipulator
         
         manipulator = get_manipulator()
         result = manipulator.align_actors(axis="z", align_to="min")
@@ -106,7 +106,7 @@ def add_orchestration_actions(executor):
     
     def _distribute_actors():
         """Distribute actors evenly."""
-        from .actor_manipulator import get_manipulator
+        from ..tools.actor_manipulator import get_manipulator
         
         manipulator = get_manipulator()
         result = manipulator.distribute_evenly(axis="x")
@@ -117,7 +117,7 @@ def add_orchestration_actions(executor):
     
     def _arrange_grid():
         """Arrange actors in grid."""
-        from .actor_manipulator import get_manipulator
+        from ..tools.actor_manipulator import get_manipulator
         
         manipulator = get_manipulator()
         result = manipulator.arrange_in_grid(rows=5, columns=5)
@@ -128,7 +128,7 @@ def add_orchestration_actions(executor):
     
     def _arrange_circle():
         """Arrange actors in circle."""
-        from .actor_manipulator import get_manipulator
+        from ..tools.actor_manipulator import get_manipulator
         
         manipulator = get_manipulator()
         result = manipulator.arrange_in_circle(radius=500)
@@ -139,7 +139,7 @@ def add_orchestration_actions(executor):
     
     def _snap_to_grid():
         """Snap actors to grid."""
-        from .actor_manipulator import get_manipulator
+        from ..tools.actor_manipulator import get_manipulator
         
         manipulator = get_manipulator()
         result = manipulator.align_to_grid(grid_size=50)

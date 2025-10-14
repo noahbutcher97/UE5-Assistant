@@ -117,7 +117,7 @@ class WebSocketClient:
                     # Check if we're on a background thread and have action queue
                     import threading
                     try:
-                        from .action_queue import get_action_queue
+                        from ..execution.action_queue import get_action_queue
                         action_queue = get_action_queue()
                         
                         if threading.current_thread() != threading.main_thread():

@@ -14,7 +14,7 @@ except ImportError:
     unreal = None  # type: ignore
     HAS_UNREAL = False
 
-from .utils import Logger
+from ..core.utils import Logger
 
 
 class ContextCollector:

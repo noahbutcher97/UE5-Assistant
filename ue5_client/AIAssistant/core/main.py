@@ -4,16 +4,16 @@ Supports both sync and async modes.
 """
 from typing import Optional
 
-from .action_executor import get_executor
-from .api_client import get_client
-from .async_client import get_async_client
+from ..execution.action_executor import get_executor
+from ..network.api_client import get_client
+from ..network.async_client import get_async_client
 from .config import get_config
-from .ui_manager import get_ui_manager
+from ..ui.ui_manager import get_ui_manager
 from .utils import Logger
 
 # Check for websocket-client dependency
 try:
-    from .websocket_client import WebSocketClient
+    from ..network.websocket_client import WebSocketClient
 except ImportError:
     # Missing websocket-client library
     try:
@@ -69,7 +69,7 @@ class AIAssistant:
         
         # Initialize action queue for thread-safe execution
         try:
-            from .action_queue import get_action_queue
+            from ..execution.action_queue import get_action_queue
             self.action_queue = get_action_queue()
             self.action_queue.set_action_handler(self._execute_action_wrapper)
             print("[AIAssistant] ✅ Action queue initialized for thread-safe execution")
@@ -326,7 +326,7 @@ class AIAssistant:
             
             elif context_type == "blueprint_capture":
                 # Capture blueprint screenshot
-                from .blueprint_capture import capture_blueprint_screenshot
+                from ..tools.blueprint_capture import capture_blueprint_screenshot
                 result = capture_blueprint_screenshot()
                 if "error" in result:
                     return self.ui.format_error(result["error"])
@@ -334,7 +334,7 @@ class AIAssistant:
             
             elif context_type == "browse_files":
                 # Browse project files
-                from .action_executor import browse_project_files
+                from ..execution.action_executor import browse_project_files
                 file_tree = browse_project_files()
                 context_data = {"file_tree": file_tree}
             
@@ -412,7 +412,7 @@ class AIAssistant:
     def _auto_register_project(self):
         """Auto-register project on initialization."""
         try:
-            from .project_registration import auto_register_project
+            from ..system.project_registration import auto_register_project
             result = auto_register_project(self.sync_client)
             if not result.get("success"):
                 import unreal
@@ -500,7 +500,7 @@ class AIAssistant:
         try:
             import unreal
 
-            from .websocket_client import WebSocketClient
+            from ..network.websocket_client import WebSocketClient
             
             self.ws_client = WebSocketClient(base_url, project_id)
             self.ws_client.set_action_handler(self._handle_websocket_action)
@@ -516,7 +516,7 @@ class AIAssistant:
         try:
             import unreal
 
-            from .http_polling_client import HTTPPollingClient
+            from ..network.http_polling_client import HTTPPollingClient
             
             print("[HTTP] Creating HTTP client with:")
             print(f"[HTTP]   Base URL: {base_url}")
@@ -660,7 +660,7 @@ def _auto_init():
         
         # Register toolbar menu for easy access to troubleshooting tools
         try:
-            from .toolbar_menu import register_toolbar_menu
+            from ..ui.toolbar_menu import register_toolbar_menu
             register_toolbar_menu()
         except Exception as e:
             unreal.log_warning(f"⚠️ Could not register toolbar menu: {e}")

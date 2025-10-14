@@ -4,7 +4,7 @@ Handles response formatting and file-based state management.
 """
 from typing import Optional
 
-from .utils import (
+from ..core.utils import (
     Logger,
     get_ai_console_dir,
     log_conversation,
