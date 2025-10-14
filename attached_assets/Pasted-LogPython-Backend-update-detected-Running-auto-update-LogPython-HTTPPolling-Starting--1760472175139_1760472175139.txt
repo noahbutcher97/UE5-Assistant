@@ -1,0 +1,322 @@
+LogPython: 📢 Backend update detected! Running auto-update...
+LogPython: [HTTPPolling] 🔄 Starting auto-update process...
+LogPython: 💡 Auto-update module loaded (vec0c33cd)
+LogPython: 📢 Auto-update triggered from background thread
+LogPython: ⬇️  Downloading and installing files...
+LogPython: ============================================================
+LogPython: 🔄 UE5 AI Assistant Auto-Update (Background Thread Safe)
+LogPython: ============================================================
+LogPython: 📡 Backend: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📦 Version: 30f8bbe6
+LogPython: ⬇️  Downloading: https://ue5-assistant-noahbutcher97.replit.app/api/download_client
+LogPython: ✅ Downloaded 308471 bytes
+LogPython: 📦 Detected format: ZIP
+LogPython:    ✅ Overwrote: AIAssistant/__init__.py
+LogPython:    ✅ Created: AIAssistant/archived/README.md
+LogPython:    ✅ Created: AIAssistant/archived/_DEPRECATED_widget_files.txt
+LogPython:    ✅ Created: AIAssistant/archived/__init__.py
+LogPython:    ✅ Created: AIAssistant/archived/fix_imports_oct2025.py
+LogPython:    ✅ Created: AIAssistant/archived/__pycache__/__init__.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/collection/__init__.py
+LogPython:    ✅ Created: AIAssistant/collection/context_collector.py
+LogPython:    ✅ Created: AIAssistant/collection/file_collector.py
+LogPython:    ✅ Created: AIAssistant/collection/project_metadata_collector.py
+LogPython:    ✅ Created: AIAssistant/collection/__pycache__/__init__.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/collection/__pycache__/context_collector.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/collection/__pycache__/file_collector.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/collection/__pycache__/project_metadata_collector.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/core/__init__.py
+LogPython:    ✅ Created: AIAssistant/core/config.py
+LogPython:    ✅ Created: AIAssistant/core/main.py
+LogPython:    ✅ Created: AIAssistant/core/utils.py
+LogPython:    ✅ Created: AIAssistant/core/__pycache__/__init__.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/core/__pycache__/config.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/core/__pycache__/main.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/core/__pycache__/utils.cpython-311.pyc
+LogPython:    ✅ Overwrote: AIAssistant/documentation/BLUEPRINT_INTEGRATION.md
+LogPython:    ✅ Overwrote: AIAssistant/documentation/BUGFIX_DATA_STRUCTURE.md
+LogPython:    ✅ Overwrote: AIAssistant/documentation/HOTFIX_THREAD_SAFETY.md
+LogPython:    ✅ Overwrote: AIAssistant/documentation/INSTALLATION.md
+LogPython:    ✅ Overwrote: AIAssistant/documentation/INTELLIGENT_RESPONSE_SYSTEM.md
+LogPython:    ✅ Overwrote: AIAssistant/documentation/LINTING_FIXES.md
+LogPython:    ✅ Overwrote: AIAssistant/documentation/README.md
+LogPython:    ✅ Overwrote: AIAssistant/documentation/THREAD_SAFETY.md
+LogPython:    ✅ Overwrote: AIAssistant/documentation/THREAD_SAFE_SOLUTION.md
+LogPython:    ✅ Created: AIAssistant/documentation/__init__.py
+LogPython:    ✅ Created: AIAssistant/documentation/__pycache__/__init__.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/execution/__init__.py
+LogPython:    ✅ Created: AIAssistant/execution/action_executor.py
+LogPython:    ✅ Created: AIAssistant/execution/action_executor_extensions.py
+LogPython:    ✅ Created: AIAssistant/execution/action_queue.py
+LogPython:    ✅ Created: AIAssistant/execution/__pycache__/__init__.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/execution/__pycache__/action_executor.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/execution/__pycache__/action_executor_extensions.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/execution/__pycache__/action_queue.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/network/__init__.py
+LogPython:    ✅ Created: AIAssistant/network/api_client.py
+LogPython:    ✅ Created: AIAssistant/network/async_client.py
+LogPython:    ✅ Created: AIAssistant/network/http_polling_client.py
+LogPython:    ✅ Created: AIAssistant/network/websocket_client.py
+LogPython:    ✅ Created: AIAssistant/network/__pycache__/__init__.cpython-311.pyc
+LogPython: [ActionQueue] 🔄 Version change detected: 0902dfef → 30f8bbe6
+LogPython:    ✅ Created: AIAssistant/network/__pycache__/api_client.cpython-311.pyc
+LogPython: [ActionQueue] 🔄 Restarting assistant with fresh code...
+LogPython: 🔌 HTTP polling disconnected
+LogPython:    ✅ Created: AIAssistant/network/__pycache__/async_client.cpython-311.pyc
+LogPython: [ActionQueue] 🔌 Disconnected HTTP client
+LogPython: [ActionQueue] 🗑️ Shutdown existing assistant instance
+LogPython:    ✅ Created: AIAssistant/network/__pycache__/http_polling_client.cpython-311.pyc
+LogPython: [ActionQueue] 🗑️ Cleared 22 cached modules
+LogPython:    ✅ Created: AIAssistant/network/__pycache__/websocket_client.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/system/__init__.py
+LogPython:    ✅ Created: AIAssistant/system/auto_update.py
+LogPython:    ✅ Created: AIAssistant/system/clear_and_reload.py
+LogPython: [ActionQueue] ❌ Failed to restart assistant: No module named 'AIAssistant.tools'
+LogPython:    ✅ Created: AIAssistant/system/install_dependencies.py
+LogPython: Error: Traceback (most recent call last):
+LogPython:    ✅ Created: AIAssistant/system/local_server.py
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\action_queue.py", line 317, in _trigger_module_reload
+    import AIAssistant.main
+LogPython:    ✅ Created: AIAssistant/system/project_registration.py
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\__init__.py", line 22, in <module>
+    from .core import config, main, utils
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\core\main.py", line 7, in <module>
+    from ..execution.action_executor import get_executor
+LogPython:    ✅ Created: AIAssistant/system/startup.py
+LogPython: Error:   File "D:\UnrealProjects/5.6/UE5_Assistant/Content/Python\AIAssistant\execution\action_executor.py", line 17, in <module>
+    from ..tools.blueprint_capture import BlueprintCapture
+LogPython:    ✅ Created: AIAssistant/system/__pycache__/__init__.cpython-311.pyc
+LogPython: Error: ModuleNotFoundError: No module named 'AIAssistant.tools'
+LogPython:    ✅ Created: AIAssistant/system/__pycache__/auto_update.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/system/__pycache__/clear_and_reload.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/system/__pycache__/install_dependencies.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/system/__pycache__/local_server.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/system/__pycache__/project_registration.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/system/__pycache__/startup.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/test/__init__.py
+LogPython:    ✅ Created: AIAssistant/test/test_connection.py
+LogPython:    ✅ Created: AIAssistant/test/test_registration.py
+LogPython:    ✅ Created: AIAssistant/test/__pycache__/__init__.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/test/__pycache__/test_connection.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/test/__pycache__/test_registration.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/tools/__init__.py
+LogPython:    ✅ Created: AIAssistant/tools/actor_manipulator.py
+LogPython:    ✅ Created: AIAssistant/tools/ai_agent_utility_generator.py
+LogPython:    ✅ Created: AIAssistant/tools/blueprint_capture.py
+LogPython:    ✅ Created: AIAssistant/tools/blueprint_helpers.py
+LogPython:    ✅ Created: AIAssistant/tools/editor_utility_generator.py
+LogPython:    ✅ Created: AIAssistant/tools/scene_orchestrator.py
+LogPython:    ✅ Created: AIAssistant/tools/viewport_controller.py
+LogPython:    ✅ Created: AIAssistant/tools/__pycache__/__init__.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/tools/__pycache__/actor_manipulator.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/tools/__pycache__/ai_agent_utility_generator.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/tools/__pycache__/blueprint_capture.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/tools/__pycache__/blueprint_helpers.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/tools/__pycache__/editor_utility_generator.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/tools/__pycache__/scene_orchestrator.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/tools/__pycache__/viewport_controller.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/troubleshoot/TROUBLESHOOTING.md
+LogPython:    ✅ Created: AIAssistant/troubleshoot/__init__.py
+LogPython:    ✅ Created: AIAssistant/troubleshoot/connection_troubleshooter.py
+LogPython:    ✅ Created: AIAssistant/troubleshoot/diagnose.py
+LogPython:    ✅ Created: AIAssistant/troubleshoot/diagnose_connection.py
+LogPython:    ✅ Created: AIAssistant/troubleshoot/launch_troubleshooter.py
+LogPython:    ✅ Created: AIAssistant/troubleshoot/troubleshooter.py
+LogPython:    ✅ Created: AIAssistant/troubleshoot/__pycache__/__init__.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/troubleshoot/__pycache__/connection_troubleshooter.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/troubleshoot/__pycache__/diagnose.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/troubleshoot/__pycache__/diagnose_connection.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/troubleshoot/__pycache__/launch_troubleshooter.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/troubleshoot/__pycache__/troubleshooter.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/ui/__init__.py
+LogPython:    ✅ Created: AIAssistant/ui/toolbar_menu.py
+LogPython:    ✅ Created: AIAssistant/ui/ui_manager.py
+LogPython:    ✅ Created: AIAssistant/ui/__pycache__/__init__.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/ui/__pycache__/toolbar_menu.cpython-311.pyc
+LogPython:    ✅ Created: AIAssistant/ui/__pycache__/ui_manager.cpython-311.pyc
+LogPython:    ✅ Overwrote: init_unreal.py
+LogPython: ✅ Updated 107 files
+LogPython: ✅ Cleared Python bytecode cache
+LogPython: ============================================================
+LogPython: ✅ Auto-update complete! Files downloaded and installed.
+LogPython: 📦 New version marker: b4bda727
+LogPython: 🔄 Module cache will be cleared automatically...
+LogPython: ============================================================
+LogPython: [AutoUpdate] 📦 Files updated successfully!
+LogPython: [AutoUpdate] ✅ Version marker updated: b4bda727
+LogPython: [AutoUpdate] ⏳ Ticker will detect version change and restart on main thread...
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+23f3, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: [HTTPPolling] ✅ Auto-update downloaded successfully
+LogPython: [HTTPPolling] ⏳ Queueing restart on main thread...
+LogPython: [HTTPPolling] ℹ️ Module reload will happen safely on main thread
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+23f3, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: restart_assistant
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: restart_assistant
+LogPython: [ActionExecutor] ℹ️ 🔄 Executing assistant restart on main thread...
+LogPython: [ActionExecutor] ℹ️ 🔄 Executing assistant restart on main thread...
+LogPython: [ActionQueue] ✅ Main thread ticker started (vbb498248)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://ue5-assistant-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTPPolling] Background polling thread stopped
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 200
+LogPython: [HTTP] Registration response text: {"success":true,"message":"Registered via HTTP polling","persistent":true}
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP] Connect result: True
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000002031B80F890>
+LogPython: [HTTP] self.http_client.connected = True
+LogPython: [HTTP] Result is True, about to return True...
+LogPython: [HTTP] Returning result: True
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Client installed with 34 Python files
+LogPython: 🔖 Version marker: c1314fc3
+LogPython: ✅ Latest version (includes thread-safe queue)
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 31 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 31 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v918036ce)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://ue5-assistant-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 200
+LogPython: [HTTP] Registration response text: {"success":true,"message":"Registered via HTTP polling","persistent":true}
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP] Connect result: True
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000002031B8A2F10>
+LogPython: [HTTP] self.http_client.connected = True
+LogPython: [HTTP] Result is True, about to return True...
+LogPython: [HTTP] Returning result: True
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: [ActionQueue] ✅ Main thread ticker started (v4b1834a4)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://ue5-assistant-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 200
+LogPython: [HTTP] Registration response text: {"success":true,"message":"Registered via HTTP polling","persistent":true}
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP] Connect result: True
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.http_polling_client.HTTPPollingClient object at 0x000002031B8A3D50>
+LogPython: [HTTP] self.http_client.connected = True
+LogPython: [HTTP] Result is True, about to return True...
+LogPython: [HTTP] Returning result: True
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: c1314fc3
+LogPython: ============================================================
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: restart_assistant
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: restart_assistant
+LogPython: [HTTPPolling] ✅ Assistant restart queued for main thread
+LogPython: [HTTPPolling] 📦 Version marker updated: 794844a2
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
