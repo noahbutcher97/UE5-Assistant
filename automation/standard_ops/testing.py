@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Dict, List
 import subprocess
 import os
+import sys
 
 
 class TestingOps:
@@ -15,6 +16,43 @@ class TestingOps:
         """Initialize testing operations."""
         self.root_path = root_path
         self.tests_dir = root_path / "tests"
+    
+    def run_backend_tests(self, verbose: bool = False, **kwargs) -> Dict:
+        """Run backend API tests only (fast, reliable subset)."""
+        print("🧪 Running backend tests...")
+        
+        try:
+            cmd = [
+                sys.executable, '-m', 'pytest', 
+                'tests/backend/', 
+                '-q', '--tb=line',
+                '--color=no'
+            ]
+            
+            # Run without capture to avoid timeout issues
+            result = subprocess.run(
+                cmd,
+                cwd=str(self.root_path),
+                timeout=30
+            )
+            
+            return {
+                'success': result.returncode == 0,
+                'exit_code': result.returncode,
+                'test_count': '30 backend API tests',
+                'note': 'Tests executed successfully' if result.returncode == 0 else 'Tests failed'
+            }
+            
+        except subprocess.TimeoutExpired:
+            return {
+                'success': False,
+                'error': 'Tests timed out after 30s'
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
     
     def run_all_tests(self, verbose: bool = False, **kwargs) -> Dict:
         """Run all tests in the project."""
@@ -28,84 +66,28 @@ class TestingOps:
         
         try:
             cmd = [
-                'python', '-m', 'pytest', 
+                sys.executable, '-m', 'pytest', 
                 'tests/', 
-                '-q', '--tb=no',
+                '-q', '--tb=line',
                 '--color=no'
             ]
             
-            # Prepare environment with unbuffered output
-            env = os.environ.copy()
-            env['PYTHONUNBUFFERED'] = '1'
-            
             result = subprocess.run(
                 cmd,
-                capture_output=True,
-                text=True,
                 cwd=str(self.root_path),
-                timeout=120,  # Reduced from 300s
-                env=env
+                timeout=120
             )
             
             return {
                 'success': result.returncode == 0,
                 'exit_code': result.returncode,
-                'stdout': result.stdout,
-                'stderr': result.stderr
+                'note': 'Tests executed successfully' if result.returncode == 0 else 'Tests failed'
             }
             
-        except subprocess.TimeoutExpired as e:
+        except subprocess.TimeoutExpired:
             return {
                 'success': False,
-                'error': 'Tests timed out after 2 minutes',
-                'stdout': e.stdout if e.stdout else '',
-                'stderr': e.stderr if e.stderr else ''
-            }
-        except Exception as e:
-            return {
-                'success': False,
-                'error': str(e)
-            }
-    
-    def run_backend_tests(self, verbose: bool = False, **kwargs) -> Dict:
-        """Run backend API tests only (fast, reliable subset)."""
-        print("🧪 Running backend tests...")
-        
-        try:
-            cmd = [
-                'python', '-m', 'pytest', 
-                'tests/backend/', 
-                '-q', '--tb=no',  # Quiet mode, no traceback to reduce output
-                '--color=no'  # Disable color codes
-            ]
-            
-            # Prepare environment with unbuffered output
-            env = os.environ.copy()
-            env['PYTHONUNBUFFERED'] = '1'
-            
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                cwd=str(self.root_path),
-                timeout=30,
-                env=env
-            )
-            
-            return {
-                'success': result.returncode == 0,
-                'exit_code': result.returncode,
-                'stdout': result.stdout,
-                'stderr': result.stderr,
-                'test_count': '30 backend API tests'
-            }
-            
-        except subprocess.TimeoutExpired as e:
-            return {
-                'success': False,
-                'error': f'Tests timed out after 30s',
-                'stdout': e.stdout if e.stdout else '',
-                'stderr': e.stderr if e.stderr else ''
+                'error': 'Tests timed out after 2 minutes'
             }
         except Exception as e:
             return {
@@ -118,20 +100,17 @@ class TestingOps:
         print("🧪 Running unit tests...")
         
         try:
-            cmd = ['python', '-m', 'pytest', 'tests/backend/', 'tests/ue5_client/', '-v' if verbose else '-q']
+            cmd = [sys.executable, '-m', 'pytest', 'tests/backend/', 'tests/ue5_client/', '-q']
             
             result = subprocess.run(
                 cmd,
-                capture_output=True,
-                text=True,
-                cwd=self.root_path,
-                timeout=180
+                cwd=str(self.root_path),
+                timeout=60
             )
             
             return {
                 'success': result.returncode == 0,
-                'exit_code': result.returncode,
-                'stdout': result.stdout
+                'exit_code': result.returncode
             }
             
         except Exception as e:
@@ -140,25 +119,22 @@ class TestingOps:
                 'error': str(e)
             }
     
-    def run_integration_tests(self, verbose: bool = False) -> Dict:
+    def run_integration_tests(self, verbose: bool = False, **kwargs) -> Dict:
         """Run integration tests only."""
         print("🧪 Running integration tests...")
         
         try:
-            cmd = ['python', '-m', 'pytest', 'tests/integration/', '-v' if verbose else '-q']
+            cmd = [sys.executable, '-m', 'pytest', 'tests/integration/', '-q']
             
             result = subprocess.run(
                 cmd,
-                capture_output=True,
-                text=True,
-                cwd=self.root_path,
-                timeout=180
+                cwd=str(self.root_path),
+                timeout=60
             )
             
             return {
                 'success': result.returncode == 0,
-                'exit_code': result.returncode,
-                'stdout': result.stdout
+                'exit_code': result.returncode
             }
             
         except Exception as e:
@@ -167,26 +143,22 @@ class TestingOps:
                 'error': str(e)
             }
     
-    def run_specific_test(self, test_path: str, verbose: bool = True) -> Dict:
+    def run_specific_test(self, test_path: str, verbose: bool = True, **kwargs) -> Dict:
         """Run a specific test file or test."""
         print(f"🧪 Running test: {test_path}")
         
         try:
-            cmd = ['python', '-m', 'pytest', test_path, '-v' if verbose else '-q']
+            cmd = [sys.executable, '-m', 'pytest', test_path, '-v' if verbose else '-q']
             
             result = subprocess.run(
                 cmd,
-                capture_output=True,
-                text=True,
-                cwd=self.root_path,
-                timeout=120
+                cwd=str(self.root_path),
+                timeout=60
             )
             
             return {
                 'success': result.returncode == 0,
-                'exit_code': result.returncode,
-                'stdout': result.stdout,
-                'stderr': result.stderr
+                'exit_code': result.returncode
             }
             
         except Exception as e:
@@ -195,24 +167,21 @@ class TestingOps:
                 'error': str(e)
             }
     
-    def get_test_coverage(self) -> Dict:
+    def get_test_coverage(self, **kwargs) -> Dict:
         """Get test coverage report (if coverage is installed)."""
         print("📊 Generating test coverage report...")
         
         try:
-            cmd = ['python', '-m', 'pytest', '--cov=app', '--cov=ue5_client', 'tests/']
+            cmd = [sys.executable, '-m', 'pytest', '--cov=app', '--cov=ue5_client', 'tests/']
             
             result = subprocess.run(
                 cmd,
-                capture_output=True,
-                text=True,
-                cwd=self.root_path,
-                timeout=300
+                cwd=str(self.root_path),
+                timeout=120
             )
             
             return {
-                'success': result.returncode == 0,
-                'coverage_report': result.stdout
+                'success': result.returncode == 0
             }
             
         except FileNotFoundError:

@@ -1,0 +1,8 @@
+[
+  {
+    "timestamp": "2025-10-14T21:03:22.791386",
+    "operation": "test_backend",
+    "result": {
+      "success": false,
+      "error": "Tests timed out after 30s",
+      "stdout": 

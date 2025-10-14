@@ -165,7 +165,8 @@ def run_ops(args, logger):
     try:
         result = manager.run_operation(args.operation, verbose=args.verbose)
 
-        print(f"\n✅ Success: {result.get('success', False)}")
+        success_icon = "✅" if result.get('success', False) else "❌"
+        print(f"\n{success_icon} Success: {result.get('success', False)}")
 
         if 'stdout' in result:
             print("\nOutput:")
