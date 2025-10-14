@@ -1394,6 +1394,105 @@ def register_routes(app, app_config: Dict[str, Any], save_config_func):
         
         return {"success": True, "projects": projects}
 
+    @app.get("/api/projects_federated")
+    async def list_projects_federated():
+        """
+        List projects from both local and remote (production) servers.
+        
+        This allows development dashboard to see production connections in real-time.
+        Security: Uses hardcoded production server URL to prevent SSRF.
+        """
+        import httpx
+        from datetime import datetime, timedelta
+        
+        from app.project_registry import get_registry
+
+        # SECURITY: Hardcoded production server URL (no user input)
+        PRODUCTION_SERVER = "https://ue5-assistant-noahbutcher97.replit.app"
+
+        registry = get_registry()
+        
+        # Get local projects
+        local_projects = registry.list_projects()
+        current_time = datetime.now()
+        connection_timeout = timedelta(seconds=60)
+        
+        # Add health monitoring and tag as local
+        for project in local_projects:
+            metadata = project.get('metadata', {})
+            last_seen_str = metadata.get('last_seen')
+            
+            if last_seen_str:
+                try:
+                    last_seen = datetime.fromisoformat(last_seen_str)
+                    time_since_last_seen = current_time - last_seen
+                    is_active = time_since_last_seen < connection_timeout
+                    project['is_active'] = is_active
+                    project['connection_health'] = {
+                        'last_seen': last_seen_str,
+                        'seconds_since_last_seen': int(time_since_last_seen.total_seconds()),
+                        'status': 'active' if is_active else 'inactive'
+                    }
+                except (ValueError, AttributeError) as e:
+                    project['is_active'] = False
+                    project['connection_health'] = {'status': 'unknown', 'error': str(e)}
+            else:
+                if 'is_active' not in project:
+                    project['is_active'] = False
+                project['connection_health'] = {'status': 'manual_registration', 'last_seen': None}
+            
+            # Tag as local
+            project['server_source'] = 'local'
+            project['server_url'] = 'localhost'
+        
+        # Fetch remote projects (async, non-blocking)
+        remote_projects = []
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                response = await client.get(f"{PRODUCTION_SERVER}/api/projects")
+                if response.status_code == 200:
+                    data = response.json()
+                    if data.get('success'):
+                        remote_projects = data.get('projects', [])
+                        # Tag as remote
+                        for project in remote_projects:
+                            project['server_source'] = 'remote'
+                            project['server_url'] = PRODUCTION_SERVER
+        except Exception as e:
+            print(f"⚠️ Failed to fetch remote projects: {e}")
+        
+        # Combine projects (dedup by project_id, preferring active connections)
+        all_projects = {}
+        
+        # Add local projects first
+        for proj in local_projects:
+            proj_id = proj.get('project_id')
+            if proj_id:
+                all_projects[proj_id] = proj
+        
+        # Add remote projects (keep if not in local, or if remote is more active)
+        for proj in remote_projects:
+            proj_id = proj.get('project_id')
+            if proj_id:
+                if proj_id not in all_projects:
+                    all_projects[proj_id] = proj
+                elif proj.get('is_active') and not all_projects[proj_id].get('is_active'):
+                    # Remote is active but local isn't - use remote
+                    all_projects[proj_id] = proj
+                elif proj.get('server_source') == 'remote':
+                    # If both exist, add server info to show it's on both
+                    all_projects[proj_id]['on_multiple_servers'] = True
+        
+        return {
+            "success": True,
+            "projects": list(all_projects.values()),
+            "sources": {
+                "local": len(local_projects),
+                "remote": len(remote_projects),
+                "remote_server": PRODUCTION_SERVER
+            }
+        }
+
     @app.get("/api/active_project")
     async def get_active_project():
         """Get the currently active project."""

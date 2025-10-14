@@ -906,6 +906,55 @@
             border: 1px solid rgba(0, 245, 255, 0.3);
             color: var(--primary-cyan);
         }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: 0.4s;
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 3px;
+            background-color: var(--text-secondary);
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--primary-purple);
+            border-color: var(--primary-purple);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -1449,6 +1498,22 @@ Then the file writing system is working correctly!</textarea>
                     <input type="range" id="max_context_turns" min="2" max="20" step="1" value="6"
                            oninput="document.getElementById('turns-value').textContent = this.value"
                            style="width: 100%; accent-color: var(--primary-cyan);">
+                </div>
+
+                <div style="background: rgba(139, 92, 246, 0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.3);">
+                    <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                        <div>
+                            <strong style="color: var(--primary-purple);"><i class="fas fa-network-wired"></i> Federation Mode</strong>
+                            <span style="display: block; font-size: 13px; color: var(--text-secondary); margin-top: 4px;">Monitor production server connections from dev dashboard</span>
+                        </div>
+                        <div class="toggle-switch" onclick="toggleFederation(event)">
+                            <input type="checkbox" id="federation_toggle" onchange="toggleFederation(event)">
+                            <span class="toggle-slider"></span>
+                        </div>
+                    </label>
+                    <div id="federation-status" style="margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.3); border-radius: 6px; font-size: 12px; color: var(--text-secondary); display: none;">
+                        <i class="fas fa-info-circle"></i> Monitoring: <span id="remote-server-url">https://ue5-assistant-noahbutcher97.replit.app</span>
+                    </div>
                 </div>
             </div>
 
@@ -2206,7 +2271,11 @@ Then the file writing system is working correctly!</textarea>
         // Project Management
         async function loadProjects() {
             try {
-                const response = await fetch('/api/projects');
+                // Check if federation mode is enabled (monitor production server)
+                const federationEnabled = localStorage.getItem('federation_enabled') === 'true';
+                const endpoint = federationEnabled ? '/api/projects_federated' : '/api/projects';
+                
+                const response = await fetch(endpoint);
                 const data = await response.json();
 
                 const select = document.getElementById('projectSelect');
@@ -2239,11 +2308,19 @@ Then the file writing system is working correctly!</textarea>
                         const isConnected = state.connectedClients.includes(project.project_id);
                         const statusClass = isConnected ? 'status-online' : 'status-offline';
                         const statusText = isConnected ? 'Connected' : 'Disconnected';
+                        
+                        // Server source badge
+                        const serverSource = project.server_source || 'local';
+                        const serverBadge = serverSource === 'remote' ? `
+                            <span style="display: inline-block; padding: 2px 8px; background: rgba(139, 92, 246, 0.2); border: 1px solid rgba(139, 92, 246, 0.4); border-radius: 4px; font-size: 10px; color: var(--primary-purple); margin-left: 8px;">
+                                <i class="fas fa-cloud"></i> Production
+                            </span>
+                        ` : '';
 
                         card.innerHTML = `
                             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
                                 <div style="flex: 1;">
-                                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">${project.name}</h3>
+                                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 4px;">${project.name}${serverBadge}</h3>
                                     <p style="font-size: 12px; color: var(--text-muted);">${project.path}</p>
                                 </div>
                                 <div style="display: flex; gap: 8px;">
@@ -2731,6 +2808,31 @@ Then the file writing system is working correctly!</textarea>
             }
         }
 
+        function toggleFederation(event) {
+            event.stopPropagation();
+            const toggle = document.getElementById('federation_toggle');
+            const status = document.getElementById('federation-status');
+            const enabled = toggle.checked;
+            
+            localStorage.setItem('federation_enabled', enabled);
+            status.style.display = enabled ? 'block' : 'none';
+            
+            // Reload projects with new mode
+            loadProjects();
+            
+            console.log(`✅ Federation mode ${enabled ? 'enabled' : 'disabled'}`);
+        }
+
+        // Initialize federation toggle on load
+        function initFederation() {
+            const enabled = localStorage.getItem('federation_enabled') === 'true';
+            const toggle = document.getElementById('federation_toggle');
+            const status = document.getElementById('federation-status');
+            
+            toggle.checked = enabled;
+            status.style.display = enabled ? 'block' : 'none';
+        }
+
         async function saveSettings() {
             const config = {
                 model: document.getElementById('model').value,
@@ -3074,6 +3176,7 @@ Then the file writing system is working correctly!</textarea>
 
             // Initialize
             await loadSettings();
+            initFederation();
             await loadProjects();
             initWebSocket();
 
