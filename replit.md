@@ -31,6 +31,8 @@ The UE5 client uses a **Modular Client Architecture** with a reorganized folder 
 
 **Server URL Configuration (October 2025):** Production server uses deployment URL (`ue5-assistant-noahbutcher97.replit.app`) which has proper public API routing. Enhanced **UE5 Toolbar Menu** with one-click server management: "Update to Production Server" configures correct URL, "Show Current Server" displays connection info, "Switch to Localhost" enables local development, and dynamic dashboard URL always matches configured server. All server changes include automatic assistant restart. These toolbar options eliminate the need for users to have code fluency or API familiarity. Note: The workspace development URL has routing limitations and is not used for production connections.
 
+**Widget Generation & File Drop Bug Fixes (October 2025):** Critical bugs in widget generation and file drop functionality were identified and resolved. The widget generator AI prompt was corrected to produce proper import statements (`from AIAssistant.network.api_client import APIClient` instead of the incorrect `from AIAssistant.api_client import AIClient`). Both widget generation and file drop endpoints were fixed to use the correct `project_id` field (changed from `active_project.get('id')` to `active_project.get('project_id')`), restoring auto-deployment functionality. Generated widgets and dropped files now correctly queue to UE5 clients via HTTP polling command queue for local file writing.
+
 ## External Dependencies
 
 ### AI Services
