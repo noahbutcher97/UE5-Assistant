@@ -27,6 +27,8 @@ The UE5 client uses a **Modular Client Architecture** with a reorganized folder 
 
 **Critical Connection Reliability Fixes (October 2025):** Two critical bugs were identified and resolved to ensure absolute connection reliability: (1) Auto-initialization was never triggered on module import - fixed by adding `_auto_init()` call to `__init__.py`, ensuring clients automatically connect when UE5 loads the module. (2) Heartbeat endpoint didn't update the Project Registry - fixed by adding `update_project_last_seen()` call to the heartbeat handler, ensuring dashboard accurately reflects real-time connection status. A comprehensive connection diagnostics suite validates the entire HTTP polling lifecycle with 7 critical touchpoints. All connection tests pass (37/37 including backend API tests), confirming connection reliability is production-ready.
 
+**Server URL Migration (October 2025):** Updated production server URL from legacy deployment (`ue5-assistant-noahbutcher97.replit.app`) to current workspace (`workspace-noahbutcher97.replit.app`). Enhanced **UE5 Toolbar Menu** with one-click server management: "Update to Current Server" fixes URL mismatches, "Show Current Server" displays connection info, "Switch to Localhost" enables local development, and dynamic dashboard URL always matches configured server. All server changes include automatic assistant restart. These toolbar options eliminate the need for users to have code fluency or API familiarity.
+
 ## External Dependencies
 
 ### AI Services
