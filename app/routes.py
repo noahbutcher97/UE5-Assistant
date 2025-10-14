@@ -2191,10 +2191,10 @@ Return ONLY the complete Python script, no explanations or markdown."""
             }
         
         # Try WebSocket reconnect
-        elif hasattr(manager, 'ue5_connections') and project_id in manager.ue5_connections:
+        elif hasattr(manager, 'ue5_clients') and project_id in manager.ue5_clients:
             # For WebSocket, send reconnect command directly
             try:
-                await manager.send_to_ue5(project_id, {
+                await manager.send_command_to_ue5(project_id, {
                     "type": "reconnect",
                     "timestamp": datetime.now().isoformat()
                 })
