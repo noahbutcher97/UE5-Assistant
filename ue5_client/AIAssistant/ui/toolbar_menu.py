@@ -81,9 +81,58 @@ def register_toolbar_menu():
         dashboard_entry.set_string_command(
             type=unreal.ToolMenuStringCommandType.PYTHON,
             custom_type=unreal.Name(""),
-            string="import webbrowser; webbrowser.open('https://ue5-assistant-noahbutcher97.replit.app/dashboard'); print('\\n✅ Dashboard opened in browser!')"
+            string="from AIAssistant.core.config import get_config; import webbrowser; url = get_config().api_url; webbrowser.open(f'{url}/dashboard'); print(f'\\n✅ Dashboard opened: {url}/dashboard')"
         )
         ai_menu.add_menu_entry("AIAssistantCommands", dashboard_entry)
+        
+        # Add separator for server management
+        separator_server = unreal.ToolMenuEntry(
+            name="SeparatorServer",
+            type=unreal.MultiBlockType.SEPARATOR
+        )
+        ai_menu.add_menu_entry("AIAssistantServer", separator_server)
+        
+        # Add Update to Current Server menu item
+        update_server_entry = unreal.ToolMenuEntry(
+            name="UpdateToCurrentServer",
+            type=unreal.MultiBlockType.MENU_ENTRY
+        )
+        update_server_entry.set_label(unreal.Text("🔄 Update to Current Server"))
+        update_server_entry.set_tool_tip(unreal.Text("Fix connection to current production server (workspace-noahbutcher97.replit.app)"))
+        update_server_entry.set_string_command(
+            type=unreal.ToolMenuStringCommandType.PYTHON,
+            custom_type=unreal.Name(""),
+            string="from AIAssistant.core.config import get_config; config = get_config(); config.SERVER_PRESETS['production'] = 'https://workspace-noahbutcher97.replit.app'; config.set('api_base_url', 'https://workspace-noahbutcher97.replit.app'); config.set('active_server', 'production'); config.save(); print('\\n' + '='*70); print('✅ Updated to CURRENT production server!'); print('   URL: https://workspace-noahbutcher97.replit.app'); print('='*70); print('\\n🔄 Restarting assistant...'); from AIAssistant.system.auto_update import force_restart_assistant; force_restart_assistant()"
+        )
+        ai_menu.add_menu_entry("AIAssistantServer", update_server_entry)
+        
+        # Add Show Current Server menu item
+        show_server_entry = unreal.ToolMenuEntry(
+            name="ShowCurrentServer",
+            type=unreal.MultiBlockType.MENU_ENTRY
+        )
+        show_server_entry.set_label(unreal.Text("📡 Show Current Server"))
+        show_server_entry.set_tool_tip(unreal.Text("Display which server you're currently connected to"))
+        show_server_entry.set_string_command(
+            type=unreal.ToolMenuStringCommandType.PYTHON,
+            custom_type=unreal.Name(""),
+            string="from AIAssistant.core.config import get_config; config = get_config(); print('\\n' + '='*70); print('📡 CURRENT SERVER CONNECTION'); print('='*70); print(f'Active Server: {config.get(\"active_server\", \"unknown\")}'); print(f'Backend URL: {config.api_url}'); print('='*70); print('\\n💡 Use \"Update to Current Server\" if dashboard shows disconnected')"
+        )
+        ai_menu.add_menu_entry("AIAssistantServer", show_server_entry)
+        
+        # Add Switch to Localhost menu item
+        localhost_entry = unreal.ToolMenuEntry(
+            name="SwitchToLocalhost",
+            type=unreal.MultiBlockType.MENU_ENTRY
+        )
+        localhost_entry.set_label(unreal.Text("🏠 Switch to Localhost"))
+        localhost_entry.set_tool_tip(unreal.Text("Connect to local development server (http://localhost:5000)"))
+        localhost_entry.set_string_command(
+            type=unreal.ToolMenuStringCommandType.PYTHON,
+            custom_type=unreal.Name(""),
+            string="from AIAssistant.core.config import get_config; config = get_config(); config.switch_server('localhost'); config.save(); print('\\n✅ Switched to localhost server'); print('\\n🔄 Restarting assistant...'); from AIAssistant.system.auto_update import force_restart_assistant; force_restart_assistant()"
+        )
+        ai_menu.add_menu_entry("AIAssistantServer", localhost_entry)
         
         # Add separator
         separator1 = unreal.ToolMenuEntry(

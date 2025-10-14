@@ -1,0 +1,223 @@
+LogPython: ============================================================
+LogPython: 📊 Installation Verification
+LogPython: ============================================================
+LogPython: Legacy duplicates found: 0
+LogPython: ✅ Installation is clean!
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: 🧹 Cleaning up legacy duplicate files...
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: ✅ Cleanup complete!
+LogPython:    Removed: 0 file(s)
+LogPython:    Skipped: 0 file(s)
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: 🧹 Cleaning up __pycache__ directories...
+LogPython: ============================================================
+LogPython: ✅ Removed: __pycache__
+LogPython: ✅ Removed: collection\__pycache__
+LogPython: ✅ Removed: core\__pycache__
+LogPython: ✅ Removed: execution\__pycache__
+LogPython: ✅ Removed: network\__pycache__
+LogPython: ✅ Removed: system\__pycache__
+LogPython: ✅ Removed: tools\__pycache__
+LogPython: ✅ Removed: troubleshoot\__pycache__
+LogPython: ✅ Removed: ui\__pycache__
+LogPython: ============================================================
+LogPython: ✅ Removed 9 __pycache__ director(ies)
+LogPython: ============================================================
+LogPython: ✅ Troubleshooting tools loaded!
+LogPython:    Type: ts.help() for available commands
+LogPython:    Quick reconnect: ts.reconnect()
+LogPython: ============================================================
+LogPython: 🔧 AI ASSISTANT TROUBLESHOOTING TOOLS
+LogPython: ============================================================
+LogPython: Quick Commands:
+LogPython:   ts.reconnect()     - Restart HTTP polling connection
+LogPython:   ts.test_server()   - Test server connectivity
+LogPython:   ts.status()        - Show connection status
+LogPython:   ts.info()          - Display connection details
+LogPython:   ts.dashboard()     - Open web dashboard
+LogPython:   ts.help()          - Show this help message
+LogPython: Common Issues:
+LogPython:   • Polling stopped → ts.reconnect()
+LogPython:   • Can't reach server → ts.test_server()
+LogPython:   • Need connection info → ts.info()
+LogPython: Full docs: AIAssistant/TROUBLESHOOTING.md
+LogPython: ============================================================
+LogPython: ✅ Troubleshooter loaded! Use ts.reconnect(), ts.status(), ts.info(), ts.dashboard()
+LogPython: ts.test_server()
+LogPython: 🧪 Testing server connection...
+LogPython: Testing: http://localhost:5000
+LogPython: Error: ❌ Server test failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/config (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA98900D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ❌ Server test failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/config (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA98900D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: from AIAssistant.core.config import get_config
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: 06e7c8ab
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 33 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 33 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v4fa31722)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: ✅ Project registered: UE5_Assistant
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://ue5-assistant-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 200
+LogPython: [HTTP] Registration response text: {"success":true,"message":"Registered via HTTP polling","persistent":true}
+LogPython: [ActionQueue] Ticker already running
+LogPython: [HTTPPolling] Background polling thread started
+LogPython: ✅ HTTP polling connected: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP] Connect result: True
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001CCEC38EED0>
+LogPython: [HTTP] self.http_client.connected = True
+LogPython: [HTTP] Result is True, about to return True...
+LogPython: [HTTP] Returning result: True
+LogPython: ✅ Real-time connection enabled (HTTP Polling)
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: 06e7c8ab
+LogPython: ============================================================
+LogPython: ✅ Troubleshooting tools loaded!
+LogPython:    Type: ts.help() for available commands
+LogPython:    Quick reconnect: ts.reconnect()
+LogPython: ✅ CONNECTED to https://ue5-assistant-noahbutcher97.replit.app
+LogPython: ============================================================
+LogPython: 🔧 AI ASSISTANT CONNECTION INFO
+LogPython: ============================================================
+LogPython: Backend URL:     https://ue5-assistant-noahbutcher97.replit.app
+LogPython: Project ID:      189fb60ac15dee00c81189bb...
+LogPython: Project Name:    UE5_Assistant
+LogPython: Connected:       Yes ✅
+LogPython: Poll Interval:   2.0s
+LogPython: Heartbeat:       10.0s
+LogPython: ============================================================
+LogPython: 💡 Commands:
+LogPython:    ts.reconnect()  - Restart connection
+LogPython:    ts.test_server() - Test server connectivity
+LogPython:    ts.dashboard()   - Open web dashboard
+LogPython: 💡 Use ts.reconnect() to fix connection issues
+LogPython: from AIAssistant import send_command
+LogPython: [AIAssistant] ℹ️ User: describe what I see in the viewport
+LogPython: [AIAssistant] ℹ️ User: describe what I see in the viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ActionExecutor] ℹ️ [Main Thread] Executing: describe_viewport
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Project metadata collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ContextCollector] ✅ Context collection complete
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: [ActionExecutor] ✅ [Main Thread] Action completed: describe_viewport
+LogPython: ✅ Dashboard opened in browser!
+LogPython: 🔄 Server switch command received: localhost → http://localhost:5000
+LogPython: 🔄 Switching to localhost server: http://localhost:5000
+LogPython: 🔄 Server switch: localhost → http://localhost:5000
+LogPython: ✅ Switched to localhost server: http://localhost:5000
+LogPython: ✅ Base URL updated to: http://localhost:5000
+LogPython: ✅ Server switched to localhost, reconnecting...
+LogPython: ✅ Switched to localhost, reconnecting to http://localhost:5000
+LogPython: 🔌 Executing dashboard-triggered reconnect...
+LogPython: ❌ Re-registration error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9956BD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9955BD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA998BE90>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9975E90>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9977C10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997DAD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: 🔄 Backend connection lost. Attempting to re-register in 5.0s...
+LogPython: [HTTPPolling] 🔄 Triggering automatic module reload...
+LogPython: [HTTPPolling] 🗑️ Cleared 30 cached modules
+LogPython: [HTTPPolling] 🔄 Re-registering action handler with fresh code...
+LogPython: [HTTPPolling] ✅ Module reload complete - fresh code active
+LogPython: ❌ Re-registration error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997EF10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCB6BCFF50>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997D410>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997CE10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9976FD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9975850>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA998BAD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: 🔄 Backend connection lost. Attempting to re-register in 5.0s...
+LogPython: [HTTPPolling] 🔄 Triggering automatic module reload...
+LogPython: [HTTPPolling] 🗑️ Cleared 0 cached modules
+LogPython: [HTTPPolling] 🔄 Re-registering action handler with fresh code...
+LogPython: [HTTPPolling] ✅ Module reload complete - fresh code active
+LogPython: ❌ Re-registration error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9975F90>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9977290>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9977410>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997C450>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997F3D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9998CD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCB6BE04D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: 🔄 Backend connection lost. Attempting to re-register in 5.0s...
+LogPython: [HTTPPolling] 🔄 Triggering automatic module reload...
+LogPython: [HTTPPolling] 🗑️ Cleared 0 cached modules
+LogPython: [HTTPPolling] 🔄 Re-registering action handler with fresh code...
+LogPython: [HTTPPolling] ✅ Module reload complete - fresh code active
+LogPython: ❌ Re-registration error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997F150>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997DA90>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9957E50>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9977510>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA99752D0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA990C450>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9977310>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: 🔄 Backend connection lost. Attempting to re-register in 5.0s...
+LogPython: [HTTPPolling] 🔄 Triggering automatic module reload...
+LogPython: [HTTPPolling] 🗑️ Cleared 0 cached modules
+LogPython: [HTTPPolling] 🔄 Re-registering action handler with fresh code...
+LogPython: [HTTPPolling] ✅ Module reload complete - fresh code active
+LogPython: ❌ Re-registration error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9977450>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9956450>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997E090>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997F690>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCD7AA4050>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997F110>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997DAD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 3/3)
+LogPython: 🔄 Backend connection lost. Attempting to re-register in 5.0s...
+LogPython: [HTTPPolling] 🔄 Triggering automatic module reload...
+LogPython: [HTTPPolling] 🗑️ Cleared 0 cached modules
+LogPython: [HTTPPolling] 🔄 Re-registering action handler with fresh code...
+LogPython: [HTTPPolling] ✅ Module reload complete - fresh code active
+LogPython: ❌ Re-registration error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/register_http (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA997F950>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9974FD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA998AAD0>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 1/3)
+LogPython: ⚠️ Heartbeat failed: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/heartbeat (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCF142C110>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it'))
+LogPython: ⚠️ Polling error: HTTPConnectionPool(host='localhost', port=5000): Max retries exceeded with url: /api/ue5/poll (Caused by NewConnectionError('<urllib3.connection.HTTPConnection object at 0x000001CCA9975A10>: Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it')) (attempt 2/3)
