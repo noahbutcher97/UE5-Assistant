@@ -1,0 +1,466 @@
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: aa2b232c
+LogPython: ============================================================
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: ======================================================================
+LogPython: 📡 CURRENT SERVER CONNECTION
+LogPython: ======================================================================
+LogPython: Active Server: production
+LogPython: Backend URL: https://workspace-noahbutcher97.replit.app
+LogPython: ======================================================================
+LogPython: 💡 Use "Update to Current Server" if dashboard shows disconnected
+LogEOSSDK: LogEOS: Updating Product SDK Config, Time: 714.465881
+LogEOSSDK: LogEOS: SDK Config Product Update Request Completed - No Change
+LogEOSSDK: LogEOS: ScheduleNextSDKConfigDataUpdate - Time: 714.532410, Update Interval: 351.412079
+LogPython: import json
+from pathlib import Path
+import unreal
+# Get the config file location
+config_dir = Path(unreal.Paths.project_dir()) / "Content" / "Python" / "AIAssistant" / "core"
+config_file = config_dir / "ai_config.json"
+print("\n" + "=" * 70)
+print("🔧 EMERGENCY CONFIG FIX")
+print("=" * 70)
+# Load current config
+if config_file.exists():
+    with open(config_file, 'r') as f:
+        config = json.load(f)
+    print(f"📄 Current URL: {config.get('api_base_url', 'Not set')}")
+else:
+    config = {}
+    print("📄 No config file found, creating new one")
+# Update to working production server
+config['api_base_url'] = 'https://ue5-assistant-noahbutcher97.replit.app'
+config['active_server'] = 'production'
+# Save updated config
+with open(config_file, 'w') as f:
+    json.dump(config, f, indent=2)
+print(f"✅ Updated URL to: {config['api_base_url']}")
+print("=" * 70)
+print("\n🔄 Now restart the assistant...")
+# Restart assistant
+from AIAssistant.system.auto_update import force_restart_assistant
+force_restart_assistant()
+LogPython: ======================================================================
+LogPython: 🔧 EMERGENCY CONFIG FIX
+LogPython: ======================================================================
+LogPython: 📄 No config file found, creating new one
+LogPython: ✅ Updated URL to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: ======================================================================
+LogPython: 🔄 Now restart the assistant...
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: 21bd2281
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 30 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 30 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (vd81153de)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: Warning: ❌ Registration failed: HTTP 404: Not Found
+LogPython: Warning: ⚠️ Project auto-registration failed: HTTP 404: Not Found
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://workspace-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://workspace-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 404
+LogPython: [HTTP] Registration response text: Not Found
+LogPython: ❌ HTTP polling registration failed: 404 - Not Found
+LogPython: [HTTP] Connect result: False
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001BA831DF750>
+LogPython: [HTTP] self.http_client.connected = False
+LogPython: [HTTP] Result is False, logging error...
+LogPython: Error: HTTP Polling connection failed - connect() returned False
+LogPython: [HTTP] Returning result: False
+LogPython: Error: ❌ All connection methods failed
+LogPython: Error:    Real-time dashboard features disabled
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: 21bd2281
+LogPython: ============================================================
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogFactory: FactoryCreateFile: DataTable with ReimportDataTableFactory (0 1 D:/UnrealProjects/5.6/UE5_Assistant/Content/Python/AIAssistant/core/ai_config.json)
+LogSlate: Took 0.000169 seconds to synchronously load lazily loaded font '../../../Engine/Content/Slate/Fonts/Roboto-Light.ttf' (167K)
+LogSlate: Window 'DataTable Options' being destroyed
+LogUObjectHash: Compacting FUObjectHashTables data took   0.51ms
+LogUObjectHash: Compacting FUObjectHashTables data took   0.41ms
+AssetReimport: Importing new asset /Game/Python/AIAssistant/core/ai_config.
+AssetReimport: Failed to import file D:/UnrealProjects/5.6/UE5_Assistant/Content/Python/AIAssistant/core/ai_config.json.
+LogSlate: Window 'Message Log' being destroyed
+LogSlate: Window 'Message Log' being destroyed
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: ======================================================================
+LogPython: ✅ Updated to CURRENT production server!
+LogPython:    URL: https://workspace-noahbutcher97.replit.app
+LogPython: ======================================================================
+LogPython: 🔄 Restarting assistant...
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: ef118b14
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 30 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 30 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v2cfe654e)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: Warning: ❌ Registration failed: HTTP 404: Not Found
+LogPython: Warning: ⚠️ Project auto-registration failed: HTTP 404: Not Found
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://workspace-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://workspace-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 404
+LogPython: [HTTP] Registration response text: Not Found
+LogPython: ❌ HTTP polling registration failed: 404 - Not Found
+LogPython: [HTTP] Connect result: False
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001BA9D24CA10>
+LogPython: [HTTP] self.http_client.connected = False
+LogPython: [HTTP] Result is False, logging error...
+LogPython: Error: HTTP Polling connection failed - connect() returned False
+LogPython: [HTTP] Returning result: False
+LogPython: Error: ❌ All connection methods failed
+LogPython: Error:    Real-time dashboard features disabled
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: ef118b14
+LogPython: ============================================================
+LogPython: import json; from pathlib import Path; import unreal; config_file = Path(unreal.Paths.project_dir()) / "Content" / "Python" / "AIAssistant" / "core" / "ai_config.json"; config = json.load(open(config_file)) if config_file.exists() else {}; config['api_base_url'] = 'https://ue5-assistant-noahbutcher97.replit.app'; config['active_server'] = 'production'; json.dump(config, open(config_file, 'w'), indent=2); print(f"\n✅ Updated to: {config['api_base_url']}\n"); exec("from AIAssistant.system.auto_update import force_restart_assistant; force_restart_assistant()")
+LogPython: Warning: <string>:1: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\UnrealProjects\\5.6\\UE5_Assistant\\Content\\Python\\AIAssistant\\core\\ai_config.json' mode='r' encoding='utf-8'>
+LogPython: Warning: <string>:1: ResourceWarning: unclosed file <_io.TextIOWrapper name='D:\\UnrealProjects\\5.6\\UE5_Assistant\\Content\\Python\\AIAssistant\\core\\ai_config.json' mode='w' encoding='utf-8'>
+LogPython: ✅ Updated to: https://ue5-assistant-noahbutcher97.replit.app
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: e4b9afa1
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 30 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 30 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (v8ed677aa)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: Warning: ❌ Registration failed: HTTP 404: Not Found
+LogPython: Warning: ⚠️ Project auto-registration failed: HTTP 404: Not Found
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
+LogPython: 📋 Project Path: D:/UnrealProjects/5.6/UE5_Assistant/
+LogPython: 📋 Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: 📋 Backend URL: https://workspace-noahbutcher97.replit.app
+LogPython: 📡 Connection Mode: HTTP
+LogPython: [HTTP] Creating HTTP client with:
+LogPython: [HTTP]   Base URL: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP]   Project ID: 189fb60ac15dee00c81189bbf2abcc6c
+LogPython: [HTTP]   Project Name: UE5_Assistant
+LogPython: ✅ Using thread-safe action queue for execution
+LogPython: ✅ Action handler registered with thread-safe queue
+LogPython: [HTTP] Calling connect() on HTTP client...
+LogPython: 🔌 Attempting HTTP polling connection to: https://workspace-noahbutcher97.replit.app
+LogPython: [HTTP] Making registration POST request to: https://workspace-noahbutcher97.replit.app/api/ue5/register_http
+LogPython: [HTTP] Payload: {'project_id': '189fb60ac15dee00c81189bbf2abcc6c', 'project_name': 'UE5_Assistant'}
+LogPython: [HTTP] About to send POST request with requests library...
+LogPython: [HTTP] Request completed! Got response object
+LogPython: [HTTP] Registration response status: 404
+LogPython: [HTTP] Registration response text: Not Found
+LogPython: ❌ HTTP polling registration failed: 404 - Not Found
+LogPython: [HTTP] Connect result: False
+LogPython: [HTTP] About to check result and return...
+LogPython: [HTTP] self.http_client = <AIAssistant.network.http_polling_client.HTTPPollingClient object at 0x000001BAB6D0AB10>
+LogPython: [HTTP] self.http_client.connected = False
+LogPython: [HTTP] Result is False, logging error...
+LogPython: Error: HTTP Polling connection failed - connect() returned False
+LogPython: [HTTP] Returning result: False
+LogPython: Error: ❌ All connection methods failed
+LogPython: Error:    Real-time dashboard features disabled
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: ✅ AI Assistant toolbar menu registered
+LogPython: ✅ AI Assistant menu added to editor toolbar
+LogPython: ============================================================
+LogPython: ✅ AI Assistant initialized successfully!
+LogPython: 💡 Use: AIAssistant.main.send_command('your question here')
+LogPython: 💡 Or use toolbar: AI Assistant > Launch Troubleshooter
+LogPython: ============================================================
+LogPython: 📦 Step 4: Re-initializing assistant...
+LogPython: ✅ AI Assistant restarted with fresh code!
+LogPython: 📦 Current version: e4b9afa1
+LogPython: ============================================================
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogSlate: Warning: Could not find Glyph Index 0 with codepoint U+2139, getting last resort font data ../../../Engine/Content/Slate/Fonts/DroidSansFallback.ttf
+LogPython: ======================================================================
+LogPython: ✅ Updated to CURRENT production server!
+LogPython:    URL: https://workspace-noahbutcher97.replit.app
+LogPython: ======================================================================
+LogPython: 🔄 Restarting assistant...
+LogPython: 📦 Client installed with 1 Python files
+LogPython: 🔖 Version marker: 295f12f0
+LogPython: ⚠️  Older version (missing action_queue.py)
+LogPython: 💡 Run check_and_update() to upgrade
+LogPython: 💡 Commands:
+LogPython:    Update: AIAssistant.auto_update.check_and_update()
+LogPython:    Reload: AIAssistant.auto_update.force_reload_all()
+LogPython:    Clear:  AIAssistant.auto_update.clear_all_modules()
+LogPython: ============================================================
+LogPython: 🚀 Force Restarting AI Assistant with Fresh Code
+LogPython: ============================================================
+LogPython: 📦 Step 1: Stopping existing connections...
+LogPython: 📦 Step 2: Clearing all module cache...
+LogPython: [AutoUpdate] 🗑️ Clearing module cache...
+LogPython: [AutoUpdate] ✅ Cleared 30 cached modules
+LogPython: [AutoUpdate] ✅ Invalidated import caches
+LogPython:    - Cleared 30 modules
+LogPython: 📦 Step 3: Re-importing main module with fresh code...
+LogPython: [ActionQueue] ✅ Main thread ticker started (va63f3435)
+LogPython: ============================================================
+LogPython: 🤖 UE5 AI Assistant - Initializing...
+LogPython: ============================================================
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [ActionExecutor] ℹ️ ✅ Thread-safe action queue initialized
+LogPython: [AIAssistant] ✅ Action queue initialized for thread-safe execution
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 1/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 2/3)
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: [APIClient] ℹ️ Retrying in 2.5s...
+LogPython: Warning: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: [APIClient] ⚠️ HTTP 404: Not Found (attempt 3/3)
+LogPython: Error: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: [APIClient] ❌ All 3 attempts failed. Last error: HTTP 404: Not Found
+LogPython: Warning: ❌ Registration failed: HTTP 404: Not Found
+LogPython: Warning: ⚠️ Project auto-registration failed: HTTP 404: Not Found
+LogPython: Warning: 💡 Diagnostic: import AIAssistant.test_registration
+LogPython: Warning: 💡 Auto-update: import AIAssistant.auto_update; AIAssistant.auto_update.check_and_update()
