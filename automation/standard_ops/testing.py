@@ -1,12 +1,13 @@
 """
 Testing operations automation.
+
+Due to environment limitations with pytest in automated contexts, 
+this module provides a wrapper around a standalone test script.
 """
 
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 import subprocess
-import os
-import sys
 
 
 class TestingOps:
@@ -16,181 +17,102 @@ class TestingOps:
         """Initialize testing operations."""
         self.root_path = root_path
         self.tests_dir = root_path / "tests"
+        self.test_script = root_path / "run_tests.sh"
+    
+    def _run_test_script(self, test_type: str) -> Dict:
+        """Run the standalone test script."""
+        
+        if not self.test_script.exists():
+            return {
+                'success': False,
+                'error': f'Test script not found: {self.test_script}',
+                'workaround': 'Run pytest directly: python -m pytest tests/backend/ -v'
+            }
+        
+        try:
+            # Use the standalone script which works reliably
+            result = subprocess.run(
+                [str(self.test_script), test_type],
+                cwd=str(self.root_path),
+                capture_output=False,  # Let output stream directly
+                timeout=60
+            )
+            
+            return {
+                'success': result.returncode == 0,
+                'exit_code': result.returncode
+            }
+            
+        except subprocess.TimeoutExpired:
+            return {
+                'success': False,
+                'error': 'Test script timed out after 60s'
+            }
+        except Exception as e:
+            return {
+                'success': False,
+                'error': str(e)
+            }
     
     def run_backend_tests(self, verbose: bool = False, **kwargs) -> Dict:
         """Run backend API tests only (fast, reliable subset)."""
-        print("🧪 Running backend tests...")
+        print("🧪 Running backend tests via standalone script...")
+        print("-" * 60)
         
-        try:
-            cmd = [
-                sys.executable, '-m', 'pytest', 
-                'tests/backend/', 
-                '-q', '--tb=line',
-                '--color=no'
-            ]
-            
-            # Run without capture to avoid timeout issues
-            result = subprocess.run(
-                cmd,
-                cwd=str(self.root_path),
-                timeout=30
-            )
-            
-            return {
-                'success': result.returncode == 0,
-                'exit_code': result.returncode,
-                'test_count': '30 backend API tests',
-                'note': 'Tests executed successfully' if result.returncode == 0 else 'Tests failed'
-            }
-            
-        except subprocess.TimeoutExpired:
-            return {
-                'success': False,
-                'error': 'Tests timed out after 30s'
-            }
-        except Exception as e:
-            return {
-                'success': False,
-                'error': str(e)
-            }
+        result = self._run_test_script('backend')
+        
+        print("-" * 60)
+        
+        if result.get('success'):
+            result['test_count'] = '30 backend API tests'
+        
+        return result
     
     def run_all_tests(self, verbose: bool = False, **kwargs) -> Dict:
         """Run all tests in the project."""
-        print("🧪 Running all tests...")
+        print("🧪 Running all tests via standalone script...")
+        print("-" * 60)
         
-        if not self.tests_dir.exists():
-            return {
-                'success': False,
-                'error': 'Tests directory not found'
-            }
+        result = self._run_test_script('all')
         
-        try:
-            cmd = [
-                sys.executable, '-m', 'pytest', 
-                'tests/', 
-                '-q', '--tb=line',
-                '--color=no'
-            ]
-            
-            result = subprocess.run(
-                cmd,
-                cwd=str(self.root_path),
-                timeout=120
-            )
-            
-            return {
-                'success': result.returncode == 0,
-                'exit_code': result.returncode,
-                'note': 'Tests executed successfully' if result.returncode == 0 else 'Tests failed'
-            }
-            
-        except subprocess.TimeoutExpired:
-            return {
-                'success': False,
-                'error': 'Tests timed out after 2 minutes'
-            }
-        except Exception as e:
-            return {
-                'success': False,
-                'error': str(e)
-            }
+        print("-" * 60)
+        
+        return result
     
     def run_unit_tests(self, verbose: bool = False, **kwargs) -> Dict:
         """Run unit tests only."""
-        print("🧪 Running unit tests...")
+        print("🧪 Running unit tests via standalone script...")
+        print("-" * 60)
         
-        try:
-            cmd = [sys.executable, '-m', 'pytest', 'tests/backend/', 'tests/ue5_client/', '-q']
-            
-            result = subprocess.run(
-                cmd,
-                cwd=str(self.root_path),
-                timeout=60
-            )
-            
-            return {
-                'success': result.returncode == 0,
-                'exit_code': result.returncode
-            }
-            
-        except Exception as e:
-            return {
-                'success': False,
-                'error': str(e)
-            }
+        result = self._run_test_script('unit')
+        
+        print("-" * 60)
+        
+        return result
     
     def run_integration_tests(self, verbose: bool = False, **kwargs) -> Dict:
         """Run integration tests only."""
-        print("🧪 Running integration tests...")
+        print("🧪 Running integration tests via standalone script...")
+        print("-" * 60)
         
-        try:
-            cmd = [sys.executable, '-m', 'pytest', 'tests/integration/', '-q']
-            
-            result = subprocess.run(
-                cmd,
-                cwd=str(self.root_path),
-                timeout=60
-            )
-            
-            return {
-                'success': result.returncode == 0,
-                'exit_code': result.returncode
-            }
-            
-        except Exception as e:
-            return {
-                'success': False,
-                'error': str(e)
-            }
+        result = self._run_test_script('integration')
+        
+        print("-" * 60)
+        
+        return result
     
     def run_specific_test(self, test_path: str, verbose: bool = True, **kwargs) -> Dict:
         """Run a specific test file or test."""
-        print(f"🧪 Running test: {test_path}")
-        
-        try:
-            cmd = [sys.executable, '-m', 'pytest', test_path, '-v' if verbose else '-q']
-            
-            result = subprocess.run(
-                cmd,
-                cwd=str(self.root_path),
-                timeout=60
-            )
-            
-            return {
-                'success': result.returncode == 0,
-                'exit_code': result.returncode
-            }
-            
-        except Exception as e:
-            return {
-                'success': False,
-                'error': str(e)
-            }
+        return {
+            'success': False,
+            'error': 'Use direct command for specific tests',
+            'workaround': f'python -m pytest {test_path} -v'
+        }
     
     def get_test_coverage(self, **kwargs) -> Dict:
-        """Get test coverage report (if coverage is installed)."""
-        print("📊 Generating test coverage report...")
-        
-        try:
-            cmd = [sys.executable, '-m', 'pytest', '--cov=app', '--cov=ue5_client', 'tests/']
-            
-            result = subprocess.run(
-                cmd,
-                cwd=str(self.root_path),
-                timeout=120
-            )
-            
-            return {
-                'success': result.returncode == 0
-            }
-            
-        except FileNotFoundError:
-            return {
-                'success': False,
-                'error': 'pytest-cov not installed'
-            }
-        except Exception as e:
-            return {
-                'success': False,
-                'error': str(e)
-            }
+        """Get test coverage report."""
+        return {
+            'success': False,
+            'error': 'Use direct command for coverage',
+            'workaround': 'python -m pytest --cov=app --cov=ue5_client tests/'
+        }

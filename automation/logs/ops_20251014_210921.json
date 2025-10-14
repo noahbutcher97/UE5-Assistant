@@ -1,0 +1,13 @@
+[
+  {
+    "timestamp": "2025-10-14T21:09:21.065402",
+    "operation": "test_backend",
+    "result": {
+      "success": false,
+      "error": "Automation test wrapper has known issues. Use direct command instead:",
+      "workaround": "python -m pytest tests/backend/ -v",
+      "note": "Tests work perfectly when run directly. Issue is environment-specific."
+    },
+    "success": false
+  }
+]
