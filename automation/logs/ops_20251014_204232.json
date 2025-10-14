@@ -1,0 +1,35 @@
+[
+  {
+    "timestamp": "2025-10-14T20:42:32.010062",
+    "operation": "health_check",
+    "result": {
+      "success": true,
+      "healthy": false,
+      "checks": {
+        "project_structure": {
+          "healthy": true,
+          "missing_directories": []
+        },
+        "dependencies": {
+          "healthy": true,
+          "output": "No broken requirements found.\n"
+        },
+        "configuration": {
+          "healthy": false,
+          "missing_keys": [
+            "max_tokens"
+          ]
+        },
+        "api_health": {
+          "healthy": true,
+          "missing_routes": []
+        },
+        "client_health": {
+          "healthy": true,
+          "missing_modules": []
+        }
+      }
+    },
+    "success": true
+  }
+]

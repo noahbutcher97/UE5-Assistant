@@ -1,0 +1,746 @@
+[
+  {
+    "timestamp": "2025-10-14T20:42:09.161970",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/services/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.162773",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/services/__pycache__/conversation.cpython-311.pyc",
+    "size_mb": 0.0042,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.163158",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/services/__pycache__/file_system.cpython-311.pyc",
+    "size_mb": 0.0084,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.163515",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/services/__pycache__/filtering.cpython-311.pyc",
+    "size_mb": 0.0049,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.163895",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/services/__pycache__/guidance.cpython-311.pyc",
+    "size_mb": 0.0081,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.164284",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/services/__pycache__/openai_client.cpython-311.pyc",
+    "size_mb": 0.0046,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.164627",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.165001",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/__pycache__/config.cpython-311.pyc",
+    "size_mb": 0.0041,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.165383",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/__pycache__/models.cpython-311.pyc",
+    "size_mb": 0.0072,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.165749",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/__pycache__/websocket_manager.cpython-311.pyc",
+    "size_mb": 0.015,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.166161",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/__pycache__/project_registry.cpython-311.pyc",
+    "size_mb": 0.0119,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.166638",
+    "action": "delete",
+    "path": "/home/runner/workspace/app/__pycache__/routes.cpython-311.pyc",
+    "size_mb": 0.1053,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.167003",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/backend/__pycache__/test_dashboard_commands_openai.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.044,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.167308",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/backend/__pycache__/test_openai_integration.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0537,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.167602",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/backend/__pycache__/test_token_routing.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0671,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.167890",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/backend/__pycache__/test_token_routing_enhanced.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0532,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.168208",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/backend/__pycache__/test_token_routing_production.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0539,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.168522",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/backend/__pycache__/test_routes_comprehensive.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0508,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.168796",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/backend/__pycache__/test_auto_update.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0102,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.169082",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/backend/__pycache__/test_api_endpoints.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0748,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.169432",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/ue5_client/__pycache__/test_action_execution.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0797,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.169708",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/ue5_client/__pycache__/mock_unreal.cpython-311.pyc",
+    "size_mb": 0.0133,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.169997",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/ue5_client/__pycache__/test_client_modules.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0366,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.170293",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/integration/__pycache__/test_http_polling_flow.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0431,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.170591",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/integration/__pycache__/test_dashboard_actions.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0508,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.170879",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/integration/__pycache__/test_end_to_end_workflows.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0265,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.171144",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/fixtures/__pycache__/mock_viewport_data.cpython-311.pyc",
+    "size_mb": 0.0056,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.171425",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/fixtures/__pycache__/mock_openai_responses.cpython-311.pyc",
+    "size_mb": 0.0057,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.171674",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/ui/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.171962",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/ui/__pycache__/test_dashboard_elements.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0732,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.172245",
+    "action": "delete",
+    "path": "/home/runner/workspace/tests/__pycache__/conftest.cpython-311-pytest-8.4.2.pyc",
+    "size_mb": 0.0023,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.172532",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/core/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.172870",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/core/__pycache__/config.cpython-311.pyc",
+    "size_mb": 0.0101,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.173345",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/core/__pycache__/main.cpython-311.pyc",
+    "size_mb": 0.0303,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.183508",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/core/__pycache__/utils.cpython-311.pyc",
+    "size_mb": 0.0063,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.188105",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/network/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.188463",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/network/__pycache__/api_client.cpython-311.pyc",
+    "size_mb": 0.0093,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.188759",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/network/__pycache__/async_client.cpython-311.pyc",
+    "size_mb": 0.0063,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.189113",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/network/__pycache__/websocket_client.cpython-311.pyc",
+    "size_mb": 0.0126,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.196520",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/network/__pycache__/http_polling_client.cpython-311.pyc",
+    "size_mb": 0.0399,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.196817",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/troubleshoot/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.197215",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/troubleshoot/__pycache__/connection_troubleshooter.cpython-311.pyc",
+    "size_mb": 0.0131,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.197485",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/troubleshoot/__pycache__/diagnose.cpython-311.pyc",
+    "size_mb": 0.0031,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.197752",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/troubleshoot/__pycache__/diagnose_connection.cpython-311.pyc",
+    "size_mb": 0.0055,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.198024",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/troubleshoot/__pycache__/launch_troubleshooter.cpython-311.pyc",
+    "size_mb": 0.0035,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.198304",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/troubleshoot/__pycache__/troubleshooter.cpython-311.pyc",
+    "size_mb": 0.0098,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.198566",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/execution/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.198829",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/execution/__pycache__/action_executor.cpython-311.pyc",
+    "size_mb": 0.025,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.199077",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/execution/__pycache__/action_executor_extensions.cpython-311.pyc",
+    "size_mb": 0.0068,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.199356",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/execution/__pycache__/action_queue.cpython-311.pyc",
+    "size_mb": 0.0158,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.199599",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/ui/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.200752",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/ui/__pycache__/toolbar_menu.cpython-311.pyc",
+    "size_mb": 0.006,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.204576",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/ui/__pycache__/ui_manager.cpython-311.pyc",
+    "size_mb": 0.0037,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.204956",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/collection/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.206648",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/collection/__pycache__/context_collector.cpython-311.pyc",
+    "size_mb": 0.0164,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.207964",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/collection/__pycache__/file_collector.cpython-311.pyc",
+    "size_mb": 0.011,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.208273",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/collection/__pycache__/project_metadata_collector.cpython-311.pyc",
+    "size_mb": 0.0174,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.208534",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/system/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.208799",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/system/__pycache__/auto_update.cpython-311.pyc",
+    "size_mb": 0.0345,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.209066",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/system/__pycache__/clear_and_reload.cpython-311.pyc",
+    "size_mb": 0.0023,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.209346",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/system/__pycache__/install_dependencies.cpython-311.pyc",
+    "size_mb": 0.0026,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.209609",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/system/__pycache__/local_server.cpython-311.pyc",
+    "size_mb": 0.0079,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.209877",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/system/__pycache__/project_registration.cpython-311.pyc",
+    "size_mb": 0.0045,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.215484",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/system/__pycache__/startup.cpython-311.pyc",
+    "size_mb": 0.0044,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.215745",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/tools/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.215989",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/tools/__pycache__/actor_manipulator.cpython-311.pyc",
+    "size_mb": 0.0161,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.217000",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/tools/__pycache__/ai_agent_utility_generator.cpython-311.pyc",
+    "size_mb": 0.0096,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.217626",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/tools/__pycache__/blueprint_capture.cpython-311.pyc",
+    "size_mb": 0.0146,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.218262",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/tools/__pycache__/blueprint_helpers.cpython-311.pyc",
+    "size_mb": 0.0056,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.219315",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/tools/__pycache__/editor_utility_generator.cpython-311.pyc",
+    "size_mb": 0.0126,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.220319",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/tools/__pycache__/scene_orchestrator.cpython-311.pyc",
+    "size_mb": 0.0156,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.221751",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/tools/__pycache__/viewport_controller.cpython-311.pyc",
+    "size_mb": 0.0148,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.222020",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/test/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.222367",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/test/__pycache__/test_connection.cpython-311.pyc",
+    "size_mb": 0.0025,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.222608",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/test/__pycache__/test_registration.cpython-311.pyc",
+    "size_mb": 0.0028,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.223513",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/documentation/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.223801",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/archived/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0001,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.224366",
+    "action": "delete",
+    "path": "/home/runner/workspace/ue5_client/AIAssistant/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0013,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.224851",
+    "action": "delete",
+    "path": "/home/runner/workspace/__pycache__/main.cpython-311.pyc",
+    "size_mb": 0.0048,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.225406",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/cleanup/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0005,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.225834",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/cleanup/__pycache__/project_cleaner.cpython-311.pyc",
+    "size_mb": 0.0135,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.226279",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/cleanup/__pycache__/file_scanner.cpython-311.pyc",
+    "size_mb": 0.0081,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.226699",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/cleanup/__pycache__/cleanup_rules.cpython-311.pyc",
+    "size_mb": 0.0064,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.227080",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/standard_ops/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0005,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.229833",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/standard_ops/__pycache__/ops_manager.cpython-311.pyc",
+    "size_mb": 0.0048,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.230121",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/standard_ops/__pycache__/deployment.cpython-311.pyc",
+    "size_mb": 0.0068,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.231595",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/standard_ops/__pycache__/testing.cpython-311.pyc",
+    "size_mb": 0.0055,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.231823",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/standard_ops/__pycache__/maintenance.cpython-311.pyc",
+    "size_mb": 0.0096,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.232231",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/utils/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0004,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.232421",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/utils/__pycache__/logger.cpython-311.pyc",
+    "size_mb": 0.0033,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.233702",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/utils/__pycache__/file_utils.cpython-311.pyc",
+    "size_mb": 0.0037,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:09.233901",
+    "action": "delete",
+    "path": "/home/runner/workspace/automation/__pycache__/__init__.cpython-311.pyc",
+    "size_mb": 0.0005,
+    "rule": "Python Cache Files",
+    "dry_run": false
+  },
+  {
+    "timestamp": "2025-10-14T20:42:10.175476",
+    "action": "delete",
+    "path": "/home/runner/workspace/.pytest_cache",
+    "size_mb": 0.0341,
+    "rule": "Test Cache",
+    "dry_run": false
+  }
+]

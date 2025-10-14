@@ -8,7 +8,7 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'ue5_client'))
 
-from AIAssistant.main import AIAssistant
+from AIAssistant.core.main import AIAssistant
 
 def test_token_extraction_from_start():
     """Test token at the start of response (original behavior)."""
