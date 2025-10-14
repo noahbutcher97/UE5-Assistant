@@ -201,8 +201,66 @@ All changes have been reviewed and approved by the architect agent:
 
 ---
 
+---
+
+## Additional Widget Generation & File Drop Fixes (October 14, 2025 - Later)
+
+### 5. ✅ Widget Generator Incorrect Import Path (CRITICAL)
+**Issue:** AI-generated Editor Utility Widgets had incorrect import statements:
+```python
+from AIAssistant.api_client import AIClient  # ❌ Wrong
+```
+
+Should be:
+```python
+from AIAssistant.network.api_client import APIClient  # ✅ Correct
+```
+
+**Impact:** Generated widgets would fail to import the AI client, breaking AI functionality in all generated widgets.
+
+**Fix:**
+- Updated AI prompt in widget generation endpoint (lines 1998-2005)
+- Changed from vague instruction to explicit: "For AI features, use: from AIAssistant.network.api_client import APIClient"
+- Added IMPORTANT section warning against incorrect import path
+- AI will now generate correct import statements
+
+**Files Modified:** `app/routes.py`
+
+---
+
+### 6. ✅ File Drop Tool Project ID Field Bug (CRITICAL)
+**Issue:** File drop endpoint used `active_project.get('id')` which returned `None` because registry stores field as `project_id`.
+
+**Impact:** File drop tool reported "UE5 client not connected via HTTP polling" even when HTTP polling was active, preventing file deployment.
+
+**Fix:**
+- Changed line 2117: `project_id = active_project.get('project_id')` (was: `get('id')`)
+- Now correctly retrieves project_id to find HTTP client connection
+- File drop tool will properly detect HTTP polling connections
+
+**Files Modified:** `app/routes.py`
+
+---
+
+### 7. ✅ Widget Generation Project ID Field Bug (CRITICAL)
+**Issue:** Widget generation endpoint had same bug - used `active_project.get('id')` instead of `active_project.get('project_id')`.
+
+**Impact:** Generated widgets weren't automatically deployed to UE5 projects, forcing users to manually copy code.
+
+**Fix:**
+- Changed line 1975: `project_id = active_project.get('project_id')` (was: `get('id')`)
+- Widget auto-deployment now works correctly
+- UE5 clients receive widget files via HTTP polling command queue
+
+**Files Modified:** `app/routes.py`
+
+---
+
 ## Conclusion
 
 Comprehensive project-wide sweep completed successfully. All critical bugs, security vulnerabilities, and inconsistencies have been identified and resolved. The codebase is clean, well-documented, and production-ready with no regressions introduced.
 
+Additional widget generation and file drop bugs fixed to ensure reliable auto-deployment functionality.
+
 **Final Status:** ✅ Project health restored to optimal state
+**Latest Update:** Widget generation and file drop issues resolved
