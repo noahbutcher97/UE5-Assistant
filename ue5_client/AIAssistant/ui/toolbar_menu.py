@@ -39,7 +39,7 @@ def register_toolbar_menu():
         troubleshooter_entry.set_string_command(
             type=unreal.ToolMenuStringCommandType.PYTHON,
             custom_type=unreal.Name(""),
-            string="import AIAssistant.troubleshooter as ts; ts.help(); print('\\n✅ Troubleshooter loaded! Use ts.reconnect(), ts.status(), ts.info(), ts.dashboard()')"
+            string="import AIAssistant.troubleshoot.troubleshooter as ts; ts.help(); print('\\n✅ Troubleshooter loaded! Use ts.reconnect(), ts.status(), ts.info(), ts.dashboard()')"
         )
         ai_menu.add_menu_entry("AIAssistantCommands", troubleshooter_entry)
         
@@ -53,7 +53,7 @@ def register_toolbar_menu():
         restart_entry.set_string_command(
             type=unreal.ToolMenuStringCommandType.PYTHON,
             custom_type=unreal.Name(""),
-            string="from AIAssistant.auto_update import force_restart_assistant; force_restart_assistant(); print('\\n✅ Assistant restarted! Connection re-established.')"
+            string="from AIAssistant.system.auto_update import force_restart_assistant; force_restart_assistant(); print('\\n✅ Assistant restarted! Connection re-established.')"
         )
         ai_menu.add_menu_entry("AIAssistantCommands", restart_entry)
         
@@ -67,7 +67,7 @@ def register_toolbar_menu():
         test_entry.set_string_command(
             type=unreal.ToolMenuStringCommandType.PYTHON,
             custom_type=unreal.Name(""),
-            string="import AIAssistant.troubleshooter as ts; ts.status(); ts.info(); print('\\n💡 Use ts.reconnect() to fix connection issues')"
+            string="import AIAssistant.troubleshoot.troubleshooter as ts; ts.status(); ts.info(); print('\\n💡 Use ts.reconnect() to fix connection issues')"
         )
         ai_menu.add_menu_entry("AIAssistantCommands", test_entry)
         
