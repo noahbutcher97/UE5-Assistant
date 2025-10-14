@@ -86,12 +86,24 @@ def main():
         print("\n❌ Dependencies not met. Please install required packages.")
         return 1
     
-    # Define test suites
+    # Define test suites (comprehensive coverage)
     test_suites = [
+        # UI Tests
+        ("Dashboard UI Elements", "tests/ui/test_dashboard_elements.py"),
+        
+        # Backend Tests
         ("Backend API Tests", "tests/backend/test_api_endpoints.py"),
+        ("Backend Routes Comprehensive", "tests/backend/test_routes_comprehensive.py"),
         ("HTTP Polling Flow Tests", "tests/integration/test_http_polling_flow.py"),
+        ("Auto-Update System", "tests/backend/test_auto_update.py"),
+        
+        # UE5 Client Tests
         ("Action Execution Tests", "tests/ue5_client/test_action_execution.py"),
+        ("Client Modules Tests", "tests/ue5_client/test_client_modules.py"),
+        
+        # Integration Tests
         ("Dashboard Integration Tests", "tests/integration/test_dashboard_actions.py"),
+        ("End-to-End Workflows", "tests/integration/test_end_to_end_workflows.py"),
     ]
     
     # Run all test suites
